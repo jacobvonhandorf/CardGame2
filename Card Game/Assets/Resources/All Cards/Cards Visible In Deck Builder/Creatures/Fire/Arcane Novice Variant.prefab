@@ -1,0 +1,410 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &6349466571094980921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8508414890304885269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a18d35d1e0180e144a0434cb5b6e68ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  statsScript: {fileID: 3192422185454136609}
+  sourceCard: {fileID: 8144619278524181824}
+  cardName: 
+  baseHealth: 0
+  baseAttack: 0
+  baseDefense: 0
+  baseRange: 0
+  baseMovement: 0
+  range: 0
+  effectActionCost: 1
+  currentTile: {fileID: 0}
+  owner: {fileID: 0}
+  controller: {fileID: 0}
+  hasMovedThisTurn: 0
+  hasDoneActionThisTurn: 0
+--- !u!1001 &6593946901260626609
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 7003494207221417021, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_Name
+      value: Arcane Novice
+      objectReference: {fileID: 0}
+    - target: {fileID: 7003494207221417018, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7003494207221417018, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7003494207221417018, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7003494207221417018, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7003494207221417018, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7003494207221417018, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7003494207221417018, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7003494207221417018, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7003494207221417018, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7003494207221417018, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7003494207221417018, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3064110009858525169, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: creature
+      value: 
+      objectReference: {fileID: 6349466571094980921}
+    - target: {fileID: 226323414284861780, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 226323414284861780, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 226323414284861780, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 226323414284861780, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 226323414284861780, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_text
+      value: Creature - Arcane
+      objectReference: {fileID: 0}
+    - target: {fileID: 226323414284861780, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 913961755797240630, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 913961755797240630, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 913961755797240630, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 913961755797240630, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 913961755797240630, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 954270350380510455, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 954270350380510455, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 954270350380510455, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 954270350380510455, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 954270350380510455, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_text
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2836965240563950911, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 2836965240563950911, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2836965240563950911, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2836965240563950911, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2836965240563950911, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_text
+      value: Arcane Novice
+      objectReference: {fileID: 0}
+    - target: {fileID: 2836965240563950911, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3389059934756464700, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3389059934756464700, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3389059934756464700, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3389059934756464700, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3389059934756464700, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_text
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3106011441812989720, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: aef3e28dc07dc874c86968476f6c950f,
+        type: 3}
+    - target: {fileID: 4225407104599502098, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4225407104599502098, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4225407104599502098, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4225407104599502098, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4225407104599502098, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_text
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6226373338916091508, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6226373338916091508, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6226373338916091508, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6226373338916091508, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6226373338916091508, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_text
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_text
+      value: The first time you cast a spell while you control this creature draw
+        a card.
+      objectReference: {fileID: 0}
+    - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4278190080
+      objectReference: {fileID: 0}
+    - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_firstOverflowCharacterIndex
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 76
+      objectReference: {fileID: 0}
+    - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 69108570860124748, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 6218209010432418840, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7421076516139761264, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8585059076774099708, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8293093873966034078, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1043561064174000586, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2466927391483883601, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3988664976028752257, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 4060556932609095646, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 54dd3f0ca07c104429e52ed9eb04601e, type: 3}
+--- !u!114 &8144619278524181824 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3064110009858525169, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+    type: 3}
+  m_PrefabInstance: {fileID: 6593946901260626609}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca0d4bdb06c171b4984d9d95f197269f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &8508414890304885269 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3283565609637984420, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+    type: 3}
+  m_PrefabInstance: {fileID: 6593946901260626609}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3192422185454136609 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8633300247516055440, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+    type: 3}
+  m_PrefabInstance: {fileID: 6593946901260626609}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8faaa84e21273764ebce0961327a25ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -1,0 +1,100 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags: []
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - 
+  - 
+  - Tile
+  - Card Viewer
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Background
+    uniqueID: 3245434029
+    locked: 0
+  - name: Board Under
+    uniqueID: 2902355647
+    locked: 0
+  - name: Board Middle
+    uniqueID: 1782460603
+    locked: 0
+  - name: Board Above
+    uniqueID: 1229939045
+    locked: 0
+  - name: Structure
+    uniqueID: 997508409
+    locked: 0
+  - name: Creature Under
+    uniqueID: 2705496509
+    locked: 0
+  - name: Creature
+    uniqueID: 236072385
+    locked: 0
+  - name: Creature above
+    uniqueID: 2882007235
+    locked: 0
+  - name: UI Under
+    uniqueID: 895212959
+    locked: 0
+  - name: UI Middle
+    uniqueID: 3668836119
+    locked: 0
+  - name: UI Above
+    uniqueID: 2664452453
+    locked: 0
+  - name: Card Under
+    uniqueID: 1312195041
+    locked: 0
+  - name: Card Middle
+    uniqueID: 4266880987
+    locked: 0
+  - name: Card Above
+    uniqueID: 3836866475
+    locked: 0
+  - name: Card Being Dragged
+    uniqueID: 3174742749
+    locked: 0
+  - name: UI2 Under
+    uniqueID: 2262887113
+    locked: 0
+  - name: UI2 highlight
+    uniqueID: 2716011853
+    locked: 0
+  - name: UI2 Middle
+    uniqueID: 1512249105
+    locked: 0
+  - name: UI2 Above
+    uniqueID: 3321235753
+    locked: 0
+  - name: Default
+    uniqueID: 0
+    locked: 0
