@@ -160,6 +160,10 @@ public class Client : MonoBehaviour
             case NetOP.SyncCreature:
                 NetInterface.Get().recieveCreatureStats((Net_SyncCreature)msg);
                 break;
+            case NetOP.SyncCountersPlaced:
+                Net_SyncCountersPlaced scp = (Net_SyncCountersPlaced)msg;
+                NetInterface.Get().recieveCounterPlaced(scp.amount, scp.counterId, scp.targetCardId);
+                break;
         }
     }
     private void LoginRequestResponse(Net_LoginRequestResponse lrr)

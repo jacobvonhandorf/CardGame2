@@ -7,11 +7,17 @@ using UnityEngine;
 // creature.addCounter(Counters.counterName);
 // creature needs to add, remove and check for counters
 
-public class Counters
+public static class Counters
 {
     public static CounterClass build { get; } = new CounterClass.BuildCounter();
     public static CounterClass well { get; } = new CounterClass.WellCounter();
 
+    // when adding a new counter add it to this map for netcode to work with it
+    public static Dictionary<int, CounterClass> counterMap = new Dictionary<int, CounterClass>()
+    {
+        { build.id(), build },
+        { well.id(), well }
+    };
 }
 
 public abstract class CounterClass
@@ -88,11 +94,6 @@ public class CounterList
     }
     public int hasCounter(CounterClass counterType)
     {
-        Debug.Log("bbb" + counterType.id());
-        foreach (CounterClass cc in counterAmounts.Keys)
-        {
-            Debug.Log("aaaaa" + cc.id());
-        }
         if (counterAmounts.TryGetValue(counterType, out int value))
         {
             return value;

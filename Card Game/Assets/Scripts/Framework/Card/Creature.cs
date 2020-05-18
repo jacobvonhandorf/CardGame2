@@ -492,7 +492,6 @@ public abstract class Creature : MonoBehaviour, Damageable
 
     public void updateCardViewers()
     {
-        Debug.Log("Updating card viewers");
         List<CardViewer> tempLlist = new List<CardViewer>(); // need a temp list because we might end up removing from the original list
         foreach (CardViewer cv in sourceCard.viewersDisplayingThisCard) { tempLlist.Add(cv); }
         foreach (CardViewer cv in tempLlist)
@@ -506,17 +505,34 @@ public abstract class Creature : MonoBehaviour, Damageable
 
     public void addCounters(CounterClass counterType, int amount)
     {
-        Debug.Log("Trying to add counters");
         counterController.addCounters(counterType, amount);
+        syncCounters(counterType);
     }
     public void removeCounters(CounterClass counterType, int amount)
     {
         counterController.removeCounters(counterType, amount);
+        syncCounters(counterType);
     }
     public int hasCounter(CounterClass counterType)
     {
         return counterController.hasCounter(counterType);
     }
+    public void syncCounters(CounterClass counterType)
+    {
+        NetInterface.Get().syncCounterPlaced(sourceCard, counterType, counterController.hasCounter(counterType));
+    }
+    // used by net interface for syncing
+    public void recieveCountersPlaced(CounterClass counterType, int newCounters)
+    {
+        int currentCounters = counterController.hasCounter(counterType);
+        if (currentCounters > newCounters)
+            counterController.removeCounters(counterType, currentCounters - newCounters);
+        else if (currentCounters < newCounters)
+            counterController.addCounters(counterType, newCounters - currentCounters);
+        else
+            Debug.LogError("Trying to set counters to a value it's already set to. This shouldn't happen under normal circumstances");
+    }
+
 
     // ABSTRACT METHODS
     public abstract int getStartingRange();

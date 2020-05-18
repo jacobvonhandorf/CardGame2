@@ -22,6 +22,7 @@
     public const int DoneSendingCards = 18;
     public const int DoneWithSetup = 19;
     public const int SyncPermanentPlaced = 20;
+    public const int SyncCountersPlaced = 21;
 }
 
 [System.Serializable]

@@ -296,6 +296,26 @@ public class NetInterface
         else
             GameManager.Get().syncStructureOnTile(card as StructureCard, targetTile, card.owner);
     }
+    public void syncCounterPlaced(Card sourceCard, CounterClass counterType, int amount)
+    {
+        Net_SyncCountersPlaced msg = new Net_SyncCountersPlaced();
+        msg.amount = amount;
+        msg.counterId = counterType.id();
+        msg.targetCardId = cardMap.get(sourceCard).netId;
+        relayMessage(msg);
+    }
+    public void recieveCounterPlaced(int amount, int counterId, int targetCardId)
+    {
+        Card card = cardMap.get(targetCardId).cardObject;
+        CounterClass counterType = Counters.counterMap[counterId];
+        if (card is StructureCard)
+            (card as StructureCard).structure.recieveCountersPlaced(counterType, amount);
+        else if (card is CreatureCard)
+            (card as CreatureCard).creature.recieveCountersPlaced(counterType, amount);
+        else
+            Debug.LogError("Trying to place counters on a spell card");
+    }
+
 
     public void signalSetupComplete()
     {

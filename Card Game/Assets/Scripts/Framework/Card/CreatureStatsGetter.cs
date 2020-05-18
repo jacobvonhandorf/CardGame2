@@ -228,12 +228,14 @@ public class CreatureStatsGetter : CardStatsGetter
     internal void setMovement(int value, int baseValue)
     {
         moveValueText.text = "" + value;
+        /*
         if (value > baseValue)
             moveValueText.color = aboveBaseColor;
         else if (value < baseValue)
             moveValueText.color = belowBaseColor;
         else
             moveValueText.color = Color.white;
+            */
     }
 
     // used to update the friend or foe border
