@@ -38,13 +38,18 @@ public class Ruby : SpellCard, CanReceivePickedCards
 
     private class RubyEff : SingleTileTargetEffect
     {
-        public override void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
+        public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
         {
             targetCreature.addAttack(1);
             targetCreature.addHealth(1);
         }
 
-        public override List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
+        public bool canBeCancelled()
+        {
+            return true;
+        }
+
+        public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
         {
             List<Tile> pickableTiles = new List<Tile>();
             foreach (Creature c in GameManager.Get().getAllCreaturesControlledBy(sourcePlayer))

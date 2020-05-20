@@ -6,6 +6,7 @@ public class VivianTheUntouchable : Creature
 {
     private void Awake()
     {
+        base.Awake();
         addKeyword(Card.CardKeywords.Quick);
     }
 
@@ -41,18 +42,18 @@ public class VivianTheUntouchable : Creature
             vivian = creature;
         }
 
-        public override void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
+        public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
         {
             GameManager.Get().createCreatureOnTile(vivian, targetTile, sourcePlayer, vivian.sourceCard);
         }
 
-        public override List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
+        public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
         {
             Debug.Log(sourcePlayer);
             return GameManager.Get().getAllDeployableTiles(sourcePlayer);
         }
 
-        public override bool canBeCancelled()
+        public bool canBeCancelled()
         {
             return false;
         }

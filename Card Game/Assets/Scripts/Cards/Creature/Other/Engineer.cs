@@ -39,7 +39,7 @@ public class Engineer : Creature
             this.engineer = engineer;
         }
 
-        public override List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
+        public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
         {
             List<Tile> returnList = GameManager.Get().getLegalStructurePlacementTiles(sourcePlayer);
             returnList.RemoveAll(t => t.getDistanceTo(sourceTile) > 1);
@@ -47,7 +47,7 @@ public class Engineer : Creature
             return returnList;
         }
 
-        public override void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
+        public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
         {
             if (engineer.hasCounter(Counters.build) <= 0)
             {
@@ -65,6 +65,11 @@ public class Engineer : Creature
             if (!engineer.hasMovedThisTurn)
                 engineer.controller.subtractActions(1);
             engineer.updateHasActedIndicators();
+        }
+
+        public bool canBeCancelled()
+        {
+            return true;
         }
 
         public class EngineerOptionHandler : OptionBoxHandler

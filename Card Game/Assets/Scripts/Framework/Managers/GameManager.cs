@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     public Player nonActivePlayer;
     public List<EffectActuator> beginningOfTurnEffectsList = new List<EffectActuator>();
     public List<EffectActuator> endOfTurnEffectsList = new List<EffectActuator>();
+
     //public List<EffectActuator> activateASAPEffectsList = new List<EffectActuator>();
     //public List<EffectActuator> onSpellCastEffectsList = new List<EffectActuator>();
     //public List<EffectActuator> afterSpellCastEffectsList = new List<EffectActuator>();

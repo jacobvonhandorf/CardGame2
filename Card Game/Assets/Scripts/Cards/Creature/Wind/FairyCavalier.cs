@@ -29,13 +29,13 @@ public class FairyCavalier : Creature
 
     private class FairyCavalierEffect : SingleTileTargetEffect
     {
-        public override void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
+        public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
         {
             Debug.Log("Cavalier effect activated");
             targetTile.creature.bounce();
         }
 
-        public override List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
+        public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
         {
             Debug.Log(sourcePlayer);
             Debug.Log(GameManager.Get().getAllTilesWithCreatures(sourcePlayer).Count);
@@ -44,7 +44,7 @@ public class FairyCavalier : Creature
             return GameManager.Get().getAllTilesWithCreatures(sourcePlayer);
         }
 
-        public override bool canBeCancelled()
+        public bool canBeCancelled()
         {
             return false;
         }

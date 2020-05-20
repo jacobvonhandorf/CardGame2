@@ -26,7 +26,7 @@ public class GemMercenaryCamp : Structure
 
     private class GemMercCampEffect : SingleTileTargetEffect
     {
-        public override void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
+        public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
         {
             if (sourcePlayer.GetActions() <= 0)
             {
@@ -58,7 +58,7 @@ public class GemMercenaryCamp : Structure
             }
         }
 
-        public override List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
+        public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
         {
             List<Tile> returnList = new List<Tile>();
             int x = sourceTile.x;
@@ -76,6 +76,11 @@ public class GemMercenaryCamp : Structure
             returnList.RemoveAll(t => t.creature != null);
 
             return returnList;
+        }
+
+        public bool canBeCancelled()
+        {
+            return true;
         }
     }
 }

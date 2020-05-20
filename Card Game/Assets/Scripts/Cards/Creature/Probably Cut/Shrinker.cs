@@ -21,13 +21,18 @@ public class Shrinker : Creature
 
     private class ShrinkerEffect : SingleTileTargetEffect
     {
-        public override void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
+        public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
         {
             targetCreature.addHealth(-1);
             targetCreature.addAttack(-1);
         }
 
-        public override List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
+        public bool canBeCancelled()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
         {
             // List<Tile> validTargets = GameManager.Get().getAllTilesWithCreatures(oppositePlayer);
             List<Tile> validTargets = GameManager.Get().getAllTilesWithCreatures();
