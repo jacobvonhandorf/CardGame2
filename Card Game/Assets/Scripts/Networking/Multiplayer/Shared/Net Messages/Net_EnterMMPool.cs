@@ -5,4 +5,6 @@ public class Net_EnterMMPool : NetMsg
     {
         OP = NetOP.EnterMMPool;
     }
+
+    public bool inPool { get; set; }
 }

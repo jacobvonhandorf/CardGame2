@@ -45,10 +45,6 @@ public abstract class Creature : MonoBehaviour, Damageable
             initialize();
     }
 
-    private void Start()
-    {
-    }
-
     public void initialize()
     {
         if (initialized)
@@ -95,6 +91,8 @@ public abstract class Creature : MonoBehaviour, Damageable
         range = baseRange;
         movement = baseMovement;
         statsScript.updateAllStats(this);
+        if (counterController != null) // counter controller will be null before awake is called (when card is created)
+            counterController.clearAll();
     }
 
     public void takeDamage(int damage)
@@ -133,6 +131,7 @@ public abstract class Creature : MonoBehaviour, Damageable
 
         // perform damage calc
         defender.takeDamage(attackRoll); // do damage text in takeDamage()
+        takeDamage(KeywordUtils.getDefenderValue(defender.getSourceCard()));
 
         // gray out creature to show it has already acted
         updateHasActedIndicators();
@@ -325,16 +324,21 @@ public abstract class Creature : MonoBehaviour, Damageable
         if (GameManager.gameMode == GameManager.GameMode.hotseat && GameManager.Get().activePlayer != controller)
             return;
         controller.heldCreature = this;
-        if (!hasMovedThisTurn)
+        if (!hasMovedThisTurn && !hasDoneActionThisTurn)
         {
             List<Tile> validTiles = GameManager.Get().getMovableTilesForCreature(this);
             foreach (Tile t in validTiles)
             {
                 t.setActive(true);
             }
-        } else
+        }
+        else if (hasMovedThisTurn && !hasDoneActionThisTurn)
         {
             GameManager.Get().createActionBox(this);
+        }
+        else
+        {
+            GameManager.Get().showToast("You can only use a creature once per turn");
         }
     }
 
@@ -444,13 +448,9 @@ public abstract class Creature : MonoBehaviour, Damageable
     public void updateFriendOrFoeBorder()
     {
         if (GameManager.gameMode != GameManager.GameMode.online)
-        {
             statsScript.setAsAlly(GameManager.Get().activePlayer == controller);
-        }
         else
-        {
             statsScript.setAsAlly(NetInterface.Get().getLocalPlayer() == controller);
-        }
     }
 
     public Card getSourceCard()

@@ -232,6 +232,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65198ebdc5cf1da4e8c7ee745cfcec20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ownedByLocalPlayer: 0
+  cardCountText: {fileID: 0}
+  deckOwner: {fileID: 0}
 --- !u!4 &998130539
 Transform:
   m_ObjectHideFlags: 0

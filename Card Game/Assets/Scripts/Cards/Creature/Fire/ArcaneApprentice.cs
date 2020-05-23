@@ -34,6 +34,11 @@ public class ArcaneApprentice : Creature, Effect, CanRecieveXPick
 
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
+        if (hasDoneActionThisTurn)
+        {
+            GameManager.Get().showToast("You have already acted with this creature this turn");
+            return;
+        }
         GameManager.Get().queueXPickerEffect(this, "How many counters to remove?", 1, hasCounter(Counters.arcane));
     }
 

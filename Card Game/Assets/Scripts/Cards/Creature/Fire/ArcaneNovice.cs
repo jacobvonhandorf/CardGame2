@@ -11,7 +11,7 @@ public class ArcaneNovice : Creature
 
     public override void onAnySpellCast(SpellCard spell)
     {
-        if (hasCounter(Counters.arcane) > 0 && sourceCard.isCreature && spell.owner == controller)
+        if (sourceCard.isCreature && hasCounter(Counters.arcane) > 0 && spell.owner == controller)
         {
             controller.drawCard();
             removeCounters(Counters.arcane, 1);

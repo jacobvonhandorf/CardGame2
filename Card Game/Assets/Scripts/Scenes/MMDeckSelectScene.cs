@@ -13,12 +13,11 @@ public class MMDeckSelectScene : MonoBehaviour
     [SerializeField] private TMP_Dropdown deckSelectDropdown;
     [SerializeField] private GameObject uiBlocker;
     [SerializeField] private Button enterMMPoolButton;
+    [SerializeField] private Button returnToMainMenuButton;
 
     public void submitAndEnterMMQueue()
     {
-        deckSelectDropdown.interactable = false;
-        enterMMPoolButton.interactable = false;
-        uiBlocker.gameObject.SetActive(true);
+        setInteractable(false);
 
         string deckName = deckSelectDropdown.options[deckSelectDropdown.value].text;
         NetInterface.Get().selectedDeckName = deckName;
@@ -37,5 +36,25 @@ public class MMDeckSelectScene : MonoBehaviour
         GameManager.gameMode = GameManager.GameMode.online;
         SceneManager.LoadScene(ScenesEnum.HotSeatGameMode);
         //SceneManager.SetActiveScene(SceneManager.GetSceneByName(ScenesEnum.OnlineGameScene));
+    }
+
+    public void cancelMMSearch()
+    {
+        Client.Instance.exitMMPool();
+        setInteractable(true);
+    }
+
+    private void setInteractable(bool interactable)
+    {
+        deckSelectDropdown.interactable = interactable;
+        enterMMPoolButton.interactable = interactable;
+        returnToMainMenuButton.interactable = interactable;
+        uiBlocker.gameObject.SetActive(!interactable);
+        //exitMMPoolButton.gameObject.SetActive(!interactable);
+    }
+
+    public void returnToMainMenu()
+    {
+        SceneManager.LoadScene(ScenesEnum.MainMenu);
     }
 }

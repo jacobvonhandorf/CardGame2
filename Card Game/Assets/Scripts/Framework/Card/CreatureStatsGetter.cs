@@ -185,13 +185,13 @@ public class CreatureStatsGetter : CardStatsGetter
 
     public void updateHasActedIndicator(bool hasDoneActionThisTurn, bool hasMovedThisTurn)
     {
-        if (!hasDoneActionThisTurn && !hasMovedThisTurn)
-            hasActedTextIndicator.text = "";
-        else if (hasDoneActionThisTurn && !hasMovedThisTurn)
-            hasActedTextIndicator.text = "M";
-        else if (!hasDoneActionThisTurn && hasMovedThisTurn)
+        //if (hasDoneActionThisTurn == hasMovedThisTurn)
+            //hasActedTextIndicator.text = "";
+        //else if (hasDoneActionThisTurn && !hasMovedThisTurn)
+        //    hasActedTextIndicator.text = "M";
+        if (!hasDoneActionThisTurn && hasMovedThisTurn)
             hasActedTextIndicator.text = "A";
-        else if (hasDoneActionThisTurn && hasMovedThisTurn)
+        else
             hasActedTextIndicator.text = "";
     }
 

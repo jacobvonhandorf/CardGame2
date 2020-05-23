@@ -20,7 +20,7 @@ public static class Counters
         { build.id(), build },
         { well.id(), well },
         { mine.id(), mine },
-        { mine.id(), arcane },
+        { arcane.id(), arcane },
     };
 }
 
@@ -121,7 +121,7 @@ public class CounterList
             return 0;
         }
     }
-    public void clear()
+    protected void clear()
     {
         counterAmounts.Clear();
     }

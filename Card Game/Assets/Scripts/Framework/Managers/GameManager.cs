@@ -702,7 +702,7 @@ public class GameManager : MonoBehaviour
         }
         else // effect doesn't need a target
         {
-            creature.hasDoneActionThisTurn = true;
+            //creature.hasDoneActionThisTurn = true;
             effect.activate(creature.controller, null, creature.currentTile, null, creature, null);
             creature.updateHasActedIndicators();
         }

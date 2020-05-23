@@ -74,29 +74,32 @@ public class Server : MonoBehaviour
             return;
 
         byte[] recBuffer = new byte[BYTE_SIZE];
-        NetworkEventType type = NetworkTransport.Receive(out int recHostId, out int connectionId, out int channelId, recBuffer, BYTE_SIZE, out int dataSize, out error);
-        switch (type)
-        {
-            case NetworkEventType.DataEvent:
-                Debug.Log("Recieve data event");
-                BinaryFormatter formatter = new BinaryFormatter();
-                MemoryStream ms = new MemoryStream(recBuffer);
-                NetMsg msg = (NetMsg)formatter.Deserialize(ms);
-                OnData(connectionId, channelId, recHostId, msg);
-                break;
-            case NetworkEventType.ConnectEvent:
-                Debug.Log("User " + connectionId + " has connected!");
-                break;
-            case NetworkEventType.DisconnectEvent:
-                onDisconnect(recHostId, connectionId, channelId);
-                break;
-            case NetworkEventType.Nothing:
-                break;
-            default:
-            case NetworkEventType.BroadcastEvent:
-                Debug.Log("Unexpected network event type");
-                break;
-        }
+        //while (NetworkTransport.GetCurrentIncomingMessageAmount() > 0)
+        //{
+            NetworkEventType type = NetworkTransport.Receive(out int recHostId, out int connectionId, out int channelId, recBuffer, BYTE_SIZE, out int dataSize, out error);
+            switch (type)
+            {
+                case NetworkEventType.DataEvent:
+                    Debug.Log("Recieve data event");
+                    BinaryFormatter formatter = new BinaryFormatter();
+                    MemoryStream ms = new MemoryStream(recBuffer);
+                    NetMsg msg = (NetMsg)formatter.Deserialize(ms);
+                    OnData(connectionId, channelId, recHostId, msg);
+                    break;
+                case NetworkEventType.ConnectEvent:
+                    Debug.Log("User " + connectionId + " has connected!");
+                    break;
+                case NetworkEventType.DisconnectEvent:
+                    onDisconnect(recHostId, connectionId, channelId);
+                    break;
+                case NetworkEventType.Nothing:
+                    break;
+                default:
+                case NetworkEventType.BroadcastEvent:
+                    Debug.Log("Unexpected network event type");
+                    break;
+            }
+        //}
     }
 
     #region OnData
@@ -137,11 +140,22 @@ public class Server : MonoBehaviour
     private void EnterMMPool(int cnnId, int channelId, int recHostId, Net_EnterMMPool msg)
     {
         Debug.Log("Adding " + cnnId + " to matchmaking pool");
-        MatchMakerObject mmo = new MatchMakerObject();
-        mmo.channelId = channelId;
-        mmo.connectionId = cnnId;
-        mmo.hostId = recHostId;
-        MatchMaker.getInstance().queueMatchMakerObject(mmo);
+        if (msg.inPool)
+        {
+            MatchMakerObject mmo = new MatchMakerObject();
+            mmo.channelId = channelId;
+            mmo.connectionId = cnnId;
+            mmo.hostId = recHostId;
+            MatchMaker.getInstance().queueMatchMakerObject(mmo);
+        }
+        else
+        {
+            MatchMakerObject mmo = new MatchMakerObject();
+            mmo.channelId = channelId;
+            mmo.connectionId = cnnId;
+            mmo.hostId = recHostId;
+            MatchMaker.getInstance().removeMatchMakerObject(mmo);
+        }
     }
     private void LoginRequest(int cnnId, int channelId, int recHostId, Net_LoginRequest msg)
     {
@@ -217,6 +231,10 @@ public class Server : MonoBehaviour
     private void onDisconnect(int recHostId, int cnnId, int channelId)
     {
         // TODO issue game loss
+        // TODO notify other player
+        MatchMakerObject mmo = new MatchMakerObject();
+        mmo.connectionId = cnnId;
+        MatchMaker.getInstance().removeMatchMakerObject(mmo);
         if (pairedConnectionIds.TryGetValue(cnnId, out int pairedCnnId))
         {
             connectionIdToHostId.Remove(pairedCnnId);

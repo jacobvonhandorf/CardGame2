@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,7 +30,10 @@ public abstract class Card : MonoBehaviour
 
     public enum CardKeywords
     {
-        Quick // Creature that can move and attack the same turn it is played
+        Quick, // Creature that can move and attack the same turn it is played
+        Defender1, // Deal damage equal to the # to attacker when attacked
+        Defender2, // Deal damage equal to the # to attacker when attacked
+        Defender3, // Deal damage equal to the # to attacker when attacked
     }
 
     private List<Tag> tags = new List<Tag>();
@@ -534,6 +538,10 @@ public abstract class Card : MonoBehaviour
     {
         goldCost = baseGoldCost;
         manaCost = baseManaCost;
+    }
+    public ReadOnlyCollection<CardKeywords> getKeywords()
+    {
+        return keywords.AsReadOnly();
     }
 
     public ElementIdentity getElementIdentity() { return elementIdentity; }

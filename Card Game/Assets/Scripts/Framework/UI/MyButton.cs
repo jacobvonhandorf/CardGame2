@@ -56,6 +56,7 @@ public class MyButton : MonoBehaviour
 
     public void enable()
     {
+        buttonBackground.color = up;
         gameObject.SetActive(true);
     }
 

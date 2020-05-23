@@ -18,6 +18,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Hot Seat Game Mode.unity
     guid: c29c68d136469ec4eabbcd34423b9ec6
   - enabled: 0
-    path: Assets/Scenes/Server.unity
-    guid: af175ad746db65b49874fc25fdd40ad5
+    path: Assets/Scenes/Not in current build/Server.unity
+    guid: 35c8e2a58875dfa45a798ed70b874a56
   m_configObjects: {}
