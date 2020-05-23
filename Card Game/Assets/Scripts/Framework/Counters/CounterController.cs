@@ -27,6 +27,10 @@ public class CounterController : MonoBehaviour
     {
         return counterList.hasCounter(counterType);
     }
+    public void clearAll()
+    {
+        counterList.clearAll();
+    }
 
     private class CardCounterList : CounterList
     {
@@ -52,6 +56,15 @@ public class CounterController : MonoBehaviour
             updateDisplay(counterType);
         }
 
+        public void clearAll()
+        {
+            foreach (CounterClass cc in counterAmounts.Keys)
+            {
+                counterAmounts.Remove(cc);
+                updateDisplay(cc);
+            }
+        }
+
         private void updateDisplay(CounterClass counterType)
         {
             // get the display if it exists
@@ -74,11 +87,12 @@ public class CounterController : MonoBehaviour
             {
                 // no display exists so create a new one
                 CounterDisplay newDisplay = Instantiate(counterDisplayPrefab);
-                newDisplay.gameObject.transform.parent = parentTransform;
+                newDisplay.gameObject.transform.SetParent(parentTransform);
                 counterDisplayMap.Add(counterType, newDisplay);
                 newDisplay.setBackgroundColor(counterType.fillColor());
                 newDisplay.setBorderColor(counterType.borderColor());
                 newDisplay.setText(counterAmounts[counterType]);
+                newDisplay.setTextColor(counterType.borderColor());
                 newDisplay.transform.localScale = new Vector3(1, 1, 1);
                 updateDisplayLocations();
             }
@@ -97,6 +111,5 @@ public class CounterController : MonoBehaviour
             }
         }
     }
-
 
 }

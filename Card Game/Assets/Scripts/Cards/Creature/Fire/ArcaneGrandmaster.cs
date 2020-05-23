@@ -19,7 +19,7 @@ public class ArcaneGrandmaster : Creature
 
     private class Eff : SingleTileTargetEffect
     {
-        public override void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
+        public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
         {
             int damage;
             if (sourcePlayer.graveyard.getAllCardsWithTag(Card.Tag.Arcane).Count >= numCardsNeededForBonusDamage)
@@ -45,9 +45,14 @@ public class ArcaneGrandmaster : Creature
                 t.structure.takeDamage(damage);
         }
 
-        public override List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
+        public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
         {
             return GameManager.Get().board.getAllTilesWithinRangeOfTile(sourceTile, effRange);
+        }
+
+        public bool canBeCancelled()
+        {
+            return true;
         }
     }
 

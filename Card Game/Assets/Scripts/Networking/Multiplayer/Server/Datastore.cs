@@ -1,4 +1,5 @@
 ﻿using Google.Cloud.Datastore.V1;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class Datastore
@@ -18,6 +19,7 @@ public class Datastore
             Debug.LogError("Trying to initialize a Datastore instance when one already exists");
         ds = this;
     }
+
 
     private void exampleStore()
     {

@@ -7,11 +7,21 @@ using UnityEngine;
 // creature.addCounter(Counters.counterName);
 // creature needs to add, remove and check for counters
 
-public class Counters
+public static class Counters
 {
     public static CounterClass build { get; } = new CounterClass.BuildCounter();
     public static CounterClass well { get; } = new CounterClass.WellCounter();
+    public static CounterClass mine { get; } = new CounterClass.MineCounter();
+    public static CounterClass arcane { get; } = new CounterClass.ArcaneCounter();
 
+    // when adding a new counter add it to this map for netcode to work with it
+    public static Dictionary<int, CounterClass> counterMap = new Dictionary<int, CounterClass>()
+    {
+        { build.id(), build },
+        { well.id(), well },
+        { mine.id(), mine },
+        { arcane.id(), arcane },
+    };
 }
 
 public abstract class CounterClass
@@ -34,6 +44,20 @@ public abstract class CounterClass
         public override Color fillColor() => new Color(.039f, .714f, .75f);
         public override int id() => 2;
         public override string tooltip() => "Spend 3 to gain 1 mana";
+    }
+    public class MineCounter : CounterClass
+    {
+        public override Color borderColor() => new Color(.047f, .36f, .678f);
+        public override Color fillColor() => new Color(.169f, .125f, 0f);
+        public override int id() => 3;
+        public override string tooltip() => "Remove to add a gem to your hand";
+    }
+    public class ArcaneCounter : CounterClass
+    {
+        public override Color borderColor() => new Color(0, .525f, .812f);
+        public override Color fillColor() => new Color(1, 1, 1);
+        public override int id() => 4;
+        public override string tooltip() => "Arcane creatures use these for their effects";
     }
 }
 
@@ -88,11 +112,6 @@ public class CounterList
     }
     public int hasCounter(CounterClass counterType)
     {
-        Debug.Log("bbb" + counterType.id());
-        foreach (CounterClass cc in counterAmounts.Keys)
-        {
-            Debug.Log("aaaaa" + cc.id());
-        }
         if (counterAmounts.TryGetValue(counterType, out int value))
         {
             return value;
@@ -102,7 +121,7 @@ public class CounterList
             return 0;
         }
     }
-    public void clear()
+    protected void clear()
     {
         counterAmounts.Clear();
     }

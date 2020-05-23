@@ -24,6 +24,7 @@ public class GameManager : MonoBehaviour
     public Player nonActivePlayer;
     public List<EffectActuator> beginningOfTurnEffectsList = new List<EffectActuator>();
     public List<EffectActuator> endOfTurnEffectsList = new List<EffectActuator>();
+
     //public List<EffectActuator> activateASAPEffectsList = new List<EffectActuator>();
     //public List<EffectActuator> onSpellCastEffectsList = new List<EffectActuator>();
     //public List<EffectActuator> afterSpellCastEffectsList = new List<EffectActuator>();
@@ -701,7 +702,7 @@ public class GameManager : MonoBehaviour
         }
         else // effect doesn't need a target
         {
-            creature.hasDoneActionThisTurn = true;
+            //creature.hasDoneActionThisTurn = true;
             effect.activate(creature.controller, null, creature.currentTile, null, creature, null);
             creature.updateHasActedIndicators();
         }

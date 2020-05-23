@@ -21,4 +21,8 @@ public class CounterDisplay : MonoBehaviour
     {
         background.color = color;
     }
+    public void setTextColor(Color color)
+    {
+        text.color = color;
+    }
 }

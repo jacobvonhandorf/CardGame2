@@ -13,6 +13,7 @@ public class CardIdChecker : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("Starting...");
         long startTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
 
         // check for duplicate and unused IDs

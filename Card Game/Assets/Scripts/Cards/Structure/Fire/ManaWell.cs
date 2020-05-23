@@ -29,7 +29,8 @@ public class ManaWell : Structure, Effect
 
     public override void onTurnStart()
     {
-        addCounters(Counters.well, 1);
+        if (GameManager.Get().activePlayer == controller)
+            addCounters(Counters.well, 1);
     }
 
     public override Effect getEffect()

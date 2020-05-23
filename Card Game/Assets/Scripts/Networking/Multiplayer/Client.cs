@@ -66,6 +66,8 @@ public class Client : MonoBehaviour
         Debug.Log(string.Format("Attempting to connect on port {0}", SERVER_IP));
         isStarted = true;
     }
+
+
     public void Shutdown()
     {
         isStarted = false;
@@ -160,6 +162,10 @@ public class Client : MonoBehaviour
             case NetOP.SyncCreature:
                 NetInterface.Get().recieveCreatureStats((Net_SyncCreature)msg);
                 break;
+            case NetOP.SyncCountersPlaced:
+                Net_SyncCountersPlaced scp = (Net_SyncCountersPlaced)msg;
+                NetInterface.Get().recieveCounterPlaced(scp.amount, scp.counterId, scp.targetCardId);
+                break;
         }
     }
     private void LoginRequestResponse(Net_LoginRequestResponse lrr)
@@ -187,8 +193,16 @@ public class Client : MonoBehaviour
     public void enterMMPool()
     {
         Net_EnterMMPool msg = new Net_EnterMMPool();
+        msg.inPool = true;
         SendServer(msg);
     }
+    internal void exitMMPool()
+    {
+        Net_EnterMMPool msg = new Net_EnterMMPool();
+        msg.inPool = false;
+        SendServer(msg);
+    }
+
     #endregion
 
     public bool getIsStarted()

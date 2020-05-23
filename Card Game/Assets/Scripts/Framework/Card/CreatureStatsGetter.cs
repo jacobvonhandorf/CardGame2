@@ -185,13 +185,13 @@ public class CreatureStatsGetter : CardStatsGetter
 
     public void updateHasActedIndicator(bool hasDoneActionThisTurn, bool hasMovedThisTurn)
     {
-        if (!hasDoneActionThisTurn && !hasMovedThisTurn)
-            hasActedTextIndicator.text = "";
-        else if (hasDoneActionThisTurn && !hasMovedThisTurn)
-            hasActedTextIndicator.text = "M";
-        else if (!hasDoneActionThisTurn && hasMovedThisTurn)
+        //if (hasDoneActionThisTurn == hasMovedThisTurn)
+            //hasActedTextIndicator.text = "";
+        //else if (hasDoneActionThisTurn && !hasMovedThisTurn)
+        //    hasActedTextIndicator.text = "M";
+        if (!hasDoneActionThisTurn && hasMovedThisTurn)
             hasActedTextIndicator.text = "A";
-        else if (hasDoneActionThisTurn && hasMovedThisTurn)
+        else
             hasActedTextIndicator.text = "";
     }
 
@@ -228,12 +228,14 @@ public class CreatureStatsGetter : CardStatsGetter
     internal void setMovement(int value, int baseValue)
     {
         moveValueText.text = "" + value;
+        /*
         if (value > baseValue)
             moveValueText.color = aboveBaseColor;
         else if (value < baseValue)
             moveValueText.color = belowBaseColor;
         else
             moveValueText.color = Color.white;
+            */
     }
 
     // used to update the friend or foe border

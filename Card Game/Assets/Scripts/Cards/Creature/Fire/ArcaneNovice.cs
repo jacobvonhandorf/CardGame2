@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class ArcaneNovice : Creature
 {
-    private bool drawAvailable = true;
-
     public override int getStartingRange()
     {
         return 1;
@@ -13,16 +11,16 @@ public class ArcaneNovice : Creature
 
     public override void onAnySpellCast(SpellCard spell)
     {
-        if (drawAvailable && sourceCard.isCreature && spell.owner == controller)
+        if (sourceCard.isCreature && hasCounter(Counters.arcane) > 0 && spell.owner == controller)
         {
             controller.drawCard();
-            drawAvailable = false;
+            removeCounters(Counters.arcane, 1);
         }
     }
 
     public override void onCreation()
     {
-        drawAvailable = true;
+        addCounters(Counters.arcane, 1);
     }
 
     public override List<Card.Tag> getTags()
