@@ -272,6 +272,18 @@ public abstract class Card : MonoBehaviour
                 if (canBePlayed())
                 {
                     payCosts(owner);
+                    switch (getCardType())
+                    {
+                        case CardType.Spell:
+                            owner.numSpellsCastThisTurn++;
+                            break;
+                        case CardType.Creature:
+                            owner.numCreaturesThisTurn++;
+                            break;
+                        case CardType.Structure:
+                            owner.numStructuresThisTurn++;
+                            break;
+                    }
                     play(tile);
                 }
                 else
@@ -347,7 +359,6 @@ public abstract class Card : MonoBehaviour
                 return;
             }
         }
-        Debug.Log("Returning graphics to scene");
 
         interuptMove = false;
         getRootTransform().position = positionOnScene;

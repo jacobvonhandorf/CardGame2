@@ -49,14 +49,12 @@ public class StructureStatsGetter : CardStatsGetter
 
     internal void setStructureStats(Structure structure)
     {
-        Debug.Log("Structure stats on initialization = " + int.Parse(hpText.text));
         structure.setBaseHealth(int.Parse(hpText.text));
         structure.setHealth(structure.getBaseHealth());
     }
 
     internal void setHealth(int health, int baseHealth)
     {
-        Debug.Log("s health " + health + "/" + baseHealth);
         hpText.text = "" + health;
         if (health > baseHealth)
             hpText.color = aboveBaseColor;

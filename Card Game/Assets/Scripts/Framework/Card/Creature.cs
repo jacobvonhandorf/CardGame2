@@ -26,7 +26,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     public int effectActionCost = 1; // CURRENTLY DISABLED can be set to 0 in child class if effect shouldn't consume an action
     // public Effect activeEffect;
     public Tile currentTile;
-    public Player owner;
+    //public Player owner;
     public Player controller;
     public bool hasMovedThisTurn = false;
     public bool hasDoneActionThisTurn = false; // action is attack or effect
@@ -64,7 +64,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         // might need to write a thing to request a base stat change depending on effects added in future
         // but for now this should not be called by card scripts
             // ex: reset a creature to their base stats. The owner would need to know they need to reset because the other player isn't allowed
-        if (GameManager.gameMode == GameManager.GameMode.online && NetInterface.Get().gameSetupComplete && NetInterface.Get().getLocalPlayer() != owner)
+        if (GameManager.gameMode == GameManager.GameMode.online && NetInterface.Get().gameSetupComplete && NetInterface.Get().getLocalPlayer() != sourceCard.owner)
         {
             return;
         }
@@ -277,7 +277,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         statsScript.swapToCard(sourceCard);
         setSpriteColor(Color.white); // reset sprite color in case card is greyed out
         resetToBaseStats();
-        owner.addCardToHandByEffect(sourceCard);
+        sourceCard.owner.addCardToHandByEffect(sourceCard);
         onLeavesTheField();
     }
 
@@ -352,7 +352,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     {
         sourceCard.isCreature = false;
         resetToBaseStats();
-        sourceCard.moveToCardPile(owner.graveyard);
+        sourceCard.moveToCardPile(sourceCard.owner.graveyard);
         sourceCard.removeGraphicsAndCollidersFromScene();
     }
 

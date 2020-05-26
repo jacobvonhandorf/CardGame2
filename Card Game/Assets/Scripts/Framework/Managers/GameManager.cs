@@ -218,6 +218,8 @@ public class GameManager : MonoBehaviour
     // GAME FLOW METHODS
     private void takeTurn()
     {
+        activePlayer.startOfTurn();
+        nonActivePlayer.startOfTurn();
         activePlayer.doIncome();
         beginningOfTurnEffects();
         activePlayer.drawCard();
@@ -534,7 +536,7 @@ public class GameManager : MonoBehaviour
         creature.getRootTransform().position = newPostion;
 
         // set owner if it hasn't been set already
-        creature.owner = owner;
+        // creature.owner = owner; changed so only source card knows the owner
         creature.controller = owner;
 
         // set creature to has moved and acted unless it is quick
@@ -732,7 +734,6 @@ public class GameManager : MonoBehaviour
             this.sourceTile = sourceTile;
             sourcePlayer = effectOwner;
             targetPlayer = Get().getOppositePlayer(sourcePlayer);
-            Debug.LogError("sourcePlayer = " + sourcePlayer);
             this.effect = new WrappedEffectActivator(effect, effectOwner, sourceTile, creature, structure);
         }
 
@@ -750,7 +751,6 @@ public class GameManager : MonoBehaviour
             {
                 this.effect = effect;
                 this.effectOwner = effectOwner;
-                Debug.LogError("Effect owner1 = " + effectOwner);
                 this.sourceTile = sourceTile;
                 this.sourceCreature = sourceCreature;
                 this.sourceStructure = sourceStructure;
@@ -906,7 +906,7 @@ public class GameManager : MonoBehaviour
     public void playerHasDrawnOutDeck(Player player)
     {
         Debug.Log(player.name + " has drawn out of cards");
-        showToast("Someone is out of card :)");
+        showToast("Someone is out of card and this hasn't been coded yet :)");
     }
 
     public void showToast(string message)

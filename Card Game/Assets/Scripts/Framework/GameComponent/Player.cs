@@ -31,6 +31,10 @@ public class Player : MonoBehaviour
     [SerializeField] private int manaPerTurn;
     [SerializeField] private int actions;
 
+    public int numSpellsCastThisTurn = 0;
+    public int numCreaturesThisTurn = 0;
+    public int numStructuresThisTurn = 0;
+
     private State state = State.Default;
     public Effect heldEffect;
     public bool locked;
@@ -91,6 +95,12 @@ public class Player : MonoBehaviour
     public void setToNonActivePlayer()
     {
         hand.hide();
+    }
+
+    public void startOfTurn()
+    {
+        numCreaturesThisTurn = 0;
+        numSpellsCastThisTurn = 0;
     }
 
     public void doIncome()
@@ -230,12 +240,10 @@ public class Player : MonoBehaviour
         return playerNameText.text;
     }
 
-
     public void readyAttack()
     {
         state = State.Attacking;
     }
-
     internal void readyEffect()
     {
         Debug.Log("Using effect");
