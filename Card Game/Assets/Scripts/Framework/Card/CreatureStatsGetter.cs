@@ -91,8 +91,6 @@ public class CreatureStatsGetter : CardStatsGetter
             //cardRoot.localScale = Vector3.MoveTowards(cardRoot.localScale, newRootScale, iconResizeSpeed * Time.deltaTime);
             yield return null;
         }
-
-        // signal that is finished being played
     }
 
 

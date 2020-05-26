@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -66,6 +67,16 @@ public class StructureStatsGetter : CardStatsGetter
 
     public void switchBetweenStructureOrCard(StructureCard structureCard)
     {
+        Debug.Log("Switch called");
+        if (structureCard.isStructure)
+        {
+            swapToCard();
+        }
+        else
+        {
+            swapToStructure();
+        }
+        /*
         List<Transform> iconsToResize = new List<Transform>();
         iconsToResize.Add(hpText.transform.parent);
 
@@ -87,7 +98,71 @@ public class StructureStatsGetter : CardStatsGetter
 
             Vector3 newRootScale = new Vector3(.5f, .5f, 1);
             cardRoot.localScale = newRootScale;
+        }*/
+    }
+
+    public void swapToStructure()
+    {
+        List<Transform> iconsToResize = new List<Transform>();
+        iconsToResize.Add(hpText.transform.parent);
+
+        Vector3 newIconScale = new Vector3(scalingCoefficient, scalingCoefficient, 1);
+        Vector3 newRootScale = new Vector3(entireCardScaleCoefficient, entireCardScaleCoefficient, 1);
+
+        StartCoroutine(resizeToStrcture(cardRoot, newRootScale, iconsToResize, newIconScale));
+    }
+
+    [SerializeField] private float resizeSpeed = .1f;
+    [SerializeField] private float pauseBetweenResize = .5f;
+    [SerializeField] private float iconResizeSpeed = 2f;
+    private float timePaused = 0f;
+    IEnumerator resizeToStrcture(Transform cardRoot, Vector3 newRootScale, List<Transform> iconsToEnlarge, Vector3 newIconScale)
+    {
+        // resize root
+        while (Vector3.Distance(cardRoot.localScale, newRootScale) > 0.02f)
+        {
+            Debug.Log("Resizing root");
+            cardRoot.localScale = Vector3.MoveTowards(cardRoot.localScale, newRootScale, resizeSpeed * Time.deltaTime);
+            yield return null;
         }
+
+        // pause
+        while (timePaused < pauseBetweenResize)
+        {
+            timePaused += Time.deltaTime;
+        }
+        timePaused = 0f;
+
+        // resize icons
+        while (Vector3.Distance(iconsToEnlarge[0].localScale, newIconScale) > 0.02f)
+        {
+            foreach (Transform t in iconsToEnlarge)
+            {
+                t.localScale = Vector3.MoveTowards(t.localScale, newIconScale, iconResizeSpeed * Time.deltaTime);
+            }
+            //cardRoot.localScale = Vector3.MoveTowards(cardRoot.localScale, newRootScale, iconResizeSpeed * Time.deltaTime);
+            yield return null;
+        }
+    }
+
+
+    // called when a structure leaves the field and needs to act like a card again
+    // if the topology of a card is changed this method may need to be changed
+    public void swapToCard()
+    {
+        friendOrFoeBorder.gameObject.SetActive(false);
+
+        List<Transform> iconsToResize = new List<Transform>();
+        iconsToResize.Add(hpText.transform.parent);
+
+        Vector3 newIconScale = new Vector3(1, 1, 1);
+        foreach (Transform icon in iconsToResize)
+        {
+            icon.localScale = newIconScale;
+        }
+
+        Vector3 newRootScale = new Vector3(.5f, .5f, 1);
+        cardRoot.localScale = newRootScale;
     }
 
     public Transform getRootTransform()
