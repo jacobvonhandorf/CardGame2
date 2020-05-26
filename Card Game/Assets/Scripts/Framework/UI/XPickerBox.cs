@@ -46,6 +46,12 @@ public class XPickerBox : MonoBehaviour
         if (headerText == null || headerText.Equals(""))
             headerText = "Select a value";
         headerTextMesh.text = headerText;
+
+        if (minValue > 0)
+        {
+            xValue = minValue;
+            xValueText.text = "" + xValue;
+        }
     }
 }
 

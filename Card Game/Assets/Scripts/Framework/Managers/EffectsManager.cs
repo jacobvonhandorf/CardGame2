@@ -74,6 +74,7 @@ public class EffectsManager : MonoBehaviour
         effectsQueue.Remove(effectToActivate);
         effectInProcess = true;
         effectToActivate.activate();
+        //effectToActivate.sourcePlayer.locked = true;
         GameManager.Get().activePlayer.locked = true;
         if (effectToActivate.informationText != null)
             flipEffectTextOn(effectToActivate.informationText);

@@ -306,6 +306,11 @@ public class GameManager : MonoBehaviour
     {
         if (gameMode == GameMode.online)
         {
+            if (activePlayer.locked)
+            {
+                showToast("Must finish resolving effects before ending turn");
+                return;
+            }
             // called when button is pressed
             // disable button
             endTurnButton.gameObject.SetActive(false);
@@ -717,14 +722,17 @@ public class GameManager : MonoBehaviour
     // an effect actuator whoes effect activates a SingleTileTargetEffect
     private class WrapperSingleTileTargetEffect : EffectActuator
     {
-        private SingleTileTargetEffect wrappedEffect;
+        //private SingleTileTargetEffect wrappedEffect;
         private Structure structure;
 
         // needs to be passed all the information the effect needs to be activated
         public WrapperSingleTileTargetEffect(SingleTileTargetEffect effect, Player effectOwner, Tile sourceTile, Creature creature, Structure structure)
         {
-            wrappedEffect = effect;
+            //wrappedEffect = effect;
             this.sourceTile = sourceTile;
+            sourcePlayer = effectOwner;
+            targetPlayer = Get().getOppositePlayer(sourcePlayer);
+            Debug.LogError("sourcePlayer = " + sourcePlayer);
             this.effect = new WrappedEffectActivator(effect, effectOwner, sourceTile, creature, structure);
         }
 
@@ -742,6 +750,7 @@ public class GameManager : MonoBehaviour
             {
                 this.effect = effect;
                 this.effectOwner = effectOwner;
+                Debug.LogError("Effect owner1 = " + effectOwner);
                 this.sourceTile = sourceTile;
                 this.sourceCreature = sourceCreature;
                 this.sourceStructure = sourceStructure;
@@ -749,6 +758,7 @@ public class GameManager : MonoBehaviour
 
             public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
             {
+
                 List<Tile> validTargetTiles = effect.getValidTargetTiles(effectOwner, targetPlayer, this.sourceTile);
                 bool effectValid = false;
                 foreach (Tile tile in validTargetTiles)

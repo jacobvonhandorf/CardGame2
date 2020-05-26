@@ -58,7 +58,9 @@ public class CounterController : MonoBehaviour
 
         public void clearAll()
         {
-            foreach (CounterClass cc in counterAmounts.Keys)
+            List<CounterClass> tempList = new List<CounterClass>();
+            foreach (CounterClass cc in counterAmounts.Keys) tempList.Add(cc);
+            foreach (CounterClass cc in tempList)
             {
                 counterAmounts.Remove(cc);
                 updateDisplay(cc);
