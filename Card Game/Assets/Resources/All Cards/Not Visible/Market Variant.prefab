@@ -19,6 +19,8 @@ MonoBehaviour:
   effectActionsCost: 0
   effectGoldCost: 0
   effectManaCost: 0
+  health: 0
+  baseHealth: 0
   statsScript: {fileID: 7613295406207027966}
 --- !u!1001 &2874792620731258654
 PrefabInstance:
@@ -172,31 +174,6 @@ PrefabInstance:
       propertyPath: m_textInfo.pageCount
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: m_text
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 5213023479865107682, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -222,12 +199,37 @@ PrefabInstance:
       propertyPath: m_text
       value: Market
       objectReference: {fileID: 0}
-    - target: {fileID: 2022240573173673283, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+        type: 3}
+      propertyPath: m_text
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 719019182562246573, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 719019182562246573, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 2022240573173673283, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_Mesh
       value: 

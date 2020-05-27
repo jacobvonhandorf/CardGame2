@@ -30,6 +30,8 @@ public class Client : MonoBehaviour
 
     void Start()
     {
+        if (Instance != null)
+            return;
         Instance = this;
         DontDestroyOnLoad(gameObject);
         Init();
@@ -165,6 +167,9 @@ public class Client : MonoBehaviour
             case NetOP.SyncCountersPlaced:
                 Net_SyncCountersPlaced scp = (Net_SyncCountersPlaced)msg;
                 NetInterface.Get().recieveCounterPlaced(scp.amount, scp.counterId, scp.targetCardId);
+                break;
+            case NetOP.EndGame:
+                NetInterface.Get().recieveEndGameMessage((Net_EndGame)msg);
                 break;
         }
     }

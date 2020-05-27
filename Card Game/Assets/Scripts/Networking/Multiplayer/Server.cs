@@ -74,9 +74,12 @@ public class Server : MonoBehaviour
         if (!isStarted)
             return;
 
-        byte[] recBuffer = new byte[BYTE_SIZE];
         //while (NetworkTransport.GetCurrentIncomingMessageAmount() > 0)
         //{
+        bool loop = true;
+        while (loop)
+        {
+            byte[] recBuffer = new byte[BYTE_SIZE];
             NetworkEventType type = NetworkTransport.Receive(out int recHostId, out int connectionId, out int channelId, recBuffer, BYTE_SIZE, out int dataSize, out error);
             switch (type)
             {
@@ -94,12 +97,15 @@ public class Server : MonoBehaviour
                     onDisconnect(recHostId, connectionId, channelId);
                     break;
                 case NetworkEventType.Nothing:
+                    loop = false;
                     break;
                 default:
                 case NetworkEventType.BroadcastEvent:
                     Debug.Log("Unexpected network event type");
                     break;
             }
+
+        }
         //}
     }
 
@@ -123,6 +129,9 @@ public class Server : MonoBehaviour
                 break;
             case NetOP.InGameRelay:
                 RelayNetMessage(cnnId, channelId, recHostId, (Net_InGameRelay)msg);
+                break;
+            case NetOP.EndGame:
+                EndGame(cnnId, channelId, recHostId, (Net_EndGame)msg);
                 break;
             default:
                 Debug.LogError("Unexpected NETOP code: " + msg.OP);
@@ -194,6 +203,20 @@ public class Server : MonoBehaviour
         // get the user we need to message from the map and then relay the message to them
         SendClient(targetHostId, targetCnId, channelId, msg.msg); // Might need to change HostId. If so then it needs to be stored along with connection id in map
     }
+    private void EndGame(int cnnId, int channelId, int recHostId, Net_EndGame msg)
+    {
+        // if the server still sees the game as in progress
+        if (pairedConnectionIds.TryGetValue(cnnId, out int oppCnnId))
+        {
+            // unpair users
+            int oppHostId = connectionIdToHostId[oppCnnId];
+            pairedConnectionIds.Remove(oppCnnId);
+            pairedConnectionIds.Remove(cnnId);
+            // send message to opponent
+            SendClient(oppHostId, oppCnnId, channelId, msg);
+            // TODO record match result
+        }
+    }
     #endregion
 
     #region Send
@@ -219,8 +242,10 @@ public class Server : MonoBehaviour
         // add users to map and let them know they've been paired up
         pairedConnectionIds.Add(mmo1.connectionId, mmo2.connectionId);
         pairedConnectionIds.Add(mmo2.connectionId, mmo1.connectionId);
-        connectionIdToHostId.Add(mmo1.connectionId, mmo1.hostId);
-        connectionIdToHostId.Add(mmo2.connectionId, mmo2.hostId);
+        if (!connectionIdToHostId.ContainsKey(mmo1.connectionId))
+            connectionIdToHostId.Add(mmo1.connectionId, mmo1.hostId);
+        if (!connectionIdToHostId.ContainsKey(mmo2.connectionId))
+            connectionIdToHostId.Add(mmo2.connectionId, mmo2.hostId);
         Net_NotifyClientOfMMPairing mmNotification = new Net_NotifyClientOfMMPairing();
         // designate a palyer as player 1
         mmNotification.isPlayer1 = true;
@@ -232,14 +257,21 @@ public class Server : MonoBehaviour
     private void onDisconnect(int recHostId, int cnnId, int channelId)
     {
         // TODO issue game loss
-        // TODO notify other player
         MatchMakerObject mmo = new MatchMakerObject();
         mmo.connectionId = cnnId;
         MatchMaker.getInstance().removeMatchMakerObject(mmo);
-        if (pairedConnectionIds.TryGetValue(cnnId, out int pairedCnnId))
+        if (pairedConnectionIds.TryGetValue(cnnId, out int oppCnnId)) // will be true if they were in game during disconnect
         {
-            connectionIdToHostId.Remove(pairedCnnId);
-            pairedConnectionIds.Remove(pairedCnnId);
+            // notify opponent's client that opponent disconnected
+            int oppHostId = connectionIdToHostId[oppCnnId];
+            Net_EndGame msg = new Net_EndGame();
+            msg.endGameCode = EndGameCode.Disconnect;
+            SendClient(oppHostId, oppCnnId, channelId, msg);
+
+            // remove paired connection
+            //connectionIdToHostId.Remove(oppCnnId);
+            pairedConnectionIds.Remove(oppCnnId);
+
         }
 
         if (pairedConnectionIds.ContainsKey(cnnId))

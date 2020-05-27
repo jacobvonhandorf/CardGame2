@@ -114,6 +114,7 @@ public class CreatureCard : Card
 
     public override void onAnySpellCast(SpellCard s)
     {
+        Debug.Log("On any spell cast in creature");
         creature.onAnySpellCast(s);
     }
 

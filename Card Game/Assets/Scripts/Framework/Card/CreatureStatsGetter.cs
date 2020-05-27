@@ -91,8 +91,6 @@ public class CreatureStatsGetter : CardStatsGetter
             //cardRoot.localScale = Vector3.MoveTowards(cardRoot.localScale, newRootScale, iconResizeSpeed * Time.deltaTime);
             yield return null;
         }
-
-        // signal that is finished being played
     }
 
 
@@ -162,7 +160,9 @@ public class CreatureStatsGetter : CardStatsGetter
             cardViewer.manaText2.text = manaText2.text;
         }
 
+        // set sprites to be equivalent
         cardViewer.background.sprite = background.sprite;
+        cardViewer.setCardArt(cardArt.sprite);
     }
 
     public void setTextSortingLayer(SpriteLayers layer)

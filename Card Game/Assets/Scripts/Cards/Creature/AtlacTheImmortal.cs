@@ -21,7 +21,7 @@ public class AtlacTheImmortal : Creature
         resetToBaseStats();
 
         Debug.Log("Card pile when sent to grave " + sourceCard.getCardPile());
-        sourceCard.moveToCardPile(owner.deck);
-        owner.deck.shuffle();
+        sourceCard.moveToCardPile(sourceCard.owner.deck);
+        sourceCard.owner.deck.shuffle();
     }
 }

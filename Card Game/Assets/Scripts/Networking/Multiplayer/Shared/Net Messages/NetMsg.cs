@@ -23,6 +23,7 @@
     public const int DoneWithSetup = 19;
     public const int SyncPermanentPlaced = 20;
     public const int SyncCountersPlaced = 21;
+    public const int EndGame = 22;
 }
 
 [System.Serializable]

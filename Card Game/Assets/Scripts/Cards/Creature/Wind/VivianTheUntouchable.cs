@@ -25,7 +25,7 @@ public class VivianTheUntouchable : Creature
     public override void onCardAddedToHandByEffect()
     {
         Debug.Log("Card added to hand by effect");
-        GameManager.Get().setUpSingleTileTargetEffect(new OnAddedToHandEffect(this), owner, null, this, null, "Select a tile to deploy Vivian");
+        GameManager.Get().setUpSingleTileTargetEffect(new OnAddedToHandEffect(this), sourceCard.owner, null, this, null, "Select a tile to deploy Vivian");
     }
 
     public override int getCardId()

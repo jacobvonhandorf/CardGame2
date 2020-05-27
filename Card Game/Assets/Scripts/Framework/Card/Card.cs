@@ -272,6 +272,18 @@ public abstract class Card : MonoBehaviour
                 if (canBePlayed())
                 {
                     payCosts(owner);
+                    switch (getCardType())
+                    {
+                        case CardType.Spell:
+                            owner.numSpellsCastThisTurn++;
+                            break;
+                        case CardType.Creature:
+                            owner.numCreaturesThisTurn++;
+                            break;
+                        case CardType.Structure:
+                            owner.numStructuresThisTurn++;
+                            break;
+                    }
                     play(tile);
                 }
                 else
@@ -332,9 +344,7 @@ public abstract class Card : MonoBehaviour
         getRootTransform().position = new Vector3(99999f, 99999f, 99999f);
         interuptMove = true;
         onScene = false;
-        Debug.Log("Returning graphics to scene");
     }
-
     public void returnGraphicsAndCollidersToScene()
     {
         //if (onScene)
@@ -347,7 +357,6 @@ public abstract class Card : MonoBehaviour
                 return;
             }
         }
-        Debug.Log("Returning graphics to scene");
 
         interuptMove = false;
         getRootTransform().position = positionOnScene;
@@ -443,8 +452,10 @@ public abstract class Card : MonoBehaviour
             t.sortingOrder = orderInLayer;
         }
 
+        // move card art below icons
+        cardStatsScript.getArtSprite().sortingOrder = orderInLayer - 1;
         // move background below all other sprites
-        cardStatsScript.getBackgroundSprite().sortingOrder = orderInLayer - 1;
+        cardStatsScript.getBackgroundSprite().sortingOrder = orderInLayer - 2;
     }
 
     public void setSpriteMaskInteraction(SpriteMaskInteraction value)

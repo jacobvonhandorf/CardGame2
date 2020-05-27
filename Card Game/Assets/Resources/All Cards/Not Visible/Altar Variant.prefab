@@ -19,6 +19,8 @@ MonoBehaviour:
   effectActionsCost: 0
   effectGoldCost: 0
   effectManaCost: 0
+  health: 0
+  baseHealth: 0
   statsScript: {fileID: 3234189636375827049}
 --- !u!1001 &7106870613207338889
 PrefabInstance:
@@ -92,25 +94,40 @@ PrefabInstance:
       propertyPath: structure
       value: 
       objectReference: {fileID: 2050967958}
-    - target: {fileID: 7791933331743768713, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+        type: 3}
+      propertyPath: m_text
+      value: Increase your mana income by 1 while you control this card
+      objectReference: {fileID: 0}
+    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 9
+      value: 58
       objectReference: {fileID: 0}
-    - target: {fileID: 7791933331743768713, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.wordCount
-      value: 1
+      value: 11
       objectReference: {fileID: 0}
-    - target: {fileID: 7791933331743768713, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.lineCount
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 7791933331743768713, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.pageCount
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+        type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+        type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4278190080
       objectReference: {fileID: 0}
     - target: {fileID: 7077602755901041962, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
@@ -136,6 +153,26 @@ PrefabInstance:
         type: 3}
       propertyPath: m_text
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7791933331743768713, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 7791933331743768713, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7791933331743768713, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7791933331743768713, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5213023479865107682, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
@@ -185,47 +222,7 @@ PrefabInstance:
     - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_text
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: m_text
-      value: Increase your mana income by 1 while you control this card
-      objectReference: {fileID: 0}
-    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 58
-      objectReference: {fileID: 0}
-    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 11
-      objectReference: {fileID: 0}
-    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: m_textInfo.spaceCount
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: m_fontColor32.rgba
-      value: 4278190080
-      objectReference: {fileID: 0}
-    - target: {fileID: 8066800186961034129, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 719019182562246573, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
@@ -233,6 +230,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2022240573173673283, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8066800186961034129, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_Mesh
       value: 

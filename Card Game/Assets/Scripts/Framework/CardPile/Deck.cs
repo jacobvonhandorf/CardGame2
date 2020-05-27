@@ -25,7 +25,7 @@ public class Deck : CardPile
         foreach (Card card in GetComponentsInChildren<CreatureCard>())
         {
             card.owner = deckOwner;
-            (card as CreatureCard).creature.owner = deckOwner;
+            //(card as CreatureCard).creature.owner = deckOwner; Creatures don't know owner anymore
             (card as CreatureCard).creature.controller = deckOwner;
             card.moveToCardPile(this);
         }

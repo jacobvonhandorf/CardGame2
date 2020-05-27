@@ -30,5 +30,6 @@ public class SpellStatsGetter : CardStatsGetter
         cardViewer.manaText2.text = manaText2.text;
 
         cardViewer.background.sprite = background.sprite;
+        cardViewer.setCardArt(cardArt.sprite);
     }
 }

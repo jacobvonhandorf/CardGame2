@@ -20,7 +20,7 @@ public class Engineer : Creature
 
     public override Effect getEffect()
     {
-        return new EngineerEffect(owner, this);
+        return new EngineerEffect(controller, this);
     }
 
     public override int getCardId()

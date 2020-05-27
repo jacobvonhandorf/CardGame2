@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 /*
- * Master game object that controls the flow of the game
- * and contains utility methods for other classes to call
- */
+* Master game object that controls the flow of the game
+* and contains utility methods for other classes to call
+*/
 public class GameManager : MonoBehaviour
 {
     private const int STARTING_HAND_SIZE = 5;
@@ -41,6 +42,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private MyButton endTurnButton;
     [SerializeField] private AfterMoveBox afterMoveBox;
     [SerializeField] private DamageText damageText;
+    [SerializeField] private EndGamePopUp endGamePopUp;
 
     // prefabs to instantiate later
     [SerializeField] private CardPicker cardPickerPrefab;
@@ -218,6 +220,8 @@ public class GameManager : MonoBehaviour
     // GAME FLOW METHODS
     private void takeTurn()
     {
+        activePlayer.startOfTurn();
+        nonActivePlayer.startOfTurn();
         activePlayer.doIncome();
         beginningOfTurnEffects();
         activePlayer.drawCard();
@@ -306,6 +310,11 @@ public class GameManager : MonoBehaviour
     {
         if (gameMode == GameMode.online)
         {
+            if (activePlayer.locked)
+            {
+                showToast("Must finish resolving effects before ending turn");
+                return;
+            }
             // called when button is pressed
             // disable button
             endTurnButton.gameObject.SetActive(false);
@@ -445,7 +454,6 @@ public class GameManager : MonoBehaviour
 
         return returnList;
     }
-
     public List<Tile> getLegalStructurePlacementTiles(Player player)
     {
         List<Tile> returnList = new List<Tile>();
@@ -468,7 +476,6 @@ public class GameManager : MonoBehaviour
 
         return returnList;
     }
-
     // returns true if the tile is something that can be returned from
     private bool canDeployFrom(Tile tile)
     {
@@ -480,7 +487,6 @@ public class GameManager : MonoBehaviour
             return true;
         return false;
     }
-
     private bool canDeployFrom(Tile tile, Player player)
     {
         if (tile == null)
@@ -529,7 +535,7 @@ public class GameManager : MonoBehaviour
         creature.getRootTransform().position = newPostion;
 
         // set owner if it hasn't been set already
-        creature.owner = owner;
+        // creature.owner = owner; changed so only source card knows the owner
         creature.controller = owner;
 
         // set creature to has moved and acted unless it is quick
@@ -681,6 +687,14 @@ public class GameManager : MonoBehaviour
         showToast("Player " + player.name + " wins!");
     }
 
+    public void surrender()
+    {
+        NetInterface.Get().sendSurrenderMessage();
+        // probably want to start a coroutine here that handles end of match
+        NetInterface.Reset();
+        SceneManager.LoadScene(ScenesEnum.MMDeckSelect);
+    }
+
     public void setUpCreatureEffect(Creature creature)
     {
         Effect effect = creature.getEffect();
@@ -717,14 +731,16 @@ public class GameManager : MonoBehaviour
     // an effect actuator whoes effect activates a SingleTileTargetEffect
     private class WrapperSingleTileTargetEffect : EffectActuator
     {
-        private SingleTileTargetEffect wrappedEffect;
+        //private SingleTileTargetEffect wrappedEffect;
         private Structure structure;
 
         // needs to be passed all the information the effect needs to be activated
         public WrapperSingleTileTargetEffect(SingleTileTargetEffect effect, Player effectOwner, Tile sourceTile, Creature creature, Structure structure)
         {
-            wrappedEffect = effect;
+            //wrappedEffect = effect;
             this.sourceTile = sourceTile;
+            sourcePlayer = effectOwner;
+            targetPlayer = Get().getOppositePlayer(sourcePlayer);
             this.effect = new WrappedEffectActivator(effect, effectOwner, sourceTile, creature, structure);
         }
 
@@ -749,6 +765,7 @@ public class GameManager : MonoBehaviour
 
             public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
             {
+
                 List<Tile> validTargetTiles = effect.getValidTargetTiles(effectOwner, targetPlayer, this.sourceTile);
                 bool effectValid = false;
                 foreach (Tile tile in validTargetTiles)
@@ -896,7 +913,14 @@ public class GameManager : MonoBehaviour
     public void playerHasDrawnOutDeck(Player player)
     {
         Debug.Log(player.name + " has drawn out of cards");
-        showToast("Someone is out of card :)");
+        showToast("Someone is out of card and this hasn't been coded yet :)");
+    }
+
+    public void showEndGamePopup(string message)
+    {
+        glassBackground.SetActive(true);
+        EndGamePopUp egp = Instantiate(endGamePopUp, Vector3.zero, Quaternion.identity);
+        egp.setup(message);
     }
 
     public void showToast(string message)

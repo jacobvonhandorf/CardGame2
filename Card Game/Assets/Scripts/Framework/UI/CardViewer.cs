@@ -30,6 +30,7 @@ public class CardViewer : MonoBehaviour
     public TextMeshPro typeText;
 
     public SpriteRenderer background;
+    public SpriteRenderer cardArt;
 
     public void setMoveActive(bool active)
     {
@@ -66,6 +67,10 @@ public class CardViewer : MonoBehaviour
     public void setManaLowerActive(bool active)
     {
         manaLowerGameObject.SetActive(active);
+    }
+    public void setCardArt(Sprite newSprite)
+    {
+        cardArt.sprite = newSprite;
     }
 
     public void setCard(Card c)

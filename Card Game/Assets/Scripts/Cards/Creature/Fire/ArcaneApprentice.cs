@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ArcaneApprentice : Creature, Effect, CanRecieveXPick
 {
+    public const int EFFECT_RANGE = 2;
+
     public override int getStartingRange()
     {
         return 1;
@@ -71,7 +73,10 @@ public class ArcaneApprentice : Creature, Effect, CanRecieveXPick
 
         public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
         {
-            return GameManager.Get().getAllTilesWithCreatures(oppositePlayer);
+            Debug.LogError("Opposite = " + oppositePlayer);
+            List<Tile> returnList = GameManager.Get().getAllTilesWithCreatures(oppositePlayer);
+            returnList.RemoveAll(t => t.getDistanceTo(sourceTile) > EFFECT_RANGE);
+            return returnList;
         }
     }
 

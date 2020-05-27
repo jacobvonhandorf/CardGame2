@@ -28,13 +28,13 @@ public class EffectableFilter : MonoBehaviour
             }
             else if (sourceCreature != null) // effect is coming from a creature
             {
-                Debug.Log("Effect with a source creature");
+                //Debug.Log("Effect with a source creature");
                 sourcePlayer = sourceCreature.controller;
                 //int actionsToSubtract = sourceCreature.effectActionCost;
                 //if (sourceCreature.hasMovedThisTurn) // if the player has already spent an action on this creature then don't subtract one more
                 //    actionsToSubtract--;
                 //sourcePlayer.subtractActions(actionsToSubtract);
-                Debug.Log("Effect action cost " + sourceCreature.effectActionCost);
+                //Debug.Log("Effect action cost " + sourceCreature.effectActionCost);
                 //if (sourceCreature.effectActionCost > 0)
                 //    sourceCreature.hasDoneActionThisTurn = true;
                 sourceCreature.updateHasActedIndicators();
