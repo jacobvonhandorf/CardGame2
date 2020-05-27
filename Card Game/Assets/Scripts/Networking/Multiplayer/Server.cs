@@ -73,9 +73,12 @@ public class Server : MonoBehaviour
         if (!isStarted)
             return;
 
-        byte[] recBuffer = new byte[BYTE_SIZE];
         //while (NetworkTransport.GetCurrentIncomingMessageAmount() > 0)
         //{
+        bool loop = true;
+        while (loop)
+        {
+            byte[] recBuffer = new byte[BYTE_SIZE];
             NetworkEventType type = NetworkTransport.Receive(out int recHostId, out int connectionId, out int channelId, recBuffer, BYTE_SIZE, out int dataSize, out error);
             switch (type)
             {
@@ -93,12 +96,15 @@ public class Server : MonoBehaviour
                     onDisconnect(recHostId, connectionId, channelId);
                     break;
                 case NetworkEventType.Nothing:
+                    loop = false;
                     break;
                 default:
                 case NetworkEventType.BroadcastEvent:
                     Debug.Log("Unexpected network event type");
                     break;
             }
+
+        }
         //}
     }
 
