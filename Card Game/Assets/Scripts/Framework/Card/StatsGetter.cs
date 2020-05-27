@@ -14,6 +14,7 @@ public abstract class CardStatsGetter : MonoBehaviour
     [SerializeField] protected TextMeshPro bodyText;
     [SerializeField] protected TextMeshPro typeText;
     [SerializeField] protected SpriteRenderer background;
+    [SerializeField] protected SpriteRenderer cardArt;
     [SerializeField] protected Sprite fireBackground;
     [SerializeField] protected Sprite windBackground;
     [SerializeField] protected Sprite waterBackground;
@@ -68,6 +69,10 @@ public abstract class CardStatsGetter : MonoBehaviour
     public SpriteRenderer getBackgroundSprite()
     {
         return background;
+    }
+    public SpriteRenderer getArtSprite()
+    {
+        return cardArt;
     }
 
     public abstract void setCardViewer(CardViewer viewer);

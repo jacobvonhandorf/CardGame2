@@ -115,7 +115,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         Attack(defender, attackRoll);
         return attackRoll;
     }
-    public void Attack(Damageable defender, int damageRoll) // used when damage roll is fixed
+    public void Attack(Damageable defender, int damageRoll) // used when damage roll has been determined
     {
         hasDoneActionThisTurn = true;
         if (!hasMovedThisTurn)

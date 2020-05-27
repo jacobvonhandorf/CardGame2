@@ -46,6 +46,7 @@ public class StructureStatsGetter : CardStatsGetter
 
         //throw new System.NotImplementedException();
         viewer.background.sprite = background.sprite;
+        viewer.setCardArt(cardArt.sprite);
     }
 
     internal void setStructureStats(Structure structure)
@@ -67,7 +68,6 @@ public class StructureStatsGetter : CardStatsGetter
 
     public void switchBetweenStructureOrCard(StructureCard structureCard)
     {
-        Debug.Log("Switch called");
         if (structureCard.isStructure)
         {
             swapToCard();
@@ -121,7 +121,6 @@ public class StructureStatsGetter : CardStatsGetter
         // resize root
         while (Vector3.Distance(cardRoot.localScale, newRootScale) > 0.02f)
         {
-            Debug.Log("Resizing root");
             cardRoot.localScale = Vector3.MoveTowards(cardRoot.localScale, newRootScale, resizeSpeed * Time.deltaTime);
             yield return null;
         }

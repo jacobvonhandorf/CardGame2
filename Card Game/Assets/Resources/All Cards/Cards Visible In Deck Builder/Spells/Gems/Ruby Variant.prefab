@@ -18,6 +18,7 @@ MonoBehaviour:
   positionLocked: 0
   positionInHand: {x: 0, y: 0, z: 0}
   cardStatsScript: {fileID: 8960888067907092650}
+  viewersDisplayingThisCard: []
   positionOnScene: {x: 0, y: 0, z: 0}
 --- !u!1001 &6545867931738280823
 PrefabInstance:
@@ -34,12 +35,12 @@ PrefabInstance:
     - target: {fileID: 7420118472789478342, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -14.46
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7420118472789478342, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 2.05
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7420118472789478342, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
@@ -86,26 +87,12 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+    - target: {fileID: 3229681692039047396, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: ba1431e8181b1b14a90ba49f05e54020,
         type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2348075572656073411, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -130,37 +117,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_text
       value: Ruby
-      objectReference: {fileID: 0}
-    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 109
-      objectReference: {fileID: 0}
-    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.spaceCount
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 22
-      objectReference: {fileID: 0}
-    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_text
-      value: When this card is added to your hand from being drawn or by an effect
-        give target creature you control +1/+1.
       objectReference: {fileID: 0}
     - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
@@ -187,21 +143,61 @@ PrefabInstance:
       propertyPath: m_text
       value: Gem
       objectReference: {fileID: 0}
-    - target: {fileID: 3229681692039047396, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: ba1431e8181b1b14a90ba49f05e54020,
-        type: 3}
     - target: {fileID: 7420118473026751562, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8421197355409777506, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
-      propertyPath: m_Mesh
-      value: 
+      propertyPath: m_textInfo.characterCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 76
+      objectReference: {fileID: 0}
+    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_text
+      value: When this card is added to your hand give target creature you control
+        +1/+1.
       objectReference: {fileID: 0}
     - target: {fileID: 521682469348668848, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
@@ -213,11 +209,22 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 8421197355409777506, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 778445695893815173, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 2612218924776104405, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 51cc112d96508b74e9e62fae5d19487c,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f30ba095c2be8fa4bbb42c9caddb391c, type: 3}
 --- !u!1 &8512419985413115795 stripped

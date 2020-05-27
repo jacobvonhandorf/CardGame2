@@ -24,6 +24,10 @@ public class NetInterface
             instance = new NetInterface();
         return instance;
     }
+    public static void Reset() // call when a game is complete to reset it for the next game
+    {
+        instance = null;
+    }
 
     public void setIsPlayer1(bool isPlayer1)
     {
@@ -314,6 +318,30 @@ public class NetInterface
             (card as CreatureCard).creature.recieveCountersPlaced(counterType, amount);
         else
             Debug.LogError("Trying to place counters on a spell card");
+    }
+    public void sendSurrenderMessage()
+    {
+        Net_EndGame msg = new Net_EndGame();
+        msg.endGameCode = EndGameCode.Quit;
+        //relayMessage(msg);
+        Client.Instance.SendServer(msg);
+    }
+    public void recieveEndGameMessage(Net_EndGame msg)
+    {
+        if (msg.endGameCode == EndGameCode.Disconnect)
+        {
+            // show opp disconnected
+            GameManager.Get().showEndGamePopup("Your opponent has disconnected");
+        }
+        else if (msg.endGameCode == EndGameCode.Quit)
+        {
+            // show opp surrender
+            GameManager.Get().showEndGamePopup("Your opponent has surrendered");
+        }
+        else
+        {
+            throw new Exception("Unexcpected end game code");
+        }
     }
 
 

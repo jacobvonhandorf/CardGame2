@@ -344,9 +344,7 @@ public abstract class Card : MonoBehaviour
         getRootTransform().position = new Vector3(99999f, 99999f, 99999f);
         interuptMove = true;
         onScene = false;
-        Debug.Log("Returning graphics to scene");
     }
-
     public void returnGraphicsAndCollidersToScene()
     {
         //if (onScene)
@@ -454,8 +452,10 @@ public abstract class Card : MonoBehaviour
             t.sortingOrder = orderInLayer;
         }
 
+        // move card art below icons
+        cardStatsScript.getArtSprite().sortingOrder = orderInLayer - 1;
         // move background below all other sprites
-        cardStatsScript.getBackgroundSprite().sortingOrder = orderInLayer - 1;
+        cardStatsScript.getBackgroundSprite().sortingOrder = orderInLayer - 2;
     }
 
     public void setSpriteMaskInteraction(SpriteMaskInteraction value)

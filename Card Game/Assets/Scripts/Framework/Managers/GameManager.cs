@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 /*
- * Master game object that controls the flow of the game
- * and contains utility methods for other classes to call
- */
+* Master game object that controls the flow of the game
+* and contains utility methods for other classes to call
+*/
 public class GameManager : MonoBehaviour
 {
     private const int STARTING_HAND_SIZE = 5;
@@ -41,6 +42,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private MyButton endTurnButton;
     [SerializeField] private AfterMoveBox afterMoveBox;
     [SerializeField] private DamageText damageText;
+    [SerializeField] private EndGamePopUp endGamePopUp;
 
     // prefabs to instantiate later
     [SerializeField] private CardPicker cardPickerPrefab;
@@ -452,7 +454,6 @@ public class GameManager : MonoBehaviour
 
         return returnList;
     }
-
     public List<Tile> getLegalStructurePlacementTiles(Player player)
     {
         List<Tile> returnList = new List<Tile>();
@@ -475,7 +476,6 @@ public class GameManager : MonoBehaviour
 
         return returnList;
     }
-
     // returns true if the tile is something that can be returned from
     private bool canDeployFrom(Tile tile)
     {
@@ -487,7 +487,6 @@ public class GameManager : MonoBehaviour
             return true;
         return false;
     }
-
     private bool canDeployFrom(Tile tile, Player player)
     {
         if (tile == null)
@@ -686,6 +685,14 @@ public class GameManager : MonoBehaviour
     public void makePlayerWin(Player player)
     {
         showToast("Player " + player.name + " wins!");
+    }
+
+    public void surrender()
+    {
+        NetInterface.Get().sendSurrenderMessage();
+        // probably want to start a coroutine here that handles end of match
+        NetInterface.Reset();
+        SceneManager.LoadScene(ScenesEnum.MMDeckSelect);
     }
 
     public void setUpCreatureEffect(Creature creature)
@@ -907,6 +914,13 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log(player.name + " has drawn out of cards");
         showToast("Someone is out of card and this hasn't been coded yet :)");
+    }
+
+    public void showEndGamePopup(string message)
+    {
+        glassBackground.SetActive(true);
+        EndGamePopUp egp = Instantiate(endGamePopUp, Vector3.zero, Quaternion.identity);
+        egp.setup(message);
     }
 
     public void showToast(string message)
