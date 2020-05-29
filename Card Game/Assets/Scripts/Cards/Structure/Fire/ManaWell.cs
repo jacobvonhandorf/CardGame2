@@ -40,6 +40,11 @@ public class ManaWell : Structure, Effect
 
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
+        if (hasCounter(Counters.well) < 3)
+        {
+            GameManager.Get().showToast("You need 3 well counters to activate this effect");
+            return;
+        }
         sourcePlayer.addMana(1);
         removeCounters(Counters.well, 3);
     }

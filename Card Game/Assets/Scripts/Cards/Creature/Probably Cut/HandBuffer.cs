@@ -17,7 +17,7 @@ public class HandBuffer : Creature
     public override void onCreation()
     {
         if (controller.hand.getAllCardsWithType(Card.CardType.Creature).Count > 0)
-            GameManager.Get().queueCardPickerEffect(controller, controller.hand.getAllCardsWithType(Card.CardType.Creature), new OnCreationEffect(), 1, 1, "Select a creature card to give +3/+3");
+            GameManager.Get().queueCardPickerEffect(controller, controller.hand.getAllCardsWithType(Card.CardType.Creature), new OnCreationEffect(), 1, 1, false, "Select a creature card to give +3/+3");
         else
             Debug.Log("No valid targets for hand buffer");
     }

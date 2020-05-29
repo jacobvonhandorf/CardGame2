@@ -8,7 +8,7 @@ public class SpellGrasp : SpellCard, CanReceivePickedCards, Effect
 
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
-        GameManager.Get().queueCardPickerEffect(sourcePlayer, owner.deck.getAllCardsWithTag(Tag.Arcane), this, 1, 1, "Select a card to add to your hand");
+        GameManager.Get().queueCardPickerEffect(sourcePlayer, owner.deck.getAllCardsWithTag(Tag.Arcane), this, 1, 1, false, "Select a card to add to your hand");
     }
 
     public override List<Tile> getLegalTargetTiles()

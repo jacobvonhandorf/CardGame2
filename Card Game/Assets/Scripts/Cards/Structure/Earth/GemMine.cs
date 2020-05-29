@@ -33,6 +33,17 @@ public class GemMine : Structure, Effect
 
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
+        if (hasCounter(Counters.mine) == 0)
+        {
+            GameManager.Get().showToast("You must have a mine counter on Gem Mine to activate its effect");
+            return;
+        }
+        if (controller.GetActions() <= 0)
+        {
+            GameManager.Get().showToast("You do not have enough actions to use this effect");
+            return;
+        }
+
         foreach (Card c in controller.deck.getCardList())
         {
             if (c.hasTag(Card.Tag.Gem))
@@ -41,5 +52,7 @@ public class GemMine : Structure, Effect
                 break;
             }
         }
+        removeCounters(Counters.mine, 1);
+        controller.subtractActions(1);
     }
 }

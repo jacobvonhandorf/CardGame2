@@ -59,7 +59,7 @@ public class Engineer : Creature
             options.Add("Altar");
             options.Add("Tower");
 
-            GameManager.Get().queueOptionSelectBoxEffect(options, new EngineerOptionHandler(targetTile, owner), "Select which structure you would like to place");
+            GameManager.Get().queueOptionSelectBoxEffect(options, new EngineerOptionHandler(targetTile, owner), "Select which structure you would like to place", true);
             engineer.removeCounters(Counters.build, 1);
             engineer.hasDoneActionThisTurn = true;
             if (!engineer.hasMovedThisTurn)

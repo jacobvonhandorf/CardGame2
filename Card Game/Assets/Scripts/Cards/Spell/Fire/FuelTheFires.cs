@@ -8,7 +8,7 @@ public class FuelTheFires : SpellCard, Effect, CanReceivePickedCards
 
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
-        GameManager.Get().queueCardPickerEffect(sourcePlayer, sourcePlayer.hand.getCardList(), this, 0, sourcePlayer.hand.getCardList().Count, "Select cards to discard");
+        GameManager.Get().queueCardPickerEffect(sourcePlayer, sourcePlayer.hand.getCardList(), this, 0, sourcePlayer.hand.getCardList().Count, false , "Select cards to discard");
     }
 
     public override List<Tile> getLegalTargetTiles()

@@ -83,6 +83,10 @@ public class ResourceManager : MonoBehaviour
             throw e;
         }
         GameObject gameObject = Resources.Load(pathToCard) as GameObject;
+        if (gameObject == null)
+        {
+            throw new System.Exception("Error loading card: id=" + id + ", path=" + pathToCard);
+        }
         GameObject instantiatedGameObject = Instantiate(gameObject);
         Card card = instantiatedGameObject.GetComponentInChildren<Card>();
         if (card == null)

@@ -89,7 +89,7 @@ public abstract class Structure : MonoBehaviour, Damageable
     }
     public string getCardName()
     {
-        return cardName;
+        return sourceCard.getCardName();
     }
 
     public void sendToGrave()

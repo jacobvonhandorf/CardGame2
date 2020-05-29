@@ -503,7 +503,7 @@ public abstract class Card : MonoBehaviour
 
     public string getCardName()
     {
-        return cardName;
+        return cardStatsScript.getCardName();
     }
 
     public int getTotalCost()

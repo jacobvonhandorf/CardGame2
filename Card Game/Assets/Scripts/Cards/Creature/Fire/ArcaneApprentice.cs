@@ -41,12 +41,12 @@ public class ArcaneApprentice : Creature, Effect, CanRecieveXPick
             GameManager.Get().showToast("You have already acted with this creature this turn");
             return;
         }
-        GameManager.Get().queueXPickerEffect(this, "How many counters to remove?", 1, hasCounter(Counters.arcane));
+        GameManager.Get().queueXPickerEffect(this, "How many counters to remove?", 1, hasCounter(Counters.arcane), false);
     }
 
     public void receiveXPick(int value)
     {
-        GameManager.Get().setUpSingleTileTargetEffect(new ApprenticeEff(value), controller, currentTile, this, null, "Choose target to deal " + value + " damage");
+        GameManager.Get().setUpSingleTileTargetEffect(new ApprenticeEff(value), controller, currentTile, this, null, "Choose target to deal " + value + " damage", true);
     }
 
     private class ApprenticeEff : SingleTileTargetEffect

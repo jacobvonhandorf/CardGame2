@@ -18,7 +18,7 @@ public class GemTrader : Creature
     {
         CanReceivePickedCards receiver = new Receiver(controller);
         if (controller.hand.getAllCardsWithTag(Card.Tag.Gem).Count > 0)
-            GameManager.Get().queueCardPickerEffect(controller, controller.hand.getAllCardsWithTag(Card.Tag.Gem), receiver, 1, 1, "Select a Gem to discard");
+            GameManager.Get().queueCardPickerEffect(controller, controller.hand.getAllCardsWithTag(Card.Tag.Gem), receiver, 1, 1, false, "Select a Gem to discard");
     }
 
     private class Receiver : CanReceivePickedCards

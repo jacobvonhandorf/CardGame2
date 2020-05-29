@@ -15,8 +15,8 @@ public class Client : MonoBehaviour
     private const int MAX_USER = 100;
     private const int PORT = 26000;
     private const int WEB_PORT = 26001;
-    private const string SERVER_IP = "127.0.0.1"; // loopback
-    //private const string SERVER_IP = "35.224.116.208"; // production server
+    //private const string SERVER_IP = "127.0.0.1"; // loopback
+    private const string SERVER_IP = "35.224.116.208"; // production server
 
 
     private const int BYTE_SIZE = 1024;

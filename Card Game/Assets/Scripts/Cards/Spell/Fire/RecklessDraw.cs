@@ -23,7 +23,7 @@ public class RecklessDraw : SpellCard
     {
         public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
         {
-            GameManager.Get().queueCardPickerEffect(sourcePlayer, sourcePlayer.hand.getCardList(), new RecklessEff(sourcePlayer), 1, 1, "Select a card to discard");
+            GameManager.Get().queueCardPickerEffect(sourcePlayer, sourcePlayer.hand.getCardList(), new RecklessEff(sourcePlayer), 1, 1, false, "Select a card to discard");
         }
     }
 

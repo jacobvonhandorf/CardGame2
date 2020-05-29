@@ -48,9 +48,9 @@ public class Player : MonoBehaviour
         goldText.text = "Gold: " + gold;
         manaText.text = "Mana: " + mana;
 
-        actionsPerTurnText.text = "+ " + actionsPerTurn;
-        goldPerTurnText.text = "+ " + goldPerTurn;
-        manaPerTurnText.text = "+ " + manaPerTurn;
+        actionsPerTurnText.text = "+" + actionsPerTurn;
+        goldPerTurnText.text = "+" + goldPerTurn;
+        manaPerTurnText.text = "+" + manaPerTurn;
     }
 
     public void drawCard()

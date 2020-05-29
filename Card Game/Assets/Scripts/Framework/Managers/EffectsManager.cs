@@ -44,6 +44,12 @@ public class EffectsManager : MonoBehaviour
         addEffect(newEffect);
     }
 
+    public void addEffectToStartOfQueue(EffectActuator newEffect, string informationText)
+    {
+        newEffect.informationText = informationText;
+        effectsQueue.Insert(0, newEffect);
+    }
+
     void Update()
     {
         // do not allow effects until game setup is complete

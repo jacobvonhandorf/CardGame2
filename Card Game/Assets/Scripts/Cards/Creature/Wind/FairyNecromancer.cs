@@ -23,7 +23,7 @@ public class FairyNecromancer : Creature, CanReceivePickedCards
 
     public override void onCreation()
     {
-        GameManager.Get().queueCardPickerEffect(controller, controller.graveyard.getAllCardWithTagAndType(Card.Tag.Fairy, Card.CardType.Creature), this, 1, 1, "Choose a card to add to your hand");
+        GameManager.Get().queueCardPickerEffect(controller, controller.graveyard.getAllCardWithTagAndType(Card.Tag.Fairy, Card.CardType.Creature), this, 1, 1, false, "Choose a card to add to your hand");
     }
 
     public void receiveCardList(List<Card> cardList)

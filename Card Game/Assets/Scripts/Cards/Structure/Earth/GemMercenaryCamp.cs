@@ -34,7 +34,7 @@ public class GemMercenaryCamp : Structure
                 return;
             }
 
-            GameManager.Get().queueCardPickerEffect(sourcePlayer, sourcePlayer.hand.getAllCardsWithTag(Card.Tag.Gem), new PickReceiver(targetTile, sourcePlayer), 1, 1, "Select a Gem card to discard");
+            GameManager.Get().queueCardPickerEffect(sourcePlayer, sourcePlayer.hand.getAllCardsWithTag(Card.Tag.Gem), new PickReceiver(targetTile, sourcePlayer), 1, 1, true , "Select a Gem card to discard");
         }
 
         private class PickReceiver : CanReceivePickedCards

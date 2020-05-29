@@ -29,7 +29,7 @@ public class GemExchange : SpellCard
         public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
         {
             int maxCardsToPick =  Mathf.Min(sourcePlayer.hand.getAllCardsWithTag(Tag.Gem).Count, 2);
-            GameManager.Get().queueCardPickerEffect(sourcePlayer, sourcePlayer.hand.getAllCardsWithTag(Tag.Gem), new GemECardPickReceiver(sourcePlayer), 0, maxCardsToPick, "Select Gem cards to discard");
+            GameManager.Get().queueCardPickerEffect(sourcePlayer, sourcePlayer.hand.getAllCardsWithTag(Tag.Gem), new GemECardPickReceiver(sourcePlayer), 0, maxCardsToPick, false, "Select Gem cards to discard");
         }
 
         private class GemECardPickReceiver : CanReceivePickedCards

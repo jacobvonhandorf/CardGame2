@@ -26,4 +26,9 @@ public class HomeScreenManager : MonoBehaviour
     {
         throw new NotImplementedException();
     }
+
+    public void onQuitClicked()
+    {
+        Application.Quit();
+    }
 }
