@@ -8,10 +8,10 @@ using static Card;
  * This is a parent class for all objects that are a pile of cards ex: deck, hand, grave
  */
 
-public class CardPile : MonoBehaviour
+public abstract class CardPile : MonoBehaviour
 {
     [SerializeField] protected bool ownedByLocalPlayer; // used for Net Code
-    protected List<Card> cardList;
+    [SerializeField] protected List<Card> cardList;
 
     protected void Awake()
     {
@@ -29,6 +29,13 @@ public class CardPile : MonoBehaviour
 
         c.getRootTransform().SetParent(transform);
         onCardAdded(c);
+    }
+
+    public void addCardByEffect(Card c)
+    {
+        Debug.Log("card pile triggered by effect");
+        addCard(c);
+        onCardAddedByEffect(c);
     }
 
     // this method is dangerous to call. If possible use Card.moveToCardPile()
@@ -140,4 +147,5 @@ public class CardPile : MonoBehaviour
         this.cardList = newCardList;
     }
 
+    protected abstract void onCardAddedByEffect(Card c);
 }

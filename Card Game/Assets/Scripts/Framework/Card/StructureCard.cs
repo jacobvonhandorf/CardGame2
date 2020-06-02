@@ -75,6 +75,9 @@ public class StructureCard : Card
         if (isStructure)
             (cardStatsScript as StructureStatsGetter).switchBetweenStructureOrCard(this);
 
+        // set tile back to null because no longer on field
+        structure.tile = null;
+
         isStructure = false;
     }
 

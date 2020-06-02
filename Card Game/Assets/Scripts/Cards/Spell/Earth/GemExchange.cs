@@ -46,7 +46,7 @@ public class GemExchange : SpellCard
                 Debug.Log("Cards to discard count = " + cardList.Count);
                 foreach (Card c in cardList)
                 {
-                    c.moveToCardPile(owner.graveyard);
+                    c.moveToCardPile(owner.graveyard, true);
                 }
 
                 owner.drawCards(cardList.Count);

@@ -21,7 +21,7 @@ public class Hand : CardPile
         foreach (Card c in cardList)
         {
             c.owner = handOwner;
-            c.moveToCardPile(this);
+            c.moveToCardPile(this, false);
         }
         resetCardPositions();
 
@@ -97,12 +97,6 @@ public class Hand : CardPile
         resetCardPositions();
     }
 
-    internal void addCardByEffect(Card c)
-    {
-        c.moveToCardPile(this);
-        c.onCardAddedByEffect();
-    }
-
     public void printCardList()
     {
         Debug.Log("Printing cards in hand");
@@ -135,5 +129,11 @@ public class Hand : CardPile
             c.removeGraphicsAndCollidersFromScene();
             //c.setSpriteMaskInteraction(SpriteMaskInteraction.VisibleInsideMask);
         }
+    }
+
+    protected override void onCardAddedByEffect(Card c)
+    {
+        Debug.Log("Card added by effect");
+        c.onCardAddedByEffect();
     }
 }

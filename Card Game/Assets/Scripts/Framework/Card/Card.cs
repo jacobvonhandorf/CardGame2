@@ -156,19 +156,20 @@ public abstract class Card : MonoBehaviour
     }
 
     // move card to a pile and remove it from the old one
-    public void moveToCardPile(CardPile newPile)
+    public void moveToCardPile(CardPile newPile, bool byEffect)
     {
-        actualMove(newPile);
-        NetInterface.Get().syncMoveCardToPile(this, newPile);
+        actualMove(newPile, byEffect);
+        NetInterface.Get().syncMoveCardToPile(this, newPile, byEffect);
     }
 
-    public void syncCardMovement(CardPile newPile)
+    public void syncCardMovement(CardPile newPile, bool byEffect)
     {
-        actualMove(newPile);
+        actualMove(newPile, byEffect);
     }
 
-    private void actualMove(CardPile newPile)
+    private void actualMove(CardPile newPile, bool byEffect)
     {
+        Debug.Log("Move card by effect:" + byEffect);
         if (currentCardPile != null)
         {
             if (newPile == currentCardPile) // if we're already in the new pile then do nothing
@@ -176,7 +177,11 @@ public abstract class Card : MonoBehaviour
             currentCardPile.removeCard(this);
         }
         currentCardPile = newPile;
-        newPile.addCard(this);
+
+        if (byEffect)
+            newPile.addCardByEffect(this);
+        else
+            newPile.addCard(this);
     }
 
     public CardPile getCardPile()
@@ -330,7 +335,6 @@ public abstract class Card : MonoBehaviour
     }
 
     private const float smoothing = 9f; // speed at which cards snap into their place
-
     // methods for removing Card from scene by moving them way off screen
     // and for returning them to the scene afterwards
     public Vector3 positionOnScene;
@@ -362,7 +366,6 @@ public abstract class Card : MonoBehaviour
         getRootTransform().position = positionOnScene;
         onScene = true;
     }
-
     public bool isOnScene()
     {
         return onScene;
@@ -375,25 +378,21 @@ public abstract class Card : MonoBehaviour
         StopAllCoroutines();
         previousCoroutine =  StartCoroutine(moveToCoroutine(target, smoothing));
     }
-
     public void moveTo(Vector3 position)
     {
         StopAllCoroutines();
         StartCoroutine(moveToPositionCoroutine(position, smoothing));
     }
-    
     public void moveTo(Transform target, float speed)
     {
         StopAllCoroutines();
         StartCoroutine(moveToCoroutine(target, speed));
     }
-
     public void moveTo(Vector3 position, float speed)
     {
         StopAllCoroutines();
         StartCoroutine(moveToPositionCoroutine(position, speed));
     }
-
     private bool interuptMove = false; // only thing toggling this right now is removing/return graphics. Might need to refactor this if more things start affecting the card
     IEnumerator moveToCoroutine(Transform target, float speed)
     {
@@ -407,7 +406,6 @@ public abstract class Card : MonoBehaviour
             yield return null;
         }
     }
-
     IEnumerator moveToPositionCoroutine(Vector3 targetPosition, float speed)
     {
         if (interuptMove)

@@ -8,7 +8,7 @@ using UnityEngine;
 public class EffectsManager : MonoBehaviour
 {
     private static EffectsManager manager;
-    private List<EffectActuator> effectsQueue = new List<EffectActuator>();
+    [SerializeField] private List<EffectActuator> effectsQueue = new List<EffectActuator>();
     private bool effectInProcess;
     private bool effectJustFinished = false;
 
@@ -29,27 +29,32 @@ public class EffectsManager : MonoBehaviour
             effectsQueue = new List<EffectActuator>();
         }
         else
-            Debug.Log("More than one effects manager");
+            Debug.LogError("More than one effects manager");
     }
 
-    public void addEffect(EffectActuator newEffect)
+    public void addEffect(EffectActuator newEffect, Player effectOwner)
     {
-        Debug.Log("Effect added to queue");
+        Debug.Log("Effect owners in effect actuator: " + effectOwner + " " + NetInterface.Get().getLocalPlayer());
+        if (effectOwner != NetInterface.Get().getLocalPlayer())
+            return;
         effectsQueue.Add(newEffect);
     }
 
-    public void addEffect(EffectActuator newEffect, string informationText)
+    public void addEffect(EffectActuator newEffect, string informationText, Player effectOwner)
     {
         newEffect.informationText = informationText;
-        addEffect(newEffect);
+        addEffect(newEffect, effectOwner);
     }
 
-    public void addEffectToStartOfQueue(EffectActuator newEffect, string informationText)
+    public void addEffectToStartOfQueue(EffectActuator newEffect, string informationText, Player effectOwner)
     {
+        if (effectOwner != NetInterface.Get().getLocalPlayer())
+            return;
         newEffect.informationText = informationText;
         effectsQueue.Insert(0, newEffect);
     }
 
+    private int effectCount = 0;
     void Update()
     {
         // do not allow effects until game setup is complete
@@ -72,10 +77,14 @@ public class EffectsManager : MonoBehaviour
             // reset bool
             effectJustFinished = false;
             return;
-        } 
+        }
+
+        // do not trigger the next effect if one is already taking place or there is no next effect
         if (effectInProcess || effectsQueue.Count == 0)
             return;
-        Debug.Log("Effects manager activating next effect");
+
+        Debug.Log("Effects manager activating next effect " + effectCount);
+        effectCount++;
         EffectActuator effectToActivate = effectsQueue[0];
         effectsQueue.Remove(effectToActivate);
         effectInProcess = true;

@@ -21,7 +21,7 @@ public class FuelTheFires : SpellCard, Effect, CanReceivePickedCards
         int numDiscardedCards = cardList.Count;
         foreach (Card c in cardList)
         {
-            c.moveToCardPile(owner.graveyard);
+            c.moveToCardPile(owner.graveyard, true);
         }
         owner.addMana(numDiscardedCards);
         owner.drawCard();

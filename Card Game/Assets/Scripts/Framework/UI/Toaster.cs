@@ -9,7 +9,24 @@ public class Toaster : MonoBehaviour
     [SerializeField] private SpriteRenderer background;
     [SerializeField] private float fadeSpeed;
     [SerializeField] private float visibleTime;
+    private float backgroundStartingAlpha;
+    private float textStartingAlpha;
     private bool isToasting = false;
+
+    public static Toaster instance;
+    public static Toaster Get()
+    {
+        return instance;
+    }
+
+    private void Start()
+    {
+        instance = this;
+        gameObject.SetActive(false);
+        Debug.Log("in start " + textMesh.color);
+        backgroundStartingAlpha = background.color.a;
+        textStartingAlpha = textMesh.color.a;
+    }
 
     public void doToast(string message)
     {
@@ -18,7 +35,9 @@ public class Toaster : MonoBehaviour
         Color tmp = background.color;
         tmp.a = 0f;
         background.color = tmp;
-        textMesh.color = tmp;
+        Color tmp2 = textMesh.color;
+        tmp2.a = 0f;
+        textMesh.color = tmp2;
 
         gameObject.SetActive(true);
         textMesh.text = message;
@@ -33,19 +52,28 @@ public class Toaster : MonoBehaviour
             yield return null;
         }
         isToasting = true;
-        Color tmp1 = background.color;
-        Color tmp2 = textMesh.color;
+        Debug.Log("tmp2 at start: " + textMesh.color);
+        Color bgColor = new Color(background.color.r, background.color.g, background.color.b, background.color.a);
+        Color textColor = new Color(textMesh.color.r, textMesh.color.g, textMesh.color.b, textMesh.color.a);
+        Debug.Log("textColor: " + textColor);
 
         // fade in
-        while (background.color.a < .95f)
+        while (background.color.a < backgroundStartingAlpha && textMesh.color.a < textStartingAlpha)
         {
             // background alpha
-            tmp1.a += fadeSpeed;
-            background.color = tmp1;
+            if (background.color.a < backgroundStartingAlpha)
+            {
+                bgColor.a += fadeSpeed * Time.deltaTime;
+                background.color = bgColor;
+            }
 
             // text alpha
-            tmp2.a += fadeSpeed;
-            textMesh.color = tmp2;
+            if (textMesh.color.a < textStartingAlpha)
+            {
+                Debug.Log("Tmp 2: " + textMesh.color);
+                textColor.a += fadeSpeed * Time.deltaTime;
+                textMesh.color = textColor;
+            }
 
             yield return null;
         }
@@ -55,12 +83,12 @@ public class Toaster : MonoBehaviour
         // fade out
         while (background.color.a > 0f)
         {
-            tmp1.a -= fadeSpeed;
-            background.color = tmp1;
+            bgColor.a -= fadeSpeed * Time.deltaTime;
+            background.color = bgColor;
 
             // text alpha
-            tmp2.a -= fadeSpeed;
-            textMesh.color = tmp2;
+            textColor.a -= fadeSpeed * Time.deltaTime;
+            textMesh.color = textColor;
 
             yield return null;
         }

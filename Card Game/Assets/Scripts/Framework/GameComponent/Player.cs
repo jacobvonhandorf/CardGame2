@@ -61,7 +61,7 @@ public class Player : MonoBehaviour
             {
                 Card cardToAdd = deck.getTopCard();
                 //deck.getTopCard().moveToCardPile(hand);
-                cardToAdd.moveToCardPile(hand);
+                cardToAdd.moveToCardPile(hand, false);
                 cardToAdd.onCardDrawn();
             }
             else
@@ -84,7 +84,8 @@ public class Player : MonoBehaviour
 
     public void addCardToHandByEffect(Card c)
     {
-        hand.addCardByEffect(c);
+        //hand.addCardByEffect(c);
+        c.moveToCardPile(hand, true);
     }
 
     public void setToActivePlayer()
@@ -246,7 +247,6 @@ public class Player : MonoBehaviour
     }
     internal void readyEffect()
     {
-        Debug.Log("Using effect");
         state = State.UsingEfect;
     }
 

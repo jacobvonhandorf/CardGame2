@@ -40,7 +40,7 @@ public class RecklessDraw : SpellCard
         {
             foreach(Card c in cardList)
             {
-                c.moveToCardPile(owner.graveyard);
+                c.moveToCardPile(owner.graveyard, true);
             }
             owner.drawCards(2);
         }

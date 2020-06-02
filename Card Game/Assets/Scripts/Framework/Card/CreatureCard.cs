@@ -73,6 +73,9 @@ public class CreatureCard : Card
         // resize
         creatureStatsScript.swapToCard(this);
 
+        // no longer a creature so forget the tile it's on
+        creature.currentTile = null;
+
         isCreature = false;
     }
 

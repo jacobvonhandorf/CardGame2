@@ -96,7 +96,7 @@ public abstract class Structure : MonoBehaviour, Damageable
     {
         sourceCard.isStructure = false;
         resetToBaseStats();
-        sourceCard.moveToCardPile(owner.graveyard);
+        sourceCard.moveToCardPile(owner.graveyard, false);
         sourceCard.removeGraphicsAndCollidersFromScene();
     }
 

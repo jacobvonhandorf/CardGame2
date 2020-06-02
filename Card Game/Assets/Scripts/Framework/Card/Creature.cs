@@ -39,7 +39,6 @@ public abstract class Creature : MonoBehaviour, Damageable
 
     protected void Awake()
     {
-        Debug.Log("Creature awake");
         counterController = sourceCard.getCounterController();
         if (!initialized)
             initialize();
@@ -277,7 +276,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         statsScript.swapToCard(sourceCard);
         setSpriteColor(Color.white); // reset sprite color in case card is greyed out
         resetToBaseStats();
-        sourceCard.owner.addCardToHandByEffect(sourceCard);
+        sourceCard.moveToCardPile(sourceCard.owner.hand, true);
         onLeavesTheField();
     }
 
@@ -352,7 +351,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     {
         sourceCard.isCreature = false;
         resetToBaseStats();
-        sourceCard.moveToCardPile(sourceCard.owner.graveyard);
+        sourceCard.moveToCardPile(sourceCard.owner.graveyard, false);
         sourceCard.removeGraphicsAndCollidersFromScene();
     }
 

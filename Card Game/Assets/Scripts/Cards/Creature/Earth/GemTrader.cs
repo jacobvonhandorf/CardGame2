@@ -34,7 +34,7 @@ public class GemTrader : Creature
         {
             foreach (Card c in cardList)
             {
-                c.moveToCardPile(controller.graveyard);
+                c.moveToCardPile(controller.graveyard, true);
             }
             foreach (Card c in controller.deck.getCardList())
             {
