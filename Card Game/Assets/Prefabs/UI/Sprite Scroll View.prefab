@@ -152,7 +152,7 @@ GameObject:
   - component: {fileID: 983945052127041682}
   - component: {fileID: 983945052127041684}
   - component: {fileID: 983945052127041683}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Move Content Script
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -194,6 +194,7 @@ MonoBehaviour:
   lockVertical: 0
   scrollSpeed: 0.5
   verticalScrollBarRatio: 4
+  myCollider: {fileID: 983945052127041683}
   maxX: 0
   maxY: 0
   minX: -1
