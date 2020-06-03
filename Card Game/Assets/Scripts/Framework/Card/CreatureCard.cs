@@ -76,6 +76,9 @@ public class CreatureCard : Card
         // no longer a creature so forget the tile it's on
         creature.currentTile = null;
 
+        // counters don't say on cards when they aren't creatures so clear them
+        counterCountroller.clearAll();
+
         isCreature = false;
     }
 

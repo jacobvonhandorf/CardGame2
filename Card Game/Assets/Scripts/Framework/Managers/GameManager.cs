@@ -918,7 +918,7 @@ public class GameManager : MonoBehaviour
 
     public void showToast(string message)
     {
-        toaster.doToast(message);
+        Toaster.instance.doToast(message);
     }
 
     public CardViewer getCardViewer()
@@ -971,8 +971,9 @@ public class GameManager : MonoBehaviour
 
             public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
             {
-                CardPicker cardPicker = Instantiate(Get().cardPickerPrefab, Vector3.zero, Quaternion.identity);
+                CardPicker cardPicker = Instantiate(Get().cardPickerPrefab, new Vector3(0, 0, -1), Quaternion.identity);
                 cardPicker.setUp(pickableCards, receiver, minCards, maxCards, headerText);
+                Get().setPopUpGlassActive(true);
             }
         }
     }

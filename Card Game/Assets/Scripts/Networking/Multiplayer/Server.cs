@@ -9,6 +9,7 @@ public class Server : MonoBehaviour
 {
     public static Server Instance { private set; get; }
 
+    private const string VERSION = "0.1";
     private const int MAX_USER = 100;
     private const int PORT = 26000;
     private const int WEB_PORT = 26001;
@@ -215,6 +216,13 @@ public class Server : MonoBehaviour
             SendClient(oppHostId, oppCnnId, channelId, msg);
             // TODO record match result
         }
+    }
+    private void CheckClientVersion(int cnnId, int channelId, int recHostId, Net_CheckVersion msg)
+    {
+        // send a message to the client with the current version
+        Net_CheckVersion response = new Net_CheckVersion();
+        response.version = VERSION;
+        SendClient(recHostId, cnnId, channelId, response);
     }
     #endregion
 

@@ -23,6 +23,11 @@ public class DeckBuilderDeck : MonoBehaviour
     private int cardCount = 0;
     private List<CardAmountPair> cardList = new List<CardAmountPair>();
 
+    private void Start()
+    {
+        deckNameField.characterLimit = 22;
+    }
+
     public void addCard(Card newCard)
     {
         bool cardAlreadyInList = false;

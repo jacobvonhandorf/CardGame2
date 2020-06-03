@@ -13,6 +13,7 @@ public class DamageText : MonoBehaviour
 
     public void showText(int damageAmount, Vector3 position)
     {
+        Debug.Log("Damage amount is " + damageAmount);
         gameObject.SetActive(true);
         transform.position = position;
         string newText = "" + damageAmount;

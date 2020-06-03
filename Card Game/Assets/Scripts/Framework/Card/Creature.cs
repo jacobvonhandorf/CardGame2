@@ -96,6 +96,8 @@ public abstract class Creature : MonoBehaviour, Damageable
 
     public void takeDamage(int damage)
     {
+        if (damage == 0) // dealing 0 damage is illegal
+            return;
         GameManager.Get().showDamagedText(getRootTransform().position, damage);
         setHealthWithoutKilling(currentHealth - damage);
         onDamaged();
@@ -278,6 +280,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         resetToBaseStats();
         sourceCard.moveToCardPile(sourceCard.owner.hand, true);
         onLeavesTheField();
+        sourceCard.owner.hand.resetCardPositions();
     }
 
     void OnMouseUpAsButton()
