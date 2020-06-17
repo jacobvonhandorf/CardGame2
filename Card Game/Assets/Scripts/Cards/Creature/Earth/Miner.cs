@@ -36,4 +36,13 @@ public class Miner : Creature
             }
         }
     }
+
+    public override List<Keyword> getInitialKeywords()
+    {
+        return new List<Keyword>()
+        {
+            Keyword.deploy
+        };
+    }
+
 }

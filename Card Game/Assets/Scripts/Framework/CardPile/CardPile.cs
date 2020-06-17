@@ -31,10 +31,12 @@ public abstract class CardPile : MonoBehaviour
         onCardAdded(c);
     }
 
+    // this method is dangerous to call. If possible use Card.moveToCardPile()
     public void addCardByEffect(Card c)
     {
         Debug.Log("card pile triggered by effect");
         addCard(c);
+        //c.moveToCardPile(this, true);
         onCardAddedByEffect(c);
     }
 

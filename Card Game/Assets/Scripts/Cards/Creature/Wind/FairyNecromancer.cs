@@ -33,4 +33,13 @@ public class FairyNecromancer : Creature, CanReceivePickedCards
             controller.hand.addCardByEffect(c);
         }
     }
+
+    public override List<Keyword> getInitialKeywords()
+    {
+        return new List<Keyword>()
+        {
+            Keyword.deploy
+        };
+    }
+
 }

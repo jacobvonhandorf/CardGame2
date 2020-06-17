@@ -529,7 +529,7 @@ public class GameManager : MonoBehaviour
         creature.controller = owner;
 
         // set creature to has moved and acted unless it is quick
-        if (!creature.hasKeyword(Card.CardKeywords.Quick))
+        if (!creature.hasKeyword(Keyword.quick))
         {
             creature.hasMovedThisTurn = true;
             creature.hasDoneActionThisTurn = true;

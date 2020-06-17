@@ -31,4 +31,13 @@ public class ManaGorger : Creature
     {
         return 63;
     }
+
+    public override List<Keyword> getInitialKeywords()
+    {
+        return new List<Keyword>()
+        {
+            Keyword.deploy
+        };
+    }
+
 }

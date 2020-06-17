@@ -111,4 +111,9 @@ public class StructureCard : Card
     }
 
     public CounterController getCounterController() => counterCountroller;
+
+    public override List<Keyword> getInitialKeywords()
+    {
+        return structure.getInitialKeywords();
+    }
 }

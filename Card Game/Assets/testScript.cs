@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
-public class testScript : MonoBehaviour, CanReceivePickedCards
+public class testScript : MonoBehaviour, CanReceivePickedCards, IPointerClickHandler
 {
-    [SerializeField] CardPicker cardPicker;
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        Debug.Log("On pointer click");
+    }
 
     public void receiveCardList(List<Card> cardList)
     {
@@ -17,16 +21,17 @@ public class testScript : MonoBehaviour, CanReceivePickedCards
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("Start");
+    }
 
-        // make list of cards
-        List<Card> cardList = new List<Card>();
-        for (int i = 0; i < 10; i++)
-        {
-            Card c = ResourceManager.Get().instantiateCardById(76);
-            c.removeGraphicsAndCollidersFromScene();
-            cardList.Add(c);
-        }
+    private void Update()
+    {
+        if (Input.GetMouseButton(1))
+            Debug.Log("Mouse button 2 pressed");
+    }
 
-        cardPicker.setUp(cardList, this, 2, 4, "Testing :)");
+    private void OnMouseDown()
+    {
+        Debug.Log("Mouse down");
     }
 }

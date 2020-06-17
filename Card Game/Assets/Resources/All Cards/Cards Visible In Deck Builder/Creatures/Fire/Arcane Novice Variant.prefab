@@ -25,7 +25,6 @@ MonoBehaviour:
   movement: 0
   effectActionCost: 1
   currentTile: {fileID: 0}
-  owner: {fileID: 0}
   controller: {fileID: 0}
   hasMovedThisTurn: 0
   hasDoneActionThisTurn: 0
@@ -197,7 +196,7 @@ PrefabInstance:
     - target: {fileID: 4225407104599502098, guid: 54dd3f0ca07c104429e52ed9eb04601e,
         type: 3}
       propertyPath: m_text
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2836965240563950911, guid: 54dd3f0ca07c104429e52ed9eb04601e,
         type: 3}

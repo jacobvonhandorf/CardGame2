@@ -97,12 +97,12 @@ public class NetInterface
     {
         int cardId = cardMap.get(c).netId;
         byte cpId = pileIdMap.get(cp);
-        Debug.LogError("byEffect before netmsg: " + byEffect);
+        //Debug.LogError("byEffect before netmsg: " + byEffect);
         Net_MoveCardToPile msg = new Net_MoveCardToPile();
         msg.cardId = cardId;
         msg.cpId = cpId;
         msg.byEffect = byEffect;
-        Debug.LogError("Syncing move card by effect: " + byEffect);
+        //Debug.LogError("Syncing move card by effect: " + byEffect);
         relayMessage(msg);
     }
     public void recieveMoveCardToPile(int cardId, byte cardPileId, bool byEffect)

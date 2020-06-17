@@ -52,9 +52,8 @@ public class SlaveToMana : Creature, OptionBoxHandler, SingleTileTargetEffect
         }
     }
 
-    public override void resetForNewTurn()
+    public override void onTurnStart()
     {
-        base.resetForNewTurn();
         effectTriggeredThisTurn = false;
     }
 

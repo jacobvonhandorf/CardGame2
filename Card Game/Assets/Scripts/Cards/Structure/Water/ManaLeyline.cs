@@ -50,6 +50,7 @@ public class ManaLeyline : Structure, Effect
         }
 
         controller.addMana(1);
+        controller.subtractActions(1);
     }
 
     private class ManaLeylineEffect : Effect

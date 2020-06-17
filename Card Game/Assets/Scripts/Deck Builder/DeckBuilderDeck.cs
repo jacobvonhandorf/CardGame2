@@ -17,14 +17,18 @@ public class DeckBuilderDeck : MonoBehaviour
     [SerializeField] private TextMeshPro cardCountText;
     [SerializeField] private TMP_InputField deckNameField;
     [SerializeField] private YesNoBox yesNoBoxPrefab;
-    public GameObject glassBackground;
 
+    public CardViewer hoveredCardViewer;
+    public GameObject glassBackground;
 
     private int cardCount = 0;
     private List<CardAmountPair> cardList = new List<CardAmountPair>();
 
+    public static DeckBuilderDeck instance;
+
     private void Start()
     {
+        instance = this;
         deckNameField.characterLimit = 22;
     }
 
@@ -88,6 +92,12 @@ public class DeckBuilderDeck : MonoBehaviour
             return;
         }
 
+        if (deckName.Length == 0)
+        {
+            Toaster.instance.doToast("Deck name cannot be empty");
+            return;
+        }
+
         // put together string that will be the deck file
         string filePath = Application.persistentDataPath + "/decks/" + deckName + ".dek";
 
@@ -108,6 +118,7 @@ public class DeckBuilderDeck : MonoBehaviour
         BinaryFormatter bf = new BinaryFormatter();
         FileStream fs = File.Open(filePath, FileMode.Create);
         bf.Serialize(fs, idToAmountMap);
+        Toaster.Get().doToast("Deck Saved");
     }
 
     public void save()
@@ -143,7 +154,6 @@ public class DeckBuilderDeck : MonoBehaviour
         {
             // otherwise just save
             save(deckName);
-            Toaster.Get().doToast("Deck Saved");
         }
     }
 
@@ -161,7 +171,6 @@ public class DeckBuilderDeck : MonoBehaviour
         {
             deckBuilderDeck.glassBackground.SetActive(false);
             deckBuilderDeck.save(deckName);
-            Toaster.Get().doToast("Deck Saved");
         }
     }
 

@@ -16,10 +16,20 @@ public class GemBriber : Creature
 
     public override void onCreation()
     {
-        if (controller.graveyard.getAllCardsWithTag(Card.Tag.Gem).Count > 0)
+        int gemCount = controller.graveyard.getAllCardsWithTag(Card.Tag.Gem).Count;
+        if (gemCount > 0)
         {
-            addHealth(2);
-            addAttack(2);
+            addAttack(1);
+            if (gemCount >= 3)
+                addAttack(1);
         }
+    }
+
+    public override List<Keyword> getInitialKeywords()
+    {
+        return new List<Keyword>()
+        {
+            Keyword.deploy
+        };
     }
 }

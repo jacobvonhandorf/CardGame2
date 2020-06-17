@@ -7,12 +7,6 @@ public class Engineer : Creature
 {
     public const int CARD_ID = 61;
 
-    private new void Awake()
-    {
-        base.Awake();
-        addKeyword(Card.CardKeywords.Quick);
-    }
-
     public override int getStartingRange()
     {
         return 1;
@@ -26,6 +20,11 @@ public class Engineer : Creature
     public override int getCardId()
     {
         return CARD_ID;
+    }
+
+    public override List<Keyword> getInitialKeywords()
+    {
+        return new List<Keyword>() { Keyword.quick };
     }
 
     private class EngineerEffect : SingleTileTargetEffect

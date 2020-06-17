@@ -48,4 +48,13 @@ public class FairyCavalier : Creature
             return false;
         }
     }
+
+    public override List<Keyword> getInitialKeywords()
+    {
+        return new List<Keyword>()
+        {
+            Keyword.deploy
+        };
+    }
+
 }

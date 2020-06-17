@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class VivianTheUntouchable : Creature
 {
-    private new void Awake()
+    public override List<Keyword> getInitialKeywords()
     {
-        base.Awake();
-        addKeyword(Card.CardKeywords.Quick);
+        return new List<Keyword>() { Keyword.quick };
     }
 
     public override int getStartingRange()

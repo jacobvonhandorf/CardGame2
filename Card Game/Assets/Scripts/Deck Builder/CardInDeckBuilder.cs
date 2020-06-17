@@ -13,6 +13,7 @@ public class CardInDeckBuilder : MonoBehaviour
     [SerializeField] private Color waterColor;
     [SerializeField] private DeckBuilderMinus minusButton;
     [SerializeField] private DeckBuilderPlus plusButton;
+    [SerializeField] private DeckBuilderCardName cardNameBox;
     private int amount = 0;
     private List<SpriteRenderer> sprites;
 
@@ -45,6 +46,8 @@ public class CardInDeckBuilder : MonoBehaviour
         minusButton.deck = deck;
         plusButton.card = card;
         plusButton.deck = deck;
+
+        cardNameBox.sourceCard = card;
 
         Debug.Log("Setting up card in deck builder");
     }

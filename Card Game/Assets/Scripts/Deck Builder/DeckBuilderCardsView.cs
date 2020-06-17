@@ -125,7 +125,7 @@ public class DeckBuilderCardsView : MonoBehaviour
             if (filter.keywords != null && filter.keywords.Count > 0)
             {
                 bool hasKeyword = false;
-                foreach (Card.CardKeywords keyword in filter.keywords)
+                foreach (Keyword keyword in filter.keywords)
                     if (c.hasKeyword(keyword))
                     {
                         hasKeyword = true;
@@ -175,7 +175,7 @@ public class CardFilterObject
     public List<int> totalCosts;
     public List<Card.CardType> cardTypes;
     public List<Card.Tag> tags;
-    public List<Card.CardKeywords> keywords;
+    public List<Keyword> keywords;
     public string nameTextSearch;
     public string descriptionTextSearch;
 }

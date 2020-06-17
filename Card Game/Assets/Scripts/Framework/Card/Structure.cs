@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UnityEngine;
 using static Card;
 
@@ -146,16 +147,24 @@ public abstract class Structure : MonoBehaviour, Damageable
     {
         return sourceCard.isType(type);
     }
-
-    public bool hasKeyword(CardKeywords keyword)
+    #region Keyword
+    public bool hasKeyword(Keyword keyword)
     {
         return sourceCard.hasKeyword(keyword);
     }
-
-    public void addKeyword(CardKeywords keyword)
+    public void addKeyword(Keyword keyword)
     {
         sourceCard.addKeyword(keyword);
     }
+    public ReadOnlyCollection<Keyword> getKeywordList()
+    {
+        return sourceCard.getKeywordList();
+    }
+    public void removeKeyword(Keyword keyword)
+    {
+        sourceCard.removeKeyword(keyword);
+    }
+    #endregion
 
     public Vector2 getCoordinates()
     {
@@ -230,6 +239,7 @@ public abstract class Structure : MonoBehaviour, Damageable
     public virtual Effect getEffect() { return null; }
     public virtual bool additionalCanBePlayedChecks() { return true; } // if some conditions need to be met before playing this structure then do them in this method. Return true if can be played
     public virtual List<Tag> getTags() { return new List<Tag>(); }
+    public virtual List<Keyword> getInitialKeywords() { return new List<Keyword>(); }
 
 
     // MUST BE OVERWRITTEN

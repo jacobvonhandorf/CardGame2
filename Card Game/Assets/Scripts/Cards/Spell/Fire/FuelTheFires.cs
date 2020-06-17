@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FuelTheFires : SpellCard, Effect, CanReceivePickedCards
 {
-    public static bool alreadyActivatedThisTurn = false;
+    //public static bool alreadyActivatedThisTurn = false;
 
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
@@ -27,24 +27,24 @@ public class FuelTheFires : SpellCard, Effect, CanReceivePickedCards
         owner.drawCard();
 
         // handle OPT stuff
-        alreadyActivatedThisTurn = true;
-        EffectActuator resetEffect = new EffectActuator();
-        resetEffect.effect = new ResetOPTRestriction();
-        GameManager.Get().beginningOfTurnEffectsList.Add(resetEffect);
+        //alreadyActivatedThisTurn = true;
+        //EffectActuator resetEffect = new EffectActuator();
+        //resetEffect.effect = new ResetOPTRestriction();
+        //GameManager.Get().beginningOfTurnEffectsList.Add(resetEffect);
     }
 
     private class ResetOPTRestriction : Effect
     {
         public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
         {
-            alreadyActivatedThisTurn = false;
+            //alreadyActivatedThisTurn = false;
         }
     }
 
     public override bool additionalCanBePlayedChecks()
     {
-        if (alreadyActivatedThisTurn)
-            return false;
+        //if (alreadyActivatedThisTurn)
+        //    return false;
         foreach (Creature c in GameManager.Get().getAllCreaturesControlledBy(owner))
         {
             if (c.hasTag(Tag.Arcane))

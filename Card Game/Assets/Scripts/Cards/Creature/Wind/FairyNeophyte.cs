@@ -38,4 +38,13 @@ public class FairyNeophyte : Creature
     {
         return 46;
     }
+
+    public override List<Keyword> getInitialKeywords()
+    {
+        return new List<Keyword>()
+        {
+            Keyword.deploy
+        };
+    }
+
 }

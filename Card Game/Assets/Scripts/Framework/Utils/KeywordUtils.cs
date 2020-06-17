@@ -1,28 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static Card;
 
 public static class KeywordUtils
 {
-    private static int getDefenderDamage(CardKeywords keyword)
+    private static int getDefenderDamage(Keyword keyword)
     {
-        switch (keyword)
-        {
-            case CardKeywords.Defender1:
-                return 1;
-            case CardKeywords.Defender2:
-                return 2;
-            case CardKeywords.Defender3:
-                return 3;
-            default:
-                return 0;
-        }
+        if (keyword == Keyword.defender1)
+            return 1;
+        else if (keyword == Keyword.defender2)
+            return 2;
+        else if (keyword == Keyword.defender3)
+            return 3;
+        else
+            return 0;
     }
     public static int getDefenderValue(Card c)
     {
         int defenderValue = 0;
-        foreach (CardKeywords k in c.getKeywords())
+        foreach (Keyword k in c.getKeywordList())
         {
             defenderValue += getDefenderDamage(k);
         }
