@@ -566,7 +566,8 @@ public abstract class Creature : MonoBehaviour, Damageable
         // if we get here then enough time has passed so tell cardviewers to display tooltips
         foreach (CardViewer viewer in sourceCard.viewersDisplayingThisCard)
         {
-            viewer.showToolTips(sourceCard.toolTipInfos);
+            if (viewer != null)
+                viewer.showToolTips(sourceCard.toolTipInfos);
         }
     }
     public virtual List<Keyword> getInitialKeywords() { return new List<Keyword>(); }

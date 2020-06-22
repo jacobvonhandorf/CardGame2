@@ -214,6 +214,12 @@ public class GameManager : MonoBehaviour
         return newCard;
     }
 
+    public void destroyCard(Card c)
+    {
+        Debug.Log("Destroy card not implemented yet");
+        // needs to sync card destruction if gameMode is online
+    }
+
     // GAME FLOW METHODS
     private void takeTurn()
     {

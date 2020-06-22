@@ -33,7 +33,8 @@ public class DeckBuilderCardName : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (DeckBuilderDeck.instance.hoveredCardViewer.sourceCard == sourceCard)
-            DeckBuilderDeck.instance.hoveredCardViewer.gameObject.SetActive(false);
+        if (DeckBuilderDeck.instance != null && DeckBuilderDeck.instance.hoveredCardViewer != null)
+            if (DeckBuilderDeck.instance.hoveredCardViewer.sourceCard == sourceCard)
+                DeckBuilderDeck.instance.hoveredCardViewer.gameObject.SetActive(false);
     }
 }
