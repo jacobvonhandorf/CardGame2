@@ -33,7 +33,7 @@ public class Ruby : SpellCard, CanReceivePickedCards
 
     private void doEffect()
     {
-        GameManager.Get().setUpSingleTileTargetEffect(new RubyEff(), owner, null, null, null, "Ruby's Effect");
+        GameManager.Get().setUpSingleTileTargetEffect(new RubyEff(), owner, null, null, null, "Ruby's Effect", false);
     }
 
     private class RubyEff : SingleTileTargetEffect

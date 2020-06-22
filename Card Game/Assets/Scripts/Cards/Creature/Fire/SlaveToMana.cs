@@ -13,6 +13,8 @@ public class SlaveToMana : Creature, OptionBoxHandler, SingleTileTargetEffect
     // SingleTileTargetEffect
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
+        sourceCard.moveToCardPile(sourceCard.owner.hand, true); // this is jank. Could cause errors in the future
+                                                                // for now it's to stop bugs because "play" bugs out if the card is in deck
         sourceCard.play(targetTile);
     }
     public bool canBeCancelled()
@@ -36,10 +38,7 @@ public class SlaveToMana : Creature, OptionBoxHandler, SingleTileTargetEffect
 
     public override void onAnySpellCast(SpellCard spell)
     {
-        Debug.Log("Creature on spell cast called");
-        Debug.Log("card pile " + sourceCard.getCardPile());
-        Debug.Log("num spells cast this turn " + sourceCard.owner.numSpellsCastThisTurn);
-        Debug.Log("effect triggered this turn " + effectTriggeredThisTurn);
+        Debug.Log("Spell cast #" + sourceCard.owner.numSpellsCastThisTurn);
         if (spell.owner == sourceCard.owner && sourceCard.getCardPile() is Deck && sourceCard.owner.numSpellsCastThisTurn == 3 && !effectTriggeredThisTurn)
         {
             Debug.Log("Inside if");
@@ -49,13 +48,12 @@ public class SlaveToMana : Creature, OptionBoxHandler, SingleTileTargetEffect
                 YES,
                 NO
             };
-            GameManager.Get().queueOptionSelectBoxEffect(options, this, "Would you like to play " + sourceCard.getCardName() + " from your deck?");
+            GameManager.Get().queueOptionSelectBoxEffect(options, this, "Would you like to play " + sourceCard.getCardName() + " from your deck?", false, sourceCard.owner);
         }
     }
 
-    public override void resetForNewTurn()
+    public override void onTurnStart()
     {
-        base.resetForNewTurn();
         effectTriggeredThisTurn = false;
     }
 
@@ -72,7 +70,7 @@ public class SlaveToMana : Creature, OptionBoxHandler, SingleTileTargetEffect
     {
         if (selectedOption == YES)
         {
-            GameManager.Get().setUpSingleTileTargetEffect(this, sourceCard.owner, null, this, null, sourceCard.getCardName() + "'s Effect");
+            GameManager.Get().setUpSingleTileTargetEffect(this, sourceCard.owner, null, this, null, sourceCard.getCardName() + "'s Effect", true);
         }
     }
 }

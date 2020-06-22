@@ -25,6 +25,7 @@ public class Rush : SpellCard
         {
             targetCreature.hasMovedThisTurn = false;
             targetCreature.hasDoneActionThisTurn = false;
+            targetCreature.updateHasActedIndicators();
             sourcePlayer.addActions(1);
         }
     }

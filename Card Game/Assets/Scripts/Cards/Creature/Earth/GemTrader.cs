@@ -18,7 +18,7 @@ public class GemTrader : Creature
     {
         CanReceivePickedCards receiver = new Receiver(controller);
         if (controller.hand.getAllCardsWithTag(Card.Tag.Gem).Count > 0)
-            GameManager.Get().queueCardPickerEffect(controller, controller.hand.getAllCardsWithTag(Card.Tag.Gem), receiver, 1, 1, "Select a Gem to discard");
+            GameManager.Get().queueCardPickerEffect(controller, controller.hand.getAllCardsWithTag(Card.Tag.Gem), receiver, 1, 1, false, "Select a Gem to discard");
     }
 
     private class Receiver : CanReceivePickedCards
@@ -34,7 +34,7 @@ public class GemTrader : Creature
         {
             foreach (Card c in cardList)
             {
-                c.moveToCardPile(controller.graveyard);
+                c.moveToCardPile(controller.graveyard, true);
             }
             foreach (Card c in controller.deck.getCardList())
             {
@@ -46,4 +46,13 @@ public class GemTrader : Creature
             }
         }
     }
+
+    public override List<Keyword> getInitialKeywords()
+    {
+        return new List<Keyword>()
+        {
+            Keyword.deploy
+        };
+    }
+
 }

@@ -13,7 +13,7 @@ public abstract class SpellCard : Card
     {
         GameManager.Get().onSpellCastEffects(this);
         getEffect().activate(owner, GameManager.Get().getOppositePlayer(owner), t, t, t.creature, t.creature);
-        moveToCardPile(owner.graveyard);
+        moveToCardPile(owner.graveyard, false);
         owner.hand.resetCardPositions();
         GameManager.Get().afterSpellCastEffects();
 
@@ -30,6 +30,11 @@ public abstract class SpellCard : Card
         return true;
     }
 
-    public virtual bool additionalCanBePlayedChecks() { return true; } // if some conditions need to be met before playing this spell then do them in this method. Return true if can be played
+    public override List<Keyword> getInitialKeywords()
+    {
+        return getSpellInitialKeywords();
+    }
 
+    public virtual bool additionalCanBePlayedChecks() { return true; } // if some conditions need to be met before playing this spell then do them in this method. Return true if can be played
+    public virtual List<Keyword> getSpellInitialKeywords() { return new List<Keyword>(); }
 }

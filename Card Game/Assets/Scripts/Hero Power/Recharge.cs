@@ -17,7 +17,7 @@ public class Recharge : HeroPower, CanReceivePickedCards, CanRecieveXPick
     {
         this.controller = controller;
 
-        GameManager.Get().queueXPickerEffect(this, "Select how much gold you want to spend. You must spend " + totalCost + " total between gold and mana", 0, totalCost);
+        GameManager.Get().queueXPickerEffect(this, "Select how much gold you want to spend. You must spend " + totalCost + " total between gold and mana", 0, totalCost, false, controller);
     }
 
     public bool canBeActivatedCheck(Player controller)
@@ -47,7 +47,7 @@ public class Recharge : HeroPower, CanReceivePickedCards, CanRecieveXPick
     {
         foreach (Card c in cardList)
         {
-            c.moveToCardPile(controller.deck);
+            c.moveToCardPile(controller.deck, true);
         }
         controller.deck.shuffle();
 
@@ -64,6 +64,6 @@ public class Recharge : HeroPower, CanReceivePickedCards, CanRecieveXPick
     {
         controller.addGold(-value);
         controller.addMana(-(totalCost - value));
-        GameManager.Get().queueCardPickerEffect(controller, controller.graveyard.getCardList(), this, cardsToShuffleBack, cardsToShuffleBack, "Select cards to shuffle back");
+        GameManager.Get().queueCardPickerEffect(controller, controller.graveyard.getCardList(), this, cardsToShuffleBack, cardsToShuffleBack, true, "Select cards to shuffle back");
     }
 }

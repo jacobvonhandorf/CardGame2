@@ -34,7 +34,7 @@ public class GemMercenaryCamp : Structure
                 return;
             }
 
-            GameManager.Get().queueCardPickerEffect(sourcePlayer, sourcePlayer.hand.getAllCardsWithTag(Card.Tag.Gem), new PickReceiver(targetTile, sourcePlayer), 1, 1, "Select a Gem card to discard");
+            GameManager.Get().queueCardPickerEffect(sourcePlayer, sourcePlayer.hand.getAllCardsWithTag(Card.Tag.Gem), new PickReceiver(targetTile, sourcePlayer), 1, 1, true , "Select a Gem card to discard");
         }
 
         private class PickReceiver : CanReceivePickedCards
@@ -51,7 +51,7 @@ public class GemMercenaryCamp : Structure
             public void receiveCardList(List<Card> cardList)
             {
                 foreach (Card c in cardList)
-                    c.moveToCardPile(sourcePlayer.graveyard);
+                    c.moveToCardPile(sourcePlayer.graveyard, false);
                 CreatureCard newCreature = GameManager.Get().createCardById(GemMercenary.CARD_ID, sourcePlayer) as CreatureCard;
                 GameManager.Get().createCreatureOnTile(newCreature.creature, targetTile, sourcePlayer, newCreature);
                 sourcePlayer.subtractActions(1);

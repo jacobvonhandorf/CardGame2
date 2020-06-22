@@ -62,6 +62,7 @@ public class MyButton : MonoBehaviour
 
     public void disable()
     {
+        setTextToUp();
         gameObject.SetActive(false);
     }
 }

@@ -33,6 +33,11 @@ public class Bazaar : Structure
     {
         public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
         {
+            if (sourcePlayer.GetActions() <= 0)
+            {
+                GameManager.Get().showToast("You do not have enough actions to use this structure");
+                return;
+            }
             sourcePlayer.addGold(1);
             sourcePlayer.addActions(-1);
         }

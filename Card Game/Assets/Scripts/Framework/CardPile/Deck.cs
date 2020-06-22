@@ -27,7 +27,7 @@ public class Deck : CardPile
             card.owner = deckOwner;
             //(card as CreatureCard).creature.owner = deckOwner; Creatures don't know owner anymore
             (card as CreatureCard).creature.controller = deckOwner;
-            card.moveToCardPile(this);
+            card.moveToCardPile(this, false);
         }
         foreach (Card card in GetComponentsInChildren<StructureCard>())
         {
@@ -35,13 +35,13 @@ public class Deck : CardPile
             (card as StructureCard).structure.owner = deckOwner;
             (card as StructureCard).structure.controller = deckOwner;
             addCard(card);
-            card.moveToCardPile(this);
+            card.moveToCardPile(this, false);
         }
         foreach (Card card in GetComponentsInChildren<SpellCard>())
         {
             card.owner = deckOwner;
             addCard(card);
-            card.moveToCardPile(this);
+            card.moveToCardPile(this, false);
         }
         shuffle();
     }
@@ -129,4 +129,8 @@ public class Deck : CardPile
         cardCountText.text = "0";
     }
 
+    protected override void onCardAddedByEffect(Card c)
+    {
+        Debug.Log("Card added to deck by effect. No trigger implemented for this yet");
+    }
 }

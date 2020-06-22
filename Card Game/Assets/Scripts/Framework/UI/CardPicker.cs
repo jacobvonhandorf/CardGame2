@@ -80,5 +80,6 @@ public class CardPicker : MonoBehaviour, CanReceiveCardPick
         cardListReceiver.receiveCardList(selectedCards);
         Destroy(gameObject);
         EffectsManager.Get().signalEffectFinished();
+        GameManager.Get().setPopUpGlassActive(false);
     }
 }

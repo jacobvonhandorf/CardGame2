@@ -4,10 +4,9 @@ using UnityEngine;
 
 public class VivianTheUntouchable : Creature
 {
-    private void Awake()
+    public override List<Keyword> getInitialKeywords()
     {
-        base.Awake();
-        addKeyword(Card.CardKeywords.Quick);
+        return new List<Keyword>() { Keyword.quick };
     }
 
     public override int getStartingRange()
@@ -24,8 +23,8 @@ public class VivianTheUntouchable : Creature
 
     public override void onCardAddedToHandByEffect()
     {
-        Debug.Log("Card added to hand by effect");
-        GameManager.Get().setUpSingleTileTargetEffect(new OnAddedToHandEffect(this), sourceCard.owner, null, this, null, "Select a tile to deploy Vivian");
+        Debug.Log("Card added to hand by effect with owner " + sourceCard.owner);
+        GameManager.Get().setUpSingleTileTargetEffect(new OnAddedToHandEffect(this), sourceCard.owner, null, this, null, "Select a tile to deploy Vivian", false);
     }
 
     public override int getCardId()
@@ -44,7 +43,7 @@ public class VivianTheUntouchable : Creature
 
         public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
         {
-            GameManager.Get().createCreatureOnTile(vivian, targetTile, sourcePlayer, vivian.sourceCard);
+            GameManager.Get().createCreatureOnTile(vivian, targetTile, vivian.sourceCard.owner, vivian.sourceCard);
         }
 
         public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)

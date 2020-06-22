@@ -38,4 +38,21 @@ public class BuildHelper : MonoBehaviour
         buildPlayerOptions.options = BuildOptions.EnableHeadlessMode;
         BuildPipeline.BuildPlayer(buildPlayerOptions);
     }
+
+    static void BuildWindowsClient()
+    {
+        BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
+        buildPlayerOptions.scenes = new[] 
+        {
+            "Assets/Scenes/" + ScenesEnum.MainMenu + ".unity",
+            "Assets/Scenes/" + ScenesEnum.HotSeatGameMode + ".unity",
+            "Assets/Scenes/" + ScenesEnum.MMDeckSelect + ".unity",
+            "Assets/Scenes/" + ScenesEnum.DeckBuilder + ".unity",
+        };
+        buildPlayerOptions.locationPathName = "Builds/WindowsClientBuild/cwclient.exe";
+        buildPlayerOptions.target = BuildTarget.StandaloneWindows64;
+        buildPlayerOptions.options = BuildOptions.ShowBuiltPlayer | BuildOptions.Development;
+        BuildPipeline.BuildPlayer(buildPlayerOptions);
+
+    }
 }

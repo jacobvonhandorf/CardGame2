@@ -47,7 +47,7 @@ public class CardPileViewer : MonoBehaviour
         //newPosition.y = ((-index / 5) * 86) - 107;
         newPosition.x = xPosOffset + (index % cardsPerRow) * xPosCoeff;
         newPosition.y = yPosOffset + (index / cardsPerRow) * yPosCoeff;
-        newPosition.z = -1; // -1 allows for them to be hovered/clicked
+        newPosition.z = -1.1f; // -1.1 allows for them to be hovered/clicked
 
         CardViewerForPiles newCardViewer = Instantiate(previewPrefab, transform).GetComponent<CardViewerForPiles>();
         newCardViewer.transform.localScale = newScale;

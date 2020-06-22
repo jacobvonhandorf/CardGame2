@@ -12,10 +12,10 @@ public class SpriteScroller : MonoBehaviour
     [SerializeField] private bool lockVertical;
     [SerializeField] private float scrollSpeed = .5f;
     [SerializeField] private float verticalScrollBarRatio = -2f;
+    [SerializeField] private BoxCollider2D myCollider;
     private Vector3 offset;
     private Vector3 restingPosition;
     private bool isBeingDragged;
-    private bool mouseOver;
     public float maxX = 1;
     public float maxY = 0;
     public float minX = -1;
@@ -70,25 +70,25 @@ public class SpriteScroller : MonoBehaviour
         isBeingDragged = false;
     }
 
-    private void OnMouseEnter()
+    private void Update()
     {
-        mouseOver = true;
-    }
-
-    private void OnMouseExit()
-    {
-        mouseOver = false;
-    }
-
-    private void OnGUI()
-    {
-        if (mouseOver && !lockVertical)
+        // save CPU
+        if (Input.mouseScrollDelta.y != 0)
         {
-            Vector3 newPosition = contentTransform.position;
-            newPosition.y = contentTransform.position.y + (Input.mouseScrollDelta.y * -scrollSpeed);
-            updateContentPosition(newPosition);
-            //contentTransform.position = newPosition;
+            if (!lockVertical)
+            {
+                // cast ray and if it hits spritescroller then do the scroll
+                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, Mathf.Infinity, LayerMaskEnum.ScrollView);
+                if (hit.collider == myCollider)
+                {
+                    Vector3 newPosition = contentTransform.position;
+                    newPosition.y = contentTransform.position.y + (Input.mouseScrollDelta.y * -scrollSpeed);
+                    updateContentPosition(newPosition);
+                }
+            }
         }
+
     }
 
     public void updateContentPosition(Vector3 position)

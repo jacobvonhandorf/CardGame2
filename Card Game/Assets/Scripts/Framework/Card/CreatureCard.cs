@@ -20,6 +20,8 @@ public class CreatureCard : Card
     public override void initialize()
     {
         creature.initialize();
+        foreach (Keyword k in getInitialKeywords())
+            addKeyword(k);
     }
 
     public override void play(Tile t)
@@ -72,6 +74,14 @@ public class CreatureCard : Card
 
         // resize
         creatureStatsScript.swapToCard(this);
+
+        // no longer a creature so forget the tile it's on
+        creature.currentTile = null;
+        // and remove it from allCreatures
+        GameManager.Get().allCreatures.Remove(creature);
+
+        // counters don't say on cards when they aren't creatures so clear them
+        counterCountroller.clearAll();
 
         isCreature = false;
     }
@@ -144,5 +154,10 @@ public class CreatureCard : Card
     public override int getCardId()
     {
         return creature.getCardId();
+    }
+
+    public override List<Keyword> getInitialKeywords()
+    {
+        return creature.getInitialKeywords();
     }
 }

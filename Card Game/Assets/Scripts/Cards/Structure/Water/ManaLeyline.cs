@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ManaLeyline : Structure
+public class ManaLeyline : Structure, Effect
 {
     public override bool canDeployFrom()
     {
@@ -33,12 +33,24 @@ public class ManaLeyline : Structure
 
     public override Effect getEffect()
     {
-        return null;
+        return this;
     }
 
     public override int getCardId()
     {
         return 30;
+    }
+
+    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
+    {
+        if (controller.GetActions() <= 0)
+        {
+            GameManager.Get().showToast("You do not have enough actions to use this ability");
+            return;
+        }
+
+        controller.addMana(1);
+        controller.subtractActions(1);
     }
 
     private class ManaLeylineEffect : Effect

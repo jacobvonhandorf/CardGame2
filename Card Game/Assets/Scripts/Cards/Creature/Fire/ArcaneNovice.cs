@@ -34,4 +34,13 @@ public class ArcaneNovice : Creature
     {
         return 64;
     }
+
+    public override List<Keyword> getInitialKeywords()
+    {
+        return new List<Keyword>()
+        {
+            Keyword.deploy
+        };
+    }
+
 }

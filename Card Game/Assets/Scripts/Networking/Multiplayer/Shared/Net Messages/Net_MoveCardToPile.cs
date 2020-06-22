@@ -1,5 +1,4 @@
-﻿
-[System.Serializable]
+﻿[System.Serializable]
 public class Net_MoveCardToPile : NetMsg
 {
     public Net_MoveCardToPile()
@@ -9,4 +8,5 @@ public class Net_MoveCardToPile : NetMsg
 
     public byte cpId { get; set; }
     public int cardId { get; set; }
+    public bool byEffect { get; set; }
 }

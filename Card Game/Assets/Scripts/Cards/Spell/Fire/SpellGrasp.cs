@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class SpellGrasp : SpellCard, CanReceivePickedCards, Effect
 {
-    public static bool alreadyActivatedThisTurn = false;
+    //public static bool alreadyActivatedThisTurn = false;
 
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
-        GameManager.Get().queueCardPickerEffect(sourcePlayer, owner.deck.getAllCardsWithTag(Tag.Arcane), this, 1, 1, "Select a card to add to your hand");
+        GameManager.Get().queueCardPickerEffect(sourcePlayer, owner.deck.getAllCardsWithTag(Tag.Arcane), this, 1, 1, false, "Select a card to add to your hand");
     }
 
     public override List<Tile> getLegalTargetTiles()
@@ -19,7 +19,8 @@ public class SpellGrasp : SpellCard, CanReceivePickedCards, Effect
     public void receiveCardList(List<Card> cardList)
     {
         Card c = cardList[0];
-        owner.hand.addCardByEffect(c);
+        //owner.hand.addCardByEffect(c);
+        c.moveToCardPile(owner.hand, true);
         foreach (Creature creature in GameManager.Get().getAllCreaturesControlledBy(owner))
         {
             if (creature.hasTag(Tag.Arcane))
@@ -30,17 +31,17 @@ public class SpellGrasp : SpellCard, CanReceivePickedCards, Effect
         }
 
         // handle OPT stuff
-        alreadyActivatedThisTurn = true;
-        EffectActuator resetEffect = new EffectActuator();
-        resetEffect.effect = new ResetOPTRestriction();
-        GameManager.Get().beginningOfTurnEffectsList.Add(resetEffect);
+      //  alreadyActivatedThisTurn = true;
+        //EffectActuator resetEffect = new EffectActuator();
+        //resetEffect.effect = new ResetOPTRestriction();
+        //GameManager.Get().beginningOfTurnEffectsList.Add(resetEffect);
     }
 
     private class ResetOPTRestriction : Effect
     {
         public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
         {
-            alreadyActivatedThisTurn = false;
+            //alreadyActivatedThisTurn = false;
         }
     }
 
@@ -49,10 +50,11 @@ public class SpellGrasp : SpellCard, CanReceivePickedCards, Effect
         return this;
     }
 
+    /*
     public override bool additionalCanBePlayedChecks()
     {
         return !alreadyActivatedThisTurn;
-    }
+    }*/
 
     public override int getCardId()
     {

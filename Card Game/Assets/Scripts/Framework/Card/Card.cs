@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public abstract class Card : MonoBehaviour
@@ -28,16 +29,8 @@ public abstract class Card : MonoBehaviour
         Fire = 0, Water = 1, Wind = 2, Earth = 3, Nuetral = 4 // numbered so cards can be sorted by element
     }
 
-    public enum CardKeywords
-    {
-        Quick, // Creature that can move and attack the same turn it is played
-        Defender1, // Deal damage equal to the # to attacker when attacked
-        Defender2, // Deal damage equal to the # to attacker when attacked
-        Defender3, // Deal damage equal to the # to attacker when attacked
-    }
-
     private List<Tag> tags = new List<Tag>();
-    private List<CardKeywords> keywords = new List<CardKeywords>();
+    //private List<CardKeywords> keywords = new List<CardKeywords>();
     private string cardName;
     [HideInInspector] private bool hidden = true; // if true then all players can see the card
     [SerializeField] protected CardPile currentCardPile; // card pile the card is currently in. Use moveToCardPile to change
@@ -60,6 +53,7 @@ public abstract class Card : MonoBehaviour
     protected TextMeshPro[] tmps; // all text objects for this card
 
     public List<CardViewer> viewersDisplayingThisCard;
+    public List<ToolTipInfo> toolTipInfos = new List<ToolTipInfo>();
 
     // Start is called before the first frame update
     protected virtual void Start()
@@ -106,16 +100,6 @@ public abstract class Card : MonoBehaviour
         return getCardType().Equals(type);
     }
 
-    public bool hasKeyword(CardKeywords keyword)
-    {
-        return keywords.Contains(keyword);
-    }
-
-    public void addKeyword(CardKeywords keyword)
-    {
-        keywords.Add(keyword);
-    }
-
     /*
      * makes it so this card is only visible if it normally is
      * ex: cards in deck will not be visible but cards in hand will be
@@ -156,19 +140,20 @@ public abstract class Card : MonoBehaviour
     }
 
     // move card to a pile and remove it from the old one
-    public void moveToCardPile(CardPile newPile)
+    public void moveToCardPile(CardPile newPile, bool byEffect)
     {
-        actualMove(newPile);
-        NetInterface.Get().syncMoveCardToPile(this, newPile);
+        actualMove(newPile, byEffect);
+        NetInterface.Get().syncMoveCardToPile(this, newPile, byEffect);
     }
 
-    public void syncCardMovement(CardPile newPile)
+    public void syncCardMovement(CardPile newPile, bool byEffect)
     {
-        actualMove(newPile);
+        actualMove(newPile, byEffect);
     }
 
-    private void actualMove(CardPile newPile)
+    private void actualMove(CardPile newPile, bool byEffect)
     {
+        Debug.Log("Move card by effect:" + byEffect);
         if (currentCardPile != null)
         {
             if (newPile == currentCardPile) // if we're already in the new pile then do nothing
@@ -176,7 +161,11 @@ public abstract class Card : MonoBehaviour
             currentCardPile.removeCard(this);
         }
         currentCardPile = newPile;
-        newPile.addCard(this);
+
+        if (byEffect)
+            newPile.addCardByEffect(this);
+        else
+            newPile.addCard(this);
     }
 
     public CardPile getCardPile()
@@ -184,6 +173,7 @@ public abstract class Card : MonoBehaviour
         return currentCardPile;
     }
 
+    private bool hovered = false;
     // when card becomse hovered show it in the main card preview
     private void OnMouseEnter()
     {
@@ -193,6 +183,9 @@ public abstract class Card : MonoBehaviour
         Vector3 oldPosition = positionInHand;
         Vector3 newPosition = new Vector3(oldPosition.x, oldPosition.y + hoverOffset, oldPosition.z);
         moveTo(newPosition, 10);
+
+        hovered = true;
+        StartCoroutine(checkHoverForTooltips());
     }
 
     private const float hoverOffset = .7f;
@@ -201,6 +194,9 @@ public abstract class Card : MonoBehaviour
     private void OnMouseExit()
     {
         moveTo(positionInHand, 10);
+        hovered = false;
+        foreach (CardViewer cv in viewersDisplayingThisCard)
+            cv.clearToolTips();
     }
 
     // methods for drag and drop
@@ -225,9 +221,12 @@ public abstract class Card : MonoBehaviour
         }
 
         setSpritesToSortingLayer(SpriteLayers.CardBeingDragged);
+        // clear tooltips
+        foreach (CardViewer cv in viewersDisplayingThisCard)
+        {
+            cv.clearToolTips();
+        }
     }
-
-
     void OnMouseDrag()
     {
         if (positionLocked || owner.locked)
@@ -235,10 +234,12 @@ public abstract class Card : MonoBehaviour
             Debug.Log("Card Position locked");
             return;
         }
+        if (!isBeingDragged) // if being dragged has been cancelled
+            return;
 
         Vector3 newPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, -1.0f);
         cardStatsScript.cardRoot.position = Camera.main.ScreenToWorldPoint(newPosition) + offset;
-        isBeingDragged = true;
+        //isBeingDragged = true;
         Tile aboveTile = getTileMouseIsOver();
         if (aboveTile != null)
         {
@@ -250,7 +251,6 @@ public abstract class Card : MonoBehaviour
         }
 
     }
-
     private void OnMouseUp()
     {
         if (owner.locked)
@@ -258,6 +258,8 @@ public abstract class Card : MonoBehaviour
             Debug.Log("Owner is locked");
             return;
         }
+        if (!isBeingDragged) // if drag was cancelled
+            return;
         isBeingDragged = false;
         setSpriteAlpha(1f);
         setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
@@ -304,6 +306,19 @@ public abstract class Card : MonoBehaviour
         GameManager.Get().setAllTilesToNotActive();
     }
 
+    private void cancelDrag()
+    {
+        Debug.Log("Cancel drag called");
+        if (owner.locked || !isBeingDragged)
+            return;
+        isBeingDragged = false;
+        setSpriteAlpha(1f);
+        setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
+        moveTo(positionInHand);
+        
+        GameManager.Get().setAllTilesToNotActive();
+    }
+
     // change the alpha for all sprites related to this card
     private void setSpriteAlpha(float value)
     {
@@ -330,7 +345,6 @@ public abstract class Card : MonoBehaviour
     }
 
     private const float smoothing = 9f; // speed at which cards snap into their place
-
     // methods for removing Card from scene by moving them way off screen
     // and for returning them to the scene afterwards
     public Vector3 positionOnScene;
@@ -362,7 +376,6 @@ public abstract class Card : MonoBehaviour
         getRootTransform().position = positionOnScene;
         onScene = true;
     }
-
     public bool isOnScene()
     {
         return onScene;
@@ -375,25 +388,21 @@ public abstract class Card : MonoBehaviour
         StopAllCoroutines();
         previousCoroutine =  StartCoroutine(moveToCoroutine(target, smoothing));
     }
-
     public void moveTo(Vector3 position)
     {
         StopAllCoroutines();
         StartCoroutine(moveToPositionCoroutine(position, smoothing));
     }
-    
     public void moveTo(Transform target, float speed)
     {
         StopAllCoroutines();
         StartCoroutine(moveToCoroutine(target, speed));
     }
-
     public void moveTo(Vector3 position, float speed)
     {
         StopAllCoroutines();
         StartCoroutine(moveToPositionCoroutine(position, speed));
     }
-
     private bool interuptMove = false; // only thing toggling this right now is removing/return graphics. Might need to refactor this if more things start affecting the card
     IEnumerator moveToCoroutine(Transform target, float speed)
     {
@@ -407,7 +416,6 @@ public abstract class Card : MonoBehaviour
             yield return null;
         }
     }
-
     IEnumerator moveToPositionCoroutine(Vector3 targetPosition, float speed)
     {
         if (interuptMove)
@@ -438,7 +446,6 @@ public abstract class Card : MonoBehaviour
             t.sortingLayerID = SortingLayer.NameToID(layer.Value);
         }
     }
-
     public void setSpritesToSortingLayer(SpriteLayers layer, int orderInLayer)
     {
         setSpritesToSortingLayer(layer);
@@ -457,7 +464,6 @@ public abstract class Card : MonoBehaviour
         // move background below all other sprites
         cardStatsScript.getBackgroundSprite().sortingOrder = orderInLayer - 2;
     }
-
     public void setSpriteMaskInteraction(SpriteMaskInteraction value)
     {
         foreach(SpriteRenderer sprite in sprites)
@@ -465,7 +471,6 @@ public abstract class Card : MonoBehaviour
             sprite.maskInteraction = value;
         }
     }
-
     public void setSpriteColor(Color color)
     {
         foreach (SpriteRenderer sprite in sprites)
@@ -503,7 +508,7 @@ public abstract class Card : MonoBehaviour
 
     public string getCardName()
     {
-        return cardName;
+        return cardStatsScript.getCardName();
     }
 
     public int getTotalCost()
@@ -550,9 +555,56 @@ public abstract class Card : MonoBehaviour
         goldCost = baseGoldCost;
         manaCost = baseManaCost;
     }
-    public ReadOnlyCollection<CardKeywords> getKeywords()
+
+    #region Keyword
+    private List<Keyword> keywordList = new List<Keyword>();
+    public void addKeyword(Keyword keyword)
     {
-        return keywords.AsReadOnly();
+        keywordList.Add(keyword);
+        toolTipInfos.Add(keyword.info);
+    }
+    public void removeKeyword(Keyword keyword)
+    {
+        keywordList.Remove(keyword);
+        toolTipInfos.Remove(keyword.info);
+    }
+    public bool hasKeyword(Keyword keyword)
+    {
+        return keywordList.Contains(keyword);
+    }
+    public ReadOnlyCollection<Keyword> getKeywordList()
+    {
+        return keywordList.AsReadOnly();
+    }
+    [SerializeField] private float hoverTimeForToolTips = .5f;
+    private float timePassed = 0;
+    IEnumerator checkHoverForTooltips()
+    {
+        while (timePassed < hoverTimeForToolTips)
+        {
+            timePassed += Time.deltaTime;
+            if (!hovered || isBeingDragged)
+                yield break;
+            else
+                yield return null;
+        }
+        timePassed = 0;
+        // if we get here then enough time has passed so tell cardviewers to display tooltips
+        foreach (CardViewer viewer in viewersDisplayingThisCard)
+        {
+            viewer.showToolTips(toolTipInfos);
+        }
+    }
+    public abstract List<Keyword> getInitialKeywords();
+    #endregion
+
+    private void Update()
+    {
+        if (isBeingDragged) // check here first to save CPU
+        {
+            if (Input.GetMouseButtonDown(1))
+                cancelDrag();
+        }
     }
 
     public ElementIdentity getElementIdentity() { return elementIdentity; }

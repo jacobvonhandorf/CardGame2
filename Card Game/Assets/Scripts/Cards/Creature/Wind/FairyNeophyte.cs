@@ -12,7 +12,7 @@ public class FairyNeophyte : Creature
 
     public override void onCreation()
     {
-        GameManager.Get().queueCardPickerEffect(controller, controller.hand.getAllCardsWithType(Card.CardType.Creature), new EffReceiver(), 1, 1, "Select a card to give +1/+1");
+        GameManager.Get().queueCardPickerEffect(controller, controller.hand.getAllCardsWithType(Card.CardType.Creature), new EffReceiver(), 1, 1, false , "Select a card to give +1/+1");
     }
 
     private class EffReceiver : CanReceivePickedCards
@@ -38,4 +38,13 @@ public class FairyNeophyte : Creature
     {
         return 46;
     }
+
+    public override List<Keyword> getInitialKeywords()
+    {
+        return new List<Keyword>()
+        {
+            Keyword.deploy
+        };
+    }
+
 }

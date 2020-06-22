@@ -16,7 +16,7 @@ public class Miner : Creature
 
     public override void onCreation()
     {
-        GameManager.Get().queueCardPickerEffect(controller, controller.deck.getAllCardsWithTag(Card.Tag.Gem), new ETBReceiver(controller), 1, 1, "Select a Gem to add to your hand");
+        GameManager.Get().queueCardPickerEffect(controller, controller.deck.getAllCardsWithTag(Card.Tag.Gem), new ETBReceiver(controller), 1, 1, false, "Select a Gem to add to your hand");
     }
 
     private class ETBReceiver : CanReceivePickedCards
@@ -36,4 +36,13 @@ public class Miner : Creature
             }
         }
     }
+
+    public override List<Keyword> getInitialKeywords()
+    {
+        return new List<Keyword>()
+        {
+            Keyword.deploy
+        };
+    }
+
 }

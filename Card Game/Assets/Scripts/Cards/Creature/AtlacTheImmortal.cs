@@ -18,10 +18,11 @@ public class AtlacTheImmortal : Creature
     {
         baseAttack += 3;
         baseHealth += 3;
-        resetToBaseStats();
+        setHealth(baseHealth);
+        setAttack(baseAttack);
 
         Debug.Log("Card pile when sent to grave " + sourceCard.getCardPile());
-        sourceCard.moveToCardPile(sourceCard.owner.deck);
+        sourceCard.moveToCardPile(sourceCard.owner.deck, true);
         sourceCard.owner.deck.shuffle();
     }
 }

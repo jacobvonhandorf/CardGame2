@@ -2,21 +2,71 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ArcaneGrandmaster : Creature
+public class ArcaneGrandmaster : Creature, SingleTileTargetEffect
 {
-    private const int effRange = 3;
-    private const int numCardsNeededForBonusDamage = 4;
+    //private const int effRange = 3;
+    //private const int numCardsNeededForBonusDamage = 4;
+
+    private const int FIRST_THRESHOLD = 3;
+    private const int SECOND_THRESHOLD = 6;
+    private const int THIRD_THRESHOLD = 10;
 
     public override int getStartingRange()
     {
         return 1;
     }
 
-    public override Effect getEffect()
+    public override int getCardId()
     {
-        return new Eff();
+        return 65;
     }
 
+    public override void onAnySpellCast(SpellCard spell)
+    {
+        // if is in hand and the spell was cast by the same owner
+        if (sourceCard.getCardPile() is Hand && spell.owner == sourceCard.owner)
+        {
+            addAttack(1);
+        }
+    }
+
+    public override void onCreation()
+    {
+        if (getAttack() >= FIRST_THRESHOLD)
+        {
+            List<Card> arcaneCards = controller.deck.getAllCardsWithTag(Card.Tag.Arcane);
+            int index = Random.Range(0, arcaneCards.Count);
+            arcaneCards[index].moveToCardPile(controller.hand, true);
+        }
+        if (getAttack() >= SECOND_THRESHOLD)
+        {
+            List<Card> arcaneCards = controller.deck.getAllCardsWithTag(Card.Tag.Arcane);
+            int index = Random.Range(0, arcaneCards.Count);
+            arcaneCards[index].moveToCardPile(controller.hand, true);
+        }
+        if (getAttack() >= THIRD_THRESHOLD)
+        {
+            if (GameManager.Get().getAllTilesWithCreatures(GameManager.Get().getOppositePlayer(controller)).Count > 0)
+                GameManager.Get().setUpSingleTileTargetEffect(this, controller, currentTile, this, null, "Select a creature to destroy", true);
+        }
+    }
+
+    public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
+    {
+        return GameManager.Get().getAllTilesWithCreatures(oppositePlayer);
+    }
+
+    public bool canBeCancelled()
+    {
+        return true;
+    }
+
+    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
+    {
+        GameManager.Get().destroyCreature(targetCreature);
+    }
+
+    /* old effect
     private class Eff : SingleTileTargetEffect
     {
         public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
@@ -61,10 +111,5 @@ public class ArcaneGrandmaster : Creature
         List<Card.Tag> tags = new List<Card.Tag>();
         tags.Add(Card.Tag.Arcane);
         return tags;
-    }
-
-    public override int getCardId()
-    {
-        return 65;
-    }
+    }*/
 }

@@ -24,6 +24,7 @@
     public const int SyncPermanentPlaced = 20;
     public const int SyncCountersPlaced = 21;
     public const int EndGame = 22;
+    public const int CheckVersion = 23;
 }
 
 [System.Serializable]

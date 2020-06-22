@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
@@ -39,7 +40,6 @@ public abstract class Creature : MonoBehaviour, Damageable
 
     protected void Awake()
     {
-        Debug.Log("Creature awake");
         counterController = sourceCard.getCounterController();
         if (!initialized)
             initialize();
@@ -97,6 +97,8 @@ public abstract class Creature : MonoBehaviour, Damageable
 
     public void takeDamage(int damage)
     {
+        if (damage == 0) // dealing 0 damage is illegal
+            return;
         GameManager.Get().showDamagedText(getRootTransform().position, damage);
         setHealthWithoutKilling(currentHealth - damage);
         onDamaged();
@@ -247,7 +249,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     }
 
     // if overriding this you must call the base class
-    public virtual void resetForNewTurn()
+    public void resetForNewTurn()
     {
         hasMovedThisTurn = false;
         hasDoneActionThisTurn = false;
@@ -255,13 +257,13 @@ public abstract class Creature : MonoBehaviour, Damageable
         updateHasActedIndicators();
         // update border
         updateFriendOrFoeBorder();
-    }
 
+        onTurnStart();
+    }
     public void addToCardViewer(CardViewer viewer)
     {
         statsScript.setCardViewer(viewer);
     }
-
     public void setSpriteColor(Color color)
     {
         sourceCard.setSpriteColor(color);
@@ -277,8 +279,9 @@ public abstract class Creature : MonoBehaviour, Damageable
         statsScript.swapToCard(sourceCard);
         setSpriteColor(Color.white); // reset sprite color in case card is greyed out
         resetToBaseStats();
-        sourceCard.owner.addCardToHandByEffect(sourceCard);
+        sourceCard.moveToCardPile(sourceCard.owner.hand, true);
         onLeavesTheField();
+        sourceCard.owner.hand.resetCardPositions();
     }
 
     void OnMouseUpAsButton()
@@ -342,9 +345,16 @@ public abstract class Creature : MonoBehaviour, Damageable
         }
     }
 
+    private bool hovered = false;
     private void OnMouseEnter()
     {
         statsScript.setCardViewer(GameManager.Get().getCardViewer());
+        hovered = true;
+        StartCoroutine(checkHoverForTooltips());
+    }
+    private void OnMouseExit()
+    {
+        hovered = false;
     }
 
     // if you want to kill a creature do not call this. Call destroy creature in game manager
@@ -352,7 +362,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     {
         sourceCard.isCreature = false;
         resetToBaseStats();
-        sourceCard.moveToCardPile(sourceCard.owner.graveyard);
+        sourceCard.moveToCardPile(sourceCard.owner.graveyard, false);
         sourceCard.removeGraphicsAndCollidersFromScene();
     }
 
@@ -428,16 +438,6 @@ public abstract class Creature : MonoBehaviour, Damageable
     public bool isType(CardType type)
     {
         return sourceCard.isType(type);
-    }
-
-    public bool hasKeyword(CardKeywords keyword)
-    {
-        return sourceCard.hasKeyword(keyword);
-    }
-
-    public void addKeyword(CardKeywords keyword)
-    {
-        sourceCard.addKeyword(keyword);
     }
 
     public Vector2 getCoordinates()
@@ -533,6 +533,46 @@ public abstract class Creature : MonoBehaviour, Damageable
             Debug.LogError("Trying to set counters to a value it's already set to. This shouldn't happen under normal circumstances");
     }
 
+    #region Keyword
+    public void addKeyword(Keyword k)
+    {
+        sourceCard.addKeyword(k);
+    }
+    public void removeKeyword(Keyword k)
+    {
+        sourceCard.removeKeyword(k);
+    }
+    public bool hasKeyword(Keyword k)
+    {
+        return sourceCard.hasKeyword(k);
+    }
+    public ReadOnlyCollection<Keyword> getKeywordList()
+    {
+        return sourceCard.getKeywordList();
+    }
+    [SerializeField] private float hoverTimeForToolTips = .5f;
+    private float timePassed = 0;
+    IEnumerator checkHoverForTooltips()
+    {
+        while (timePassed < hoverTimeForToolTips)
+        {
+            timePassed += Time.deltaTime;
+            if (!hovered)
+                yield break;
+            else
+                yield return null;
+        }
+        timePassed = 0;
+        // if we get here then enough time has passed so tell cardviewers to display tooltips
+        foreach (CardViewer viewer in sourceCard.viewersDisplayingThisCard)
+        {
+            if (viewer != null)
+                viewer.showToolTips(sourceCard.toolTipInfos);
+        }
+    }
+    public virtual List<Keyword> getInitialKeywords() { return new List<Keyword>(); }
+    #endregion
+
 
     // ABSTRACT METHODS
     public abstract int getStartingRange();
@@ -558,6 +598,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     public virtual void onAnyCreaturePlayed(Creature c) { }
     public virtual bool additionalCanBePlayedChecks() { return true; } // if some conditions need to be met before playing this creature then do them in this method. Return true if can be played
     public virtual void onAnySpellCast(SpellCard spell) { }
+    public virtual void onTurnStart() { }
     #endregion
 
 }

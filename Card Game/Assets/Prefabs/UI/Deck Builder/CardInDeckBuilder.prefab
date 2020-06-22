@@ -55,6 +55,7 @@ MonoBehaviour:
   waterColor: {r: 0.12941177, g: 0.5198772, b: 0.8509804, a: 1}
   minusButton: {fileID: 8714730382894109250}
   plusButton: {fileID: 8714730383511019386}
+  cardNameBox: {fileID: 8714730382811107865}
 --- !u!1 &8714730381846528520
 GameObject:
   m_ObjectHideFlags: 0
@@ -1096,6 +1097,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 264f6f508f290f54599876eeedf7e54e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sourceCard: {fileID: 0}
 --- !u!61 &8714730382811107864
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -10,13 +10,18 @@ public class LoadDeckPopUp : MonoBehaviour
 
     public void submit()
     {
-        gameObject.SetActive(false);
-        deckBuilderDeck.load(dropdown.options[dropdown.value].text);
+        // 0 is default value
+        if (dropdown.value != 0)
+        {
+            gameObject.SetActive(false);
+            deckBuilderDeck.load(dropdown.options[dropdown.value].text);
+        }
     }
 
     public void setup()
     {
         dropdown.ClearOptions();
+        dropdown.AddOptions(new List<string>() { "" });
         dropdown.AddOptions(DeckUtilities.getAllDeckNames());
         gameObject.SetActive(true);
     }

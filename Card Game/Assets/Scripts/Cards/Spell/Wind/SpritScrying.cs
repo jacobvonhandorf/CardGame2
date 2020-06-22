@@ -23,7 +23,7 @@ public class SpritScrying : SpellCard
     {
         public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
         {
-            GameManager.Get().queueCardPickerEffect(sourcePlayer, sourcePlayer.deck.getAllCardsWithTag(Tag.Fairy), new MyCardPickReceiver(sourcePlayer), 1, 1, "Select a card to add to hand");
+            GameManager.Get().queueCardPickerEffect(sourcePlayer, sourcePlayer.deck.getAllCardsWithTag(Tag.Fairy), new MyCardPickReceiver(sourcePlayer), 1, 1, false, "Select a card to add to hand");
         }
 
         private class MyCardPickReceiver : CanReceivePickedCards

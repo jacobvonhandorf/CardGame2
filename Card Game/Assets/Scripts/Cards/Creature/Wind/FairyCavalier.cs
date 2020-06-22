@@ -13,8 +13,7 @@ public class FairyCavalier : Creature
 
     public override void onCreation()
     {
-        Debug.Log("On creation called");
-        GameManager.Get().setUpSingleTileTargetEffect(new FairyCavalierEffect(), controller, currentTile, this, null, "Select a creature to return to bounce");
+        GameManager.Get().setUpSingleTileTargetEffect(new FairyCavalierEffect(), controller, currentTile, this, null, "Select a creature to return to bounce", false);
     }
 
     public override int getStartingRange()
@@ -49,4 +48,13 @@ public class FairyCavalier : Creature
             return false;
         }
     }
+
+    public override List<Keyword> getInitialKeywords()
+    {
+        return new List<Keyword>()
+        {
+            Keyword.deploy
+        };
+    }
+
 }

@@ -19,7 +19,7 @@ public class ShapeShifter : Creature
         List<string> options = new List<string>();
         options.Add("Attack");
         options.Add("Health");
-        GameManager.Get().queueOptionSelectBoxEffect(options, new MyOptionHandler(this), "Which stat to buff on " + cardName + "?");
+        //GameManager.Get().queueOptionSelectBoxEffect(options, new MyOptionHandler(this), "Which stat to buff on " + cardName + "?");
     }
 
     private class MyOptionHandler : OptionBoxHandler

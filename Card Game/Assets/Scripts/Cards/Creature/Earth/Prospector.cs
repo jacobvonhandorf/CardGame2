@@ -34,7 +34,7 @@ public class Prospector : Creature, CanReceivePickedCards
                 pickableCards.Add(c);
         }
         if (pickableCards.Count > 0)
-            GameManager.Get().queueCardPickerEffect(controller, pickableCards, this, 1, 1, "Select a Gem to add to your hand");
+            GameManager.Get().queueCardPickerEffect(controller, pickableCards, this, 1, 1, false,  "Select a Gem to add to your hand");
         else
             GameManager.Get().showToast("Prospector found no Gems");
     }

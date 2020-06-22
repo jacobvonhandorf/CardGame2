@@ -32,6 +32,8 @@ public class CardViewer : MonoBehaviour
     public SpriteRenderer background;
     public SpriteRenderer cardArt;
 
+    [SerializeField] private ToolTipBox toolTipPrefab;
+
     public void setMoveActive(bool active)
     {
         moveGameObject.SetActive(active);
@@ -79,5 +81,31 @@ public class CardViewer : MonoBehaviour
             sourceCard.removeFromCardViewer(this);
         c.addToCardViewer(this);
         sourceCard = c;
+    }
+
+    private List<ToolTipBox> toolTips = new List<ToolTipBox>();
+    private static Vector3 toolTipOffset = new Vector3(3.7f, 2.1f, 0);
+    //private static float toolTipTOffsetPerBox = 1.5f;
+    private static Vector3 toolTipTOffsetPerBox = new Vector3(0, 1.74f, 0);
+    public void showToolTips(IEnumerable<ToolTipInfo> toolTipInfos)
+    {
+        int i = 0;
+        foreach (ToolTipInfo info in toolTipInfos)
+        {
+            Vector3 position = toolTipOffset + (toolTipTOffsetPerBox * i);
+            ToolTipBox box = Instantiate(toolTipPrefab, transform);
+            box.transform.localPosition = position;
+            box.setup(info.headerText, info.descriptionText);
+            toolTips.Add(box);
+            i++;
+        }
+    }
+    public void clearToolTips()
+    {
+        foreach (ToolTipBox box in toolTips)
+        {
+            Destroy(box.gameObject);
+        }
+        toolTips.Clear();
     }
 }

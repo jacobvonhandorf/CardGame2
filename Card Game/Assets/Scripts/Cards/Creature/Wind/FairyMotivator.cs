@@ -29,4 +29,13 @@ public class FairyMotivator : Creature
     {
         return 48;
     }
+
+    public override List<Keyword> getInitialKeywords()
+    {
+        return new List<Keyword>()
+        {
+            Keyword.deploy
+        };
+    }
+
 }

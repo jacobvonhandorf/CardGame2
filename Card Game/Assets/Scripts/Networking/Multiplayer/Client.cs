@@ -28,7 +28,7 @@ public class Client : MonoBehaviour
 
     private bool isStarted = false;
 
-    void Start()
+    void Awake()
     {
         if (Instance != null)
             return;
@@ -131,7 +131,7 @@ public class Client : MonoBehaviour
                 break;
             case NetOP.MoveCardToPile:
                 Net_MoveCardToPile mctp = (Net_MoveCardToPile)msg;
-                NetInterface.Get().recieveMoveCardToPile(mctp.cardId, mctp.cpId);
+                NetInterface.Get().recieveMoveCardToPile(mctp.cardId, mctp.cpId, mctp.byEffect);
                 break;
             case NetOP.SyncDeckOrder:
                 Net_SyncDeckOrder sdo = (Net_SyncDeckOrder)msg;
@@ -170,6 +170,9 @@ public class Client : MonoBehaviour
                 break;
             case NetOP.EndGame:
                 NetInterface.Get().recieveEndGameMessage((Net_EndGame)msg);
+                break;
+            case NetOP.CheckVersion:
+                VersionChecker.instance.recieveMessage((Net_CheckVersion)msg);
                 break;
         }
     }
