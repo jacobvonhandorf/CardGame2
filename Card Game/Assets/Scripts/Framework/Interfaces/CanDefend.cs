@@ -9,4 +9,5 @@ public interface Damageable
     Transform getRootTransform();
     Vector2 getCoordinates();
     Card getSourceCard();
+    Player getController();
 }

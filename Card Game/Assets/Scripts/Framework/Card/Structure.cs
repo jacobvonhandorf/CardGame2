@@ -171,6 +171,11 @@ public abstract class Structure : MonoBehaviour, Damageable
         return new Vector2(tile.x, tile.y);
     }
 
+    public Player getController()
+    {
+        return controller;
+    }
+
     public void updateFriendOrFoeBorder()
     {
         if (GameManager.gameMode != GameManager.GameMode.online)

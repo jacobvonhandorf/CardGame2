@@ -13,6 +13,7 @@ public abstract class Keyword
     public static Keyword armored1 { get; } = new Armored1();
     public static Keyword anthem { get; } = new Anthem();
     public static Keyword deploy { get; } = new Deploy();
+    public static Keyword combatant { get; } = new Combatant();
 
     // map TODO
 
@@ -77,6 +78,13 @@ public abstract class Keyword
         public override string DescriptionText => "Deploy effects are activated when the creature enters the battlefield";
         public override string Name => "Deploy";
         public override int id => 8;
+        public override ToolTipInfo info => ToolTipInfo.getToolTipInfoFromKeyword(this);
+    }
+    private class Combatant : Keyword
+    {
+        public override string DescriptionText => "Combatant effects trigger when the creature attacks or defends";
+        public override string Name => "Combatant";
+        public override int id => 9;
         public override ToolTipInfo info => ToolTipInfo.getToolTipInfoFromKeyword(this);
     }
 

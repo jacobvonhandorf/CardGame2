@@ -128,8 +128,12 @@ public abstract class Creature : MonoBehaviour, Damageable
     private void AttackPart2(Damageable defender, int attackRoll)
     {
         // triggered effects methods
-        onAttack();
-        defender.onDefend();
+
+        // only trigger effects if the local player is the owner
+        if (NetInterface.Get().getLocalPlayer() == controller)
+            onAttack();
+        if (NetInterface.Get().getLocalPlayer() == defender.getController())
+            defender.onDefend();
 
         // perform damage calc
         defender.takeDamage(attackRoll); // do damage text in takeDamage()
@@ -444,7 +448,10 @@ public abstract class Creature : MonoBehaviour, Damageable
     {
         return new Vector2(currentTile.x, currentTile.y);
     }
-
+    public Player getController()
+    {
+        return controller;
+    }
     public void updateFriendOrFoeBorder()
     {
         if (GameManager.gameMode != GameManager.GameMode.online)
