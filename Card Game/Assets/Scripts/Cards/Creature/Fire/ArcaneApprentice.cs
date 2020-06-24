@@ -30,7 +30,7 @@ public class ArcaneApprentice : Creature, Effect, CanRecieveXPick
 
     public override void onAnySpellCast(SpellCard spell)
     {
-        if (spell.owner == controller)
+        if (sourceCard.isCreature && spell.owner == controller)
             addCounters(Counters.arcane, 1);
     }
 

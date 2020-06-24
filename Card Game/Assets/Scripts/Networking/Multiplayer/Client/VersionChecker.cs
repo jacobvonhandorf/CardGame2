@@ -6,10 +6,14 @@ public class VersionChecker : MonoBehaviour
 {
     public static VersionChecker instance;
 
+    private static bool alreadyRun = false;
+
     // Start is called before the first frame update
     void Start()
     {
-        // CardIdChecker.runAsStatic();
+        if (!alreadyRun)
+            //CardIdChecker.runAsStatic();
+        alreadyRun = true;
         return;
         instance = this;
         // send message to server asking for current version. Also put up a ui blocker.

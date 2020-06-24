@@ -10,6 +10,7 @@ public class ArcaneInfluence : SpellCard, Effect
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
         targetCreature.addCounters(Counters.arcane, NUM_COUNTERS);
+        sourcePlayer.drawCard();
     }
 
     public override int getCardId()

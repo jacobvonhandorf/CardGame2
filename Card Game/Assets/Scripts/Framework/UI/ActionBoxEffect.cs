@@ -18,6 +18,8 @@ public class ActionBoxEffect : MonoBehaviour
     {
         if (!creature.hasDoneActionThisTurn && creature.effectActionCost > 0)
             GameManager.Get().setUpCreatureEffect(creature);
+        else if (creature.effectActionCost == 0)
+            GameManager.Get().setUpCreatureEffect(creature);
         else
             GameManager.Get().showToast("This creature's action is unavailable");
         afterMoveBox.hide();

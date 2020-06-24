@@ -19,7 +19,6 @@ public class PowerMage : Creature, CanReceivePickedCards
     private List<Card> cardReferences = new List<Card>();
     public override void onCreation()
     {
-
         cardReferences.Add(GameManager.Get().createCardById(PowerDraw.CARD_ID, controller));
         cardReferences.Add(GameManager.Get().createCardById(PowerBlast.CARD_ID, controller));
         cardReferences.Add(GameManager.Get().createCardById(PowerBounce.CARD_ID, controller));
