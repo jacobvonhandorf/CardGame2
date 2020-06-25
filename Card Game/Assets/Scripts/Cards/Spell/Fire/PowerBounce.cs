@@ -21,7 +21,7 @@ public class PowerBounce : SpellCard, Effect, SingleTileTargetEffect
 
         // check again for legal targets
         // if there are then ask for second target
-        List<Tile> remainingTargetTiles = GameManager.Get().getAllTilesWithCreatures();
+        List<Tile> remainingTargetTiles = GameManager.Get().getAllTilesWithCreatures(false);
         if (remainingTargetTiles.Count > 0)
         {
             GameManager.Get().setUpSingleTileTargetEffect(this, sourcePlayer, null, null, null, "Select a second creature to bounce", true);
@@ -42,14 +42,14 @@ public class PowerBounce : SpellCard, Effect, SingleTileTargetEffect
 
         public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
         {
-            return GameManager.Get().getAllTilesWithCreatures();
+            return GameManager.Get().getAllTilesWithCreatures(false);
         }
     }
 
     // SpellCard
     public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
     {
-        return GameManager.Get().getAllTilesWithCreatures();
+        return GameManager.Get().getAllTilesWithCreatures(false);
     }
 
     public bool canBeCancelled()
@@ -65,7 +65,7 @@ public class PowerBounce : SpellCard, Effect, SingleTileTargetEffect
     // SingleTileTargetEffect
     public override List<Tile> getLegalTargetTiles()
     {
-        return GameManager.Get().getAllTilesWithCreatures();
+        return GameManager.Get().getAllTilesWithCreatures(false);
     }
 
     protected override Effect getEffect()

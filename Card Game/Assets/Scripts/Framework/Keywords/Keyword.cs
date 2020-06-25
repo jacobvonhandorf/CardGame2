@@ -14,6 +14,8 @@ public abstract class Keyword
     public static Keyword anthem { get; } = new Anthem();
     public static Keyword deploy { get; } = new Deploy();
     public static Keyword combatant { get; } = new Combatant();
+    public static Keyword lastBreath { get; } = new LastBreath();
+    public static Keyword untargetable { get; } = new Untargetable();
 
     // map TODO
 
@@ -26,28 +28,28 @@ public abstract class Keyword
     // keyword data
     private class Quick : Keyword
     {
-        public override string DescriptionText => "This creature can move and act the turn it is played.";
+        public override string DescriptionText => "This creature can move and act the turn it is played";
         public override string Name => "Quick";
         public override int id => 1;
         public override ToolTipInfo info => ToolTipInfo.getToolTipInfoFromKeyword(this);
     }
     private class Defender1 : Keyword
     {
-        public override string DescriptionText => "When this creature is attacked deal 1 damage to the attacker.";
+        public override string DescriptionText => "When this creature is attacked deal 1 damage to the attacker";
         public override string Name => "Defender 1";
         public override int id => 2;
         public override ToolTipInfo info => ToolTipInfo.getToolTipInfoFromKeyword(this);
     }
     private class Defender2 : Keyword
     {
-        public override string DescriptionText => "When this creature is attacked deal 2 damage to the attacker.";
+        public override string DescriptionText => "When this creature is attacked deal 2 damage to the attacker";
         public override string Name => "Defender 2";
         public override int id => 3;
         public override ToolTipInfo info => ToolTipInfo.getToolTipInfoFromKeyword(this);
     }
     private class Defender3 : Keyword
     {
-        public override string DescriptionText => "When this creature is attacked deal 3 damage to the attacker.";
+        public override string DescriptionText => "When this creature is attacked deal 3 damage to the attacker";
         public override string Name => "Defender 3";
         public override int id => 4;
         public override ToolTipInfo info => ToolTipInfo.getToolTipInfoFromKeyword(this);
@@ -61,7 +63,7 @@ public abstract class Keyword
     }
     private class Armored1 : Keyword
     {
-        public override string DescriptionText => "Damage dealt to this creature is reduced by one.";
+        public override string DescriptionText => "Damage dealt to this creature is reduced by one";
         public override string Name => "Armored";
         public override int id => 6;
         public override ToolTipInfo info => ToolTipInfo.getToolTipInfoFromKeyword(this);
@@ -82,10 +84,23 @@ public abstract class Keyword
     }
     private class Combatant : Keyword
     {
-        public override string DescriptionText => "Combatant effects trigger when the creature attacks or defends";
+        public override string DescriptionText => "Combatant effects activate when the creature attacks or defends";
         public override string Name => "Combatant";
         public override int id => 9;
         public override ToolTipInfo info => ToolTipInfo.getToolTipInfoFromKeyword(this);
     }
-
+    private class LastBreath : Keyword
+    {
+        public override string DescriptionText => "Last breath effect activate when the creature dies";
+        public override string Name => "Last Breath";
+        public override int id => 10;
+        public override ToolTipInfo info => ToolTipInfo.getToolTipInfoFromKeyword(this);
+    }
+    private class Untargetable : Keyword
+    {
+        public override string DescriptionText => "Cannot be the target of spells or abilities your opponent controls";
+        public override string Name => "Untargetable";
+        public override int id => 11;
+        public override ToolTipInfo info => ToolTipInfo.getToolTipInfoFromKeyword(this);
+    }
 }

@@ -97,8 +97,32 @@ public abstract class Creature : MonoBehaviour, Damageable
 
     public void takeDamage(int damage)
     {
-        if (damage == 0) // dealing 0 damage is illegal
+        if (damage == 0) // dealing 0 damage is illegal :)
             return;
+
+        // check for ward on adjacent allies
+        List<Tile> adjacentTiles = currentTile.getAdjacentTiles();
+        foreach(Tile t in adjacentTiles)
+        {
+            if (t.creature != null && t.creature.hasKeyword(Keyword.ward))
+            {
+                t.creature.takeWardDamage(damage);
+            }
+        }
+
+        // subtract armored damage
+        if (hasKeyword(Keyword.armored1))
+            damage--;
+        takeDamageActual(damage);
+    }
+    public void takeWardDamage(int damage)
+    {
+        if (hasKeyword(Keyword.armored1))
+            damage--;
+        takeDamageActual(damage);
+    }
+    private void takeDamageActual(int damage)
+    {
         GameManager.Get().showDamagedText(getRootTransform().position, damage);
         setHealthWithoutKilling(currentHealth - damage);
         onDamaged();

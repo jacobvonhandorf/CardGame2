@@ -11,7 +11,7 @@ public class BounceTheCard : SpellCard
 
     public override List<Tile> getLegalTargetTiles()
     {
-        return GameManager.Get().getAllTilesWithCreatures();
+        return GameManager.Get().getAllTilesWithCreatures(false);
     }
 
     protected override Effect getEffect()
