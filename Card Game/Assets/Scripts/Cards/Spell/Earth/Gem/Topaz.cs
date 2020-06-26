@@ -21,11 +21,8 @@ public class Topaz : SpellCard
 
     public override void onCardAddedByEffect()
     {
-        if (owner.graveyard.getAllCardsWithTag(Tag.Gem).Count > 0)
-        {
-            owner.addGold(1);
-            owner.addMana(1);
-        }
+        owner.addGold(1);
+        owner.addMana(1);
     }
 
     protected override List<Tag> getTags()

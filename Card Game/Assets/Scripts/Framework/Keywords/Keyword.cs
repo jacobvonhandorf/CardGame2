@@ -16,6 +16,7 @@ public abstract class Keyword
     public static Keyword combatant { get; } = new Combatant();
     public static Keyword lastBreath { get; } = new LastBreath();
     public static Keyword untargetable { get; } = new Untargetable();
+    public static Keyword poison { get; } = new Poison();
 
     // map TODO
 
@@ -101,6 +102,13 @@ public abstract class Keyword
         public override string DescriptionText => "Cannot be the target of spells or abilities your opponent controls";
         public override string Name => "Untargetable";
         public override int id => 11;
+        public override ToolTipInfo info => ToolTipInfo.getToolTipInfoFromKeyword(this);
+    }
+    private class Poison : Keyword
+    {
+        public override string DescriptionText => "After combat with a creature destroy that creature";
+        public override string Name => "Poison";
+        public override int id => 12;
         public override ToolTipInfo info => ToolTipInfo.getToolTipInfoFromKeyword(this);
     }
 }

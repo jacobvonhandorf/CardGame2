@@ -28,6 +28,7 @@ MonoBehaviour:
   controller: {fileID: 0}
   hasMovedThisTurn: 0
   hasDoneActionThisTurn: 0
+  hoverTimeForToolTips: 0.5
 --- !u!1001 &4297647884978024484
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -103,8 +104,10 @@ PrefabInstance:
     - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
         type: 3}
       propertyPath: m_text
-      value: <b>Deploy:</b> If there is a Gem card in your graveyard gain 1 attack.
-        If there are 3 or more gems in your graveyard gain 1 more attack.
+      value: '<b>Deploy:</b> If there is a Gem in your hand gain 1 attack. If there
+        are 3 or more Gems in your hand gain 1 more attack.
+
+        <b>Defender 1</b>'
       objectReference: {fileID: 0}
     - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
         type: 3}
@@ -119,12 +122,12 @@ PrefabInstance:
     - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 129
+      value: 125
       objectReference: {fileID: 0}
     - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
         type: 3}
       propertyPath: m_textInfo.wordCount
-      value: 27
+      value: 28
       objectReference: {fileID: 0}
     - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
         type: 3}
@@ -139,7 +142,7 @@ PrefabInstance:
     - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
         type: 3}
       propertyPath: m_textInfo.spaceCount
-      value: 26
+      value: 27
       objectReference: {fileID: 0}
     - target: {fileID: 6226373338916091508, guid: 54dd3f0ca07c104429e52ed9eb04601e,
         type: 3}

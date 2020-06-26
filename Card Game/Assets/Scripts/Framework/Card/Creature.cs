@@ -165,6 +165,11 @@ public abstract class Creature : MonoBehaviour, Damageable
 
         // gray out creature to show it has already acted
         updateHasActedIndicators();
+
+        // trigger after combat stuff
+        // poison
+        if (hasKeyword(Keyword.poison) && defender.getSourceCard() is CreatureCard)
+            GameManager.Get().destroyCreature((defender.getSourceCard() as CreatureCard).creature);
     }
     private IEnumerator attackAnimation(Damageable defender, int attackRoll)
     {

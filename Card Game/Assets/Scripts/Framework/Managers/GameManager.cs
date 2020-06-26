@@ -897,6 +897,7 @@ public class GameManager : MonoBehaviour
     {
         return board.getAllTilesWithStructures(controller);
     }
+    
     public List<Creature> getAllCreaturesControlledBy(Player controller)
     {
         List<Creature> creatureList = new List<Creature>();

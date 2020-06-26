@@ -31,7 +31,7 @@ PrefabInstance:
     - target: {fileID: 7420118472789478337, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_Name
-      value: Obsidian
+      value: Obsidian Variant
       objectReference: {fileID: 0}
     - target: {fileID: 7420118472789478342, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
@@ -88,26 +88,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+    - target: {fileID: 3229681692039047396, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: ba1431e8181b1b14a90ba49f05e54020,
         type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+    - target: {fileID: 2612218924776104405, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 114d470b1141f8549947a5c5fa3bd869,
         type: 3}
-      propertyPath: m_textInfo.pageCount
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2348075572656073411, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -132,6 +124,56 @@ PrefabInstance:
         type: 3}
       propertyPath: m_text
       value: Obsidian
+      objectReference: {fileID: 0}
+    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_text
+      value: Gem
+      objectReference: {fileID: 0}
+    - target: {fileID: 7420118473026751562, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
@@ -164,53 +206,17 @@ PrefabInstance:
       value: When this card is added to your hand deal 1 damage to target creature
         and draw a card.
       objectReference: {fileID: 0}
-    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_text
-      value: Gem
-      objectReference: {fileID: 0}
-    - target: {fileID: 3229681692039047396, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: ba1431e8181b1b14a90ba49f05e54020,
-        type: 3}
-    - target: {fileID: 7420118473026751562, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8421197355409777506, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 521682469348668848, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 7004244579710857612, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8421197355409777506, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_Mesh
       value: 

@@ -89,6 +89,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4916738532956115654, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+        type: 3}
+      propertyPath: structure
+      value: 
+      objectReference: {fileID: 2144139754}
     - target: {fileID: 578105159723268065, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -99,36 +104,37 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 1.181
       objectReference: {fileID: 0}
-    - target: {fileID: 4916738532956115654, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: structure
-      value: 
-      objectReference: {fileID: 2144139754}
-    - target: {fileID: 7077602755901041962, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.characterCount
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7077602755901041962, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.wordCount
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7077602755901041962, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.lineCount
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7077602755901041962, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.pageCount
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7077602755901041962, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_text
-      value: 2
+      value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 4907878052653917893, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: ba1431e8181b1b14a90ba49f05e54020,
+        type: 3}
     - target: {fileID: 5213023479865107682, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -169,41 +175,30 @@ PrefabInstance:
       propertyPath: m_fontSizeBase
       value: 2.5
       objectReference: {fileID: 0}
-    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: m_text
-      value: 'Action, discard a Gem card: Create a 2/1 Gem Mercenary on a tile adjacent
-        to this structure'
-      objectReference: {fileID: 0}
-    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: m_fontColor32.rgba
-      value: 4278190080
-      objectReference: {fileID: 0}
-    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 7077602755901041962, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 91
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 7077602755901041962, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.wordCount
-      value: 18
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 7077602755901041962, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.lineCount
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 7077602755901041962, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.pageCount
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 7077602755901041962, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
-      propertyPath: m_textInfo.spaceCount
-      value: 16
+      propertyPath: m_text
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7791933331743768713, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
@@ -225,41 +220,41 @@ PrefabInstance:
       propertyPath: m_textInfo.pageCount
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 4907878052653917893, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: ba1431e8181b1b14a90ba49f05e54020,
+      propertyPath: m_text
+      value: 'Action, shuffle a gem card from your hand into your deck: Create a 2/2
+        Gem Mercenary on a tile adjacent to this structure'
+      objectReference: {fileID: 0}
+    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
-    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+      propertyPath: m_fontColor32.rgba
+      value: 4278190080
+      objectReference: {fileID: 0}
+    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 1
+      value: 121
       objectReference: {fileID: 0}
-    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.wordCount
-      value: 1
+      value: 24
       objectReference: {fileID: 0}
-    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.lineCount
-      value: 1
+      value: 4
       objectReference: {fileID: 0}
-    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.pageCount
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
-      propertyPath: m_text
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 719019182562246573, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
+      propertyPath: m_textInfo.spaceCount
+      value: 22
       objectReference: {fileID: 0}
     - target: {fileID: 8066800186961034129, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
@@ -267,6 +262,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 2022240573173673283, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 719019182562246573, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_Mesh
       value: 

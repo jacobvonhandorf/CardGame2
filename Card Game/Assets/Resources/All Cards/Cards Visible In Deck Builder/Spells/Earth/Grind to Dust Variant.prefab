@@ -20,6 +20,7 @@ MonoBehaviour:
   cardStatsScript: {fileID: 6242481299623934871}
   viewersDisplayingThisCard: []
   positionOnScene: {x: 0, y: 0, z: 0}
+  hoverTimeForToolTips: 0.5
 --- !u!1001 &8083222054034761802
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -176,22 +177,22 @@ PrefabInstance:
     - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 94
+      value: 72
       objectReference: {fileID: 0}
     - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_textInfo.spaceCount
-      value: 16
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_textInfo.wordCount
-      value: 17
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_textInfo.lineCount
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
@@ -201,8 +202,7 @@ PrefabInstance:
     - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_text
-      value: Deal damage to target non engineer creature equal to the number of Gem
-        cards in your graveyard
+      value: Deal damage to target creature equal to the number of Gems in your hand.
       objectReference: {fileID: 0}
     - target: {fileID: 521682469348668848, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
