@@ -8,12 +8,17 @@ public class LoadDeckPopUp : MonoBehaviour
     [SerializeField] private TMP_Dropdown dropdown;
     [SerializeField] private DeckBuilderDeck deckBuilderDeck;
 
+    private void Start()
+    {
+        setup();
+    }
+
     public void submit()
     {
         // 0 is default value
         if (dropdown.value != 0)
         {
-            gameObject.SetActive(false);
+            //gameObject.SetActive(false);
             deckBuilderDeck.load(dropdown.options[dropdown.value].text);
         }
     }

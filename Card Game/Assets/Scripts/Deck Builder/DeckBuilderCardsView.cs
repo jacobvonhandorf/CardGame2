@@ -16,6 +16,10 @@ public class DeckBuilderCardsView : MonoBehaviour
     private List<CardViewerForDeckBuilder> cardViewers;
     public CardFilterObject filter;
 
+    private Dictionary<int, Card> cardIdMap = new Dictionary<int, Card>();
+
+    public static DeckBuilderCardsView instance;
+
     private void Awake()
     {
         // get a list of all cards that need to be displayed
@@ -27,6 +31,7 @@ public class DeckBuilderCardsView : MonoBehaviour
         cardList.AddRange(allCards);
         setup(allCards);
         filter = new CardFilterObject();
+        instance = this;
     }
 
     public float xOffset = -10f;
@@ -78,9 +83,10 @@ public class DeckBuilderCardsView : MonoBehaviour
             Card newCard = newGameObject.GetComponentInChildren<Card>();
             if (newCard == null)
             {
-                Debug.Log(newGameObject + " had no Card component");
+                Debug.LogError(newGameObject + " had no Card component");
                 continue;
             }
+            cardIdMap.Add(newCard.getCardId(), newCard);
             newCard.removeGraphicsAndCollidersFromScene();
             returnList.Add(newCard);
         }
@@ -88,6 +94,11 @@ public class DeckBuilderCardsView : MonoBehaviour
         Debug.Log("Loaded all cards in " + (endTime - startTime) + " ms");
 
         return returnList;
+    }
+
+    public Card getCardById(int id)
+    {
+        return cardIdMap[id];
     }
 
     private List<Card> filterCards(CardFilterObject filter)
