@@ -36,7 +36,8 @@ public class CardViewer : MonoBehaviour
 
     private void OnDestroy()
     {
-        sourceCard.removeFromCardViewer(this);
+        if (sourceCard != null)
+            sourceCard.removeFromCardViewer(this);
     }
 
     public void setMoveActive(bool active)
@@ -96,18 +97,22 @@ public class CardViewer : MonoBehaviour
     {
         showToolTips(sourceCard.toolTipInfos);
     }
-    public void showToolTips(IEnumerable<ToolTipInfo> toolTipInfos)
+    public void showToolTips(List<ToolTipInfo> toolTipInfos)
     {
+        //For some reason (probably Unity being bad) log statements in here break things, so don't do that
         int i = 0;
         foreach (ToolTipInfo info in toolTipInfos)
         {
+            
             Vector3 position = toolTipOffset + (toolTipTOffsetPerBox * i);
             ToolTipBox box = Instantiate(toolTipPrefab, transform);
             box.transform.localPosition = position;
             box.setup(info.headerText, info.descriptionText);
             toolTips.Add(box);
             i++;
+            
         }
+        
     }
     public void clearToolTips()
     {

@@ -217,7 +217,7 @@ public class GameManager : MonoBehaviour
     public void destroyCard(Card c)
     {
         Debug.Log("Destroy card not implemented yet");
-        Destroy(c.getRootTransform());
+        Destroy(c.getRootTransform().gameObject);
         // needs to sync card destruction if gameMode is online
     }
 
@@ -585,7 +585,7 @@ public class GameManager : MonoBehaviour
 
         // place structure in correct location
         Vector3 newPosition = tile.transform.position;
-        newPosition.z = 0;
+        newPosition.z = 1;
         structure.getRootTransform().position = newPosition;
 
         // parent structure to board

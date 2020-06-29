@@ -344,6 +344,7 @@ public abstract class Card : MonoBehaviour
         return null;
     }
 
+    #region MovingGrapgicsMethods
     private const float smoothing = 9f; // speed at which cards snap into their place
     // methods for removing Card from scene by moving them way off screen
     // and for returning them to the scene afterwards
@@ -428,6 +429,7 @@ public abstract class Card : MonoBehaviour
             yield return null;
         }
     }
+    #endregion
 
     public Transform getRootTransform()
     {
@@ -499,7 +501,6 @@ public abstract class Card : MonoBehaviour
             return false;
         return true;
     }
-
     private void payCosts(Player player)
     {
         player.addGold(-goldCost);
@@ -510,17 +511,14 @@ public abstract class Card : MonoBehaviour
     {
         return cardStatsScript.getCardName();
     }
-
     public int getTotalCost()
     {
         return manaCost + goldCost;
     }
-
     public string getEffectText()
     {
         return cardStatsScript.getEffectText();
     }
-
     public int getGoldCost() { return goldCost; }
     public int getManaCost() { return manaCost; }
     public int getBaseGoldCost() { return baseGoldCost; }
@@ -584,16 +582,21 @@ public abstract class Card : MonoBehaviour
         {
             timePassed += Time.deltaTime;
             if (!hovered || isBeingDragged)
+            {
+                timePassed = 0;
                 yield break;
+            }
             else
                 yield return null;
         }
         timePassed = 0;
+        
         // if we get here then enough time has passed so tell cardviewers to display tooltips
         foreach (CardViewer viewer in viewersDisplayingThisCard)
         {
             viewer.showToolTips(toolTipInfos);
         }
+        yield return null;
     }
     public abstract List<Keyword> getInitialKeywords();
     #endregion

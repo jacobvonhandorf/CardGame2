@@ -95,6 +95,7 @@ public abstract class Creature : MonoBehaviour, Damageable
             counterController.clearAll();
     }
 
+    #region takeDamageAndAttacking
     public void takeDamage(int damage)
     {
         if (damage == 0) // dealing 0 damage is illegal :)
@@ -107,6 +108,7 @@ public abstract class Creature : MonoBehaviour, Damageable
             if (t.creature != null && t.creature.hasKeyword(Keyword.ward))
             {
                 t.creature.takeWardDamage(damage);
+                return;
             }
         }
 
@@ -129,7 +131,6 @@ public abstract class Creature : MonoBehaviour, Damageable
         if (currentHealth <= 0)
             GameManager.Get().destroyCreature(this);
     }
-
     private Vector3 right = new Vector3(-180, -90, -90);
     private Vector3 left = new Vector3(-180, 90, -90);
     private Vector3 up = new Vector3(-90, 0, 0);
@@ -214,7 +215,6 @@ public abstract class Creature : MonoBehaviour, Damageable
         // back to normal script
         AttackPart2(defender, attackRoll);
     }
-
     public int getAttackRoll()
     {
         int dieRoll = UnityEngine.Random.Range(0, 6);
@@ -227,7 +227,9 @@ public abstract class Creature : MonoBehaviour, Damageable
             return attack + 1;
         else return attack;
     }
+    #endregion
 
+    #region moving
     // Use to move a creature to a tile by an effect
     public void forceMove(Tile tile)
     {
@@ -271,6 +273,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         Vector2 tileCoordinates = tile.transform.position;
         statsScript.cardRoot.position = tileCoordinates;
     }
+    #endregion
 
     public void updateHasActedIndicators()
     {
@@ -381,13 +384,16 @@ public abstract class Creature : MonoBehaviour, Damageable
     private bool hovered = false;
     private void OnMouseEnter()
     {
-        statsScript.setCardViewer(GameManager.Get().getCardViewer());
+        sourceCard.addToCardViewer(GameManager.Get().getCardViewer());
+        //statsScript.setCardViewer(GameManager.Get().getCardViewer());
         hovered = true;
         StartCoroutine(checkHoverForTooltips());
     }
     private void OnMouseExit()
     {
         hovered = false;
+        foreach (CardViewer cv in sourceCard.viewersDisplayingThisCard)
+            cv.clearToolTips();
     }
 
     // if you want to kill a creature do not call this. Call destroy creature in game manager
@@ -401,6 +407,7 @@ public abstract class Creature : MonoBehaviour, Damageable
 
     public Transform getRootTransform() => statsScript.cardRoot;
 
+    #region basicStatsGettersAndSetters
     // health
     public int getHealth()
     {
@@ -456,6 +463,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     {
         return movement;
     }
+    #endregion
 
     /*
      * Returns true if this card has the the tag passed to this method
@@ -522,6 +530,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         if (needToSync && NetInterface.Get().gameSetupComplete)
         {
             NetInterface.Get().syncCreatureStats(this);
+            updateCardViewers();
             needToSync = false;
         }
     }
@@ -539,6 +548,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         }
     }
 
+    #region Counters
     public void addCounters(CounterClass counterType, int amount)
     {
         counterController.addCounters(counterType, amount);
@@ -568,8 +578,9 @@ public abstract class Creature : MonoBehaviour, Damageable
         else
             Debug.LogError("Trying to set counters to a value it's already set to. This shouldn't happen under normal circumstances");
     }
+    #endregion
 
-    #region Keyword
+    #region KeywordAndToolTips
     public void addKeyword(Keyword k)
     {
         sourceCard.addKeyword(k);
@@ -600,10 +611,15 @@ public abstract class Creature : MonoBehaviour, Damageable
         }
         timePassed = 0;
         // if we get here then enough time has passed so tell cardviewers to display tooltips
+        //Debug.Log("Telling viewers to show tooltips: " + sourceCard.viewersDisplayingThisCard.Count);
         foreach (CardViewer viewer in sourceCard.viewersDisplayingThisCard)
         {
+            //Debug.Log("in foreach viewer");
             if (viewer != null)
+            {
+                //Debug.Log("Viewer is not null");
                 viewer.showToolTips(sourceCard.toolTipInfos);
+            }
         }
     }
     public virtual List<Keyword> getInitialKeywords() { return new List<Keyword>(); }

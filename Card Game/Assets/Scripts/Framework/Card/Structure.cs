@@ -121,9 +121,44 @@ public abstract class Structure : MonoBehaviour, Damageable
         GameManager.Get().setUpStructureEffect(this);
     }
 
+    private bool hovered = false;
     private void OnMouseEnter()
     {
-        GameManager.Get().getCardViewer().setCard(sourceCard);
+        hovered = true;
+        sourceCard.addToCardViewer(GameManager.Get().getCardViewer());
+        StartCoroutine(checkHoverForTooltips());
+    }
+    private void OnMouseExit()
+    {
+        hovered = false;
+        foreach (CardViewer cv in sourceCard.viewersDisplayingThisCard)
+            cv.clearToolTips();
+
+    }
+    [SerializeField] private float hoverTimeForToolTips = .5f;
+    private float timePassed = 0;
+    IEnumerator checkHoverForTooltips()
+    {
+        while (timePassed < hoverTimeForToolTips)
+        {
+            timePassed += Time.deltaTime;
+            if (!hovered)
+                yield break;
+            else
+                yield return null;
+        }
+        timePassed = 0;
+        // if we get here then enough time has passed so tell cardviewers to display tooltips
+        //Debug.Log("Telling viewers to show tooltips: " + sourceCard.viewersDisplayingThisCard.Count);
+        foreach (CardViewer viewer in sourceCard.viewersDisplayingThisCard)
+        {
+            //Debug.Log("in foreach viewer");
+            if (viewer != null)
+            {
+                //Debug.Log("Viewer is not null");
+                viewer.showToolTips(sourceCard.toolTipInfos);
+            }
+        }
     }
 
     // used when instantiating from resources. Do not touch otherwise
