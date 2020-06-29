@@ -8,6 +8,9 @@ public class LoadDeckPopUp : MonoBehaviour
     [SerializeField] private TMP_Dropdown dropdown;
     [SerializeField] private DeckBuilderDeck deckBuilderDeck;
 
+    private string previousDeck1 = null;
+    private string previousDeck2 = null;
+
     private void Start()
     {
         setup();
@@ -19,7 +22,10 @@ public class LoadDeckPopUp : MonoBehaviour
         if (dropdown.value != 0)
         {
             //gameObject.SetActive(false);
-            deckBuilderDeck.load(dropdown.options[dropdown.value].text);
+            //deckBuilderDeck.load(dropdown.options[dropdown.value].text);
+            deckBuilderDeck.loadWithSavedChangesCheck(dropdown.options[dropdown.value].text);
+            previousDeck2 = previousDeck1;
+            previousDeck1 = dropdown.options[dropdown.value].text;
         }
     }
 
@@ -29,5 +35,25 @@ public class LoadDeckPopUp : MonoBehaviour
         dropdown.AddOptions(new List<string>() { "" });
         dropdown.AddOptions(DeckUtilities.getAllDeckNames());
         gameObject.SetActive(true);
+    }
+
+    public void setToValue(string value)
+    {
+        int index = 0;
+        foreach (TMP_Dropdown.OptionData option in dropdown.options)
+        {
+            if (option.text == value)
+            {
+                dropdown.SetValueWithoutNotify(index);
+                break;
+            }
+            index++;
+        }
+
+    }
+
+    public void setToPreviousValue()
+    {
+        setToValue(previousDeck2);
     }
 }

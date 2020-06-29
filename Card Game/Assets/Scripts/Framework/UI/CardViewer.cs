@@ -80,7 +80,7 @@ public class CardViewer : MonoBehaviour
         cardArt.sprite = newSprite;
     }
 
-    public void setCard(Card c)
+    public virtual void setCard(Card c)
     {
         if (sourceCard != null)
             sourceCard.removeFromCardViewer(this);
@@ -92,6 +92,10 @@ public class CardViewer : MonoBehaviour
     private static Vector3 toolTipOffset = new Vector3(3.7f, 2.1f, 0);
     //private static float toolTipTOffsetPerBox = 1.5f;
     private static Vector3 toolTipTOffsetPerBox = new Vector3(0, -1.74f, 0);
+    public void showToolTips()
+    {
+        showToolTips(sourceCard.toolTipInfos);
+    }
     public void showToolTips(IEnumerable<ToolTipInfo> toolTipInfos)
     {
         int i = 0;
