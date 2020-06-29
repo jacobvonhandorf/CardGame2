@@ -217,6 +217,7 @@ public class GameManager : MonoBehaviour
     public void destroyCard(Card c)
     {
         Debug.Log("Destroy card not implemented yet");
+        Destroy(c.getRootTransform());
         // needs to sync card destruction if gameMode is online
     }
 
@@ -455,7 +456,7 @@ public class GameManager : MonoBehaviour
         }
 
         // remove tiles that are already occupied
-        returnList = returnList.Except(getAllTilesWithCreatures()).ToList();
+        returnList = returnList.Except(getAllTilesWithCreatures(true)).ToList();
         returnList = returnList.Except(getAllTilesWithStructures()).ToList();
 
         return returnList;
@@ -476,7 +477,7 @@ public class GameManager : MonoBehaviour
 
         // remove all invalid tiles
         returnList = returnList.Except(invalidTiles).ToList();
-        returnList = returnList.Except(getAllTilesWithCreatures()).ToList();
+        returnList = returnList.Except(getAllTilesWithCreatures(true)).ToList();
         returnList = returnList.Except(board.getAllTilesOnRow(3)).ToList();
         returnList = returnList.Except(board.getAllTilesOnRow(4)).ToList();
 
@@ -880,13 +881,13 @@ public class GameManager : MonoBehaviour
         return returnList;
     }
 
-    public List<Tile> getAllTilesWithCreatures()
+    public List<Tile> getAllTilesWithCreatures(bool includeUntargetable)
     {
-        return board.getAllTilesWithCreatures();
+        return board.getAllTilesWithCreatures(includeUntargetable);
     }
-    public List<Tile> getAllTilesWithCreatures(Player controller)
+    public List<Tile> getAllTilesWithCreatures(Player controller, bool includeUntargetable)
     {
-        return board.getAllTilesWithCreatures(controller);
+        return board.getAllTilesWithCreatures(controller, includeUntargetable);
     }
     public List<Tile> getAllTilesWithStructures()
     {
@@ -896,6 +897,7 @@ public class GameManager : MonoBehaviour
     {
         return board.getAllTilesWithStructures(controller);
     }
+    
     public List<Creature> getAllCreaturesControlledBy(Player controller)
     {
         List<Creature> creatureList = new List<Creature>();
@@ -912,7 +914,7 @@ public class GameManager : MonoBehaviour
     public void playerHasDrawnOutDeck(Player player)
     {
         Debug.Log(player.name + " has drawn out of cards");
-        showToast("Someone is out of card and this hasn't been coded yet :)");
+        showToast("Someone is out of cards and this hasn't been coded yet :)");
     }
 
     public void showEndGamePopup(string message)

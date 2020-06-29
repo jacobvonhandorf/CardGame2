@@ -24,7 +24,11 @@ public class Engineer : Creature
 
     public override List<Keyword> getInitialKeywords()
     {
-        return new List<Keyword>() { Keyword.quick };
+        return new List<Keyword>()
+        {
+            Keyword.quick,
+            Keyword.untargetable
+        };
     }
 
     private class EngineerEffect : SingleTileTargetEffect

@@ -168,7 +168,7 @@ public class Board : MonoBehaviour
         return tileArray[x, y];
     }
 
-    public List<Tile> getAllTilesWithCreatures(Player controller)
+    public List<Tile> getAllTilesWithCreatures(Player controller, bool includeUntargetable)
     {
         List<Tile> returnList = new List<Tile>();
 
@@ -181,14 +181,25 @@ public class Board : MonoBehaviour
         return returnList;
     }
 
-    public List<Tile> getAllTilesWithCreatures()
+    public List<Tile> getAllTilesWithCreatures(bool includeUntargetable)
     {
         List<Tile> returnList = new List<Tile>();
 
-        foreach (Tile t in allTiles)
+        if (includeUntargetable)
         {
-            if (t.creature != null)
-                returnList.Add(t);
+            foreach (Tile t in allTiles)
+            {
+                if (t.creature != null)
+                    returnList.Add(t);
+            }
+        }
+        else
+        {
+            foreach (Tile t in allTiles)
+            {
+                if (t.creature != null && !t.creature.hasKeyword(Keyword.untargetable))
+                    returnList.Add(t);
+            }
         }
 
         return returnList;

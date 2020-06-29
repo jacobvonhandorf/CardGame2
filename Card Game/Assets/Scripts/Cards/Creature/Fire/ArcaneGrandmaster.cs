@@ -21,6 +21,11 @@ public class ArcaneGrandmaster : Creature, SingleTileTargetEffect
         return 65;
     }
 
+    public override List<Keyword> getInitialKeywords()
+    {
+        return new List<Keyword>() { Keyword.deploy };
+    }
+
     public override void onAnySpellCast(SpellCard spell)
     {
         // if is in hand and the spell was cast by the same owner

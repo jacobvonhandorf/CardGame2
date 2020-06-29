@@ -41,7 +41,8 @@ public class Miner : Creature
     {
         return new List<Keyword>()
         {
-            Keyword.deploy
+            Keyword.deploy,
+            Keyword.armored1
         };
     }
 

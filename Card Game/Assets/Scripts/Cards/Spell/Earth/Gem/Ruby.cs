@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Ruby : SpellCard, CanReceivePickedCards
+public class Ruby : SpellCard
 {
     public override List<Tile> getLegalTargetTiles()
     {
@@ -51,19 +51,7 @@ public class Ruby : SpellCard, CanReceivePickedCards
 
         public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
         {
-            List<Tile> pickableTiles = new List<Tile>();
-            foreach (Creature c in GameManager.Get().getAllCreaturesControlledBy(sourcePlayer))
-                pickableTiles.Add(c.currentTile);
-            return pickableTiles;
-        }
-    }
-
-    public void receiveCardList(List<Card> cardList)
-    {
-        foreach (Card c in cardList)
-        {
-            (c as CreatureCard).creature.addAttack(1);
-            (c as CreatureCard).creature.addHealth(1);
+            return GameManager.Get().getAllTilesWithCreatures(sourcePlayer, true);
         }
     }
 

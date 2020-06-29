@@ -16,6 +16,11 @@ public class DeckBuilderCardsView : MonoBehaviour
     private List<CardViewerForDeckBuilder> cardViewers;
     public CardFilterObject filter;
 
+    private Dictionary<int, Card> cardIdMap = new Dictionary<int, Card>();
+    private Dictionary<Card, CardViewerForDeckBuilder> cardToViewerMap = new Dictionary<Card, CardViewerForDeckBuilder>();
+
+    public static DeckBuilderCardsView instance;
+
     private void Awake()
     {
         // get a list of all cards that need to be displayed
@@ -27,6 +32,7 @@ public class DeckBuilderCardsView : MonoBehaviour
         cardList.AddRange(allCards);
         setup(allCards);
         filter = new CardFilterObject();
+        instance = this;
     }
 
     public float xOffset = -10f;
@@ -50,6 +56,8 @@ public class DeckBuilderCardsView : MonoBehaviour
                 cardViewer = Instantiate(cardViewerPrefab, contentTransform);
             cardViewer.setCard(c);
             cardViewer.deckBeingBuilt = deck;
+            if (!cardToViewerMap.ContainsKey(c))
+                cardToViewerMap.Add(c, cardViewer);
             Vector3 newPosition = new Vector3(xOffset + (index % 5) * xCoeff, yOffset + yCoeff * (index / 5), -1);
             cardViewer.transform.localPosition = newPosition;
             if (!cardViewers.Contains(cardViewer))
@@ -61,9 +69,9 @@ public class DeckBuilderCardsView : MonoBehaviour
         for (; index < cardViewers.Count; index++)
             cardViewers[index].gameObject.SetActive(false);
 
-        scroller.maxY = (index / 5) * scrollerCoeff + scrollerOffset;
+        scroller.maxY = ((index - 4) / 5) * scrollerCoeff + scrollerOffset;
         Debug.Log(scroller.minY);
-        scroller.updateContentPosition(new Vector3(-999, -999, 0));
+        scroller.updateContentPosition(new Vector3(-999, -999, 0)); // move scroller to the top
     }
 
     private List<Card> getAllCardsFromResources()
@@ -78,9 +86,10 @@ public class DeckBuilderCardsView : MonoBehaviour
             Card newCard = newGameObject.GetComponentInChildren<Card>();
             if (newCard == null)
             {
-                Debug.Log(newGameObject + " had no Card component");
+                Debug.LogError(newGameObject + " had no Card component");
                 continue;
             }
+            cardIdMap.Add(newCard.getCardId(), newCard);
             newCard.removeGraphicsAndCollidersFromScene();
             returnList.Add(newCard);
         }
@@ -88,6 +97,20 @@ public class DeckBuilderCardsView : MonoBehaviour
         Debug.Log("Loaded all cards in " + (endTime - startTime) + " ms");
 
         return returnList;
+    }
+
+    public Card getCardById(int id)
+    {
+        return cardIdMap[id];
+    }
+
+    public void notifyAddCard(Card card)
+    {
+        cardToViewerMap[card].incrementCountText();
+    }
+    public void notifyRemoveCard(Card card)
+    {
+        cardToViewerMap[card].decrementCountText();
     }
 
     private List<Card> filterCards(CardFilterObject filter)

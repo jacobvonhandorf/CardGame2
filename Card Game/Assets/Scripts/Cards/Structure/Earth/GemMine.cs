@@ -44,6 +44,15 @@ public class GemMine : Structure, Effect
             return;
         }
 
+        List<Card> gemCards = controller.deck.getAllCardsWithTag(Card.Tag.Gem);
+        if (gemCards.Count > 0)
+            gemCards[Random.Range(0, gemCards.Count)].moveToCardPile(controller.hand, true);
+        else
+        {
+            GameManager.Get().showToast("No gems left in deck");
+            return;
+        }
+        /*
         foreach (Card c in controller.deck.getCardList())
         {
             if (c.hasTag(Card.Tag.Gem))
@@ -51,8 +60,16 @@ public class GemMine : Structure, Effect
                 controller.hand.addCardByEffect(c);
                 break;
             }
-        }
+        }*/
         removeCounters(Counters.mine, 1);
         controller.subtractActions(1);
+    }
+
+    public override List<Keyword> getInitialKeywords()
+    {
+        return new List<Keyword>()
+        {
+            Keyword.deploy
+        };
     }
 }

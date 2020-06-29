@@ -1,15 +1,15 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &7930223574982954797
+--- !u!114 &503821004
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6690369316325815470}
+  m_GameObject: {fileID: 5743377494747094760}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b810cd46bf193dc4ebfff49e07c860cb, type: 3}
+  m_Script: {fileID: 11500000, guid: b4135325367580343969f68905b18676, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   currentCardPile: {fileID: 0}
@@ -17,11 +17,11 @@ MonoBehaviour:
   isBeingDragged: 0
   positionLocked: 0
   positionInHand: {x: 0, y: 0, z: 0}
-  cardStatsScript: {fileID: 6242481299623934871}
+  cardStatsScript: {fileID: 5029917968327250385}
   viewersDisplayingThisCard: []
   positionOnScene: {x: 0, y: 0, z: 0}
   hoverTimeForToolTips: 0.5
---- !u!1001 &8083222054034761802
+--- !u!1001 &7152063333053628940
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -31,17 +31,17 @@ PrefabInstance:
     - target: {fileID: 7420118472789478337, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_Name
-      value: Grind to Dust Variant
+      value: Obsidian Variant
       objectReference: {fileID: 0}
     - target: {fileID: 7420118472789478342, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -17.11
+      value: 34.48
       objectReference: {fileID: 0}
     - target: {fileID: 7420118472789478342, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 5.05
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7420118472789478342, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
@@ -88,26 +88,27 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6974876129696856512, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 0.96
-      objectReference: {fileID: 0}
     - target: {fileID: 3229681692039047396, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: ba1431e8181b1b14a90ba49f05e54020,
         type: 3}
+    - target: {fileID: 2612218924776104405, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 114d470b1141f8549947a5c5fa3bd869,
+        type: 3}
     - target: {fileID: 2348075572656073411, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 13
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 2348075572656073411, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_textInfo.wordCount
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2348075572656073411, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
@@ -122,72 +123,72 @@ PrefabInstance:
     - target: {fileID: 2348075572656073411, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_text
-      value: Grind to Dust
+      value: Obsidian
       objectReference: {fileID: 0}
-    - target: {fileID: 2348075572656073411, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_text
+      value: Gem
+      objectReference: {fileID: 0}
+    - target: {fileID: 7420118473026751562, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 86
+      objectReference: {fileID: 0}
+    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_textInfo.spaceCount
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_text
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 72
-      objectReference: {fileID: 0}
-    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.spaceCount
-      value: 13
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_textInfo.wordCount
-      value: 14
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
@@ -202,7 +203,8 @@ PrefabInstance:
     - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_text
-      value: Deal damage to target creature equal to the number of Gems in your hand.
+      value: When this card is added to your hand deal 1 damage to target creature
+        and draw a card.
       objectReference: {fileID: 0}
     - target: {fileID: 521682469348668848, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
@@ -226,17 +228,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f30ba095c2be8fa4bbb42c9caddb391c, type: 3}
---- !u!1 &6690369316325815470 stripped
+--- !u!1 &5743377494747094760 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3239681133580754148, guid: f30ba095c2be8fa4bbb42c9caddb391c,
     type: 3}
-  m_PrefabInstance: {fileID: 8083222054034761802}
+  m_PrefabInstance: {fileID: 7152063333053628940}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6242481299623934871 stripped
+--- !u!114 &5029917968327250385 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2777841409611404253, guid: f30ba095c2be8fa4bbb42c9caddb391c,
     type: 3}
-  m_PrefabInstance: {fileID: 8083222054034761802}
+  m_PrefabInstance: {fileID: 7152063333053628940}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
   m_Enabled: 1

@@ -79,7 +79,7 @@ public class SpriteScroller : MonoBehaviour
             {
                 // cast ray and if it hits spritescroller then do the scroll
                 Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, Mathf.Infinity, LayerMaskEnum.ScrollView);
+                RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, Mathf.Infinity, LayerMaskEnum.ScrollView | LayerMaskEnum.UI);
                 if (hit.collider == myCollider)
                 {
                     Vector3 newPosition = contentTransform.position;

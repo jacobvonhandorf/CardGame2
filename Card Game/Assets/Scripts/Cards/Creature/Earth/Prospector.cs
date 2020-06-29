@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Prospector : Creature, CanReceivePickedCards
+public class Prospector : Creature
 {
     public override int getCardId()
     {
@@ -14,6 +14,44 @@ public class Prospector : Creature, CanReceivePickedCards
         return 1;
     }
 
+    public override void onCreation()
+    {
+        shuffleObsidianIntoDeck();
+    }
+
+    public override void onAttack()
+    {
+        shuffleObsidianIntoDeck();
+    }
+
+    public override void onDefend()
+    {
+        shuffleObsidianIntoDeck();
+    }
+
+    public override List<Keyword> getInitialKeywords()
+    {
+        return new List<Keyword>()
+        {
+            Keyword.deploy,
+            Keyword.combatant
+        };
+    }
+
+    private void shuffleObsidianIntoDeck()
+    {
+        //create obsidian
+        Card obsidian = GameManager.Get().createCardById(Obsidian.CARD_ID, controller);
+
+        // add to deck
+        obsidian.moveToCardPile(controller.deck, true);
+
+        // shuffle deck
+        controller.deck.shuffle();
+    }
+
+
+    /* old code
     public override void onAttack()
     {
         List<Card> deckList = controller.deck.getCardList();
@@ -46,4 +84,6 @@ public class Prospector : Creature, CanReceivePickedCards
             controller.hand.addCardByEffect(c);
         }
     }
+    */
+
 }

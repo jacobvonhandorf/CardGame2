@@ -51,7 +51,10 @@ public class GemMercenaryCamp : Structure
             public void receiveCardList(List<Card> cardList)
             {
                 foreach (Card c in cardList)
-                    c.moveToCardPile(sourcePlayer.graveyard, false);
+                {
+                    c.moveToCardPile(sourcePlayer.deck, true);
+                    sourcePlayer.deck.shuffle();
+                }
                 CreatureCard newCreature = GameManager.Get().createCardById(GemMercenary.CARD_ID, sourcePlayer) as CreatureCard;
                 GameManager.Get().createCreatureOnTile(newCreature.creature, targetTile, sourcePlayer, newCreature);
                 sourcePlayer.subtractActions(1);

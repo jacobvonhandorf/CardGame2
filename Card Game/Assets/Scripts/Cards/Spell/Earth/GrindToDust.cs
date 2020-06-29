@@ -11,9 +11,7 @@ public class GrindToDust : SpellCard
 
     public override List<Tile> getLegalTargetTiles()
     {
-        List<Tile> returnList = GameManager.Get().getAllTilesWithCreatures(GameManager.Get().getOppositePlayer(owner));
-        returnList.RemoveAll(t => t.creature.sourceCard.getCardName().Equals("Engineer"));
-        return returnList;
+        return GameManager.Get().getAllTilesWithCreatures(GameManager.Get().getOppositePlayer(owner), false);
     }
 
     protected override Effect getEffect()
@@ -25,7 +23,7 @@ public class GrindToDust : SpellCard
     {
         public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
         {
-            targetCreature.takeDamage(sourcePlayer.graveyard.getAllCardsWithTag(Tag.Gem).Count);
+            targetCreature.takeDamage(sourcePlayer.hand.getAllCardsWithTag(Tag.Gem).Count);
         }
     }
 }

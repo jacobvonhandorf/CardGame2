@@ -97,8 +97,32 @@ public abstract class Creature : MonoBehaviour, Damageable
 
     public void takeDamage(int damage)
     {
-        if (damage == 0) // dealing 0 damage is illegal
+        if (damage == 0) // dealing 0 damage is illegal :)
             return;
+
+        // check for ward on adjacent allies
+        List<Tile> adjacentTiles = currentTile.getAdjacentTiles();
+        foreach(Tile t in adjacentTiles)
+        {
+            if (t.creature != null && t.creature.hasKeyword(Keyword.ward))
+            {
+                t.creature.takeWardDamage(damage);
+            }
+        }
+
+        // subtract armored damage
+        if (hasKeyword(Keyword.armored1))
+            damage--;
+        takeDamageActual(damage);
+    }
+    public void takeWardDamage(int damage)
+    {
+        if (hasKeyword(Keyword.armored1))
+            damage--;
+        takeDamageActual(damage);
+    }
+    private void takeDamageActual(int damage)
+    {
         GameManager.Get().showDamagedText(getRootTransform().position, damage);
         setHealthWithoutKilling(currentHealth - damage);
         onDamaged();
@@ -128,8 +152,12 @@ public abstract class Creature : MonoBehaviour, Damageable
     private void AttackPart2(Damageable defender, int attackRoll)
     {
         // triggered effects methods
-        onAttack();
-        defender.onDefend();
+
+        // only trigger effects if the local player is the owner
+        if (NetInterface.Get().getLocalPlayer() == controller)
+            onAttack();
+        if (NetInterface.Get().getLocalPlayer() == defender.getController())
+            defender.onDefend();
 
         // perform damage calc
         defender.takeDamage(attackRoll); // do damage text in takeDamage()
@@ -137,6 +165,11 @@ public abstract class Creature : MonoBehaviour, Damageable
 
         // gray out creature to show it has already acted
         updateHasActedIndicators();
+
+        // trigger after combat stuff
+        // poison
+        if (hasKeyword(Keyword.poison) && defender.getSourceCard() is CreatureCard)
+            GameManager.Get().destroyCreature((defender.getSourceCard() as CreatureCard).creature);
     }
     private IEnumerator attackAnimation(Damageable defender, int attackRoll)
     {
@@ -444,7 +477,10 @@ public abstract class Creature : MonoBehaviour, Damageable
     {
         return new Vector2(currentTile.x, currentTile.y);
     }
-
+    public Player getController()
+    {
+        return controller;
+    }
     public void updateFriendOrFoeBorder()
     {
         if (GameManager.gameMode != GameManager.GameMode.online)

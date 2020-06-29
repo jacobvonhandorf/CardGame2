@@ -20,6 +20,7 @@ public class MMDeckSelectScene : MonoBehaviour
         setInteractable(false);
 
         string deckName = deckSelectDropdown.options[deckSelectDropdown.value].text;
+        PlayerPrefs.SetString(PlayerPrefEnum.mostRecentDeckName, deckName);
         NetInterface.Get().selectedDeckName = deckName;
         Client.Instance.enterMMPool();
     }

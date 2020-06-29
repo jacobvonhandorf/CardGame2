@@ -17,11 +17,15 @@ public class DeckBuilderDeck : MonoBehaviour
     [SerializeField] private TextMeshPro cardCountText;
     [SerializeField] private TMP_InputField deckNameField;
     [SerializeField] private YesNoBox yesNoBoxPrefab;
+    [SerializeField] private TMP_Dropdown deckNameDropdown;
+    [SerializeField] private LoadDeckPopUp loadDeckPopUp;
+    [SerializeField] private DeckBuilderCardsView cardsView;
 
     public CardViewer hoveredCardViewer;
     public GameObject glassBackground;
 
     private int cardCount = 0;
+    public bool unsavedChanges = false;
     private List<CardAmountPair> cardList = new List<CardAmountPair>();
 
     public static DeckBuilderDeck instance;
@@ -30,6 +34,7 @@ public class DeckBuilderDeck : MonoBehaviour
     {
         instance = this;
         deckNameField.characterLimit = 22;
+        load(PlayerPrefs.GetString(PlayerPrefEnum.mostRecentDeckName, null));
     }
 
     public void addCard(Card newCard)
@@ -45,7 +50,6 @@ public class DeckBuilderDeck : MonoBehaviour
                 pair.cardInDeckBuilder.incrementAmount();
                 pair.amount++;
                 resetCardBarPositions();
-
                 break;
             }
         }
@@ -59,6 +63,8 @@ public class DeckBuilderDeck : MonoBehaviour
         }
         cardCount++;
         cardCountText.text = "Card Count: " + cardCount;
+        unsavedChanges = true;
+        cardsView.notifyAddCard(newCard);
     }
 
     public void removeCard(Card newCard)
@@ -79,6 +85,20 @@ public class DeckBuilderDeck : MonoBehaviour
                 break;
             }
         }
+        unsavedChanges = true;
+        cardsView.notifyRemoveCard(newCard);
+    }
+
+    public int getCardAmount(Card cardToFind)
+    {
+        foreach (CardAmountPair c in cardList)
+        {
+            if (c.card == cardToFind)
+            {
+                return c.amount;
+            }
+        }
+        return 0;
     }
 
     public void save(string deckName)
@@ -118,7 +138,21 @@ public class DeckBuilderDeck : MonoBehaviour
         BinaryFormatter bf = new BinaryFormatter();
         FileStream fs = File.Open(filePath, FileMode.Create);
         bf.Serialize(fs, idToAmountMap);
+        fs.Close();
+
+        // do on save stuff
+        unsavedChanges = false;
         Toaster.Get().doToast("Deck Saved");
+        int dropdownIndex = deckNameDropdown.value;
+        loadDeckPopUp.setup();
+        deckNameDropdown.SetValueWithoutNotify(dropdownIndex);
+        //deckNameDropdown.value = dropdownIndex;
+        /*
+        if (!deckNameDropdown.options.Contains(new TMP_Dropdown.OptionData(deckName)))
+        {
+            deckNameDropdown.AddOptions(new List<string>() { deckName });
+            deckNameDropdown.value = deckNameDropdown.options.Count - 1;
+        }*/
     }
 
     public void save()
@@ -134,7 +168,8 @@ public class DeckBuilderDeck : MonoBehaviour
             Toaster.Get().doToast("Deck must be under " + maxNumberOfCardsInDeck + " cards");
             return;
         }
-
+        save(deckNameDropdown.options[deckNameDropdown.value].text);
+        /*
         string deckName = deckNameField.text.Trim();
 
         // check to see if the deck already exists
@@ -154,6 +189,42 @@ public class DeckBuilderDeck : MonoBehaviour
         {
             // otherwise just save
             save(deckName);
+        }*/
+    }
+    public void saveAs()
+    {
+        // use the deckName from the text field box
+        string deckName = deckNameField.text.Trim();
+
+        // check if deck is legal size
+        if (cardCount < minNumerOfCardsInDeck)
+        {
+            Toaster.Get().doToast("Deck must contain at least " + minNumerOfCardsInDeck + " cards");
+            return;
+        }
+        else if (cardCount > maxNumberOfCardsInDeck)
+        {
+            Toaster.Get().doToast("Deck must be under " + maxNumberOfCardsInDeck + " cards");
+            return;
+        }
+
+        // check to see if the deck already exists
+        string filePath = Application.persistentDataPath + "/decks/" + deckName + ".dek";
+        if (File.Exists(filePath))
+        {
+            glassBackground.SetActive(true);
+            // if it does display a yes/no box
+            YesNoBox yesNoBox = Instantiate(yesNoBoxPrefab);
+            SaveConfirmHandler handler = new SaveConfirmHandler();
+            handler.deckBuilderDeck = this;
+            handler.deckName = deckName;
+            yesNoBox.setUp(handler, "Overwrite Confimation", "A deck with the name " + deckName + " already exists. Would you like to overwrite the saved deck?");
+        }
+        else
+        {
+            // otherwise just save
+            save(deckName);
+            loadDeckPopUp.setToValue(deckName);
         }
     }
 
@@ -171,6 +242,7 @@ public class DeckBuilderDeck : MonoBehaviour
         {
             deckBuilderDeck.glassBackground.SetActive(false);
             deckBuilderDeck.save(deckName);
+            deckBuilderDeck.loadDeckPopUp.setToValue(deckName);
         }
     }
 
@@ -218,8 +290,42 @@ public class DeckBuilderDeck : MonoBehaviour
         scroller.maxY = scrollerNewMaxY;
     }
 
+    public void loadWithSavedChangesCheck(string deckName)
+    {
+        if (unsavedChanges)
+        {
+            glassBackground.SetActive(true);
+            YesNoBox yesNoBox = Instantiate(yesNoBoxPrefab);
+            LoadWithSavedChangesHandler handler = new LoadWithSavedChangesHandler();
+            handler.deckBuilderDeck = this;
+            handler.deckName = deckName;
+            yesNoBox.setUp(handler, "Unsaved Changes", "There are unsaved changes to the current deck. Are you sure you want to load a new deck without saving?");
+        }
+        else
+        {
+            load(deckName);
+        }
+    }
+    private class LoadWithSavedChangesHandler : YesNoHandler
+    {
+        public DeckBuilderDeck deckBuilderDeck;
+        public string deckName;
+        public void onNoClicked()
+        {
+            deckBuilderDeck.glassBackground.SetActive(false);
+            deckBuilderDeck.loadDeckPopUp.setToPreviousValue();
+        }
+        public void onYesClicked()
+        {
+            deckBuilderDeck.load(deckName);
+            deckBuilderDeck.glassBackground.SetActive(false);
+        }
+    }
+
     public void load(string deckName)
     {
+        if (deckName == null)
+            return;
         // clear current list before loading new one
         clear();
 
@@ -231,20 +337,22 @@ public class DeckBuilderDeck : MonoBehaviour
             file.Close();
             foreach (int id in deckMap.Keys)
             {
-                Card newCard = ResourceManager.Get().instantiateCardById(id);
+                Card newCard = DeckBuilderCardsView.instance.getCardById(id);
                 for (int i = 0; i < deckMap[id]; i++)
                 {
                     addCard(newCard);
                 }
-                Destroy(newCard.getRootTransform().gameObject);
             }
             // set deck name text
             Debug.Log("Setting deck name text to: " + deckName);
             deckNameField.text = deckName;
+            loadDeckPopUp.setToValue(deckName);
+            PlayerPrefs.SetString(PlayerPrefEnum.mostRecentDeckName, deckName);
+            unsavedChanges = false;
         }
         else
         {
-            throw new Exception("Deck not found: " + deckName);
+            Debug.LogError("Deck not found " + deckName);
         }
     }
 
@@ -265,7 +373,8 @@ public class DeckBuilderDeck : MonoBehaviour
 
     public void delete()
     {
-        string deckName = deckNameField.text;
+        //string deckName = deckNameField.text;
+        string deckName = deckNameDropdown.options[deckNameDropdown.value].text;
         string filePath = Application.persistentDataPath + "/decks/" + deckName + ".dek";
         if (File.Exists(filePath))
         {
@@ -303,10 +412,15 @@ public class DeckBuilderDeck : MonoBehaviour
                 File.Delete(filePath);
             }
             deckBuilder.clear();
+            deckBuilder.unsavedChanges = false;
+
+            // change dropdown and deckNameField
+            deckBuilder.deckNameField.text = "";
+            deckBuilder.loadDeckPopUp.setup();
         }
     }
 
-
+    /*
     public static DeckBuilderDeck getDeckByName(string deckName)
     {
         if (File.Exists(Application.persistentDataPath + "/deck/" + deckName))
@@ -325,4 +439,5 @@ public class DeckBuilderDeck : MonoBehaviour
 
         throw new Exception("Deck " + deckName + " not found");
     }
+    */
 }

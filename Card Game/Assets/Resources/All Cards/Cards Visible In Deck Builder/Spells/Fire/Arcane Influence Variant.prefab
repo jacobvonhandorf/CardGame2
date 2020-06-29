@@ -20,6 +20,7 @@ MonoBehaviour:
   cardStatsScript: {fileID: 1557022036391153757}
   viewersDisplayingThisCard: []
   positionOnScene: {x: 0, y: 0, z: 0}
+  hoverTimeForToolTips: 0.5
 --- !u!1001 &3681489567930565504
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -30,7 +31,7 @@ PrefabInstance:
     - target: {fileID: 7420118472789478337, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_Name
-      value: Arcane Influence
+      value: Arcane Influence Variant
       objectReference: {fileID: 0}
     - target: {fileID: 7420118472789478342, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
@@ -181,27 +182,27 @@ PrefabInstance:
     - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_text
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 47
+      value: 61
       objectReference: {fileID: 0}
     - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_textInfo.spaceCount
-      value: 7
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_textInfo.wordCount
-      value: 8
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_textInfo.lineCount
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
@@ -211,7 +212,7 @@ PrefabInstance:
     - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_text
-      value: Place 2 counters on target creature you control
+      value: Place 2 counters on target creature you control. Draw a card.
       objectReference: {fileID: 0}
     - target: {fileID: 521682469348668848, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}

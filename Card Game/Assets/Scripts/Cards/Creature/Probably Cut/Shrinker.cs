@@ -35,7 +35,7 @@ public class Shrinker : Creature
         public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
         {
             // List<Tile> validTargets = GameManager.Get().getAllTilesWithCreatures(oppositePlayer);
-            List<Tile> validTargets = GameManager.Get().getAllTilesWithCreatures();
+            List<Tile> validTargets = GameManager.Get().getAllTilesWithCreatures(false);
             validTargets.Remove(sourceTile);
             validTargets.RemoveAll(t => t.getDistanceTo(sourceTile) > 3);
             return validTargets;

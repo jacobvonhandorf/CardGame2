@@ -21,6 +21,13 @@ public class GemTrader : Creature
             GameManager.Get().queueCardPickerEffect(controller, controller.hand.getAllCardsWithTag(Card.Tag.Gem), receiver, 1, 1, false, "Select a Gem to discard");
     }
 
+    public override void onDeath()
+    {
+        Card obsidian = GameManager.Get().createCardById(Obsidian.CARD_ID, controller);
+        obsidian.moveToCardPile(controller.deck, true);
+        controller.deck.shuffle();
+    }
+
     private class Receiver : CanReceivePickedCards
     {
         private Player controller;
@@ -34,7 +41,8 @@ public class GemTrader : Creature
         {
             foreach (Card c in cardList)
             {
-                c.moveToCardPile(controller.graveyard, true);
+                c.moveToCardPile(controller.deck, true);
+                controller.deck.shuffle();
             }
             foreach (Card c in controller.deck.getCardList())
             {

@@ -5,7 +5,7 @@ using UnityEngine;
 public class PowerDraw : SpellCard, Effect
 {
     public const int CARD_ID = 78;
-    private const int NUM_DRAWN_CARDS = 4;
+    private const int NUM_DRAWN_CARDS = 3;
 
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {

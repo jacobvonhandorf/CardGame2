@@ -64,6 +64,11 @@ public class Tile : MonoBehaviour
         return distX + distY;
     }
 
+    public List<Tile> getAdjacentTiles()
+    {
+        return GameManager.Get().board.getAllTilesWithinRangeOfTile(this, 1);
+    }
+
     public void removeCreature()
     {
         onCreatureRemoved();
