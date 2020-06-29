@@ -34,7 +34,6 @@ public class LoadDeckPopUp : MonoBehaviour
         dropdown.ClearOptions();
         dropdown.AddOptions(new List<string>() { "" });
         dropdown.AddOptions(DeckUtilities.getAllDeckNames());
-        gameObject.SetActive(true);
     }
 
     public void setToValue(string value)
@@ -44,6 +43,8 @@ public class LoadDeckPopUp : MonoBehaviour
         {
             if (option.text == value)
             {
+                previousDeck1 = option.text;
+                previousDeck2 = option.text;
                 dropdown.SetValueWithoutNotify(index);
                 break;
             }
@@ -54,6 +55,8 @@ public class LoadDeckPopUp : MonoBehaviour
 
     public void setToPreviousValue()
     {
+        Debug.Log("Setting to previous value " + previousDeck2);
         setToValue(previousDeck2);
+        previousDeck1 = previousDeck2;
     }
 }

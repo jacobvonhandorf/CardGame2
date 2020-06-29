@@ -313,6 +313,7 @@ public class DeckBuilderDeck : MonoBehaviour
         public void onNoClicked()
         {
             deckBuilderDeck.glassBackground.SetActive(false);
+            deckBuilderDeck.loadDeckPopUp.setToPreviousValue();
         }
         public void onYesClicked()
         {
