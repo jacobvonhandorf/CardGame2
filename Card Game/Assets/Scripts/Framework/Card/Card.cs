@@ -525,6 +525,8 @@ public abstract class Card : MonoBehaviour
     public int getBaseManaCost() { return baseManaCost; }
     public void setGoldCost(int newCost)
     {
+        if (newCost < 0)
+            newCost = 0;
         goldCost = newCost;
         cardStatsScript.setGoldCost(newCost, baseGoldCost);
     }

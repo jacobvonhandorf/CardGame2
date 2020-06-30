@@ -21,7 +21,7 @@ public class PowerMage : Creature, CanReceivePickedCards
     {
         cardReferences.Add(GameManager.Get().createCardById(PowerDraw.CARD_ID, controller));
         cardReferences.Add(GameManager.Get().createCardById(PowerBlast.CARD_ID, controller));
-        cardReferences.Add(GameManager.Get().createCardById(PowerBounce.CARD_ID, controller));
+        cardReferences.Add(GameManager.Get().createCardById(Inferno.CARD_ID, controller));
         GameManager.Get().queueCardPickerEffect(controller, cardReferences, this, 1, 1, true, "Select a card to add to your hand");
     }
 

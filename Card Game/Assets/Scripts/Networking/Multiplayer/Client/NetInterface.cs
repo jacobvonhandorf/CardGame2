@@ -298,6 +298,7 @@ public class NetInterface
     public void recievePermanentPlaced(Net_SyncPermanentPlaced msg)
     {
         Card card = cardMap.get(msg.sourceCardId).cardObject as Card;
+        card.setSpritesToSortingLayer(SpriteLayers.Creature); // move sprite layer down
         Tile targetTile =  GameManager.Get().board.getTileByCoordinate(msg.x, msg.y);
         if (card is CreatureCard)
             GameManager.Get().syncCreateCreatureOnTile(card as CreatureCard, targetTile, card.owner);

@@ -20,6 +20,7 @@ MonoBehaviour:
   cardStatsScript: {fileID: 3547529297514278735}
   viewersDisplayingThisCard: []
   positionOnScene: {x: 0, y: 0, z: 0}
+  hoverTimeForToolTips: 0.5
 --- !u!1001 &1709040273467849874
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -177,22 +178,22 @@ PrefabInstance:
     - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 115
+      value: 68
       objectReference: {fileID: 0}
     - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_textInfo.spaceCount
-      value: 25
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_textInfo.wordCount
-      value: 26
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_textInfo.lineCount
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
@@ -202,8 +203,7 @@ PrefabInstance:
     - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_text
-      value: When this card is added to your hand by an effect and you have a Gem
-        card in your graveyard gain 1 gold and 1 mana.
+      value: When this card is added to your hand by an effect 1 gold and 1 mana.
       objectReference: {fileID: 0}
     - target: {fileID: 521682469348668848, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
