@@ -48,7 +48,7 @@ public class Oblate : SpellCard, Effect
     public override List<Tile> getLegalTargetTiles()
     {
         List<Tile> returnList = GameManager.Get().getAllTilesWithStructures(owner);
-        returnList.AddRange(GameManager.Get().getAllTilesWithCreatures(owner));
+        returnList.AddRange(GameManager.Get().getAllTilesWithCreatures(owner, true));
         return returnList;
     }
 

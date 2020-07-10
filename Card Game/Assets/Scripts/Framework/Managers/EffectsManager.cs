@@ -34,7 +34,6 @@ public class EffectsManager : MonoBehaviour
 
     public void addEffect(EffectActuator newEffect, Player effectOwner)
     {
-        Debug.Log("Effect owners in effect actuator: " + effectOwner + " " + NetInterface.Get().getLocalPlayer());
         if (effectOwner != NetInterface.Get().getLocalPlayer())
             return;
         effectsQueue.Add(newEffect);
@@ -83,8 +82,6 @@ public class EffectsManager : MonoBehaviour
         if (effectInProcess || effectsQueue.Count == 0)
             return;
 
-        Debug.Log("Effects manager activating next effect " + effectCount);
-        effectCount++;
         EffectActuator effectToActivate = effectsQueue[0];
         effectsQueue.Remove(effectToActivate);
         effectInProcess = true;

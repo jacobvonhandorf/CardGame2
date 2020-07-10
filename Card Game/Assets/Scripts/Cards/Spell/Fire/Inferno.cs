@@ -4,20 +4,17 @@ using UnityEngine;
 
 public class Inferno : SpellCard, Effect
 {
-    private const int damage = 4;
+    private const int DAMAGE_AMOUNT = 4;
+    public const int CARD_ID = 14;
 
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
-        // have to use two seperate lists because this is going to be killing creatures
-        foreach (Creature c in GameManager.Get().getAllCreaturesControlledBy(sourcePlayer))
+        List<Creature> tempList = new List<Creature>();
+        tempList.AddRange(GameManager.Get().allCreatures);
+        foreach (Creature c in tempList)
         {
             if (!c.hasTag(Tag.Arcane))
-                c.takeDamage(4);
-        }
-        foreach (Creature c in GameManager.Get().getAllCreaturesControlledBy(targetPlayer))
-        {
-            if (!c.hasTag(Tag.Arcane))
-                c.takeDamage(4);
+                c.takeDamage(DAMAGE_AMOUNT);
         }
     }
 
@@ -50,6 +47,6 @@ public class Inferno : SpellCard, Effect
 
     public override int getCardId()
     {
-        return 14;
+        return CARD_ID;
     }
 }

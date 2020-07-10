@@ -47,10 +47,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   headerText: {fileID: 8139811342718879366}
-  previewPrefab: {fileID: 3124592519402833744, guid: 0d05903425511ed46b9aec1cd109567d,
+  previewPrefab: {fileID: 6212368547118213805, guid: 0d05903425511ed46b9aec1cd109567d,
     type: 3}
-  numInitialCardPreviews: 0
+  numInitialCardPreviews: 20
   scrollObject: {fileID: 3606052502450342285}
+  scroller: {fileID: 3606052503595310009}
+  scrollerOffset: -10
 --- !u!1 &6617877242166096928
 GameObject:
   m_ObjectHideFlags: 0
@@ -173,7 +175,7 @@ MonoBehaviour:
   m_fontColor32:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColor: {r: 0, g: 0, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -362,17 +364,17 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 983945052382913175, guid: e1079d90abe14ae4c99cbb9a4bd18e14,
-        type: 3}
-      propertyPath: m_Color.a
-      value: 0.8117647
-      objectReference: {fileID: 0}
     - target: {fileID: 983945051985986140, guid: e1079d90abe14ae4c99cbb9a4bd18e14,
         type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: 7632954935afb354c86dd43482463205,
         type: 3}
+    - target: {fileID: 983945052382913175, guid: e1079d90abe14ae4c99cbb9a4bd18e14,
+        type: 3}
+      propertyPath: m_Color.a
+      value: 0.8117647
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e1079d90abe14ae4c99cbb9a4bd18e14, type: 3}
 --- !u!4 &3606052501761721523 stripped
@@ -381,6 +383,18 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 4588298764958941997}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3606052503595310009 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 983945052127041684, guid: e1079d90abe14ae4c99cbb9a4bd18e14,
+    type: 3}
+  m_PrefabInstance: {fileID: 4588298764958941997}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83ee3f142159f21499dd365974b22908, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &3606052502450342285 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 983945050965396128, guid: e1079d90abe14ae4c99cbb9a4bd18e14,
@@ -484,11 +498,6 @@ PrefabInstance:
       propertyPath: methodToCall.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
-    - target: {fileID: 8219353265420789744, guid: 172056cdebc6fb646911badf058da3a5,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 8219353265420789746, guid: 172056cdebc6fb646911badf058da3a5,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -513,6 +522,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_text
       value: Close
+      objectReference: {fileID: 0}
+    - target: {fileID: 8219353265420789744, guid: 172056cdebc6fb646911badf058da3a5,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 172056cdebc6fb646911badf058da3a5, type: 3}

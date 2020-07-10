@@ -82,6 +82,7 @@ public abstract class Card : MonoBehaviour
         tmps = getRootTransform().GetComponentsInChildren<TextMeshPro>();
         setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
         elementIdentity = cardStatsScript.getElementIdentity();
+        effectGraphic = EffectGraphic.NewEffectGraphic(this);
     }
 
     /*
@@ -305,7 +306,6 @@ public abstract class Card : MonoBehaviour
         }
         GameManager.Get().setAllTilesToNotActive();
     }
-
     private void cancelDrag()
     {
         Debug.Log("Cancel drag called");
@@ -344,6 +344,13 @@ public abstract class Card : MonoBehaviour
         return null;
     }
 
+    private EffectGraphic effectGraphic; // initialized in awake
+    public void showInEffectsQueue()
+    {
+        EffectGraphicsQueue.Get().addToQueue(effectGraphic);
+    }
+
+    #region MovingGraphicsMethods
     private const float smoothing = 9f; // speed at which cards snap into their place
     // methods for removing Card from scene by moving them way off screen
     // and for returning them to the scene afterwards
@@ -428,6 +435,7 @@ public abstract class Card : MonoBehaviour
             yield return null;
         }
     }
+    #endregion
 
     public Transform getRootTransform()
     {
@@ -499,7 +507,6 @@ public abstract class Card : MonoBehaviour
             return false;
         return true;
     }
-
     private void payCosts(Player player)
     {
         player.addGold(-goldCost);
@@ -510,23 +517,22 @@ public abstract class Card : MonoBehaviour
     {
         return cardStatsScript.getCardName();
     }
-
     public int getTotalCost()
     {
         return manaCost + goldCost;
     }
-
     public string getEffectText()
     {
         return cardStatsScript.getEffectText();
     }
-
     public int getGoldCost() { return goldCost; }
     public int getManaCost() { return manaCost; }
     public int getBaseGoldCost() { return baseGoldCost; }
     public int getBaseManaCost() { return baseManaCost; }
     public void setGoldCost(int newCost)
     {
+        if (newCost < 0)
+            newCost = 0;
         goldCost = newCost;
         cardStatsScript.setGoldCost(newCost, baseGoldCost);
     }
@@ -584,16 +590,21 @@ public abstract class Card : MonoBehaviour
         {
             timePassed += Time.deltaTime;
             if (!hovered || isBeingDragged)
+            {
+                timePassed = 0;
                 yield break;
+            }
             else
                 yield return null;
         }
         timePassed = 0;
+        
         // if we get here then enough time has passed so tell cardviewers to display tooltips
         foreach (CardViewer viewer in viewersDisplayingThisCard)
         {
             viewer.showToolTips(toolTipInfos);
         }
+        yield return null;
     }
     public abstract List<Keyword> getInitialKeywords();
     #endregion
@@ -647,7 +658,6 @@ public class CardComparator : IComparer<Card>
         return x.getCardName().CompareTo(y.getCardName());
     }
 }
-
 public class CardComparatorByCostFirst : IComparer<Card>
 {
     public int Compare(Card x, Card y)

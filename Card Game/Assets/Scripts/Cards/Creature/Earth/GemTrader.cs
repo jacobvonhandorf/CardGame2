@@ -48,7 +48,7 @@ public class GemTrader : Creature
             {
                 if (c.hasTag(Card.Tag.Gem))
                 {
-                    controller.hand.addCardByEffect(c);
+                    c.moveToCardPile(controller.hand, true);
                     break;
                 }
             }

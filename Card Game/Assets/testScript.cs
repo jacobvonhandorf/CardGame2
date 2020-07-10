@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -6,32 +7,21 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
-public class testScript : MonoBehaviour, CanReceivePickedCards, IPointerClickHandler
+public class TestScript : MonoBehaviour
 {
-    public void OnPointerClick(PointerEventData eventData)
-    {
-        Debug.Log("On pointer click");
-    }
+    private SpellCard spell;
 
-    public void receiveCardList(List<Card> cardList)
+    private void Start()
     {
-        Debug.Log("Submitted");
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        Debug.Log("Start");
+        StructureCard manaWell = (StructureCard)ResourceManager.Get().instantiateCardById(ManaWell.CARD_ID);
+        manaWell.structure.gameObject.SetActive(true);
+        spell = (SpellCard)ResourceManager.Get().instantiateCardById(PowerBlast.CARD_ID);
     }
 
     private void Update()
     {
-        if (Input.GetMouseButton(1))
-            Debug.Log("Mouse button 2 pressed");
-    }
-
-    private void OnMouseDown()
-    {
-        Debug.Log("Mouse down");
+        if (Input.GetKeyDown(KeyCode.A))
+            GameEvents.TriggerSpellCastEvents(this, new GameEvents.SpellCastEventArgs() { spell = spell });
     }
 }
+

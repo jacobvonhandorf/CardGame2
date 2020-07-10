@@ -5,7 +5,7 @@ using UnityEngine;
 public class Obsidian : SpellCard, SingleTileTargetEffect
 {
     public const int CARD_ID = 81;
-    private const int DAMAGE_AMOUNT = 1;
+    private const int DAMAGE_AMOUNT = 2;
 
     public override int getCardId()
     {
@@ -36,7 +36,7 @@ public class Obsidian : SpellCard, SingleTileTargetEffect
     private void doEffect()
     {
         owner.drawCard();
-        GameManager.Get().setUpSingleTileTargetEffect(this, owner, null, null, null, "Deal 1 damage", false);
+        GameManager.Get().setUpSingleTileTargetEffect(this, owner, null, null, null, "Deal " + DAMAGE_AMOUNT + " damage", false);
     }
 
     // Effect

@@ -136,7 +136,7 @@ PrefabInstance:
       propertyPath: m_text
       value: 'When you cast a spell while this card is in your hand gain 1 attack.
 
-        <b>Deploy:</b> If this creature has 3 or more attack add a random arcane spell
+        <b>Deploy:</b> If this creature has 3 or more attack add a random arcane card
         from your deck to your hand. If it has 6 or more attack add 2 instead. Then
         if this card has 10 or more attack destroy target creature.'
       objectReference: {fileID: 0}
@@ -153,7 +153,7 @@ PrefabInstance:
     - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 276
+      value: 275
       objectReference: {fileID: 0}
     - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
         type: 3}

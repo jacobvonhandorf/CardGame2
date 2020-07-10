@@ -114,7 +114,9 @@ PrefabInstance:
     - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
         type: 3}
       propertyPath: m_text
-      value: <b>Deploy:</b> Add one Gem from your deck to your hand
+      value: '<b>Deploy:</b> Add one Gem from your deck to your hand.
+
+        <b>Armored</b>'
       objectReference: {fileID: 0}
     - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
         type: 3}
@@ -129,17 +131,17 @@ PrefabInstance:
     - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 47
+      value: 56
       objectReference: {fileID: 0}
     - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
         type: 3}
       propertyPath: m_textInfo.wordCount
-      value: 10
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
         type: 3}
       propertyPath: m_textInfo.lineCount
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
         type: 3}
@@ -149,7 +151,7 @@ PrefabInstance:
     - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
         type: 3}
       propertyPath: m_textInfo.spaceCount
-      value: 9
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 6226373338916091508, guid: 54dd3f0ca07c104429e52ed9eb04601e,
         type: 3}

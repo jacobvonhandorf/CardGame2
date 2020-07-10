@@ -19,6 +19,7 @@ public class CardPileViewer : MonoBehaviour
     [SerializeField] protected GameObject previewPrefab; // use if more card previews need to be added
     [SerializeField] private int numInitialCardPreviews = 0;
     [SerializeField] private Transform scrollObject;
+    [SerializeField] private SpriteScroller scroller;
 
     private List<CardViewerForPiles> cardPreviews;
 
@@ -59,6 +60,7 @@ public class CardPileViewer : MonoBehaviour
         return newCardViewer;
     }
 
+    public float scrollerOffset = -3;
     public void setupAndShow(List<Card> cardList, string windowName)
     {
         if (cardPreviews == null)
@@ -77,6 +79,10 @@ public class CardPileViewer : MonoBehaviour
         }
 
         headerText.text = windowName;
+        Debug.Log(scroller.minY);
+        scroller.maxY = -(index / cardsPerRow) * yPosCoeff + scrollerOffset;
+        Debug.Log(scroller.maxY);
+        scroller.updateContentPosition(new Vector3(-999, -999, 0)); // move scroller to the top
         gameObject.SetActive(true);
     }
 

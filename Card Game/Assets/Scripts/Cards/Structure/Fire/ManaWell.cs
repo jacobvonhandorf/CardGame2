@@ -21,6 +21,7 @@ public class ManaWell : Structure, Effect
         return CARD_ID;
     }
 
+    /*
     public override void onAnySpellCast(SpellCard spell)
     {
         if (spell.owner == controller && isActiveAndEnabled)
@@ -31,6 +32,37 @@ public class ManaWell : Structure, Effect
     {
         if (GameManager.Get().activePlayer == controller)
             addCounters(Counters.well, 1);
+    }*/
+
+    private void OnEnable()
+    {
+        GameEvents.E_SpellCast += GameEvents_SpellCastEvent;
+        GameEvents.E_TurnStart += GameEvents_E_TurnStart;
+    }
+
+    private void OnDisable()
+    {
+        GameEvents.E_SpellCast -= GameEvents_SpellCastEvent;
+        GameEvents.E_TurnStart -= GameEvents_E_TurnStart;
+    }
+
+    private void GameEvents_E_TurnStart(object sender, System.EventArgs e)
+    {
+        if (GameManager.Get().activePlayer == controller)
+        {
+            addCounters(Counters.well, 1);
+            sourceCard.showInEffectsQueue();
+        }
+    }
+
+
+    private void GameEvents_SpellCastEvent(object sender, GameEvents.SpellCastEventArgs e)
+    {
+        if (e.spell.owner == controller)
+        {
+            addCounters(Counters.well, 1);
+            sourceCard.showInEffectsQueue();
+        }
     }
 
     public override Effect getEffect()

@@ -34,7 +34,7 @@ public class PityTheWeak : SpellCard
             }
             if (cardToAdd != null)
             {
-                Debug.Log("Card to add is " + cardToAdd.getRootTransform().name);
+                cardToAdd.setGoldCost(cardToAdd.getGoldCost() - 1);
                 sourcePlayer.addCardToHandByEffect(cardToAdd);
                 //cardToAdd.moveToCardPile(sourcePlayer.hand);
             }
