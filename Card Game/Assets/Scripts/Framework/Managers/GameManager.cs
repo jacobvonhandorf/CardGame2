@@ -12,6 +12,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     private const int STARTING_HAND_SIZE = 5;
+    private const int MAX_HAND_SIZE = 10;
 
     // game manager is singleton and accessible by everyone
     private static GameManager gameManager;
@@ -162,9 +163,12 @@ public class GameManager : MonoBehaviour
         Card hq = createCardById(Headquarters.CARD_ID, localPlayer);
         hq.owner = NetInterface.Get().getLocalPlayer();
         hq.play(hqTile);
-
         // draw starting hand
-        localPlayer.drawCards(STARTING_HAND_SIZE);
+        Deck localPlayerDeck = localPlayer.deck;
+        List<Card> mullList = localPlayerDeck.getCardList().GetRange(0, STARTING_HAND_SIZE);
+        queueCardPickerEffect(localPlayer, mullList, new MulliganReceiver(mullList), 0, STARTING_HAND_SIZE, false, "Select cards to return to deck");
+
+        //localPlayer.drawCards(STARTING_HAND_SIZE);
         NetInterface.Get().signalSetupComplete();
 
         // network setup is done so wait for opponent to catch up if needed
@@ -176,6 +180,30 @@ public class GameManager : MonoBehaviour
         //localPlayer.locked = !NetInterface.Get().localPlayerIsP1();
         Debug.Log("Setup complete");
         NetInterface.Get().gameSetupComplete = true;
+    }
+
+    private class MulliganReceiver : CanReceivePickedCards
+    {
+        private List<Card> mullList;
+
+        public MulliganReceiver(List<Card> mullList)
+        {
+            this.mullList = mullList;
+        }
+
+        public void receiveCardList(List<Card> cardList)
+        {
+            Player localPlayer = NetInterface.Get().getLocalPlayer();
+            // remove selected cards from list
+            mullList.RemoveAll(c => cardList.Contains(c));
+            // add more cards equal to the number mulled away
+            List<Card> deckList = localPlayer.deck.getCardList();
+            mullList.AddRange(deckList.GetRange(STARTING_HAND_SIZE, cardList.Count));
+            foreach (Card c in mullList)
+            {
+                c.moveToCardPile(localPlayer.hand, false);
+            }
+        }
     }
 
     private void loadDecks()
@@ -203,6 +231,7 @@ public class GameManager : MonoBehaviour
         newP1Deck.shuffle();
         newP2Deck.shuffle();
     }
+
 
     public Card createCardById(int id, Player owner)
     {
@@ -233,6 +262,8 @@ public class GameManager : MonoBehaviour
 
     private void beginningOfTurnEffects()
     {
+        GameEvents.TriggerTurnStartEvents(this);
+        /*
         EffectActuator[] tempList = new EffectActuator[beginningOfTurnEffectsList.Count];
         beginningOfTurnEffectsList.CopyTo(tempList);
         beginningOfTurnEffectsList.Clear();
@@ -243,7 +274,7 @@ public class GameManager : MonoBehaviour
         foreach (Structure s in allStructures)
         {
             s.onTurnStart();
-        }
+        }*/
     }
     private void endOfTurnEffects()
     {
@@ -257,6 +288,8 @@ public class GameManager : MonoBehaviour
     }
     public void onSpellCastEffects(SpellCard spell)
     {
+        GameEvents.TriggerSpellCastEvents(this, new GameEvents.SpellCastEventArgs() { spell = spell });
+        /*
         foreach (Structure s in allStructures)
         {
             s.onAnySpellCast(spell);
@@ -268,7 +301,7 @@ public class GameManager : MonoBehaviour
         foreach(Card c in getAllCardsNotInPlay())
         {
             c.onAnySpellCast(spell);
-        }
+        }*/
     }
     public void afterSpellCastEffects()
     {

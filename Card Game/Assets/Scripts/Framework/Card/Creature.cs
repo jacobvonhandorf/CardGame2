@@ -37,7 +37,6 @@ public abstract class Creature : MonoBehaviour, Damageable
 
     private CounterController counterController;
 
-
     protected void Awake()
     {
         counterController = sourceCard.getCounterController();

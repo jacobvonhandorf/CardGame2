@@ -82,6 +82,7 @@ public abstract class Card : MonoBehaviour
         tmps = getRootTransform().GetComponentsInChildren<TextMeshPro>();
         setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
         elementIdentity = cardStatsScript.getElementIdentity();
+        effectGraphic = EffectGraphic.NewEffectGraphic(this);
     }
 
     /*
@@ -305,7 +306,6 @@ public abstract class Card : MonoBehaviour
         }
         GameManager.Get().setAllTilesToNotActive();
     }
-
     private void cancelDrag()
     {
         Debug.Log("Cancel drag called");
@@ -344,7 +344,13 @@ public abstract class Card : MonoBehaviour
         return null;
     }
 
-    #region MovingGrapgicsMethods
+    private EffectGraphic effectGraphic; // initialized in awake
+    public void showInEffectsQueue()
+    {
+        EffectGraphicsQueue.Get().addToQueue(effectGraphic);
+    }
+
+    #region MovingGraphicsMethods
     private const float smoothing = 9f; // speed at which cards snap into their place
     // methods for removing Card from scene by moving them way off screen
     // and for returning them to the scene afterwards
@@ -652,7 +658,6 @@ public class CardComparator : IComparer<Card>
         return x.getCardName().CompareTo(y.getCardName());
     }
 }
-
 public class CardComparatorByCostFirst : IComparer<Card>
 {
     public int Compare(Card x, Card y)
