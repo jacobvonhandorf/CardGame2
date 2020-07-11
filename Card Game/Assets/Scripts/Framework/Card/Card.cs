@@ -56,6 +56,22 @@ public abstract class Card : MonoBehaviour
     public List<ToolTipInfo> toolTipInfos = new List<ToolTipInfo>();
     public TransformManager transformManager;
 
+    #region Events
+    public event EventHandler<AddedToCardPileArgs> E_AddedToCardPile;
+    public class AddedToCardPileArgs : EventArgs
+    {
+        public AddedToCardPileArgs(CardPile previousCardPile, CardPile newCardPile)
+        {
+            this.previousCardPile = previousCardPile;
+            this.newCardPile = newCardPile;
+        }
+        public CardPile previousCardPile { get; set; }
+        public CardPile newCardPile { get; set; }
+    }
+    public delegate void AddedToCardPileHandler(object sender, AddedToCardPileArgs e);
+    public void TriggerAddedToCardPileEffects(object sender, AddedToCardPileArgs args) { if (E_AddedToCardPile != null) E_AddedToCardPile.Invoke(sender, args); }
+    #endregion
+
     // Start is called before the first frame update
     protected virtual void Start()
     {
@@ -163,8 +179,10 @@ public abstract class Card : MonoBehaviour
                 return;
             currentCardPile.removeCard(this);
         }
+        CardPile previousPile = currentCardPile;
         currentCardPile = newPile;
 
+        //E_AddedToCardPile.Invoke(source, new AddedToCardPileArgs(previousPile, newPile));
         if (byEffect)
             newPile.addCardByEffect(this);
         else
@@ -635,12 +653,12 @@ public abstract class Card : MonoBehaviour
     // VIRTUAL METHODS
     public virtual void initialize() { }
     // triggered effects
-    public virtual void onCardDrawn() { }
+    public virtual void onCardDrawn() { }//
     public virtual void onGameStart() { }
-    public virtual void onSentToGrave() { }
+    public virtual void onSentToGrave() { }//
     public virtual void onCardAddedByEffect() { } // when card is added to a players hand by an effect
-    public virtual void onAnyCreaturePlayed(Creature c) { }
-    public virtual void onAnySpellCast(SpellCard s) { }
+    public virtual void onAnyCreaturePlayed(Creature c) { }//
+    public virtual void onAnySpellCast(SpellCard s) { }//
     protected virtual List<Tag> getTags() // TODO needs to be changed to getInitialTags
     {
         return tags;
