@@ -45,7 +45,7 @@ public class CreatureCard : Card
         return CardType.Creature;
     }
 
-    internal void swapToCreature()
+    internal void swapToCreature(Tile onTile)
     {
         //creature.initialize();
 
@@ -56,7 +56,7 @@ public class CreatureCard : Card
         creature.gameObject.SetActive(true);
 
         // resize
-        creatureStatsScript.swapToCreature(this);
+        creatureStatsScript.swapToCreature(this, onTile);
 
         // set card pile to null so it is no longer in hand
         currentCardPile = null;

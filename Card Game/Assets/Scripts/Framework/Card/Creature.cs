@@ -269,8 +269,11 @@ public abstract class Creature : MonoBehaviour, Damageable
     }
     private void setCoordinates(Tile tile)
     {
-        Vector2 tileCoordinates = tile.transform.position;
-        statsScript.cardRoot.position = tileCoordinates;
+        //Vector2 tileCoordinates = tile.transform.position;
+        //statsScript.cardRoot.position = tileCoordinates;
+        TransformStruct ts = new TransformStruct(sourceCard.transformManager.transform);
+        ts.position = tile.transform.position;
+        sourceCard.transformManager.moveToInformativeAnimation(ts);
     }
     #endregion
 

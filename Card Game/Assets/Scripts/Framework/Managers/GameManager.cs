@@ -289,19 +289,6 @@ public class GameManager : MonoBehaviour
     public void onSpellCastEffects(SpellCard spell)
     {
         GameEvents.TriggerSpellCastEvents(this, new GameEvents.SpellCastEventArgs() { spell = spell });
-        /*
-        foreach (Structure s in allStructures)
-        {
-            s.onAnySpellCast(spell);
-        }
-        foreach (Creature c in allCreatures)
-        {
-            c.onAnySpellCast(spell);
-        }
-        foreach(Card c in getAllCardsNotInPlay())
-        {
-            c.onAnySpellCast(spell);
-        }*/
     }
     public void afterSpellCastEffects()
     {
@@ -557,7 +544,7 @@ public class GameManager : MonoBehaviour
     private void createCreatureActual(CreatureCard sourceCard, Tile tile, Player owner, Creature creature)
     {
         // resize creature, stop treating it as a card and start treating it as a creature
-        sourceCard.swapToCreature();
+        sourceCard.swapToCreature(tile);
 
         // place creature in correct location
         Vector3 newPostion = tile.transform.position;
@@ -597,7 +584,59 @@ public class GameManager : MonoBehaviour
     public void syncCreateCreatureOnTile(CreatureCard card, Tile tile, Player owner)
     {
         Debug.Log("Syncing creature placement");
+        // animate showing card
+        InformativeAnimationsQueue.instance.addAnimation(new ShowCardCmd(card, true, this));
         createCreatureActual(card, tile, owner, card.creature);
+    }
+    private bool showCardFinished = false;
+    private class ShowCardCmd : QueueableCommand
+    {
+        Card card;
+        bool fromTop;
+        GameManager gameManager;
+
+        public ShowCardCmd(Card card, bool fromTop, GameManager gameManager)
+        {
+            this.card = card;
+            this.fromTop = fromTop;
+            this.gameManager = gameManager;
+        }
+
+        public override bool isFinished => Get().showCardFinished;
+
+        public override void execute()
+        {
+            gameManager.StartCoroutine(gameManager.showCardCrt(card, fromTop));
+        }
+    }
+    IEnumerator showCardCrt(Card card, bool fromTop)
+    {
+        showCardFinished = false;
+        TransformManager tm = card.transformManager;
+        tm.clearQueue();
+        tm.Lock();
+        // set starting location
+        if (fromTop)
+            card.getRootTransform().position = new Vector3(0, 10);
+        else
+            card.getRootTransform().position = new Vector3(0, -10);
+
+        // move to center of screen
+        Transform cardTransform = card.transformManager.transform;
+        Vector3 target = new Vector3(0, 0);
+        while (Vector3.Distance(target, cardTransform.position) > 0.02f)
+        {
+            cardTransform.position = Vector3.Lerp(cardTransform.position, target, 15f * Time.deltaTime);
+            yield return null;
+        }
+        // TODO play animation/sound
+
+        // pause
+        yield return new WaitForSeconds(.3f);
+
+        // flip bool to signal finished
+        tm.UnLock();
+        showCardFinished = true;
     }
 
     public void createStructureOnTile(Structure structure, Tile tile, Player controller, StructureCard sourceCard)
@@ -614,7 +653,7 @@ public class GameManager : MonoBehaviour
         StructureCard sourceCard = structure.sourceCard;
 
         // resize structure and stop treating it as a card and start treating is as a structure
-        sourceCard.swapToStructure();
+        sourceCard.swapToStructure(tile);
 
         // place structure in correct location
         Vector3 newPosition = tile.transform.position;
@@ -655,6 +694,7 @@ public class GameManager : MonoBehaviour
 
     public void syncStructureOnTile(StructureCard card, Tile tile, Player owner)
     {
+        InformativeAnimationsQueue.instance.addAnimation(new ShowCardCmd(card, true, this));
         createStructureOnTileActual(card.structure, tile, owner);
     }
 

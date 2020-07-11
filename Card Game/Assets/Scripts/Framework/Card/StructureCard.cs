@@ -41,7 +41,7 @@ public class StructureCard : Card
         owner.hand.resetCardPositions();
     }
 
-    public void swapToStructure()
+    public void swapToStructure(Tile onTile)
     {
         // change structure so that it is rendered beneath cards in hand
         setSpritesToSortingLayer(SpriteLayers.Creature);
@@ -57,7 +57,7 @@ public class StructureCard : Card
 
         // resize
         if (!isStructure)
-            (cardStatsScript as StructureStatsGetter).switchBetweenStructureOrCard(this);
+            (cardStatsScript as StructureStatsGetter).swapToStructure(onTile);
         //cardStatsScript.switchBetweenCreatureOrCard(this);
 
         isStructure = true;
@@ -73,7 +73,7 @@ public class StructureCard : Card
 
         // resize
         if (isStructure)
-            (cardStatsScript as StructureStatsGetter).switchBetweenStructureOrCard(this);
+            (cardStatsScript as StructureStatsGetter).swapToCard();
 
         // set tile back to null because no longer on field
         structure.tile = null;

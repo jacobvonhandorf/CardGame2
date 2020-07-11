@@ -51,7 +51,7 @@ public class ManaWell : Structure, Effect
         if (GameManager.Get().activePlayer == controller)
         {
             addCounters(Counters.well, 1);
-            sourceCard.showInEffectsQueue();
+            sourceCard.showInEffectsView();
         }
     }
 
@@ -61,7 +61,7 @@ public class ManaWell : Structure, Effect
         if (e.spell.owner == controller)
         {
             addCounters(Counters.well, 1);
-            sourceCard.showInEffectsQueue();
+            sourceCard.showInEffectsView();
         }
     }
 

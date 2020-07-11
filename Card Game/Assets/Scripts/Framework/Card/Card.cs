@@ -54,6 +54,7 @@ public abstract class Card : MonoBehaviour
 
     public List<CardViewer> viewersDisplayingThisCard;
     public List<ToolTipInfo> toolTipInfos = new List<ToolTipInfo>();
+    public TransformManager transformManager;
 
     // Start is called before the first frame update
     protected virtual void Start()
@@ -83,6 +84,7 @@ public abstract class Card : MonoBehaviour
         setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
         elementIdentity = cardStatsScript.getElementIdentity();
         effectGraphic = EffectGraphic.NewEffectGraphic(this);
+        transformManager = getRootTransform().GetComponent<TransformManager>();
     }
 
     /*
@@ -183,7 +185,7 @@ public abstract class Card : MonoBehaviour
         // also move card up a bit
         Vector3 oldPosition = positionInHand;
         Vector3 newPosition = new Vector3(oldPosition.x, oldPosition.y + hoverOffset, oldPosition.z);
-        moveTo(newPosition, 10);
+        moveTo(newPosition);
 
         hovered = true;
         StartCoroutine(checkHoverForTooltips());
@@ -194,13 +196,15 @@ public abstract class Card : MonoBehaviour
     // move card back down when it is no longer being hovered
     private void OnMouseExit()
     {
-        moveTo(positionInHand, 10);
+        moveTo(positionInHand);
         hovered = false;
         foreach (CardViewer cv in viewersDisplayingThisCard)
             cv.clearToolTips();
+        transformManager.UnLock();
     }
 
     // methods for drag and drop
+    #region ClickAndDrag
     private Vector3 offset;
     void OnMouseDown()
     {
@@ -227,6 +231,8 @@ public abstract class Card : MonoBehaviour
         {
             cv.clearToolTips();
         }
+        transformManager.clearQueue();
+        transformManager.Lock();
     }
     void OnMouseDrag()
     {
@@ -250,7 +256,7 @@ public abstract class Card : MonoBehaviour
         {
             setSpriteAlpha(1f);
         }
-
+        transformManager.Lock();
     }
     private void OnMouseUp()
     {
@@ -265,6 +271,7 @@ public abstract class Card : MonoBehaviour
         setSpriteAlpha(1f);
         setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
 
+        transformManager.UnLock();
         // if card is above a Tile then play it
         Tile tile = getTileMouseIsOver();
         if (tile != null)
@@ -317,7 +324,9 @@ public abstract class Card : MonoBehaviour
         moveTo(positionInHand);
         
         GameManager.Get().setAllTilesToNotActive();
+        transformManager.UnLock();
     }
+    #endregion
 
     // change the alpha for all sprites related to this card
     private void setSpriteAlpha(float value)
@@ -345,9 +354,9 @@ public abstract class Card : MonoBehaviour
     }
 
     private EffectGraphic effectGraphic; // initialized in awake
-    public void showInEffectsQueue()
+    public void showInEffectsView()
     {
-        EffectGraphicsQueue.Get().addToQueue(effectGraphic);
+        EffectGraphicsView.Get().addToQueue(effectGraphic);
     }
 
     #region MovingGraphicsMethods
@@ -363,7 +372,8 @@ public abstract class Card : MonoBehaviour
 
         positionOnScene = getRootTransform().position;
         getRootTransform().position = new Vector3(99999f, 99999f, 99999f);
-        interuptMove = true;
+        transformManager.Lock();
+        //interuptMove = true;
         onScene = false;
     }
     public void returnGraphicsAndCollidersToScene()
@@ -379,7 +389,8 @@ public abstract class Card : MonoBehaviour
             }
         }
 
-        interuptMove = false;
+        //interuptMove = false;
+        transformManager.UnLock();
         getRootTransform().position = positionOnScene;
         onScene = true;
     }
@@ -389,27 +400,16 @@ public abstract class Card : MonoBehaviour
     }
 
     // these methods and coroutines change the cards position smoothly
-    Coroutine previousCoroutine = null;
-    public void moveTo(Transform target)
-    {
-        StopAllCoroutines();
-        previousCoroutine =  StartCoroutine(moveToCoroutine(target, smoothing));
-    }
     public void moveTo(Vector3 position)
     {
-        StopAllCoroutines();
-        StartCoroutine(moveToPositionCoroutine(position, smoothing));
+        TransformStruct ts = new TransformStruct(transformManager.transform);
+        ts.position = position;
+        transformManager.moveToImmediate(ts);
+
+        //StopAllCoroutines();
+        //StartCoroutine(moveToPositionCoroutine(position, smoothing));
     }
-    public void moveTo(Transform target, float speed)
-    {
-        StopAllCoroutines();
-        StartCoroutine(moveToCoroutine(target, speed));
-    }
-    public void moveTo(Vector3 position, float speed)
-    {
-        StopAllCoroutines();
-        StartCoroutine(moveToPositionCoroutine(position, speed));
-    }
+    /*
     private bool interuptMove = false; // only thing toggling this right now is removing/return graphics. Might need to refactor this if more things start affecting the card
     IEnumerator moveToCoroutine(Transform target, float speed)
     {
@@ -434,7 +434,7 @@ public abstract class Card : MonoBehaviour
 
             yield return null;
         }
-    }
+    }*/
     #endregion
 
     public Transform getRootTransform()
@@ -442,6 +442,7 @@ public abstract class Card : MonoBehaviour
         return cardStatsScript.cardRoot;
     }
 
+    #region Sprites
     public void setSpritesToSortingLayer(SpriteLayers layer)
     {
         foreach (SpriteRenderer spriteRenderer in sprites)
@@ -486,18 +487,19 @@ public abstract class Card : MonoBehaviour
             sprite.color = color;
         }
     }
-
+    #endregion
+    #region CardViewer
     public void addToCardViewer(CardViewer viewer)
     {
         viewersDisplayingThisCard.Add(viewer);
         cardStatsScript.setCardViewer(viewer);
     }
-
     public void removeFromCardViewer(CardViewer viewer)
     {
         if (!viewersDisplayingThisCard.Remove(viewer))
             Debug.Log("Attempting to remove card from viewer it hasn't been registered on");
     }
+    #endregion
 
     public bool ownerCanPayCosts()
     {
@@ -513,6 +515,7 @@ public abstract class Card : MonoBehaviour
         player.addMana(-manaCost);
     }
 
+    #region GettersAndSetters
     public string getCardName()
     {
         return cardStatsScript.getCardName();
@@ -561,6 +564,9 @@ public abstract class Card : MonoBehaviour
         goldCost = baseGoldCost;
         manaCost = baseManaCost;
     }
+    public ElementIdentity getElementIdentity() { return elementIdentity; }
+    public void setElementIdentity(ElementIdentity eId) { cardStatsScript.setElementIdentity(eId); }
+    #endregion
 
     #region Keyword
     private List<Keyword> keywordList = new List<Keyword>();
@@ -618,9 +624,7 @@ public abstract class Card : MonoBehaviour
         }
     }
 
-    public ElementIdentity getElementIdentity() { return elementIdentity; }
-    public void setElementIdentity(ElementIdentity eId) { cardStatsScript.setElementIdentity(eId); }
-
+    #region OverridableMethods
     // ABSTRACT METHODS
     public abstract CardType getCardType();
     public abstract List<Tile> getLegalTargetTiles();
@@ -637,11 +641,11 @@ public abstract class Card : MonoBehaviour
     public virtual void onCardAddedByEffect() { } // when card is added to a players hand by an effect
     public virtual void onAnyCreaturePlayed(Creature c) { }
     public virtual void onAnySpellCast(SpellCard s) { }
-
-    protected virtual List<Tag> getTags()
+    protected virtual List<Tag> getTags() // TODO needs to be changed to getInitialTags
     {
         return tags;
     }
+    #endregion
 }
 
 public class CardComparator : IComparer<Card>

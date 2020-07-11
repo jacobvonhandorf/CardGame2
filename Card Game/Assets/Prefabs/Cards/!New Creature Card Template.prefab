@@ -799,7 +799,9 @@ MonoBehaviour:
   positionInHand: {x: 0, y: 0, z: 0}
   cardStatsScript: {fileID: 8633300247516055440}
   viewersDisplayingThisCard: []
+  transformManager: {fileID: 0}
   positionOnScene: {x: 0, y: 0, z: 0}
+  hoverTimeForToolTips: 0.5
   creature: {fileID: 0}
   creatureStatsScript: {fileID: 8633300247516055440}
   counterCountroller: {fileID: 8838799526555295834}
@@ -2221,6 +2223,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7003494207221417018}
+  - component: {fileID: 6099120147204158407}
   m_Layer: 0
   m_Name: '!New Creature Card Template'
   m_TagString: Untagged
@@ -2243,6 +2246,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6099120147204158407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7003494207221417021}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59300d8fe0ebae4439ec644fbde6cfdd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 9
 --- !u!1 &7003494207759442377
 GameObject:
   m_ObjectHideFlags: 0
