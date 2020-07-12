@@ -16,14 +16,22 @@ public class Crystal : SpellCard
         return new List<Tile>();
     }
 
-    public override void onCardDrawn()
+    public override void onInitialization()
     {
-        owner.addMana(1);
+        E_AddedToCardPile += Crystal_E_AddedToCardPile;
+    }
+    private void OnDestroy()
+    {
+        E_AddedToCardPile -= Crystal_E_AddedToCardPile;
     }
 
-    public override void onCardAddedByEffect()
+    private void Crystal_E_AddedToCardPile(object sender, AddedToCardPileArgs e)
     {
-        owner.addMana(1);
+        if (e.newCardPile is Hand)
+        {
+            showInEffectsView();
+            owner.addMana(1);
+        }
     }
 
     protected override Effect getEffect()

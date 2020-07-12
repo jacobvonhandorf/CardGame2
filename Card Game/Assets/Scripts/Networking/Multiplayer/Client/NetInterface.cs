@@ -110,7 +110,10 @@ public class NetInterface
     {
         Card c = cardMap.get(cardId).cardObject;
         CardPile cp = pileIdMap.get(cardPileId);
-        c.syncCardMovement(cp, cardMap.get(sourceId).cardObject);
+        Card sourceCard = null;
+        if (sourceId != 0)
+            sourceCard = cardMap.get(sourceId).cardObject;
+        c.syncCardMovement(cp, sourceCard);
     }
     public void syncDeckOrder(CardPile deck)
     {
@@ -254,21 +257,9 @@ public class NetInterface
     }
     public void recieveCreatureStats(Net_SyncCreature msg)
     {
-        Debug.Log("Recieve creature stats atk:" + msg.attack);
         Creature c = (cardMap.get(msg.sourceCardId).cardObject as CreatureCard).creature;
         Player controller = msg.controllerIsP1 ? getPlayer1() : getPlayer2();
         c.recieveCreatureStatsFromNet(msg.attack, msg.baseAttack, msg.health, msg.baseHealth, msg.baseMovement, msg.baseRange, controller, msg.movement, msg.range);
-        /*
-        c.setAttack(msg.attack);
-        c.baseAttack = msg.baseAttack;
-        c.baseHealth = msg.baseHealth;
-        c.baseMovement = msg.movement;
-        c.baseRange = msg.baseRange;
-        c.controller = msg.controllerIsP1 ? getPlayer1() : getPlayer2();
-        c.setHealth(msg.health);
-        c.setMovement(msg.movement);
-        c.range = msg.range;
-        */
     }
     public void syncStructureStats(Structure s)
     {

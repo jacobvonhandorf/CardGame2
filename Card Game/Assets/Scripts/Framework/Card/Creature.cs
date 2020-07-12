@@ -643,8 +643,6 @@ public abstract class Creature : MonoBehaviour, Damageable
     public virtual void onAttack() { }
     public virtual void onDefend() { }
     public virtual void onDamaged() { }
-    public virtual void onCardDrawn() { }
-    public virtual void onCardAddedToHandByEffect() { }
     public virtual void onSentToGrave() { } // Whenever added to grave. death, mill or discard
     public virtual void onAnyCreatureDeath(Creature c) { }
     public virtual void onKillingACreature(Creature c) { }
@@ -653,6 +651,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     public virtual bool additionalCanBePlayedChecks() { return true; } // if some conditions need to be met before playing this creature then do them in this method. Return true if can be played
     public virtual void onAnySpellCast(SpellCard spell) { }
     public virtual void onTurnStart() { }
+    public virtual void onInitialization() { }
     #endregion
 
 }

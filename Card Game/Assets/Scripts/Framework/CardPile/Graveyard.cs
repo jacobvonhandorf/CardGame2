@@ -92,11 +92,4 @@ public class Graveyard : ViewableCardPile
         }
         cardCountText.text = cardList.Count + "";
     }
-
-    protected override void onCardAddedByEffect(Card c)
-    {
-        // TODO
-        Debug.Log("Card added to deck by effect. No triggers implemented");
-        //throw new NotImplementedException();
-    }
 }

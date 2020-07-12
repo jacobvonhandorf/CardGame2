@@ -14,14 +14,22 @@ public class Ruby : SpellCard
         return null;
     }
 
-    public override void onCardAddedByEffect()
+    public override void onInitialization()
     {
-        doEffect();
+        E_AddedToCardPile += Ruby_E_AddedToCardPile;
+    }
+    private void OnDestroy()
+    {
+        E_AddedToCardPile -= Ruby_E_AddedToCardPile;
     }
 
-    public override void onCardDrawn()
+    private void Ruby_E_AddedToCardPile(object sender, AddedToCardPileArgs e)
     {
-        doEffect();
+        if (e.newCardPile is Hand)
+        {
+            showInEffectsView();
+            doEffect();
+        }
     }
 
     protected override List<Tag> getTags()

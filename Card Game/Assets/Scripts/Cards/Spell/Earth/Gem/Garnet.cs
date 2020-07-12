@@ -16,14 +16,23 @@ public class Garnet : SpellCard
         return new List<Tile>();
     }
 
-    public override void onCardDrawn()
+    public override void onInitialization()
     {
-        owner.addGold(1);
+        E_AddedToCardPile += Garnet_E_AddedToCardPile;
     }
 
-    public override void onCardAddedByEffect()
+    private void OnDestroy()
     {
-        owner.addGold(1);
+        E_AddedToCardPile -= Garnet_E_AddedToCardPile;
+    }
+
+    private void Garnet_E_AddedToCardPile(object sender, AddedToCardPileArgs e)
+    {
+        if (e.newCardPile is Hand)
+        {
+            owner.addGold(1);
+            showInEffectsView();
+        }
     }
 
     protected override Effect getEffect()

@@ -21,10 +21,19 @@ public class VivianTheUntouchable : Creature
         return tags;
     }
 
-    public override void onCardAddedToHandByEffect()
+    public override void onInitialization()
     {
-        Debug.Log("Card added to hand by effect with owner " + sourceCard.owner);
-        GameManager.Get().setUpSingleTileTargetEffect(new OnAddedToHandEffect(this), sourceCard.owner, null, this, null, "Select a tile to deploy Vivian", false);
+        sourceCard.E_AddedToCardPile += SourceCard_E_AddedToCardPile;
+    }
+    private void OnDestroy()
+    {
+        sourceCard.E_AddedToCardPile -= SourceCard_E_AddedToCardPile;
+    }
+
+    private void SourceCard_E_AddedToCardPile(object sender, Card.AddedToCardPileArgs e)
+    {
+        if (e.newCardPile is Hand && e.source != null)
+            GameManager.Get().setUpSingleTileTargetEffect(new OnAddedToHandEffect(this), sourceCard.owner, null, this, null, "Select a tile to deploy Vivian", false);
     }
 
     public override int getCardId()

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Miner : Creature
+public class Miner : Creature, CanReceivePickedCards
 {
     public override int getCardId()
     {
@@ -16,25 +16,15 @@ public class Miner : Creature
 
     public override void onCreation()
     {
-        GameManager.Get().queueCardPickerEffect(controller, controller.deck.getAllCardsWithTag(Card.Tag.Gem), new ETBReceiver(controller), 1, 1, false, "Select a Gem to add to your hand");
+        GameManager.Get().queueCardPickerEffect(controller, controller.deck.getAllCardsWithTag(Card.Tag.Gem), this, 1, 1, false, "Select a Gem to add to your hand");
 
     }
 
-    private class ETBReceiver : CanReceivePickedCards
+    public void receiveCardList(List<Card> cardList)
     {
-        private Player controller;
-
-        public ETBReceiver(Player controller)
+        foreach (Card c in cardList)
         {
-            this.controller = controller;
-        }
-
-        public void receiveCardList(List<Card> cardList)
-        {
-            foreach (Card c in cardList)
-            {
-                controller.hand.addCardByEffect(c);
-            }
+            c.moveToCardPile(controller.hand, sourceCard);
         }
     }
 

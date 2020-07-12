@@ -19,10 +19,23 @@ public class Topaz : SpellCard
         return null;
     }
 
-    public override void onCardAddedByEffect()
+    public override void onInitialization()
     {
-        owner.addGold(1);
-        owner.addMana(1);
+        E_AddedToCardPile += Topaz_E_AddedToCardPile;
+    }
+    private void OnDestroy()
+    {
+        E_AddedToCardPile -= Topaz_E_AddedToCardPile;
+    }
+
+    private void Topaz_E_AddedToCardPile(object sender, AddedToCardPileArgs e)
+    {
+        if (e.newCardPile is Hand && e.source != null)
+        {
+            owner.addGold(1);
+            owner.addMana(1);
+            showInEffectsView();
+        }
     }
 
     protected override List<Tag> getTags()

@@ -23,14 +23,19 @@ public class Obsidian : SpellCard, SingleTileTargetEffect
         return null;
     }
 
-    public override void onCardAddedByEffect()
+    public override void onInitialization()
     {
-        doEffect();
+        E_AddedToCardPile += Obsidian_E_AddedToCardPile;
+    }
+    private void OnDestroy()
+    {
+        E_AddedToCardPile -= Obsidian_E_AddedToCardPile;
     }
 
-    public override void onCardDrawn()
+    private void Obsidian_E_AddedToCardPile(object sender, AddedToCardPileArgs e)
     {
-        doEffect();
+        if (e.newCardPile is Hand)
+            doEffect();
     }
 
     private void doEffect()

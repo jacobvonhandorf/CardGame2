@@ -32,15 +32,6 @@ public abstract class CardPile : MonoBehaviour
     }
 
     // this method is dangerous to call. If possible use Card.moveToCardPile()
-    public void addCardByEffect(Card c)
-    {
-        Debug.Log("card pile triggered by effect");
-        addCard(c);
-        //c.moveToCardPile(this, true);
-        onCardAddedByEffect(c);
-    }
-
-    // this method is dangerous to call. If possible use Card.moveToCardPile()
     public void addCards(List<Card> newCards)
     {
         foreach (Card c in newCards)
@@ -146,8 +137,7 @@ public abstract class CardPile : MonoBehaviour
     // only call this from NetInterface
     public void syncOrderFromNetwork(List<Card> newCardList)
     {
-        this.cardList = newCardList;
+        cardList = newCardList;
     }
 
-    protected abstract void onCardAddedByEffect(Card c);
 }

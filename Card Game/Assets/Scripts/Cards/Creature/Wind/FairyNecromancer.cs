@@ -30,7 +30,7 @@ public class FairyNecromancer : Creature, CanReceivePickedCards
     {
         foreach (Card c in cardList)
         {
-            controller.hand.addCardByEffect(c);
+            c.moveToCardPile(controller.hand, sourceCard);
         }
     }
 

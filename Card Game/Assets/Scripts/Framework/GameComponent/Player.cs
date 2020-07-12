@@ -60,9 +60,7 @@ public class Player : MonoBehaviour
             if (deck.getCardList().Count > 0)
             {
                 Card cardToAdd = deck.getTopCard();
-                //deck.getTopCard().moveToCardPile(hand);
                 cardToAdd.moveToCardPile(hand, null);
-                cardToAdd.onCardDrawn();
             }
             else
                 GameManager.Get().playerHasDrawnOutDeck(this);

@@ -22,6 +22,8 @@ public class CreatureCard : Card
         creature.initialize();
         foreach (Keyword k in getInitialKeywords())
             addKeyword(k);
+
+        onInitialization(); // keep this on last line
     }
 
     public override void play(Tile t)
@@ -91,16 +93,10 @@ public class CreatureCard : Card
         base.resetToBaseStats();
         creature.resetToBaseStats();
     }
-
     public override void resetToBaseStatsWithoutSyncing()
     {
         base.resetToBaseStatsWithoutSyncing();
         creature.resetToBaseStatsWithoutSyncing();
-    }
-
-    public override void onCardDrawn()
-    {
-        creature.onCardDrawn();
     }
 
     public override void onSentToGrave()
@@ -113,10 +109,6 @@ public class CreatureCard : Card
         return creature.getTags();
     }
 
-    public override void onCardAddedByEffect()
-    {
-        creature.onCardAddedToHandByEffect();
-    }
     public override void onAnyCreaturePlayed(Creature c)
     {
         creature.onAnyCreaturePlayed(c);

@@ -130,10 +130,4 @@ public class Hand : CardPile
             //c.setSpriteMaskInteraction(SpriteMaskInteraction.VisibleInsideMask);
         }
     }
-
-    protected override void onCardAddedByEffect(Card c)
-    {
-        Debug.Log("Card added by effect");
-        c.onCardAddedByEffect();
-    }
 }

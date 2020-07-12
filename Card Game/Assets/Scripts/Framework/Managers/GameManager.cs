@@ -203,6 +203,7 @@ public class GameManager : MonoBehaviour
             {
                 c.moveToCardPile(localPlayer.hand, null);
             }
+            localPlayer.deck.shuffle();
         }
     }
 
@@ -1131,6 +1132,17 @@ public class GameManager : MonoBehaviour
                 XPickerBox xPicker = Instantiate(Get().xPickerPrefab);
                 xPicker.setUp(receiver, minValue, maxValue, headerText);
             }
+        }
+    }
+
+    private class CardPickerCmd : QueueableCommand
+    {
+        public override bool isFinished => finished;
+        public bool finished = false;
+
+        public override void execute()
+        {
+            throw new NotImplementedException();
         }
     }
 

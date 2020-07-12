@@ -19,6 +19,7 @@ public class Emerald : SpellCard
         return null;
     }
 
+    /*
     public override void onCardDrawn()
     {
         if (owner.graveyard.getAllCardsWithTag(Tag.Gem).Count > 0)
@@ -30,6 +31,7 @@ public class Emerald : SpellCard
         if (owner.graveyard.getAllCardsWithTag(Tag.Gem).Count > 0)
             owner.drawCard();
     }
+    */
 
     protected override List<Tag> getTags()
     {

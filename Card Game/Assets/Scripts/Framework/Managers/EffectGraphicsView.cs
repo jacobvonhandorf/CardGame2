@@ -17,10 +17,11 @@ public class EffectGraphicsView : MonoBehaviour
 
     #region Singleton
     private static EffectGraphicsView instance;
-    private void Start()
+    private void Awake()
     {
         instance = this;
         remainingTimeDefaultWidth = remainingTimeGraphic.size.x;
+        Debug.Log("Effect graphics queue awake");
     }
     public static EffectGraphicsView Get()
     {
@@ -31,6 +32,7 @@ public class EffectGraphicsView : MonoBehaviour
     public void addToQueue(EffectGraphic newGraphic)
     {
         //effectGraphics.Enqueue(newGraphic);
+        Debug.Log("Added graphic to queue");
         InformativeAnimationsQueue.instance.addAnimation(new AnimationCommand(newGraphic, this));
     }
     private class AnimationCommand : QueueableCommand
@@ -48,18 +50,19 @@ public class EffectGraphicsView : MonoBehaviour
 
         public override void execute()
         {
+            Debug.Log("Showing effect graphic");
             view.StartCoroutine(view.showGraphicCoroutine(graphic, this));
         }
     }
     #region ShowingGraphics
-    private float timePassed = DISPLAY_TIME;
+    private float timePassed;
     private float timePassedCoeff = 1;
     private bool animationFinished = true;
     private Vector2 cachedV2 = new Vector2();
     private float newX;
     IEnumerator showGraphicCoroutine(EffectGraphic graphic, AnimationCommand cmd)
     {
-        timePassed = DISPLAY_TIME;
+        timePassed = 0;
         showGraphic(graphic);
         while (timePassed < DISPLAY_TIME)
         {

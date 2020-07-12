@@ -19,9 +19,23 @@ public class Diamond : SpellCard
         return false;
     }
 
-    public override void onCardAddedByEffect()
+    public override void onInitialization()
     {
-        owner.drawCard();
+        E_AddedToCardPile += Diamond_E_AddedToCardPile;
+    }
+
+    private void OnDestroy()
+    {
+        E_AddedToCardPile -= Diamond_E_AddedToCardPile;
+    }
+
+    private void Diamond_E_AddedToCardPile(object sender, AddedToCardPileArgs e)
+    {
+        if (e.newCardPile is Hand && e.source != null)
+        {
+            owner.drawCard();
+            showInEffectsView();
+        }
     }
 
     protected override List<Tag> getTags()

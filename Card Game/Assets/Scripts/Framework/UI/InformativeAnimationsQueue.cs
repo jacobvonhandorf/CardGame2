@@ -6,7 +6,7 @@ public class InformativeAnimationsQueue : MonoBehaviour
 {
     // singleton
     public static InformativeAnimationsQueue instance;
-    private void Start()
+    private void Awake()
     {
         instance = this;
     }

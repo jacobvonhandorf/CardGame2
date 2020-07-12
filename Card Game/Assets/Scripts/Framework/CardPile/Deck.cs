@@ -128,9 +128,4 @@ public class Deck : CardPile
         cardList.Clear();
         cardCountText.text = "0";
     }
-
-    protected override void onCardAddedByEffect(Card c)
-    {
-        Debug.Log("Card added to deck by effect. No trigger implemented for this yet");
-    }
 }
