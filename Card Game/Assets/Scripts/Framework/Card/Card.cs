@@ -60,13 +60,15 @@ public abstract class Card : MonoBehaviour
     public event EventHandler<AddedToCardPileArgs> E_AddedToCardPile;
     public class AddedToCardPileArgs : EventArgs
     {
-        public AddedToCardPileArgs(CardPile previousCardPile, CardPile newCardPile)
+        public AddedToCardPileArgs(CardPile previousCardPile, CardPile newCardPile, Card source)
         {
             this.previousCardPile = previousCardPile;
             this.newCardPile = newCardPile;
+            this.source = source;
         }
         public CardPile previousCardPile { get; set; }
         public CardPile newCardPile { get; set; }
+        public Card source { get; set; }
     }
     public delegate void AddedToCardPileHandler(object sender, AddedToCardPileArgs e);
     public void TriggerAddedToCardPileEffects(object sender, AddedToCardPileArgs args) { if (E_AddedToCardPile != null) E_AddedToCardPile.Invoke(sender, args); }
@@ -181,7 +183,8 @@ public abstract class Card : MonoBehaviour
         CardPile previousPile = currentCardPile;
         currentCardPile = newPile;
 
-        E_AddedToCardPile.Invoke(source, new AddedToCardPileArgs(previousPile, newPile));
+        newPile.addCard(this);
+        TriggerAddedToCardPileEffects(source, new AddedToCardPileArgs(previousPile, newPile, source));
     }
 
     public CardPile getCardPile()
@@ -646,12 +649,12 @@ public abstract class Card : MonoBehaviour
     public abstract int getCardId();
 
     // VIRTUAL METHODS
-    public virtual void initialize() { }
+    public virtual void initialize() { onInitialization(); }
+    public virtual void onInitialization() { } // last thing to be called at the end of init
+                                                // use to register effects
     // triggered effects
-    public virtual void onCardDrawn() { }//
     public virtual void onGameStart() { }
     public virtual void onSentToGrave() { }//
-    public virtual void onCardAddedByEffect() { } // when card is added to a players hand by an effect
     public virtual void onAnyCreaturePlayed(Creature c) { }//
     public virtual void onAnySpellCast(SpellCard s) { }//
     protected virtual List<Tag> getTags() // TODO needs to be changed to getInitialTags
