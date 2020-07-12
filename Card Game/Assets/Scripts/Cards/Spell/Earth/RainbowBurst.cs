@@ -83,7 +83,7 @@ public class RainbowBurst : SpellCard, Effect, CanReceivePickedCards
             // all selections have been made so resolve all effects
             foreach (Card c in sourceCard.cardsToShuffleBack)
             {
-                c.moveToCardPile(sourceCard.owner.deck, true);
+                c.moveToCardPile(sourceCard.owner.deck, sourceCard);
             }
             sourceCard.owner.deck.shuffle();
 

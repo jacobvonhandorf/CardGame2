@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/*
 public class Renovations : SpellCard
 {
     public override int getCardId()
@@ -45,3 +45,4 @@ public class Renovations : SpellCard
         }
     }
 }
+*/

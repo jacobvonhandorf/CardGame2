@@ -66,7 +66,7 @@ public abstract class Structure : MonoBehaviour, Damageable
         statsScript.setHealth(health, baseHealth);
         Debug.Log("Health after damage " + health);
         if (health <= 0)
-            GameManager.Get().destroyStructure(this);
+            GameManager.Get().destroyStructure(this, null);
     }
     public int getHealth()
     {
@@ -77,7 +77,7 @@ public abstract class Structure : MonoBehaviour, Damageable
         health = amount;
         statsScript.setHealth(health, baseHealth);
         if (health <= 0)
-            GameManager.Get().destroyStructure(this);
+            GameManager.Get().destroyStructure(this, null);
     }
     public void setBaseHealth(int amount)
     {
@@ -93,11 +93,12 @@ public abstract class Structure : MonoBehaviour, Damageable
         return sourceCard.getCardName();
     }
 
-    public void sendToGrave()
+    // if you want to kill a creature do not call this. Call destroy creature in game manager
+    public void sendToGrave(Card source)
     {
         sourceCard.isStructure = false;
         resetToBaseStats();
-        sourceCard.moveToCardPile(owner.graveyard, false);
+        sourceCard.moveToCardPile(owner.graveyard, null);
         sourceCard.removeGraphicsAndCollidersFromScene();
     }
 

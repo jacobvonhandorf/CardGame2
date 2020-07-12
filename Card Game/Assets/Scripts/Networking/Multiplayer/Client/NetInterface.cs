@@ -55,7 +55,7 @@ public class NetInterface
         }
         relayMessage(new Net_DoneSendingCards());
         foreach (Card c in deck)
-            c.moveToCardPile(pileIdMap.get(isPlayer1 ? PileId.p1Deck : PileId.p2Deck), false);
+            c.moveToCardPile(pileIdMap.get(isPlayer1 ? PileId.p1Deck : PileId.p2Deck), null);
         (pileIdMap.get(isPlayer1 ? PileId.p1Deck : PileId.p2Deck) as Deck).shuffle();
     }
 
@@ -93,24 +93,24 @@ public class NetInterface
         msg.ownerIsP1 = c.owner == getPlayer1();
         relayMessage(msg);
     }
-    public void syncMoveCardToPile(Card c, CardPile cp, bool byEffect)
+    public void syncMoveCardToPile(Card c, CardPile cp, object source)
     {
         int cardId = cardMap.get(c).netId;
         byte cpId = pileIdMap.get(cp);
-        //Debug.LogError("byEffect before netmsg: " + byEffect);
         Net_MoveCardToPile msg = new Net_MoveCardToPile();
         msg.cardId = cardId;
         msg.cpId = cpId;
-        msg.byEffect = byEffect;
-        //Debug.LogError("Syncing move card by effect: " + byEffect);
+        if (source is Card)
+            msg.sourceId = cardMap.get((Card)source).netId;
+        else
+            msg.sourceId = 0; // 0 is sentinal value for game mechanics/GameManager
         relayMessage(msg);
     }
-    public void recieveMoveCardToPile(int cardId, byte cardPileId, bool byEffect)
+    public void recieveMoveCardToPile(int cardId, byte cardPileId, int sourceId)
     {
         Card c = cardMap.get(cardId).cardObject;
         CardPile cp = pileIdMap.get(cardPileId);
-        Debug.Log("Recieved move to card pile byEffect:" + byEffect);
-        c.syncCardMovement(cp, byEffect);
+        c.syncCardMovement(cp, cardMap.get(sourceId).cardObject);
     }
     public void syncDeckOrder(CardPile deck)
     {

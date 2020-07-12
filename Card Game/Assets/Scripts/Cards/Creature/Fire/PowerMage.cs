@@ -27,7 +27,7 @@ public class PowerMage : Creature, CanReceivePickedCards
 
     public void receiveCardList(List<Card> cardList)
     {
-        cardList[0].moveToCardPile(controller.hand, true);
+        cardList[0].moveToCardPile(controller.hand, sourceCard);
         foreach (Card c in cardReferences)
         {
             if (c != cardList[0])

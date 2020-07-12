@@ -41,13 +41,13 @@ public class ArcaneGrandmaster : Creature, SingleTileTargetEffect
         {
             List<Card> arcaneCards = controller.deck.getAllCardsWithTag(Card.Tag.Arcane);
             int index = Random.Range(0, arcaneCards.Count);
-            arcaneCards[index].moveToCardPile(controller.hand, true);
+            arcaneCards[index].moveToCardPile(controller.hand, sourceCard);
         }
         if (getAttack() >= SECOND_THRESHOLD)
         {
             List<Card> arcaneCards = controller.deck.getAllCardsWithTag(Card.Tag.Arcane);
             int index = Random.Range(0, arcaneCards.Count);
-            arcaneCards[index].moveToCardPile(controller.hand, true);
+            arcaneCards[index].moveToCardPile(controller.hand, sourceCard);
         }
         if (getAttack() >= THIRD_THRESHOLD)
         {

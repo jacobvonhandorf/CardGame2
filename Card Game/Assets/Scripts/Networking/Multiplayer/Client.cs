@@ -131,7 +131,7 @@ public class Client : MonoBehaviour
                 break;
             case NetOP.MoveCardToPile:
                 Net_MoveCardToPile mctp = (Net_MoveCardToPile)msg;
-                NetInterface.Get().recieveMoveCardToPile(mctp.cardId, mctp.cpId, mctp.byEffect);
+                NetInterface.Get().recieveMoveCardToPile(mctp.cardId, mctp.cpId, mctp.sourceId);
                 break;
             case NetOP.SyncDeckOrder:
                 Net_SyncDeckOrder sdo = (Net_SyncDeckOrder)msg;

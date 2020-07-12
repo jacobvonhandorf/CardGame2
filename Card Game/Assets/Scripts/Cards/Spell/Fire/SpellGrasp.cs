@@ -20,7 +20,7 @@ public class SpellGrasp : SpellCard, CanReceivePickedCards, Effect
     {
         Card c = cardList[0];
         //owner.hand.addCardByEffect(c);
-        c.moveToCardPile(owner.hand, true);
+        c.moveToCardPile(owner.hand, this);
         foreach (Creature creature in GameManager.Get().getAllCreaturesControlledBy(owner))
         {
             if (creature.hasTag(Tag.Arcane))

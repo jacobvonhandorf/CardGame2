@@ -54,7 +54,7 @@ public class GemMine : Structure, Effect
         List<Card> gemCards = controller.deck.getAllCardsWithTag(Card.Tag.Gem);
         if (gemCards.Count > 0)
         {
-            gemCards[Random.Range(0, gemCards.Count)].moveToCardPile(controller.hand, true);
+            gemCards[Random.Range(0, gemCards.Count)].moveToCardPile(controller.hand, sourceCard);
             effectUsedThisTurn = true;
             removeCounters(Counters.mine, 1);
             controller.subtractActions(1);

@@ -22,7 +22,7 @@ public class DeckUtilities : MonoBehaviour
 
             for (int i = 0; i < amount; i++)
             {
-                rs.instantiateCardById(id).moveToCardPile(deck, false);
+                rs.instantiateCardById(id).moveToCardPile(deck, null);
             }
         }
         return deck;

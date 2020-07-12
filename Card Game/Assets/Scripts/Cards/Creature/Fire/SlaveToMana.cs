@@ -13,7 +13,7 @@ public class SlaveToMana : Creature, OptionBoxHandler, SingleTileTargetEffect
     // SingleTileTargetEffect
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
-        sourceCard.moveToCardPile(sourceCard.owner.hand, true); // this is jank. Could cause errors in the future
+        sourceCard.moveToCardPile(sourceCard.owner.hand, sourceCard); // this is jank. Could cause errors in the future
                                                                 // for now it's to stop bugs because "play" bugs out if the card is in deck
         sourceCard.play(targetTile);
     }

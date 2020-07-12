@@ -17,7 +17,7 @@ public class Oblate : SpellCard, Effect
         else
         {
             sourceCard = targetTile.structure.sourceCard;
-            GameManager.Get().destroyStructure(targetTile.structure);
+            GameManager.Get().destroyStructure(targetTile.structure, this);
         }
         int amount = sourceCard.getTotalCost();
         sourcePlayer.addMana(amount);

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RecklessDraw : SpellCard
+public class RecklessDraw : SpellCard, Effect
 {
     public override int getCardId()
     {
@@ -16,31 +16,30 @@ public class RecklessDraw : SpellCard
 
     protected override Effect getEffect()
     {
-        return new MyEffect();
+        return this;
     }
 
-    private class MyEffect : Effect
+    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
-        public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-        {
-            GameManager.Get().queueCardPickerEffect(sourcePlayer, sourcePlayer.hand.getCardList(), new RecklessEff(sourcePlayer), 1, 1, false, "Select a card to discard");
-        }
+        GameManager.Get().queueCardPickerEffect(sourcePlayer, sourcePlayer.hand.getCardList(), new RecklessEff(sourcePlayer, this), 1, 1, false, "Select a card to discard");
     }
 
     private class RecklessEff : CanReceivePickedCards
     {
         private Player owner;
+        private Card sourceCard;
 
-        public RecklessEff(Player owner)
+        public RecklessEff(Player owner, Card sourceCard)
         {
             this.owner = owner;
+            this.sourceCard = sourceCard;
         }
 
         public void receiveCardList(List<Card> cardList)
         {
             foreach(Card c in cardList)
             {
-                c.moveToCardPile(owner.graveyard, true);
+                c.moveToCardPile(owner.graveyard, sourceCard);
             }
             owner.drawCards(2);
         }

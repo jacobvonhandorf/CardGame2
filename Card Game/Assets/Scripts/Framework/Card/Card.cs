@@ -159,20 +159,19 @@ public abstract class Card : MonoBehaviour
     }
 
     // move card to a pile and remove it from the old one
-    public void moveToCardPile(CardPile newPile, bool byEffect)
+    public void moveToCardPile(CardPile newPile, Card source)
     {
-        actualMove(newPile, byEffect);
-        NetInterface.Get().syncMoveCardToPile(this, newPile, byEffect);
+        actualMove(newPile, source);
+        NetInterface.Get().syncMoveCardToPile(this, newPile, source);
     }
 
-    public void syncCardMovement(CardPile newPile, bool byEffect)
+    public void syncCardMovement(CardPile newPile, Card source)
     {
-        actualMove(newPile, byEffect);
+        actualMove(newPile, source);
     }
 
-    private void actualMove(CardPile newPile, bool byEffect)
+    private void actualMove(CardPile newPile, Card source)
     {
-        Debug.Log("Move card by effect:" + byEffect);
         if (currentCardPile != null)
         {
             if (newPile == currentCardPile) // if we're already in the new pile then do nothing
@@ -182,11 +181,7 @@ public abstract class Card : MonoBehaviour
         CardPile previousPile = currentCardPile;
         currentCardPile = newPile;
 
-        //E_AddedToCardPile.Invoke(source, new AddedToCardPileArgs(previousPile, newPile));
-        if (byEffect)
-            newPile.addCardByEffect(this);
-        else
-            newPile.addCard(this);
+        E_AddedToCardPile.Invoke(source, new AddedToCardPileArgs(previousPile, newPile));
     }
 
     public CardPile getCardPile()

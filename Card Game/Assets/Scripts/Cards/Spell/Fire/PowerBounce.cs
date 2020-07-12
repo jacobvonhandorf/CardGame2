@@ -10,7 +10,7 @@ public class PowerBounce : SpellCard, Effect, SingleTileTargetEffect
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
         // bounce the first creature
-        targetCreature.bounce();
+        targetCreature.bounce(this);
 
         if (firstBounceDone)
         {
@@ -30,9 +30,16 @@ public class PowerBounce : SpellCard, Effect, SingleTileTargetEffect
 
     private class SecondBounce : SingleTileTargetEffect
     {
+        Card sourceCard;
+
+        public SecondBounce(Card sourceCard)
+        {
+            this.sourceCard = sourceCard;
+        }
+
         public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
         {
-            targetCreature.bounce();
+            targetCreature.bounce(sourceCard);
         }
 
         public bool canBeCancelled()

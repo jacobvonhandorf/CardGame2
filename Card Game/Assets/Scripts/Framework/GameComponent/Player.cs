@@ -61,7 +61,7 @@ public class Player : MonoBehaviour
             {
                 Card cardToAdd = deck.getTopCard();
                 //deck.getTopCard().moveToCardPile(hand);
-                cardToAdd.moveToCardPile(hand, false);
+                cardToAdd.moveToCardPile(hand, null);
                 cardToAdd.onCardDrawn();
             }
             else
@@ -80,12 +80,6 @@ public class Player : MonoBehaviour
                 drawCard();
         }
         hand.resetCardPositions();
-    }
-
-    public void addCardToHandByEffect(Card c)
-    {
-        //hand.addCardByEffect(c);
-        c.moveToCardPile(hand, true);
     }
 
     public void setToActivePlayer()

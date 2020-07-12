@@ -307,7 +307,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         sourceCard.setSpriteColor(color);
     }
 
-    public void bounce()
+    public void bounce(Card source)
     {
         hasDoneActionThisTurn = false;
         hasMovedThisTurn = false;
@@ -317,7 +317,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         statsScript.swapToCard(sourceCard);
         setSpriteColor(Color.white); // reset sprite color in case card is greyed out
         resetToBaseStats();
-        sourceCard.moveToCardPile(sourceCard.owner.hand, true);
+        sourceCard.moveToCardPile(sourceCard.owner.hand, source);
         onLeavesTheField();
         sourceCard.owner.hand.resetCardPositions();
     }
@@ -403,7 +403,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     {
         sourceCard.isCreature = false;
         resetToBaseStats();
-        sourceCard.moveToCardPile(sourceCard.owner.graveyard, false);
+        sourceCard.moveToCardPile(sourceCard.owner.graveyard, null);
         sourceCard.removeGraphicsAndCollidersFromScene();
     }
 

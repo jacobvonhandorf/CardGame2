@@ -44,7 +44,7 @@ public class Prospector : Creature
         Card obsidian = GameManager.Get().createCardById(Obsidian.CARD_ID, controller);
 
         // add to deck
-        obsidian.moveToCardPile(controller.deck, true);
+        obsidian.moveToCardPile(controller.deck, sourceCard);
 
         // shuffle deck
         controller.deck.shuffle();

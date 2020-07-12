@@ -57,7 +57,7 @@ public class FairyFortress : Structure, Effect, CanReceivePickedCards
             return;
         }
 
-        GameManager.Get().queueCardPickerEffect(controller, pickableCards, new EffectPart2(firstCreature), 1, 1, true ,"Select opponent's creature to bounce");
+        GameManager.Get().queueCardPickerEffect(controller, pickableCards, new EffectPart2(firstCreature, sourceCard), 1, 1, true ,"Select opponent's creature to bounce");
     }
 
     public override int getCardId()
@@ -67,19 +67,21 @@ public class FairyFortress : Structure, Effect, CanReceivePickedCards
 
     private class EffectPart2 : CanReceivePickedCards
     {
+        Card sourceCard;
         Creature firstCreature;
 
-        public EffectPart2(Creature firstCreature)
+        public EffectPart2(Creature firstCreature, Card sourceCard)
         {
             this.firstCreature = firstCreature;
+            this.sourceCard = sourceCard;
         }
 
         public void receiveCardList(List<Card> cardList)
         {
             Creature secondCreature = (cardList[0] as CreatureCard).creature;
             firstCreature.controller.subtractActions(1);
-            firstCreature.bounce();
-            secondCreature.bounce();
+            firstCreature.bounce(sourceCard);
+            secondCreature.bounce(sourceCard);
 
         }
     }

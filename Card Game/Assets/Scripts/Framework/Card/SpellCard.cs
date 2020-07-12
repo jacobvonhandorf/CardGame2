@@ -13,7 +13,7 @@ public abstract class SpellCard : Card
     {
         GameManager.Get().onSpellCastEffects(this);
         getEffect().activate(owner, GameManager.Get().getOppositePlayer(owner), t, t, t.creature, t.creature);
-        moveToCardPile(owner.graveyard, false);
+        moveToCardPile(owner.graveyard, null);
         owner.hand.resetCardPositions();
         GameManager.Get().afterSpellCastEffects();
 

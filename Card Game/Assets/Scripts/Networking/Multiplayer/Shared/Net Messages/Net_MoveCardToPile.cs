@@ -8,5 +8,5 @@ public class Net_MoveCardToPile : NetMsg
 
     public byte cpId { get; set; }
     public int cardId { get; set; }
-    public bool byEffect { get; set; }
+    public int sourceId { get; set; }
 }

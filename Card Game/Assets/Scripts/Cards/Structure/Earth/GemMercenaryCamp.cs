@@ -21,11 +21,18 @@ public class GemMercenaryCamp : Structure
 
     public override Effect getEffect()
     {
-        return new GemMercCampEffect();
+        return new GemMercCampEffect(this);
     }
 
     private class GemMercCampEffect : SingleTileTargetEffect
     {
+        private GemMercenaryCamp camp;
+
+        public GemMercCampEffect(GemMercenaryCamp camp)
+        {
+            this.camp = camp;
+        }
+
         public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
         {
             if (sourcePlayer.GetActions() <= 0)
@@ -34,25 +41,27 @@ public class GemMercenaryCamp : Structure
                 return;
             }
 
-            GameManager.Get().queueCardPickerEffect(sourcePlayer, sourcePlayer.hand.getAllCardsWithTag(Card.Tag.Gem), new PickReceiver(targetTile, sourcePlayer), 1, 1, true , "Select a Gem card to discard");
+            GameManager.Get().queueCardPickerEffect(sourcePlayer, sourcePlayer.hand.getAllCardsWithTag(Card.Tag.Gem), new PickReceiver(targetTile, sourcePlayer, camp), 1, 1, true , "Select a Gem card to discard");
         }
 
         private class PickReceiver : CanReceivePickedCards
         {
             private Tile targetTile;
             private Player sourcePlayer;
+            private GemMercenaryCamp camp;
 
-            public PickReceiver(Tile targetTile, Player sourcePlayer)
+            public PickReceiver(Tile targetTile, Player sourcePlayer, GemMercenaryCamp camp)
             {
                 this.targetTile = targetTile;
                 this.sourcePlayer = sourcePlayer;
+                this.camp = camp;
             }
 
             public void receiveCardList(List<Card> cardList)
             {
                 foreach (Card c in cardList)
                 {
-                    c.moveToCardPile(sourcePlayer.deck, true);
+                    c.moveToCardPile(sourcePlayer.deck, camp.sourceCard);
                     sourcePlayer.deck.shuffle();
                 }
                 CreatureCard newCreature = GameManager.Get().createCardById(GemMercenary.CARD_ID, sourcePlayer) as CreatureCard;

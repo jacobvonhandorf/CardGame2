@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BounceTheCard : SpellCard
+public class BounceTheCard : SpellCard, Effect
 {
     public override int getCardId()
     {
@@ -16,14 +16,11 @@ public class BounceTheCard : SpellCard
 
     protected override Effect getEffect()
     {
-        return new BounceEffect();
+        return this;
     }
 
-    private class BounceEffect : Effect
+    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
-        public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-        {
-            targetCreature.bounce();
-        }
+        targetCreature.bounce(this);
     }
 }

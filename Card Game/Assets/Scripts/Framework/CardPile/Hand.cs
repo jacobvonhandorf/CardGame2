@@ -21,7 +21,7 @@ public class Hand : CardPile
         foreach (Card c in cardList)
         {
             c.owner = handOwner;
-            c.moveToCardPile(this, false);
+            c.moveToCardPile(this, null);
         }
         resetCardPositions();
 

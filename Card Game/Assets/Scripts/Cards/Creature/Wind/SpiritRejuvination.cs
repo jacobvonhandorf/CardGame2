@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpiritRejuvination : SpellCard
+public class SpiritRejuvination : SpellCard, Effect
 {
     public override int getCardId()
     {
@@ -16,15 +16,12 @@ public class SpiritRejuvination : SpellCard
 
     protected override Effect getEffect()
     {
-        return new RejuvEff();
+        return this;
     }
 
-    private class RejuvEff : Effect
+    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
-        public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-        {
-            targetCreature.bounce();
-            sourcePlayer.drawCards(2);
-        }
+        targetCreature.bounce(this);
+        sourcePlayer.drawCards(2);
     }
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PityTheWeak : SpellCard
+public class PityTheWeak : SpellCard, Effect
 {
     public override int getCardId()
     {
@@ -16,32 +16,28 @@ public class PityTheWeak : SpellCard
 
     protected override Effect getEffect()
     {
-        return new PityTheWeakEffect();
+        return this;
     }
 
-    private class PityTheWeakEffect : Effect
+    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
-        public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
+        CreatureCard cardToAdd = null;
+        foreach (CreatureCard c in sourcePlayer.deck.getAllCardsWithType(CardType.Creature))
         {
-            CreatureCard cardToAdd = null;
-            foreach (CreatureCard c in sourcePlayer.deck.getAllCardsWithType(CardType.Creature))
-            {
-                if (cardToAdd == null)
-                    cardToAdd = c;
-                else
-                    if (cardToAdd.creature.getAttack() < c.creature.getAttack())
-                    cardToAdd = c;
-            }
-            if (cardToAdd != null)
-            {
-                cardToAdd.setGoldCost(cardToAdd.getGoldCost() - 1);
-                sourcePlayer.addCardToHandByEffect(cardToAdd);
-                //cardToAdd.moveToCardPile(sourcePlayer.hand);
-            }
+            if (cardToAdd == null)
+                cardToAdd = c;
             else
-            {
-                Debug.Log("Card to add is null");
-            }
+                if (cardToAdd.creature.getAttack() < c.creature.getAttack())
+                cardToAdd = c;
+        }
+        if (cardToAdd != null)
+        {
+            cardToAdd.setGoldCost(cardToAdd.getGoldCost() - 1);
+            cardToAdd.moveToCardPile(sourcePlayer.hand, this);
+        }
+        else
+        {
+            Debug.Log("Card to add is null");
         }
     }
 }

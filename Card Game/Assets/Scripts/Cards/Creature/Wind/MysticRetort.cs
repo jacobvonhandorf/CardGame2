@@ -10,7 +10,7 @@ public class MysticRetort : SpellCard, Effect
         foreach (Creature c in GameManager.Get().allCreatures) // need to move into a seperate list because bouncing removes from allCreatures
             creaturesToBounce.Add(c);
         foreach (Creature c in creaturesToBounce)
-            c.bounce();
+            c.bounce(this);
     }
 
     public override int getCardId()

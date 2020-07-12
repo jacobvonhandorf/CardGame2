@@ -201,7 +201,7 @@ public class GameManager : MonoBehaviour
             mullList.AddRange(deckList.GetRange(STARTING_HAND_SIZE, cardList.Count));
             foreach (Card c in mullList)
             {
-                c.moveToCardPile(localPlayer.hand, false);
+                c.moveToCardPile(localPlayer.hand, null);
             }
         }
     }
@@ -724,7 +724,7 @@ public class GameManager : MonoBehaviour
         creature.sendToGrave();
     }
 
-    public void destroyStructure(Structure structure)
+    public void destroyStructure(Structure structure, Card source)
     {
         Debug.Log("Destroying structure");
         structure.tile.structure = null;
@@ -735,7 +735,7 @@ public class GameManager : MonoBehaviour
         }
 
         allStructures.Remove(structure);
-        structure.sendToGrave();
+        structure.sendToGrave(source);
         structure.onRemoved();
     }
 

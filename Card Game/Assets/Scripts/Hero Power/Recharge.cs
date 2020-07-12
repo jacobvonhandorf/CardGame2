@@ -47,7 +47,7 @@ public class Recharge : HeroPower, CanReceivePickedCards, CanRecieveXPick
     {
         foreach (Card c in cardList)
         {
-            c.moveToCardPile(controller.deck, true);
+            c.moveToCardPile(controller.deck, null);
         }
         controller.deck.shuffle();
 

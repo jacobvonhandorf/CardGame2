@@ -21,24 +21,28 @@ public class SpritScrying : SpellCard
 
     private class SpiritScryingEffect : Effect
     {
+        Card sourceCard;
+
         public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
         {
-            GameManager.Get().queueCardPickerEffect(sourcePlayer, sourcePlayer.deck.getAllCardsWithTag(Tag.Fairy), new MyCardPickReceiver(sourcePlayer), 1, 1, false, "Select a card to add to hand");
+            GameManager.Get().queueCardPickerEffect(sourcePlayer, sourcePlayer.deck.getAllCardsWithTag(Tag.Fairy), new MyCardPickReceiver(sourcePlayer, sourceCard), 1, 1, false, "Select a card to add to hand");
         }
 
         private class MyCardPickReceiver : CanReceivePickedCards
         {
             Player player;
+            Card sourceCard;
 
-            public MyCardPickReceiver(Player player)
+            public MyCardPickReceiver(Player player, Card sourceCard)
             {
                 this.player = player;
+                this.sourceCard = sourceCard;
             }
 
             public void receiveCardList(List<Card> cardList)
             {
                 if (cardList.Count > 0)
-                    player.addCardToHandByEffect(cardList[0]);
+                    sourceCard.moveToCardPile(player.hand, sourceCard);
             }
         }
     }
