@@ -15,7 +15,7 @@ public abstract class SpellCard : Card
         getEffect().activate(owner, GameManager.Get().getOppositePlayer(owner), t, t, t.creature, t.creature);
         moveToCardPile(owner.graveyard, null);
         owner.hand.resetCardPositions();
-        GameManager.Get().afterSpellCastEffects();
+        //GameManager.Get().afterSpellCastEffects();
 
     }
 

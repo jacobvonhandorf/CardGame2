@@ -27,7 +27,7 @@ public class Oblate : SpellCard, Effect
         alreadyActivatedThisTurn = true;
         EffectActuator resetEffect = new EffectActuator();
         resetEffect.effect = new ResetOPTRestriction();
-        GameManager.Get().beginningOfTurnEffectsList.Add(resetEffect);
+        //GameManager.Get().beginningOfTurnEffectsList.Add(resetEffect);
     }
 
     private class ResetOPTRestriction : Effect

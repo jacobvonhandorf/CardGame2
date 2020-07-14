@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RainbowBurst : SpellCard, Effect, CanReceivePickedCards
+public class RainbowBurst : SpellCard, Effect
 {
     public const int CARD_ID = 82;
     private const int DAMAGE = 5;
     private const int CARDS_DRAWN = 3;
+    private const int CARDS_TO_SHUFFLE_BACK = 3;
 
     public override int getCardId()
     {
@@ -46,10 +47,44 @@ public class RainbowBurst : SpellCard, Effect, CanReceivePickedCards
         // reset values
         selectedCardIds.Clear();
         cardsToShuffleBack.Clear();
-        gemsNeededToShuffleBack = 5;
-        GameManager.Get().queueCardPickerEffect(sourcePlayer, sourcePlayer.hand.getAllCardsWithTag(Tag.Gem), this, 1, 1, true, "Select a gem to shuffle back. " + gemsNeededToShuffleBack + " remaining");
-    }
+        gemsNeededToShuffleBack = CARDS_TO_SHUFFLE_BACK;
+        List<Card> pickableCards = sourcePlayer.hand.getAllCardsWithTag(Tag.Gem);
 
+        CompoundQueueableCommand.Builder cmdBuilder = new CompoundQueueableCommand.Builder();
+        for (int i = 0; i < CARDS_TO_SHUFFLE_BACK; i++)
+        {
+            QueueableCommand cmd = CardPicker.CreateCommand(pickableCards, 1, 1, "Select a gem to shuffle back. " + gemsNeededToShuffleBack + " remaining", sourcePlayer, delegate (List<Card> cardList)
+            {
+                pickableCards.RemoveAll(c => c.getCardId() == cardList[0].getCardId()); // remove already selected cards
+                cardsToShuffleBack.Add(cardList[0]);
+                gemsNeededToShuffleBack--;
+            });
+            cmdBuilder.addCommand(cmd);
+        }
+        cmdBuilder.addCommand(new SingleTileTargetCmd(new PickCreatureEff(this), sourcePlayer));
+
+        InformativeAnimationsQueue.instance.addAnimation(cmdBuilder.Build());
+        //GameManager.Get().queueCardPickerEffect(sourcePlayer, sourcePlayer.hand.getAllCardsWithTag(Tag.Gem), this, 1, 1, true, "Select a gem to shuffle back. " + gemsNeededToShuffleBack + " remaining");
+    }
+    private class SingleTileTargetCmd : QueueableCommand
+    {
+        SingleTileTargetEffect effect;
+        Player effectOwner;
+
+        public SingleTileTargetCmd(SingleTileTargetEffect effect, Player effectOwner)
+        {
+            this.effect = effect;
+            this.effectOwner = effectOwner;
+        }
+
+        public override bool isFinished => true;
+
+        public override void execute()
+        {
+            GameManager.Get().setUpSingleTileTargetEffect(effect, effectOwner, null, null, null, "Select a creature to deal " + DAMAGE + " damage", true);
+        }
+    }
+    /*
     public void receiveCardList(List<Card> cardList)
     {
         Card selectedCard = cardList[0];
@@ -73,19 +108,25 @@ public class RainbowBurst : SpellCard, Effect, CanReceivePickedCards
             GameManager.Get().queueCardPickerEffect(owner, pickableCards, this, 1, 1, true, "Select a gem to shuffle back. " + gemsNeededToShuffleBack + " remaining");
         }
     }
+    */
 
     private class PickCreatureEff : SingleTileTargetEffect
     {
-        public RainbowBurst sourceCard;
+        private RainbowBurst rainbowBurst;
+
+        public PickCreatureEff(RainbowBurst rainbowBurst)
+        {
+            this.rainbowBurst = rainbowBurst;
+        }
 
         public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
         {
             // all selections have been made so resolve all effects
-            foreach (Card c in sourceCard.cardsToShuffleBack)
+            foreach (Card c in rainbowBurst.cardsToShuffleBack)
             {
-                c.moveToCardPile(sourceCard.owner.deck, sourceCard);
+                c.moveToCardPile(rainbowBurst.owner.deck, rainbowBurst);
             }
-            sourceCard.owner.deck.shuffle();
+            rainbowBurst.owner.deck.shuffle();
 
             targetCreature.takeDamage(DAMAGE);
             sourcePlayer.drawCards(CARDS_DRAWN);

@@ -10,29 +10,59 @@ public abstract class QueueableCommand
 
 public class CompoundQueueableCommand : QueueableCommand
 {
-    private List<QueueableCommand> commands;
+    private Queue<QueueableCommand> commandList;
+    private QueueableCommand currentCommand;
 
-    public CompoundQueueableCommand(List<QueueableCommand> commands)
+    public override bool isFinished => checkFinished();
+
+    public CompoundQueueableCommand(Queue<QueueableCommand> commandList)
     {
-        this.commands = commands;
+        this.commandList = commandList;
     }
 
-    public override bool isFinished => getIsFinished();
+    private bool checkFinished()
+    {
+        if (currentCommand.isFinished)
+        {
+            if (commandList.Count > 0)
+            {
+                moveToNextCommand();
+                return false;
+            }
+            else
+                return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private void moveToNextCommand()
+    {
+        currentCommand = commandList.Dequeue();
+        currentCommand.execute();
+    }
 
     public override void execute()
     {
-        foreach (QueueableCommand cmd in commands)
-        {
-            cmd.execute();
-        }
+        throw new System.NotImplementedException();
     }
-    private bool getIsFinished()
+
+    #region Static
+    public class Builder
     {
-        foreach (QueueableCommand cmd in commands)
+        private Queue<QueueableCommand> commands;
+        public Builder addCommand(QueueableCommand c)
         {
-            if (!cmd.isFinished)
-                return false;
+            commands.Enqueue(c);
+            return this;
         }
-        return true;
+
+        public CompoundQueueableCommand Build()
+        {
+            return new CompoundQueueableCommand(commands);
+        }
     }
+    #endregion
 }

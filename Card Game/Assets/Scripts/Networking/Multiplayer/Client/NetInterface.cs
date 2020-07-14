@@ -43,6 +43,10 @@ public class NetInterface
     {
         return localPlayer;
     }
+    public void setLocalPlayer(Player p)
+    {
+        localPlayer = p;
+    }
 
     public void syncStartingDeck() // might neeed to move to a game setup object
     {
@@ -62,11 +66,6 @@ public class NetInterface
     public void recieveGameSetupComplete()
     {
         gameSetupComplete = true;
-    }
-
-    public void setLocalPlayer(Player p)
-    {
-        localPlayer = p;
     }
 
     // syncing

@@ -2,8 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpritScrying : SpellCard
+public class SpritScrying : SpellCard, Effect
 {
+    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
+    {
+        CardPicker.CreateAndQueue(owner.hand.getAllCardsWithTag(Tag.Fairy), 1, 1, "Select a card to add to your hand", owner, delegate (List<Card> cardList)
+        {
+            cardList[0].moveToCardPile(owner.hand, this);
+        });
+    }
+
     public override int getCardId()
     {
         return 2;
@@ -16,9 +24,10 @@ public class SpritScrying : SpellCard
 
     protected override Effect getEffect()
     {
-        return new SpiritScryingEffect();
+        return this;
     }
 
+    /*
     private class SpiritScryingEffect : Effect
     {
         Card sourceCard;
@@ -46,4 +55,5 @@ public class SpritScrying : SpellCard
             }
         }
     }
+    */
 }

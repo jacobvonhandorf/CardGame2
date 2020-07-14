@@ -5,16 +5,93 @@ using UnityEngine;
 
 public class CardPicker : MonoBehaviour, CanReceiveCardPick
 {
+    public static CardPicker pickerPrefab;
+
     private List<Card> selectedCards;
     private int minCards, maxCards;
     private CanReceivePickedCards cardListReceiver;
+    private CardListHandler handler;
     [SerializeField] private MyButton confirmButton;
-    //[SerializeField] private GameObject pickableCardPrefab;
     [SerializeField] private CardPileViewer cardPileViewer;
+    private bool finished = false;
 
-    private void Start()
+    #region Command
+    public static void CreateAndQueue(List<Card> pickableCards, int minCards, int maxCards, string headerText, Player owner, CardListHandler handler)
+    {
+        InformativeAnimationsQueue.instance.addAnimation(CreateCommand(pickableCards, minCards, maxCards, headerText, owner, handler));
+    }
+    // used for creating compound commands
+    public static QueueableCommand CreateCommand(List<Card> pickableCards, int minCards, int maxCards, string headerText, Player owner, CardListHandler handler)
+    {
+        return new CardPickerCmd(pickableCards, minCards, maxCards, headerText, owner, handler);
+    }
+    private class CardPickerCmd : QueueableCommand
+    {
+        public override bool isFinished => picker.isFinished();
+        public bool finished = false;
+        private CardPicker picker;
+
+        List<Card> pickableCards;
+        int minCards;
+        int maxCards;
+        string headerText;
+        CardListHandler handler;
+        Player owner;
+
+        public CardPickerCmd(List<Card> pickableCards, int minCards, int maxCards, string headerText, Player owner, CardListHandler handler)
+        {
+            this.pickableCards = pickableCards;
+            this.minCards = minCards;
+            this.maxCards = maxCards;
+            this.headerText = headerText;
+            this.handler = handler;
+            this.owner = owner;
+        }
+
+        public override void execute()
+        {
+            if (owner != NetInterface.Get().getLocalPlayer())
+                return;
+            CardPicker cardPicker = Instantiate(GameManager.Get().cardPickerPrefab, new Vector3(0, 0, -1), Quaternion.identity);
+            picker = cardPicker;
+            cardPicker.setUp(pickableCards, handler, minCards, maxCards, headerText);
+            GameManager.Get().setPopUpGlassActive(true);
+        }
+    }
+    #endregion
+
+    private void Awake()
     {
         selectedCards = new List<Card>();
+    }
+
+    public bool setUp(List<Card> pickableCards, CardListHandler handler, int minCards, int maxCards, string headerText)
+    {
+        if (pickableCards.Count < minCards)
+            return false;
+        headerText = getHeaderString(minCards, maxCards, headerText);
+
+        this.handler = handler;
+        this.minCards = minCards;
+        this.maxCards = maxCards;
+        // enable button if needed
+        if (minCards == 0)
+            confirmButton.gameObject.SetActive(true);
+        else
+            confirmButton.gameObject.SetActive(false);
+        // setup individual card veiwers
+        if (minCards == maxCards)
+            cardPileViewer.setupAndShow(pickableCards, headerText, this);
+        else if (maxCards < 999999)
+            cardPileViewer.setupAndShow(pickableCards, headerText, this);
+        else
+            throw new NotImplementedException();
+        return true;
+    }
+
+    public bool isFinished()
+    {
+        return finished;
     }
 
     // return true if there are enough cards to meet min
@@ -77,9 +154,12 @@ public class CardPicker : MonoBehaviour, CanReceiveCardPick
     // called when player is done selecting cards. Usually when they press a button or reach max number of cards
     public void confirmPicks()
     {
-        cardListReceiver.receiveCardList(selectedCards);
-        Destroy(gameObject);
-        EffectsManager.Get().signalEffectFinished();
+        handler.Invoke(selectedCards);
+        //cardListReceiver.receiveCardList(selectedCards);
+        finished = true;
+        //EffectsManager.Get().signalEffectFinished();
         GameManager.Get().setPopUpGlassActive(false);
+        Destroy(gameObject);
     }
+
 }

@@ -21,27 +21,9 @@ public class RecklessDraw : SpellCard, Effect
 
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
-        GameManager.Get().queueCardPickerEffect(sourcePlayer, sourcePlayer.hand.getCardList(), new RecklessEff(sourcePlayer, this), 1, 1, false, "Select a card to discard");
-    }
-
-    private class RecklessEff : CanReceivePickedCards
-    {
-        private Player owner;
-        private Card sourceCard;
-
-        public RecklessEff(Player owner, Card sourceCard)
+        CardPicker.CreateAndQueue(sourcePlayer.hand.getCardList(), 1, 1, "Select a card to discard", sourcePlayer, delegate (List<Card> cardList)
         {
-            this.owner = owner;
-            this.sourceCard = sourceCard;
-        }
-
-        public void receiveCardList(List<Card> cardList)
-        {
-            foreach(Card c in cardList)
-            {
-                c.moveToCardPile(owner.graveyard, sourceCard);
-            }
-            owner.drawCards(2);
-        }
+            cardList[0].moveToCardPile(sourcePlayer.graveyard, this);
+        });
     }
 }

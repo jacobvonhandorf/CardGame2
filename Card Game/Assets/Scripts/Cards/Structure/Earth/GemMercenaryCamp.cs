@@ -2,8 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GemMercenaryCamp : Structure
+public class GemMercenaryCamp : Structure, Effect
 {
+    Card selectedCard;
+    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
+    {
+        if (sourcePlayer.GetActions() < 1)
+        {
+            GameManager.Get().showToast("Not enough actions to activate this effect");
+            return;
+        }
+        if (sourcePlayer.hand.getAllCardsWithTag(Card.Tag.Gem).Count < 1)
+        {
+            GameManager.Get().showToast("You must have a Gem in your hand to activate this effect");
+            return;
+        }
+
+        CardPicker.CreateAndQueue(controller.hand.getAllCardsWithTag(Card.Tag.Gem), 1, 1, "Select a Gem to shuffle into your deck", controller, delegate (List<Card> cardList)
+        {
+            selectedCard = cardList[0];
+            GameManager.Get().setUpSingleTileTargetEffect(new STTE(this), controller, tile, null, this, "Select a tile to deploy Mercenary", true);
+        });
+    }
+
     public override bool canDeployFrom()
     {
         return true;
@@ -21,9 +42,37 @@ public class GemMercenaryCamp : Structure
 
     public override Effect getEffect()
     {
-        return new GemMercCampEffect(this);
+        return this;
     }
 
+    private class STTE : SingleTileTargetEffect
+    {
+        GemMercenaryCamp source;
+
+        public STTE(GemMercenaryCamp source)
+        {
+            this.source = source;
+        }
+
+        public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
+        {
+            CreatureCard newCreature = GameManager.Get().createCardById(GemMercenary.CARD_ID, sourcePlayer) as CreatureCard;
+            GameManager.Get().createCreatureOnTile(newCreature.creature, targetTile, sourcePlayer, newCreature);
+            sourcePlayer.subtractActions(1);
+        }
+
+        public bool canBeCancelled()
+        {
+            return true;
+        }
+
+        public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
+        {
+            return GameManager.Get().board.getAllTilesWithinRangeOfTile(sourceTile, 1);
+        }
+    }
+
+    /*
     private class GemMercCampEffect : SingleTileTargetEffect
     {
         private GemMercenaryCamp camp;
@@ -95,4 +144,5 @@ public class GemMercenaryCamp : Structure
             return true;
         }
     }
+    */
 }

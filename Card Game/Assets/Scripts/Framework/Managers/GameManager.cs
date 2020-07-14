@@ -24,12 +24,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Player player2; 
     public Player activePlayer;
     public Player nonActivePlayer;
-    public List<EffectActuator> beginningOfTurnEffectsList = new List<EffectActuator>();
-    public List<EffectActuator> endOfTurnEffectsList = new List<EffectActuator>();
 
-    //public List<EffectActuator> activateASAPEffectsList = new List<EffectActuator>();
-    //public List<EffectActuator> onSpellCastEffectsList = new List<EffectActuator>();
-    //public List<EffectActuator> afterSpellCastEffectsList = new List<EffectActuator>();
     public Board board;
     public List<Creature> allCreatures;
     public List<Structure> allStructures;
@@ -46,7 +41,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private EndGamePopUp endGamePopUp;
 
     // prefabs to instantiate later
-    [SerializeField] private CardPicker cardPickerPrefab;
+    [SerializeField] public CardPicker cardPickerPrefab;
     [SerializeField] private OptionButton optionButton;
     [SerializeField] private OptionSelectBox optionSelectBoxPrefab;
     [SerializeField] private XPickerBox xPickerPrefab;
@@ -162,24 +157,37 @@ public class GameManager : MonoBehaviour
         Tile hqTile = board.getTileByCoordinate(hqCoord, hqCoord);
         Card hq = createCardById(Headquarters.CARD_ID, localPlayer);
         hq.owner = NetInterface.Get().getLocalPlayer();
+        //hq.removeGraphicsAndCollidersFromScene();
         hq.play(hqTile);
         // draw starting hand
         Deck localPlayerDeck = localPlayer.deck;
-        List<Card> mullList = localPlayerDeck.getCardList().GetRange(0, STARTING_HAND_SIZE);
-        queueCardPickerEffect(localPlayer, mullList, new MulliganReceiver(mullList), 0, STARTING_HAND_SIZE, false, "Select cards to return to deck");
 
         //localPlayer.drawCards(STARTING_HAND_SIZE);
         NetInterface.Get().signalSetupComplete();
 
         // network setup is done so wait for opponent to catch up if needed
-        while (!NetInterface.Get().finishedWithSetup)
-        {
-            yield return null;
-        }
+        while (!NetInterface.Get().finishedWithSetup) { yield return null; }
         // lock local player if they are going second
         //localPlayer.locked = !NetInterface.Get().localPlayerIsP1();
         Debug.Log("Setup complete");
         NetInterface.Get().gameSetupComplete = true;
+
+        // starting mulligan
+        List<Card> mullList = localPlayerDeck.getCardList().GetRange(0, STARTING_HAND_SIZE);
+        //queueCardPickerEffect(localPlayer, mullList, new MulliganReceiver(mullList), 0, STARTING_HAND_SIZE, false, "Select cards to return to deck");
+        CardPicker.CreateAndQueue(mullList, 0, STARTING_HAND_SIZE, "Select cards to return to deck", localPlayer, delegate (List<Card> cardList) 
+        {
+            // remove selected cards from list
+            mullList.RemoveAll(c => cardList.Contains(c));
+            // add more cards equal to the number mulled away
+            List<Card> deckList = localPlayer.deck.getCardList();
+            mullList.AddRange(deckList.GetRange(STARTING_HAND_SIZE, cardList.Count));
+            foreach (Card c in mullList)
+            {
+                c.moveToCardPile(localPlayer.hand, null);
+            }
+            localPlayer.deck.shuffle();
+        });
     }
 
     private class MulliganReceiver : CanReceivePickedCards
@@ -233,7 +241,6 @@ public class GameManager : MonoBehaviour
         newP2Deck.shuffle();
     }
 
-
     public Card createCardById(int id, Player owner)
     {
         Card newCard = ResourceManager.Get().instantiateCardById(id);
@@ -261,40 +268,20 @@ public class GameManager : MonoBehaviour
         activePlayer.drawCard();
     }
 
+    #region TriggeredEffects
     private void beginningOfTurnEffects()
     {
         GameEvents.TriggerTurnStartEvents(this);
-        /*
-        EffectActuator[] tempList = new EffectActuator[beginningOfTurnEffectsList.Count];
-        beginningOfTurnEffectsList.CopyTo(tempList);
-        beginningOfTurnEffectsList.Clear();
-        foreach (EffectActuator e in tempList)
-        {
-            e.activate();
-        }
-        foreach (Structure s in allStructures)
-        {
-            s.onTurnStart();
-        }*/
     }
     private void endOfTurnEffects()
     {
-        EffectActuator[] tempList = new EffectActuator[endOfTurnEffectsList.Count];
-        endOfTurnEffectsList.CopyTo(tempList);
-        endOfTurnEffectsList.Clear();
-        foreach (EffectActuator e in tempList)
-        {
-            e.activate();
-        }
+        GameEvents.TriggerTurnEndEvents(this);
     }
     public void onSpellCastEffects(SpellCard spell)
     {
         GameEvents.TriggerSpellCastEvents(this, new GameEvents.SpellCastEventArgs() { spell = spell });
     }
-    public void afterSpellCastEffects()
-    {
-        // TODO
-    }
+    #endregion
 
     private List<Card> getAllCardsNotInPlay()
     {
@@ -548,7 +535,7 @@ public class GameManager : MonoBehaviour
         sourceCard.swapToCreature(tile);
 
         // place creature in correct location
-        Vector3 newPostion = tile.transform.position;
+        Vector3 newPostion = creature.getRootTransform().position;
         newPostion.z = 1; // change z so that the card is always above tile and can be clicked
         creature.getRootTransform().position = newPostion;
 
@@ -657,7 +644,7 @@ public class GameManager : MonoBehaviour
         sourceCard.swapToStructure(tile);
 
         // place structure in correct location
-        Vector3 newPosition = tile.transform.position;
+        Vector3 newPosition = structure.getRootTransform().position;
         newPosition.z = 1;
         structure.getRootTransform().position = newPosition;
 
@@ -1014,6 +1001,7 @@ public class GameManager : MonoBehaviour
     }
 
     // headerText can be null
+    /*
     public void queueCardPickerEffect(Player effectOwner, List<Card> pickableCards, CanReceivePickedCards receiver, int minCards, int maxCards, bool isPartOfChain, string headerText)
     {
         if (pickableCards.Count >= minCards)
@@ -1025,7 +1013,7 @@ public class GameManager : MonoBehaviour
         }
         else
             Debug.LogError("Not enough cards for card picker effect");
-    }
+    }*/
 
     private class WrappedCardPickerEffect : EffectActuator
     {
@@ -1135,16 +1123,20 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private class CardPickerCmd : QueueableCommand
+    /*
+    public void queueCardPickerEffect(Player effectOwner, List<Card> pickableCards, int minCards, int maxCards, bool isPartOfChain, string headerText, CanReceivePickedCards receiver)
     {
-        public override bool isFinished => finished;
-        public bool finished = false;
-
-        public override void execute()
+        if (pickableCards.Count >= minCards)
         {
-            throw new NotImplementedException();
+            if (!isPartOfChain)
+                EffectsManager.Get().addEffect(new WrappedCardPickerEffect(pickableCards, receiver, minCards, maxCards, headerText), effectOwner);
+            else
+                EffectsManager.Get().addEffectToStartOfQueue(new WrappedCardPickerEffect(pickableCards, receiver, minCards, maxCards, headerText), null, effectOwner);
         }
+        else
+            Debug.LogError("Not enough cards for card picker effect");
     }
+    */
 
     public void getOnAttackParticles(Vector3 position, Vector3 rotation)
     {

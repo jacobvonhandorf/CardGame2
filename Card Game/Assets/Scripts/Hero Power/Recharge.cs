@@ -62,8 +62,9 @@ public class Recharge : HeroPower, CanReceivePickedCards, CanRecieveXPick
 
     public void receiveXPick(int value)
     {
+        throw new System.Exception("Not implemented");
         controller.addGold(-value);
         controller.addMana(-(totalCost - value));
-        GameManager.Get().queueCardPickerEffect(controller, controller.graveyard.getCardList(), this, cardsToShuffleBack, cardsToShuffleBack, true, "Select cards to shuffle back");
+        //GameManager.Get().queueCardPickerEffect(controller, controller.graveyard.getCardList(), this, cardsToShuffleBack, cardsToShuffleBack, true, "Select cards to shuffle back");
     }
 }

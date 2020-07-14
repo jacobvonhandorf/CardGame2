@@ -20,12 +20,13 @@ public class InformativeAnimationsQueue : MonoBehaviour
     private void processCommands()
     {
         if (currentAnimation != null && !currentAnimation.isFinished) // command is in progress
+        {
             return;
+        }
         if (currentAnimation != null && currentAnimation.isFinished)
             currentAnimation = null;
         if (animationQueue.Count == 0) // command is finished but there is no new command
             return;
-        Debug.Log("Executing new animation");
         currentAnimation = animationQueue.Dequeue();
         currentAnimation.execute();
     }

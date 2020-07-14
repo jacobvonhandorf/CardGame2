@@ -5,6 +5,8 @@ using static Card;
 
 public class FairyNeophyte : Creature
 {
+    public const int CARD_ID = 46;
+
     public override int getStartingRange()
     {
         return 1;
@@ -12,22 +14,14 @@ public class FairyNeophyte : Creature
 
     public override void onCreation()
     {
-        GameManager.Get().queueCardPickerEffect(controller, controller.hand.getAllCardsWithType(Card.CardType.Creature), new EffReceiver(), 1, 1, false , "Select a card to give +1/+1");
-    }
-
-    private class EffReceiver : CanReceivePickedCards
-    {
-        public void receiveCardList(List<Card> cardList)
+        CardPicker.CreateAndQueue(controller.hand.getAllCardsWithType(CardType.Creature), 1, 1, "Select a card to give +1/+1", controller, delegate (List<Card> cardList)
         {
-            foreach(Card c in cardList)
-            {
-                (c as CreatureCard).creature.addAttack(1);
-                (c as CreatureCard).creature.addHealth(1);
-            }
-        }
+            (cardList[0] as CreatureCard).creature.addAttack(1);
+            (cardList[0] as CreatureCard).creature.addHealth(1);
+        });
     }
 
-    public override List<Card.Tag> getTags()
+    public override List<Tag> getTags()
     {
         List<Tag> tags = new List<Tag>();
         tags.Add(Tag.Fairy);
@@ -36,7 +30,7 @@ public class FairyNeophyte : Creature
 
     public override int getCardId()
     {
-        return 46;
+        return CARD_ID;
     }
 
     public override List<Keyword> getInitialKeywords()
