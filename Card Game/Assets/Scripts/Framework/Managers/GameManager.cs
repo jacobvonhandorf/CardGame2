@@ -43,8 +43,8 @@ public class GameManager : MonoBehaviour
     // prefabs to instantiate later
     [SerializeField] public CardPicker cardPickerPrefab;
     [SerializeField] private OptionButton optionButton;
-    [SerializeField] private OptionSelectBox optionSelectBoxPrefab;
-    [SerializeField] private XPickerBox xPickerPrefab;
+    [SerializeField] public OptionSelectBox optionSelectBoxPrefab;
+    [SerializeField] public XPickerBox xPickerPrefab;
     [SerializeField] private GameObject engineerPrefab;
     [SerializeField] private GameObject headquartersPrefab;
 
@@ -174,7 +174,6 @@ public class GameManager : MonoBehaviour
 
         // starting mulligan
         List<Card> mullList = localPlayerDeck.getCardList().GetRange(0, STARTING_HAND_SIZE);
-        //queueCardPickerEffect(localPlayer, mullList, new MulliganReceiver(mullList), 0, STARTING_HAND_SIZE, false, "Select cards to return to deck");
         CardPicker.CreateAndQueue(mullList, 0, STARTING_HAND_SIZE, "Select cards to return to deck", localPlayer, delegate (List<Card> cardList) 
         {
             // remove selected cards from list
@@ -188,31 +187,6 @@ public class GameManager : MonoBehaviour
             }
             localPlayer.deck.shuffle();
         });
-    }
-
-    private class MulliganReceiver : CanReceivePickedCards
-    {
-        private List<Card> mullList;
-
-        public MulliganReceiver(List<Card> mullList)
-        {
-            this.mullList = mullList;
-        }
-
-        public void receiveCardList(List<Card> cardList)
-        {
-            Player localPlayer = NetInterface.Get().getLocalPlayer();
-            // remove selected cards from list
-            mullList.RemoveAll(c => cardList.Contains(c));
-            // add more cards equal to the number mulled away
-            List<Card> deckList = localPlayer.deck.getCardList();
-            mullList.AddRange(deckList.GetRange(STARTING_HAND_SIZE, cardList.Count));
-            foreach (Card c in mullList)
-            {
-                c.moveToCardPile(localPlayer.hand, null);
-            }
-            localPlayer.deck.shuffle();
-        }
     }
 
     private void loadDecks()
@@ -761,26 +735,12 @@ public class GameManager : MonoBehaviour
             showToast("This creature has no effect");
             return;
         }
-        if (effect is SingleTileTargetEffect)
-        {
-            if ((effect as SingleTileTargetEffect).getValidTargetTiles(creature.controller, getOppositePlayer(creature.controller), creature.currentTile).Count == 0)
-            {
-                showToast("No valid targets for effect");
-                return;
-            }
-            // creature.hasDoneActionThisTurn = true;
-            string informationText = creature.sourceCard.getCardName() + "'s Effect";
-            setUpSingleTileTargetEffect(effect as SingleTileTargetEffect, creature.controller, creature.currentTile, creature, null, informationText, false);
-        }
-        else // effect doesn't need a target
-        {
-            //creature.hasDoneActionThisTurn = true;
-            effect.activate(creature.controller, null, creature.currentTile, null, creature, null);
-            creature.updateHasActedIndicators();
-        }
+        effect.activate(creature.controller, null, creature.currentTile, null, creature, null);
+        creature.updateHasActedIndicators();
     }
 
     // Creature, Structure and textToDisplay can be null
+    /*
     public void setUpSingleTileTargetEffect(SingleTileTargetEffect effect, Player effectOwner, Tile sourceTile, Creature creature, Structure structure, string textToDisplay, bool isPartOfChain)
     {
         if (!isPartOfChain)
@@ -788,7 +748,9 @@ public class GameManager : MonoBehaviour
         else
             EffectsManager.Get().addEffectToStartOfQueue(new WrapperSingleTileTargetEffect(effect, effectOwner, sourceTile, creature, structure), textToDisplay, effectOwner);
     }
+    */
 
+    /*
     // an effect actuator whoes effect activates a SingleTileTargetEffect
     private class WrapperSingleTileTargetEffect : EffectActuator
     {
@@ -859,6 +821,7 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    */
 
     public void setUpStructureEffect(Structure structure)
     {
@@ -869,35 +832,16 @@ public class GameManager : MonoBehaviour
             showToast("This structure has no effect");
             return;
         }
-        if (effect is SingleTileTargetEffect)
-        {
-            string informationText = structure.sourceCard.getCardName() + "'s Effect";
-            setUpSingleTileTargetEffect(effect as SingleTileTargetEffect, structure.controller, structure.tile, null, structure, informationText, false);
-        }
         else
         {
             List<string> options = new List<string>();
             options.Add("Yes");
             options.Add("No");
-            queueOptionSelectBoxEffect(options, new StructureEffectOptionHandler(effect, structure), "Are you sure you want to active the effect of " + structure.getCardName(), false, structure.controller);
-        }
-    }
-
-    private class StructureEffectOptionHandler : OptionBoxHandler
-    {
-        private Effect effect;
-        private Structure structure;
-
-        public StructureEffectOptionHandler(Effect effect, Structure structure)
-        {
-            this.effect = effect;
-            this.structure = structure;
-        }
-
-        public void receiveOptionBoxSelection(int selectedOptionIndex, string selectedOption)
-        {
-            if (selectedOptionIndex == 0)
-                effect.activate(structure.controller, Get().getOppositePlayer(structure.controller), structure.tile, null, null, null);
+            OptionSelectBox.CreateAndQueue(options, "Are you sure you want to activate the effect of " + structure.getCardName(), structure.controller, delegate (int selectedIndex, string selectedOption)
+            {
+                if (selectedIndex == 0)
+                    effect.activate(structure.controller, Get().getOppositePlayer(structure.controller), structure.tile, null, null, null);
+            });
         }
     }
 
@@ -1015,6 +959,7 @@ public class GameManager : MonoBehaviour
             Debug.LogError("Not enough cards for card picker effect");
     }*/
 
+        /*
     private class WrappedCardPickerEffect : EffectActuator
     {
         public WrappedCardPickerEffect(List<Card> pickableCards, CanReceivePickedCards receiver, int minCards, int maxCards, string headerText)
@@ -1047,7 +992,8 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-
+    */
+    /*
     // headerText can be null
     public void queueOptionSelectBoxEffect(List<string> options, OptionBoxHandler handler, string headerText, bool isPartOfChain, Player effectOwner)
     {
@@ -1056,7 +1002,6 @@ public class GameManager : MonoBehaviour
         else
             EffectsManager.Get().addEffectToStartOfQueue(new WrappedOptionBoxEffect(options, handler, headerText), null, effectOwner);
     }
-
     private class WrappedOptionBoxEffect : EffectActuator
     {
         public WrappedOptionBoxEffect(List<string> options, OptionBoxHandler handler, string headerText)
@@ -1084,7 +1029,9 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    */
 
+        /*
     public void queueXPickerEffect(CanRecieveXPick receiver, string headerText, int minValue, int maxValue, bool isPartOfChain, Player effectOwner)
     {
         if (!isPartOfChain)
@@ -1122,6 +1069,7 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    */
 
     /*
     public void queueCardPickerEffect(Player effectOwner, List<Card> pickableCards, int minCards, int maxCards, bool isPartOfChain, string headerText, CanReceivePickedCards receiver)

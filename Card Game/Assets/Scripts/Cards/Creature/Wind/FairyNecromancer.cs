@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FairyNecromancer : Creature, CanReceivePickedCards
+public class FairyNecromancer : Creature
 {
     public override int getCardId()
     {
@@ -23,7 +23,7 @@ public class FairyNecromancer : Creature, CanReceivePickedCards
 
     public override void onCreation()
     {
-
+        throw new System.Exception("Not implemented");
         //GameManager.Get().queueCardPickerEffect(controller, controller.graveyard.getAllCardWithTagAndType(Card.Tag.Fairy, Card.CardType.Creature), this, 1, 1, false, "Choose a card to add to your hand");
     }
 

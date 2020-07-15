@@ -11,7 +11,7 @@ public class Shrinker : Creature
 
     public override Effect getEffect()
     {
-        return new ShrinkerEffect();
+        return null;
     }
 
     public override int getCardId()
@@ -19,6 +19,7 @@ public class Shrinker : Creature
         return 54;
     }
 
+    /*
     private class ShrinkerEffect : SingleTileTargetEffect
     {
         public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
@@ -41,4 +42,5 @@ public class Shrinker : Creature
             return validTargets;
         }
     }
+    */
 }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Obsidian : SpellCard, SingleTileTargetEffect
+public class Obsidian : SpellCard
 {
     public const int CARD_ID = 81;
     private const int DAMAGE_AMOUNT = 2;
@@ -41,23 +41,10 @@ public class Obsidian : SpellCard, SingleTileTargetEffect
     private void doEffect()
     {
         owner.drawCard();
-        GameManager.Get().setUpSingleTileTargetEffect(this, owner, null, null, null, "Deal " + DAMAGE_AMOUNT + " damage", false);
-    }
-
-    // Effect
-    public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
-    {
-        return GameManager.Get().getAllTilesWithCreatures(oppositePlayer);
-    }
-
-    public bool canBeCancelled()
-    {
-        return true;
-    }
-
-    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-    {
-        targetCreature.takeDamage(DAMAGE_AMOUNT);
+        SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(GameManager.Get().getOppositePlayer(owner), false), delegate (Tile t)
+        {
+            t.creature.takeDamage(DAMAGE_AMOUNT);
+        });
     }
 
     protected override List<Tag> getTags()

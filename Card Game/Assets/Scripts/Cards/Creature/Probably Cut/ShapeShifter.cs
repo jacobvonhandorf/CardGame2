@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShapeShifter : Creature, Effect, OptionBoxHandler
+public class ShapeShifter : Creature, Effect
 {
     private const string ATTACK = "+1 Attack";
     private const string HEALTH = "+2 Health";
@@ -48,16 +48,14 @@ public class ShapeShifter : Creature, Effect, OptionBoxHandler
             HEALTH,
             ATTACK
         };
-        GameManager.Get().queueOptionSelectBoxEffect(options, this, "Would you like to increase attack or health?", true, controller);
-    }
-
-    public void receiveOptionBoxSelection(int selectedOptionIndex, string selectedOption)
-    {
-        if (selectedOption == ATTACK)
-            addAttack(1);
-        else
-            addHealth(2);
-        removeCounters(Counters.arcane, 2);
+        OptionSelectBox.CreateAndQueue(options, "Would you like to increase attack or health", controller, delegate (int selectedIndex, string selectedOption)
+        {
+            if (selectedOption == ATTACK)
+                addAttack(1);
+            else
+                addHealth(2);
+            removeCounters(Counters.arcane, 2);
+        });
     }
 
     /* old code

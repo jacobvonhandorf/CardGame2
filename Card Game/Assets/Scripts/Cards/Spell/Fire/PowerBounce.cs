@@ -2,66 +2,20 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PowerBounce : SpellCard, Effect, SingleTileTargetEffect
+public class PowerBounce : SpellCard, Effect
 {
     public const int CARD_ID = 79;
 
-    private bool firstBounceDone = false;
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
-        // bounce the first creature
-        targetCreature.bounce(this);
-
-        if (firstBounceDone)
-        {
-            firstBounceDone = false;
-            return;
-        }
-        firstBounceDone = true;
-
-        // check again for legal targets
-        // if there are then ask for second target
-        List<Tile> remainingTargetTiles = GameManager.Get().getAllTilesWithCreatures(false);
-        if (remainingTargetTiles.Count > 0)
-        {
-            GameManager.Get().setUpSingleTileTargetEffect(this, sourcePlayer, null, null, null, "Select a second creature to bounce", true);
-        }
-    }
-
-    private class SecondBounce : SingleTileTargetEffect
-    {
-        Card sourceCard;
-
-        public SecondBounce(Card sourceCard)
-        {
-            this.sourceCard = sourceCard;
-        }
-
-        public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-        {
-            targetCreature.bounce(sourceCard);
-        }
-
-        public bool canBeCancelled()
-        {
-            return true;
-        }
-
-        public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
-        {
-            return GameManager.Get().getAllTilesWithCreatures(false);
-        }
-    }
-
-    // SpellCard
-    public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
-    {
-        return GameManager.Get().getAllTilesWithCreatures(false);
-    }
-
-    public bool canBeCancelled()
-    {
-        return true;
+        List<Tile> validTargets = GameManager.Get().getAllTilesWithCreatures(false);
+        validTargets.Remove(targetCreature.currentTile);
+        if (validTargets.Count > 0)
+            SingleTileTargetEffect.CreateAndQueue(validTargets, delegate (Tile t)
+            {
+                targetCreature.bounce(this);
+                t.creature.bounce(this);
+            });
     }
 
     public override int getCardId()
@@ -69,15 +23,13 @@ public class PowerBounce : SpellCard, Effect, SingleTileTargetEffect
         return CARD_ID;
     }
 
-    // SingleTileTargetEffect
-    public override List<Tile> getLegalTargetTiles()
-    {
-        return GameManager.Get().getAllTilesWithCreatures(false);
-    }
-
     protected override Effect getEffect()
     {
         return this;
     }
 
+    public override List<Tile> getLegalTargetTiles()
+    {
+        return GameManager.Get().getAllTilesWithCreatures(false);
+    }
 }

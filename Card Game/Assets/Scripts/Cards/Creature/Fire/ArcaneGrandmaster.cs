@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ArcaneGrandmaster : Creature, SingleTileTargetEffect
+public class ArcaneGrandmaster : Creature
 {
-    //private const int effRange = 3;
-    //private const int numCardsNeededForBonusDamage = 4;
-
     private const int FIRST_THRESHOLD = 3;
     private const int SECOND_THRESHOLD = 6;
     private const int THIRD_THRESHOLD = 10;
@@ -26,13 +23,19 @@ public class ArcaneGrandmaster : Creature, SingleTileTargetEffect
         return new List<Keyword>() { Keyword.deploy };
     }
 
-    public override void onAnySpellCast(SpellCard spell)
+    public override void onInitialization()
     {
-        // if is in hand and the spell was cast by the same owner
-        if (sourceCard.getCardPile() is Hand && spell.owner == sourceCard.owner)
-        {
+        GameEvents.E_SpellCast += GameEvents_E_SpellCast;
+    }
+    private void OnDestroy()
+    {
+        GameEvents.E_SpellCast -= GameEvents_E_SpellCast;
+    }
+
+    private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastEventArgs e)
+    {
+        if (sourceCard.getCardPile() is Hand && e.spell.owner == sourceCard.owner)
             addAttack(1);
-        }
     }
 
     public override void onCreation()
@@ -51,19 +54,11 @@ public class ArcaneGrandmaster : Creature, SingleTileTargetEffect
         }
         if (getAttack() >= THIRD_THRESHOLD)
         {
-            if (GameManager.Get().getAllTilesWithCreatures(GameManager.Get().getOppositePlayer(controller)).Count > 0)
-                GameManager.Get().setUpSingleTileTargetEffect(this, controller, currentTile, this, null, "Select a creature to destroy", true);
+            SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(controller.getOppositePlayer(), false), delegate (Tile t)
+            {
+                GameManager.Get().destroyCreature(t.creature);
+            });
         }
-    }
-
-    public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
-    {
-        return GameManager.Get().getAllTilesWithCreatures(oppositePlayer);
-    }
-
-    public bool canBeCancelled()
-    {
-        return true;
     }
 
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)

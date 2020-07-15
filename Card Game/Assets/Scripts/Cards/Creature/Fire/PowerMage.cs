@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PowerMage : Creature, CanReceivePickedCards
+public class PowerMage : Creature
 {
     public const int CARD_ID = 80;
 
@@ -16,24 +16,28 @@ public class PowerMage : Creature, CanReceivePickedCards
         return 1;
     }
 
-    private List<Card> cardReferences = new List<Card>();
-    public override void onCreation()
+    private static List<Card> cardReferences = new List<Card>();
+    public override void onInitialization()
     {
-        cardReferences.Add(GameManager.Get().createCardById(PowerDraw.CARD_ID, controller));
-        cardReferences.Add(GameManager.Get().createCardById(PowerBlast.CARD_ID, controller));
-        cardReferences.Add(GameManager.Get().createCardById(Inferno.CARD_ID, controller));
-        GameManager.Get().queueCardPickerEffect(controller, cardReferences, this, 1, 1, true, "Select a card to add to your hand");
+        if (cardReferences.Count == 0)
+        {
+            cardReferences.Add(GameManager.Get().createCardById(PowerDraw.CARD_ID, controller));
+            cardReferences.Add(GameManager.Get().createCardById(PowerBlast.CARD_ID, controller));
+            cardReferences.Add(GameManager.Get().createCardById(Inferno.CARD_ID, controller));
+        }
+    }
+    private void OnDestroy() // clear the list when game ends. 
+    {
+        cardReferences.Clear();
     }
 
-    public void receiveCardList(List<Card> cardList)
+    public override void onCreation()
     {
-        cardList[0].moveToCardPile(controller.hand, sourceCard);
-        foreach (Card c in cardReferences)
+        //GameManager.Get().queueCardPickerEffect(controller, cardReferences, this, 1, 1, true, "Select a card to add to your hand");
+        CardPicker.CreateAndQueue(cardReferences, 1, 1, "Select a card to add to your hand", controller, delegate (List<Card> cardList)
         {
-            if (c != cardList[0])
-                GameManager.Get().destroyCard(c);
-        }
-        cardReferences.Clear();
+            GameManager.Get().createCardById(cardList[0].getCardId(), controller).moveToCardPile(controller.hand, sourceCard);
+        });
     }
 
     public override List<Card.Tag> getTags()

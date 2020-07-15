@@ -232,6 +232,10 @@ public class Player : MonoBehaviour
     {
         return playerNameText.text;
     }
+    public Player getOppositePlayer()
+    {
+        return GameManager.Get().getOppositePlayer(this);
+    }
 
     public void readyAttack()
     {

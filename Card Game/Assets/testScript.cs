@@ -7,26 +7,24 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
-public class TestScript : MonoBehaviour, CanReceivePickedCards
+public class TestScript : MonoBehaviour
 {
     public CardPicker prefab;
 
     private void Start()
     {
         // setup test
-        CardPicker picker = Instantiate(prefab);
-        picker.setUp(getTestCardList(), this, 0, 5, "Testing");
+    }
+
+    private void doTestOnKeyPress()
+    {
+        // test code here
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.A))
             doTestOnKeyPress();
-    }
-
-    private void doTestOnKeyPress()
-    {
-
     }
 
     private List<Card> getTestCardList()
@@ -42,11 +40,6 @@ public class TestScript : MonoBehaviour, CanReceivePickedCards
     private Card getTestCard()
     {
         return ResourceManager.Get().instantiateCardById(ManaWell.CARD_ID);
-    }
-
-    public void receiveCardList(List<Card> cardList)
-    {
-        throw new NotImplementedException();
     }
 }
 

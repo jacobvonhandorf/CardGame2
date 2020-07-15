@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FairyFortress : Structure, Effect, CanReceivePickedCards
+public class FairyFortress : Structure, Effect
 {
     public override bool canDeployFrom()
     {
@@ -28,61 +28,46 @@ public class FairyFortress : Structure, Effect, CanReceivePickedCards
 
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
+        #region Validation
         if (sourcePlayer.GetActions() <= 0)
         {
             GameManager.Get().showToast("You do not have enough actions to use this effect");
             return;
         }
-        List<Card> controlledCreatureCards = new List<Card>();
-        foreach (Creature c in controller.getAllControlledCreatures())
-            controlledCreatureCards.Add(c.sourceCard);
-        if (controlledCreatureCards.Count <= 0)
+        if (GameManager.Get().getAllTilesWithCreatures(sourcePlayer, true).Count < 1)
         {
             GameManager.Get().showToast("You must control a creature to activate this effect");
             return;
         }
-
-        GameManager.Get().queueCardPickerEffect(controller, controlledCreatureCards, this, 1, 1, false, "Select your creature to bounce");
-    }
-
-    public void receiveCardList(List<Card> cardList)
-    {
-        Creature firstCreature = (cardList[0] as CreatureCard).creature;
-        List<Card> pickableCards = new List<Card>();
-        foreach (Creature c in GameManager.Get().getOppositePlayer(controller).getAllControlledCreatures())
-            pickableCards.Add(c.sourceCard);
-        if (pickableCards.Count <= 0)
+        if (GameManager.Get().getAllTilesWithCreatures(GameManager.Get().getOppositePlayer(sourcePlayer), false).Count < 1)
         {
-            GameManager.Get().showToast("Your opponent must control a creature for you to activate this effect");
+            GameManager.Get().showToast("Your opponent must control a creature to activate this effect");
             return;
         }
+        #endregion
 
-        GameManager.Get().queueCardPickerEffect(controller, pickableCards, new EffectPart2(firstCreature, sourceCard), 1, 1, true ,"Select opponent's creature to bounce");
+        #region CommandBuilding
+        Creature ownersCreature = null;
+        Creature opponentsCreature = null;
+        SingleTileTargetEffect firstSelection = new SingleTileTargetEffect(GameManager.Get().getAllTilesWithCreatures(controller, true), delegate (Tile t)
+        {
+            ownersCreature = t.creature;
+        });
+        SingleTileTargetEffect secondSelection = new SingleTileTargetEffect(GameManager.Get().getAllTilesWithCreatures(controller, true), delegate (Tile t)
+        {
+            opponentsCreature = t.creature;
+            ownersCreature.bounce(sourceCard);
+            opponentsCreature.bounce(sourceCard);
+            sourcePlayer.subtractActions(1);
+        });
+        CompoundQueueableCommand cqc = new CompoundQueueableCommand.Builder().addCommand(firstSelection).addCommand(secondSelection).Build();
+        InformativeAnimationsQueue.instance.addAnimation(cqc);
+        #endregion
     }
+
 
     public override int getCardId()
     {
         return 50;
-    }
-
-    private class EffectPart2 : CanReceivePickedCards
-    {
-        Card sourceCard;
-        Creature firstCreature;
-
-        public EffectPart2(Creature firstCreature, Card sourceCard)
-        {
-            this.firstCreature = firstCreature;
-            this.sourceCard = sourceCard;
-        }
-
-        public void receiveCardList(List<Card> cardList)
-        {
-            Creature secondCreature = (cardList[0] as CreatureCard).creature;
-            firstCreature.controller.subtractActions(1);
-            firstCreature.bounce(sourceCard);
-            secondCreature.bounce(sourceCard);
-
-        }
     }
 }

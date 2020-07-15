@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class DoubleUp : HeroPower, CanReceivePickedCards
+public class DoubleUp : HeroPower
 {
     public void activate(Player controller)
     {

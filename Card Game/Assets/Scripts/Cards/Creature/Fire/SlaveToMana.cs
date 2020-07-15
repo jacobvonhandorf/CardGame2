@@ -2,59 +2,61 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SlaveToMana : Creature, OptionBoxHandler, SingleTileTargetEffect
+public class SlaveToMana : Creature
 {
     public const int CARD_ID = 76;
     private const string YES = "Yes";
     private const string NO = "No";
 
-    private static bool effectTriggeredThisTurn = false;
-
-    // SingleTileTargetEffect
-    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-    {
-        sourceCard.moveToCardPile(sourceCard.owner.hand, sourceCard); // this is jank. Could cause errors in the future
-                                                                // for now it's to stop bugs because "play" bugs out if the card is in deck
-        sourceCard.play(targetTile);
-    }
-    public bool canBeCancelled()
-    {
-        return true;
-    }
-    public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
-    {
-        return GameManager.Get().getAllDeployableTiles(sourcePlayer);
-    }
 
     public override int getCardId()
     {
         return CARD_ID;
     }
 
-    public override int getStartingRange()
+    public override void onInitialization()
     {
-        return 1;
+        GameEvents.E_SpellCast += GameEvents_E_SpellCast;
+        GameEvents.E_TurnStart += GameEvents_E_TurnStart;
+    }
+    private void OnDestroy()
+    {
+        GameEvents.E_SpellCast -= GameEvents_E_SpellCast;
+        GameEvents.E_TurnStart -= GameEvents_E_TurnStart;
     }
 
-    public override void onAnySpellCast(SpellCard spell)
+    private static bool effectTriggeredThisTurn = false;
+    private void GameEvents_E_TurnStart(object sender, System.EventArgs e)
     {
-        Debug.Log("Spell cast #" + sourceCard.owner.numSpellsCastThisTurn);
-        if (spell.owner == sourceCard.owner && sourceCard.getCardPile() is Deck && sourceCard.owner.numSpellsCastThisTurn == 3 && !effectTriggeredThisTurn)
+        effectTriggeredThisTurn = false;
+    }
+    private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastEventArgs e)
+    {
+        if (e.spell.owner == sourceCard.owner && sourceCard.getCardPile() is Deck && sourceCard.owner.numSpellsCastThisTurn == 3 && !effectTriggeredThisTurn)
         {
-            Debug.Log("Inside if");
             effectTriggeredThisTurn = true;
             List<string> options = new List<string>()
             {
                 YES,
                 NO
             };
-            GameManager.Get().queueOptionSelectBoxEffect(options, this, "Would you like to play " + sourceCard.getCardName() + " from your deck?", false, sourceCard.owner);
+            bool deploy = false;
+            QueueableCommand optionCmd = OptionSelectBox.CreateCommand(options, "Deploy " + cardName + " from your deck?", sourceCard.owner, delegate (int selectedIndex, string selectedOption)
+            {
+                if (selectedIndex == 0)
+                    deploy = true;
+            });
+            QueueableCommand deployCmd = SingleTileTargetEffect.CreateCommand(GameManager.Get().getAllDeployableTiles(sourceCard.owner), delegate (Tile t)
+            {
+                if (deploy)
+                {
+                    sourceCard.moveToCardPile(sourceCard.owner.hand, sourceCard); // this is jank. Could cause errors in the future
+                                                                                  // for now it's to stop bugs because "play" bugs out if the card is in deck
+                    sourceCard.play(t);
+                }
+            });
+            new CompoundQueueableCommand.Builder().addCommand(optionCmd).addCommand(deployCmd).BuildAndQueue();
         }
-    }
-
-    public override void onTurnStart()
-    {
-        effectTriggeredThisTurn = false;
     }
 
     public override List<Card.Tag> getTags()
@@ -63,14 +65,5 @@ public class SlaveToMana : Creature, OptionBoxHandler, SingleTileTargetEffect
         {
             Card.Tag.Arcane
         };
-    }
-
-    // OptionBoxHandler
-    public void receiveOptionBoxSelection(int selectedOptionIndex, string selectedOption)
-    {
-        if (selectedOption == YES)
-        {
-            GameManager.Get().setUpSingleTileTargetEffect(this, sourceCard.owner, null, this, null, sourceCard.getCardName() + "'s Effect", true);
-        }
     }
 }

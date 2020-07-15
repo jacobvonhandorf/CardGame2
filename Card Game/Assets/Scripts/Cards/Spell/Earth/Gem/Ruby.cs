@@ -41,26 +41,11 @@ public class Ruby : SpellCard
 
     private void doEffect()
     {
-        GameManager.Get().setUpSingleTileTargetEffect(new RubyEff(), owner, null, null, null, "Ruby's Effect", false);
-    }
-
-    private class RubyEff : SingleTileTargetEffect
-    {
-        public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
+        SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(owner), delegate (Tile t)
         {
-            targetCreature.addAttack(1);
-            targetCreature.addHealth(1);
-        }
-
-        public bool canBeCancelled()
-        {
-            return true;
-        }
-
-        public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
-        {
-            return GameManager.Get().getAllTilesWithCreatures(sourcePlayer, true);
-        }
+            t.creature.addAttack(1);
+            t.creature.addHealth(1);
+        });
     }
 
     public override int getCardId()

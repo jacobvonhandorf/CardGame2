@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ArcaneApprentice : Creature, Effect, CanRecieveXPick
+public class ArcaneApprentice : Creature, Effect
 {
     public const int EFFECT_RANGE = 2;
 
@@ -28,9 +28,17 @@ public class ArcaneApprentice : Creature, Effect, CanRecieveXPick
         return 66;
     }
 
-    public override void onAnySpellCast(SpellCard spell)
+    private void OnEnable()
     {
-        if (sourceCard.isCreature && spell.owner == controller)
+        GameEvents.E_SpellCast += GameEvents_E_SpellCast;
+    }
+    private void OnDisable()
+    {
+        GameEvents.E_SpellCast -= GameEvents_E_SpellCast;
+    }
+    private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastEventArgs e)
+    {
+        if (e.spell.owner == controller)
             addCounters(Counters.arcane, 1);
     }
 
@@ -41,56 +49,18 @@ public class ArcaneApprentice : Creature, Effect, CanRecieveXPick
             GameManager.Get().showToast("You have already acted with this creature this turn");
             return;
         }
-        GameManager.Get().queueXPickerEffect(this, "How many counters to remove?", 1, hasCounter(Counters.arcane), false, controller);
+
+        int selectedValue = -1;
+        QueueableCommand xPickCmd = XPickerBox.CreateAsCommand(1, hasCounter(Counters.arcane), "How many counters to remove?", controller, delegate (int x)
+        {
+            selectedValue = x;
+        });
+        QueueableCommand targetSelect = SingleTileTargetEffect.CreateCommand(GameManager.Get().getAllTilesWithCreatures(controller.getOppositePlayer(), false), delegate (Tile t)
+        {
+            removeCounters(Counters.arcane, selectedValue);
+            t.creature.takeDamage(selectedValue);
+            hasDoneActionThisTurn = true;
+        });
+        new CompoundQueueableCommand.Builder().addCommand(xPickCmd).addCommand(targetSelect).BuildAndQueue();
     }
-
-    public void receiveXPick(int value)
-    {
-        GameManager.Get().setUpSingleTileTargetEffect(new ApprenticeEff(value), controller, currentTile, this, null, "Choose target to deal " + value + " damage", true);
-    }
-
-    private class ApprenticeEff : SingleTileTargetEffect
-    {
-        private int value;
-
-        public ApprenticeEff(int value)
-        {
-            this.value = value;
-        }
-
-        public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-        {
-            sourceCreature.removeCounters(Counters.arcane, value);
-            sourceCreature.hasDoneActionThisTurn = true;
-
-            targetCreature.takeDamage(value);
-        }
-
-        public bool canBeCancelled()
-        {
-            return true;
-        }
-
-        public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
-        {
-            Debug.LogError("Opposite = " + oppositePlayer);
-            List<Tile> returnList = GameManager.Get().getAllTilesWithCreatures(oppositePlayer);
-            returnList.RemoveAll(t => t.getDistanceTo(sourceTile) > EFFECT_RANGE);
-            return returnList;
-        }
-    }
-
-    /* 
-     * old code
-     *      public override void onCreation()
-            {
-                GameManager.Get().queueCardPickerEffect(controller, controller.deck.getAllCardWithTagAndType(Card.Tag.Arcane, Card.CardType.Spell), this, 1, 1, "Select a card to add to your hand");
-            }
-
-            public void receiveCardList(List<Card> cardList)
-            {
-                controller.hand.addCardByEffect(cardList[0]);
-            }
-
-     */
 }

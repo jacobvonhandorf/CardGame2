@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FairyCavalier : Creature, SingleTileTargetEffect
+public class FairyCavalier : Creature
 {
     public override List<Card.Tag> getTags()
     {
@@ -13,7 +13,10 @@ public class FairyCavalier : Creature, SingleTileTargetEffect
 
     public override void onCreation()
     {
-        GameManager.Get().setUpSingleTileTargetEffect(this, controller, currentTile, this, null, "Select a creature to return to bounce", false);
+        SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(controller, true), delegate (Tile t)
+        {
+            t.creature.bounce(sourceCard);
+        });
     }
 
     public override int getStartingRange()
@@ -30,20 +33,6 @@ public class FairyCavalier : Creature, SingleTileTargetEffect
     {
         Debug.Log("Cavalier effect activated");
         targetTile.creature.bounce(sourceCard);
-    }
-
-    public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
-    {
-        Debug.Log(sourcePlayer);
-        Debug.Log(GameManager.Get().getAllTilesWithCreatures(sourcePlayer).Count);
-        List<Tile> returnList = GameManager.Get().getAllTilesWithCreatures(sourcePlayer);
-        returnList.RemoveAll(t => t.creature is Engineer); // can't bounce engineers
-        return GameManager.Get().getAllTilesWithCreatures(sourcePlayer);
-    }
-
-    public bool canBeCancelled()
-    {
-        return false;
     }
 
     public override List<Keyword> getInitialKeywords()

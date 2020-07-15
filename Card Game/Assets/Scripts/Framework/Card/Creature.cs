@@ -629,7 +629,6 @@ public abstract class Creature : MonoBehaviour, Damageable
 
 
     // ABSTRACT METHODS
-    public abstract int getStartingRange();
     public abstract int getCardId();
 
     #region ExtendedMethods
@@ -652,6 +651,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     public virtual void onAnySpellCast(SpellCard spell) { }
     public virtual void onTurnStart() { }
     public virtual void onInitialization() { }
+    public virtual int getStartingRange() { return 1; } // 1 by default
     #endregion
 
 }

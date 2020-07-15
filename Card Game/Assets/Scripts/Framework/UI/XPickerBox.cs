@@ -7,18 +7,55 @@ public class XPickerBox : MonoBehaviour
 {
     [SerializeField] private TextMeshPro xValueText;
     [SerializeField] private TextMeshPro headerTextMesh;
-    private int xValue;
-    private CanRecieveXPick receiver;
+    private int xValue = 0;
+    private int minValue = 0;
+    private int maxValue = 9999;
+    private XValueHandler handler;
 
-    private int minValue;
-    private int maxValue;
+    private bool finished = false;
 
-    private void Awake()
+    #region Command
+    public static QueueableCommand CreateAsCommand(int minValue, int maxValue, string headerText, Player owner, XValueHandler handler)
     {
-        xValue = 0;
-        minValue = 0;
-        maxValue = 9999;
+        return new XPickerCmd(minValue, maxValue, headerText, owner, handler);
     }
+    public static void CreateAndQueue(int minValue, int maxValue, string headerText, Player owner, XValueHandler handler)
+    {
+        InformativeAnimationsQueue.instance.addAnimation(CreateAsCommand(minValue, maxValue, headerText, owner, handler));
+    }
+    private class XPickerCmd : QueueableCommand
+    {
+        XPickerBox xPicker;
+        int minValue;
+        int maxValue;
+        string headerText;
+        Player owner;
+        XValueHandler handler;
+
+        bool forceFinished = false;
+
+        public XPickerCmd(int minValue, int maxValue, string headerText, Player owner, XValueHandler handler)
+        {
+            this.minValue = minValue;
+            this.maxValue = maxValue;
+            this.headerText = headerText;
+            this.handler = handler;
+        }
+
+        public override bool isFinished => xPicker.finished || forceFinished;
+
+        public override void execute()
+        {
+            if (NetInterface.Get().getLocalPlayer() != owner)
+            {
+                forceFinished = true;
+                return;
+            }
+            xPicker = Instantiate(GameManager.Get().xPickerPrefab);
+            xPicker.setUp(minValue, maxValue, headerText, handler);
+        }
+    }
+    #endregion
 
     public void addX(int value)
     {
@@ -33,13 +70,13 @@ public class XPickerBox : MonoBehaviour
     public void submit()
     {
         Destroy(gameObject);
-        receiver.receiveXPick(xValue);
-        EffectsManager.Get().signalEffectFinished();
+        handler.Invoke(xValue);
+        finished = true;
     }
 
-    public void setUp(CanRecieveXPick receiver, int minValue, int maxValue, string headerText)
+    public void setUp(int minValue, int maxValue, string headerText, XValueHandler handler)
     {
-        this.receiver = receiver;
+        this.handler = handler;
         this.minValue = minValue;
         this.maxValue = maxValue;
 
@@ -53,9 +90,4 @@ public class XPickerBox : MonoBehaviour
             xValueText.text = "" + xValue;
         }
     }
-}
-
-public interface CanRecieveXPick
-{
-    void receiveXPick(int value);
 }

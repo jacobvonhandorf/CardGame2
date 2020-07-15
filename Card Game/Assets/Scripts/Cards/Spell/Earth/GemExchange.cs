@@ -27,7 +27,7 @@ public class GemExchange : SpellCard, Effect
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
         int maxCardsToPick = Mathf.Min(sourcePlayer.hand.getAllCardsWithTag(Tag.Gem).Count, 2);
-        CardPicker.CreateAndQueue(sourcePlayer.hand.getAllCardsWithTag(Tag.Gem), 1, maxCardsToPick, "", sourcePlayer, delegate (List<Card> cardList)
+        CardPicker.CreateAndQueue(sourcePlayer.hand.getAllCardsWithTag(Tag.Gem), 1, maxCardsToPick, "Select cards to shuffle back", sourcePlayer, delegate (List<Card> cardList)
         {
             foreach (Card c in cardList)
                 c.moveToCardPile(sourcePlayer.graveyard, this);

@@ -46,13 +46,13 @@ public class CompoundQueueableCommand : QueueableCommand
 
     public override void execute()
     {
-        throw new System.NotImplementedException();
+        moveToNextCommand();
     }
 
-    #region Static
+    #region Builder
     public class Builder
     {
-        private Queue<QueueableCommand> commands;
+        private Queue<QueueableCommand> commands = new Queue<QueueableCommand>();
         public Builder addCommand(QueueableCommand c)
         {
             commands.Enqueue(c);
@@ -62,6 +62,10 @@ public class CompoundQueueableCommand : QueueableCommand
         public CompoundQueueableCommand Build()
         {
             return new CompoundQueueableCommand(commands);
+        }
+        public void BuildAndQueue()
+        {
+            InformativeAnimationsQueue.instance.addAnimation(new CompoundQueueableCommand(commands));
         }
     }
     #endregion

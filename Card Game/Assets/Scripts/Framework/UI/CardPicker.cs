@@ -9,7 +9,6 @@ public class CardPicker : MonoBehaviour, CanReceiveCardPick
 
     private List<Card> selectedCards;
     private int minCards, maxCards;
-    private CanReceivePickedCards cardListReceiver;
     private CardListHandler handler;
     [SerializeField] private MyButton confirmButton;
     [SerializeField] private CardPileViewer cardPileViewer;
@@ -27,9 +26,9 @@ public class CardPicker : MonoBehaviour, CanReceiveCardPick
     }
     private class CardPickerCmd : QueueableCommand
     {
-        public override bool isFinished => picker.isFinished();
-        public bool finished = false;
+        public override bool isFinished => picker.isFinished() || forceFinished;
         private CardPicker picker;
+        private bool forceFinished = false;
 
         List<Card> pickableCards;
         int minCards;
@@ -51,7 +50,10 @@ public class CardPicker : MonoBehaviour, CanReceiveCardPick
         public override void execute()
         {
             if (owner != NetInterface.Get().getLocalPlayer())
+            {
+                forceFinished = true;
                 return;
+            }
             CardPicker cardPicker = Instantiate(GameManager.Get().cardPickerPrefab, new Vector3(0, 0, -1), Quaternion.identity);
             picker = cardPicker;
             cardPicker.setUp(pickableCards, handler, minCards, maxCards, headerText);
@@ -92,31 +94,6 @@ public class CardPicker : MonoBehaviour, CanReceiveCardPick
     public bool isFinished()
     {
         return finished;
-    }
-
-    // return true if there are enough cards to meet min
-    public bool setUp(List<Card> selectableCards, CanReceivePickedCards cardReceiver, int minCards, int maxCards, string headerText)
-    {
-        headerText = getHeaderString(minCards, maxCards, headerText);
-
-        if (selectableCards.Count < minCards)
-            return false;
-        cardListReceiver = cardReceiver;
-        this.minCards = minCards;
-        this.maxCards = maxCards;
-        // enable button if needed
-        if (minCards == 0)
-            confirmButton.gameObject.SetActive(true);
-        else
-            confirmButton.gameObject.SetActive(false);
-        // setup individual card veiwers
-        if (minCards == maxCards)
-            cardPileViewer.setupAndShow(selectableCards, headerText, this);
-        else if (maxCards < 999999)
-            cardPileViewer.setupAndShow(selectableCards, headerText, this);
-        else
-            throw new NotImplementedException();
-        return true;
     }
 
     private string getHeaderString(int minCards, int maxCards, string oldHeaderText)

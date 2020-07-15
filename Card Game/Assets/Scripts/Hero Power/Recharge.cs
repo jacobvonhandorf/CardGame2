@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Recharge : HeroPower, CanReceivePickedCards, CanRecieveXPick
+public class Recharge : HeroPower
 {
     //private const int manaCost = 5;
     //private const int goldCost = 5;
@@ -17,7 +17,7 @@ public class Recharge : HeroPower, CanReceivePickedCards, CanRecieveXPick
     {
         this.controller = controller;
 
-        GameManager.Get().queueXPickerEffect(this, "Select how much gold you want to spend. You must spend " + totalCost + " total between gold and mana", 0, totalCost, false, controller);
+        //GameManager.Get().queueXPickerEffect(this, "Select how much gold you want to spend. You must spend " + totalCost + " total between gold and mana", 0, totalCost, false, controller);
     }
 
     public bool canBeActivatedCheck(Player controller)
