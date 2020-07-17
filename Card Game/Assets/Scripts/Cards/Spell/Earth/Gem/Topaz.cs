@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Topaz : SpellCard
 {
+    public override int cardId => 20;
+
     public override bool additionalCanBePlayedChecks()
     {
         return false;
@@ -38,15 +40,5 @@ public class Topaz : SpellCard
         }
     }
 
-    protected override List<Tag> getTags()
-    {
-        List<Tag> tags = new List<Tag>();
-        tags.Add(Tag.Gem);
-        return tags;
-    }
-
-    public override int getCardId()
-    {
-        return 20;
-    }
+    protected override List<Tag> getTags() => new List<Tag>() { Tag.Gem };
 }

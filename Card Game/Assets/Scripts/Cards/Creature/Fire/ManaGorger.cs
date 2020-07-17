@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class ManaGorger : Creature
 {
-    public override int getStartingRange()
-    {
-        return 1;
-    }
+    public override int cardId => 63;
 
     public override void onCreation()
     {
@@ -20,24 +17,6 @@ public class ManaGorger : Creature
             controller.drawCard();
     }
 
-    public override List<Card.Tag> getTags()
-    {
-        List<Card.Tag> tags = new List<Card.Tag>();
-        tags.Add(Card.Tag.Arcane);
-        return tags;
-    }
-
-    public override int getCardId()
-    {
-        return 63;
-    }
-
-    public override List<Keyword> getInitialKeywords()
-    {
-        return new List<Keyword>()
-        {
-            Keyword.deploy
-        };
-    }
-
+    public override List<Card.Tag> getTags() => new List<Card.Tag>() { Card.Tag.Arcane };
+    public override List<Keyword> getInitialKeywords() => new List<Keyword>() { Keyword.deploy };
 }

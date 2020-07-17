@@ -11,6 +11,7 @@ public class InformativeAnimationsQueue : MonoBehaviour
         instance = this;
     }
 
+    private object playingAnimationsLock = new object();
     private Queue<QueueableCommand> animationQueue = new Queue<QueueableCommand>();
     private QueueableCommand currentAnimation;
     void Update()
@@ -23,11 +24,15 @@ public class InformativeAnimationsQueue : MonoBehaviour
         {
             return;
         }
-        if (currentAnimation != null && currentAnimation.isFinished)
+        if (currentAnimation != null && currentAnimation.isFinished) // command finishes
+        {
             currentAnimation = null;
+            NetInterface.Get().getLocalPlayer().removeLock(playingAnimationsLock);
+        }
         if (animationQueue.Count == 0) // command is finished but there is no new command
             return;
         currentAnimation = animationQueue.Dequeue();
+        NetInterface.Get().getLocalPlayer().addLock(playingAnimationsLock);
         currentAnimation.execute();
     }
 

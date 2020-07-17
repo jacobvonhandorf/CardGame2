@@ -68,7 +68,7 @@ public class NetInterface
         gameSetupComplete = true;
     }
 
-    // syncing
+    #region Syncing
     public void importNewCardFromOpponent(Net_InstantiateCard msg)
     {
         SerializeableCard sc = msg.card;
@@ -86,7 +86,7 @@ public class NetInterface
         cardMap.add(c, lastUsedNetId);
         SerializeableCard sc = new SerializeableCard();
         sc.netId = lastUsedNetId;
-        sc.cardId = c.getCardId();
+        sc.cardId = c.cardId;
         Net_InstantiateCard msg = new Net_InstantiateCard();
         msg.card = sc;
         msg.ownerIsP1 = c.owner == getPlayer1();
@@ -338,7 +338,7 @@ public class NetInterface
             throw new Exception("Unexcpected end game code");
         }
     }
-
+    #endregion
 
     public void signalSetupComplete()
     {
@@ -428,7 +428,6 @@ public class NetInterface
             idToCard.Add(id, n);
         }
     }
-
 
     // enum for card pile Ids
     private static class PileId

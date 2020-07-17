@@ -8,14 +8,11 @@ public class ArcaneGrandmaster : Creature
     private const int SECOND_THRESHOLD = 6;
     private const int THIRD_THRESHOLD = 10;
 
+    public override int cardId => 65;
+
     public override int getStartingRange()
     {
         return 1;
-    }
-
-    public override int getCardId()
-    {
-        return 65;
     }
 
     public override List<Keyword> getInitialKeywords()

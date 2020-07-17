@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class FairyMotivator : Creature
 {
+    public override int cardId => 48;
+
     public override int getStartingRange()
     {
         return 1;
@@ -18,24 +20,6 @@ public class FairyMotivator : Creature
         }
     }
 
-    public override List<Card.Tag> getTags()
-    {
-        List<Card.Tag> tags = new List<Card.Tag>();
-        tags.Add(Card.Tag.Fairy);
-        return tags;
-    }
-
-    public override int getCardId()
-    {
-        return 48;
-    }
-
-    public override List<Keyword> getInitialKeywords()
-    {
-        return new List<Keyword>()
-        {
-            Keyword.deploy
-        };
-    }
-
+    public override List<Card.Tag> getTags() => new List<Card.Tag>() { Card.Tag.Fairy };
+    public override List<Keyword> getInitialKeywords() => new List<Keyword>() { Keyword.deploy };
 }

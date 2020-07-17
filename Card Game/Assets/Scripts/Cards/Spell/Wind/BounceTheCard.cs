@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class BounceTheCard : SpellCard, Effect
 {
-    public override int getCardId()
-    {
-        return 8;
-    }
+    public override int cardId => 8;
 
     public override List<Tile> getLegalTargetTiles()
     {

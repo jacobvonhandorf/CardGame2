@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class GrindToDust : SpellCard
 {
-    public override int getCardId()
-    {
-        return 19;
-    }
+    public override int cardId => 19;
 
     public override List<Tile> getLegalTargetTiles()
     {

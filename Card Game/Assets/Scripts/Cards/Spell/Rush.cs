@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class Rush : SpellCard
 {
-    public override int getCardId()
-    {
-        return 10;
-    }
+    public override int cardId => 10;
 
     public override List<Tile> getLegalTargetTiles()
     {

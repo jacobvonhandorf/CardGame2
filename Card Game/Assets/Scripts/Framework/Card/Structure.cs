@@ -115,7 +115,7 @@ public abstract class Structure : MonoBehaviour, Damageable
 
     private void OnMouseUpAsButton()
     {
-        if (GameManager.Get().activePlayer != controller || controller.locked)
+        if (GameManager.Get().activePlayer != controller || controller.isLocked())
             return;
         if (getEffect() == null)
             return;
@@ -150,13 +150,10 @@ public abstract class Structure : MonoBehaviour, Damageable
         }
         timePassed = 0;
         // if we get here then enough time has passed so tell cardviewers to display tooltips
-        //Debug.Log("Telling viewers to show tooltips: " + sourceCard.viewersDisplayingThisCard.Count);
         foreach (CardViewer viewer in sourceCard.viewersDisplayingThisCard)
         {
-            //Debug.Log("in foreach viewer");
             if (viewer != null)
             {
-                //Debug.Log("Viewer is not null");
                 viewer.showToolTips(sourceCard.toolTipInfos);
             }
         }
@@ -206,7 +203,6 @@ public abstract class Structure : MonoBehaviour, Damageable
     {
         return new Vector2(tile.x, tile.y);
     }
-
     public Player getController()
     {
         return controller;
@@ -265,13 +261,11 @@ public abstract class Structure : MonoBehaviour, Damageable
     }
 
     // MAY BE OVERWRITTEN
-    public virtual void onCreatureAdded(Creature c){ }
     public virtual void onCreatureRemoved(Creature c) { }
     public virtual void onAnyStructurePlayed(Structure s) { }
     public virtual void onAnyCreaturePlayed(Structure s) { }
     public virtual void onAnyCreatureDeath(Creature c) { }
     public virtual void onAnyStructureDeath(Structure s) { }
-    public virtual void onAnySpellCast(SpellCard spell) { }
     public virtual void onPlaced() { }
     public virtual void onRemoved() { }
     public virtual void onDefend() { }
@@ -281,11 +275,9 @@ public abstract class Structure : MonoBehaviour, Damageable
     public virtual bool additionalCanBePlayedChecks() { return true; } // if some conditions need to be met before playing this structure then do them in this method. Return true if can be played
     public virtual List<Tag> getTags() { return new List<Tag>(); }
     public virtual List<Keyword> getInitialKeywords() { return new List<Keyword>(); }
-
+    public virtual bool canDeployFrom() { return true; }
 
     // MUST BE OVERWRITTEN
-    public abstract bool canDeployFrom();
-    public abstract bool canWalkOn();
-    public abstract int getCardId();
+    public abstract int cardId { get; }
 
 }

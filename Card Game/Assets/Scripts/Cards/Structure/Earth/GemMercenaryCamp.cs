@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class GemMercenaryCamp : Structure, Effect
 {
+    public override int cardId => 41;
+
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
         if (sourcePlayer.GetActions() < 1)
@@ -28,21 +30,6 @@ public class GemMercenaryCamp : Structure, Effect
             GameManager.Get().createCreatureOnTile(newCreature.creature, targetTile, sourcePlayer, newCreature);
             controller.subtractActions(1);
         });
-    }
-
-    public override bool canDeployFrom()
-    {
-        return true;
-    }
-
-    public override bool canWalkOn()
-    {
-        return false;
-    }
-
-    public override int getCardId()
-    {
-        return 41;
     }
 
     public override Effect getEffect()

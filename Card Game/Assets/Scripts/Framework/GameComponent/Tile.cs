@@ -12,7 +12,6 @@ public class Tile : MonoBehaviour
     public int y;
     private bool active = false;
     private bool attackable = false;
-    private bool effectable = false;
 
     [SerializeField] private GameObject attackableFilter; // prefab to instantiate
     [SerializeField] private GameObject effectableFilter; // prefab to instantiate
@@ -38,8 +37,6 @@ public class Tile : MonoBehaviour
 
     private void onCreatureAdded()
     {
-        if (structure != null)
-            structure.onCreatureAdded(creature);
     }
 
     private void onCreatureRemoved()

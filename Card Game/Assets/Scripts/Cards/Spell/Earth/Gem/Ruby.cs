@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Ruby : SpellCard
 {
+    public override int cardId => 21;
+
     public override List<Tile> getLegalTargetTiles()
     {
         return new List<Tile>();
@@ -32,12 +34,7 @@ public class Ruby : SpellCard
         }
     }
 
-    protected override List<Tag> getTags()
-    {
-        List<Tag> tags = new List<Tag>();
-        tags.Add(Tag.Gem);
-        return tags;
-    }
+    protected override List<Tag> getTags() => new List<Tag>() { Tag.Gem };
 
     private void doEffect()
     {
@@ -46,10 +43,5 @@ public class Ruby : SpellCard
             t.creature.addAttack(1);
             t.creature.addHealth(1);
         });
-    }
-
-    public override int getCardId()
-    {
-        return 21;
     }
 }

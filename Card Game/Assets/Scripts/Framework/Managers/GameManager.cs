@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using static GameEvents;
 /*
 * Master game object that controls the flow of the game
 * and contains utility methods for other classes to call
@@ -127,6 +128,7 @@ public class GameManager : MonoBehaviour
         activePlayerText.text = activePlayer.getPlayerName() + "'s turn";
     }
 
+    private object activePlayerLock = new object();
     IEnumerator onlineGameSetupCoroutine()
     {
         Player localPlayer = NetInterface.Get().localPlayerIsP1() ? player1 : player2;
@@ -134,7 +136,9 @@ public class GameManager : MonoBehaviour
         // disable end turn button if going second
         endTurnButton.gameObject.SetActive(NetInterface.Get().localPlayerIsP1());
         // lock local player if they are going second
-        localPlayer.locked = !NetInterface.Get().localPlayerIsP1();
+        //localPlayer.locked = !NetInterface.Get().localPlayerIsP1();
+        if (!NetInterface.Get().localPlayerIsP1())
+            localPlayer.addLock(activePlayerLock);
 
         // send opponent starting deck
         NetInterface.Get().syncStartingDeck();
@@ -237,23 +241,23 @@ public class GameManager : MonoBehaviour
     {
         activePlayer.startOfTurn();
         nonActivePlayer.startOfTurn();
-        activePlayer.doIncome();
         beginningOfTurnEffects();
+        activePlayer.doIncome();
         activePlayer.drawCard();
     }
 
     #region TriggeredEffects
     private void beginningOfTurnEffects()
     {
-        GameEvents.TriggerTurnStartEvents(this);
+        TriggerTurnStartEvents(this);
     }
     private void endOfTurnEffects()
     {
-        GameEvents.TriggerTurnEndEvents(this);
+        TriggerTurnEndEvents(this);
     }
     public void onSpellCastEffects(SpellCard spell)
     {
-        GameEvents.TriggerSpellCastEvents(this, new GameEvents.SpellCastEventArgs() { spell = spell });
+        TriggerSpellCastEvents(this, new SpellCastEventArgs() { spell = spell });
     }
     #endregion
 
@@ -291,12 +295,11 @@ public class GameManager : MonoBehaviour
         activePlayerText.text = activePlayer.getPlayerName() + "'s turn";
     }
 
-    // PUBLIC UTIL METHODS
     public void endTurn()
     {
         if (gameMode == GameMode.online)
         {
-            if (activePlayer.locked)
+            if (activePlayer.isLocked())
             {
                 showToast("Must finish resolving effects before ending turn");
                 return;
@@ -305,7 +308,8 @@ public class GameManager : MonoBehaviour
             // disable button
             endTurnButton.gameObject.SetActive(false);
             // lock local player
-            NetInterface.Get().getLocalPlayer().locked = true;
+            NetInterface.Get().getLocalPlayer().addLock(activePlayerLock);
+            //NetInterface.Get().getLocalPlayer().locked = true;
             // reset player for new turn
             NetInterface.Get().getLocalPlayer().startOfTurn();
             // trigger effects
@@ -321,9 +325,9 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        Debug.Log("Active player " + activePlayer.locked);
-        Debug.Log("Nonactive player " + nonActivePlayer.locked);
-        if (activePlayer.locked)
+        //Debug.Log("Active player " + activePlayer.locked);
+        //Debug.Log("Nonactive player " + nonActivePlayer.locked);
+        if (activePlayer.isLocked())
         {
             showToast("Must finish resolving effects before ending turn");
             return;
@@ -338,12 +342,13 @@ public class GameManager : MonoBehaviour
         takeTurn();
     }
 
+    // called when recieving end turn message
     public void startTurnForOnline()
     {
         if (gameMode != GameMode.online)
             throw new Exception("Only call this for online play");
-
-        // called when recieving start turn message
+        // trigger end turn effects
+        TriggerTurnEndEvents(this);
         // re enable end turn
         endTurnButton.gameObject.SetActive(true);
         // do income and trigger effects
@@ -354,7 +359,8 @@ public class GameManager : MonoBehaviour
         localPlayer.drawCard();
         beginningOfTurnEffects();
         // unlock local player
-        NetInterface.Get().getLocalPlayer().locked = false;
+        NetInterface.Get().getLocalPlayer().removeLock(activePlayerLock);
+        //NetInterface.Get().getLocalPlayer().locked = false;
     }
 
     public List<Tile> getMovableTilesForCreature(Creature creature)
@@ -512,6 +518,7 @@ public class GameManager : MonoBehaviour
         Vector3 newPostion = creature.getRootTransform().position;
         newPostion.z = 1; // change z so that the card is always above tile and can be clicked
         creature.getRootTransform().position = newPostion;
+        sourceCard.transformManager.enabled = true;
 
         // set owner if it hasn't been set already
         // creature.owner = owner; changed so only source card knows the owner
@@ -530,10 +537,12 @@ public class GameManager : MonoBehaviour
             sourceCard.owner = owner;
 
         // move card from player's hand and parent it to the board
+        /*
         if (owner.hand.getCardList().Contains(sourceCard))
             owner.hand.removeCard(sourceCard).getRootTransform().SetParent(board.transform);
         else
             creature.getRootTransform().SetParent(board.transform);
+            */
 
         tile.creature = creature;
         creature.currentTile = tile;
@@ -679,6 +688,7 @@ public class GameManager : MonoBehaviour
         {
             c.onAnyCreatureDeath(creature);
         }
+        TriggerCreatureDeathEvents(this, new CreatureDeathEventArgs() { creature = creature });
 
         allCreatures.Remove(creature);
         creature.onDeath();

@@ -4,15 +4,7 @@ using UnityEngine;
 
 public class WarCart : Creature
 {
-    public override int getCardId()
-    {
-        return 52;
-    }
-
-    public override int getStartingRange()
-    {
-        return 1;
-    }
+    public override int cardId => 52;
 
     protected override bool getCanDeployFrom()
     {

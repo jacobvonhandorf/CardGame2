@@ -6,6 +6,7 @@ using UnityEngine;
 public class TransformManager : MonoBehaviour
 {
     private bool locked = false;
+    public bool removedFromScene = false;
     public float speed = 9f;
     private Queue<TransformStruct> transformQueue = new Queue<TransformStruct>();
     private Vector3 currentPosition;
@@ -14,7 +15,7 @@ public class TransformManager : MonoBehaviour
     private void Update()
     {
         // first check if there is anything to do
-        if (currentTransform == null && transformQueue.Count == 0)
+        if (currentTransform == null && transformQueue.Count == 0 || removedFromScene)
             return;
 
         // if close to transform or currentTransform is null then move to next transform
@@ -35,7 +36,7 @@ public class TransformManager : MonoBehaviour
     // add to queue
     public void queueMoveTo(TransformStruct t)
     {
-        if (!locked)
+        if (!locked && !removedFromScene)
             transformQueue.Enqueue(t);
     }
     // clear queue
@@ -47,7 +48,7 @@ public class TransformManager : MonoBehaviour
     // clear and add
     public void moveToImmediate(TransformStruct t)
     {
-        if (!locked)
+        if (!locked && !removedFromScene)
         {
             clearQueue();
             queueMoveTo(t);
@@ -84,11 +85,8 @@ public class TransformManager : MonoBehaviour
 
         private bool isFinishedCheck()
         {
-            Debug.Log("Doing is finished check");
-            Debug.Log("Count " + transformManager.transformQueue.Count);
-            Debug.Log(transformManager.transformQueue.Contains(targetTransform));
-            //Debug.Log("Peek " + transformManager.transformQueue.Peek());
-            return !transformManager.transformQueue.Contains(targetTransform);
+            // check for not being enabled here so queue doesn't get clogged
+            return !transformManager.transformQueue.Contains(targetTransform) || !transformManager.enabled;
         }
 
         public override void execute()

@@ -4,15 +4,7 @@ using UnityEngine;
 
 public class Thief : Creature
 {
-    public override int getCardId()
-    {
-        return 53;
-    }
-
-    public override int getStartingRange()
-    {
-        return 1;
-    }
+    public override int cardId => 53;
 
     public override void onAttack()
     {

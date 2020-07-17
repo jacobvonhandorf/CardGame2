@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Board : MonoBehaviour
+public class Board : CardPile
 {
     public Tile myPrefab;
     public int boardWidth;
@@ -14,9 +14,12 @@ public class Board : MonoBehaviour
     [SerializeField] private Transform tileContainer; // used to organize tiles in inspector
 
     private List<Vector2> powerTileCoordinates;
+    public static Board instance;
 
-    void Awake()
+    new void Awake()
     {
+        base.Awake();
+        instance = this;
         powerTileCoordinates = new List<Vector2>();
         // add power tiles to power tile list
         powerTileCoordinates.Add(new Vector2(3, 3));
@@ -56,34 +59,19 @@ public class Board : MonoBehaviour
         return count;
     }
 
-    /*
-     * Use this when moving the creature from one tile to another
-     */ 
+    // Use this when moving the creature from one tile to another
     public void moveCreatureToTile(Creature creature, Tile tile)
     {
         creature.move(tile);
     }
 
+    #region GetMovableTiles
     /*
      * Returns all tiles that the creature can move to
-     */ 
+     */
     public List<Tile> getAllMovableTiles(Creature creature)
     {
         return _getAllMovableTiles(creature.getMovement(), creature.getCoordinates(), new List<Tile>(), creature.controller, new List<TileMovePair>());
-        List<Tile> returnList = new List<Tile>();
-        int creatureX = creature.currentTile.x;
-        int creatureY = creature.currentTile.y;
-        foreach (Tile tile in allTiles)
-        {
-            int tileX = tile.x;
-            int tileY = tile.y;
-            int xDiff = Math.Abs(creatureX - tileX);
-            int yDiff = Math.Abs(creatureY - tileY);
-            if (xDiff + yDiff < creature.getMovement() && tile.creature == null && (tile.structure == null || tile.structure.canWalkOn()))
-                returnList.Add(tile);
-        }
-        returnList.Add(creature.currentTile); // allow to click creature's current tile to pull up actionBox without moving
-        return returnList;
     }
 
     private List<Tile> _getAllMovableTiles(int remainingMove, Vector2 coord, List<Tile> returnList, Player controller, List<TileMovePair> tileMovePairs)
@@ -138,7 +126,9 @@ public class Board : MonoBehaviour
             this.move = remainingMove;
         }
     }
+    #endregion
 
+    #region UtilityMethods
     public List<Structure> getAllStructures()
     {
         List<Structure> returnList = new List<Structure>();
@@ -290,4 +280,5 @@ public class Board : MonoBehaviour
                 .Select(x => tileArray[x, row])
                 .ToArray().ToList();
     }
+    #endregion
 }

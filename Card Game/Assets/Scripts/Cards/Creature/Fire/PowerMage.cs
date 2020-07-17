@@ -6,17 +6,15 @@ public class PowerMage : Creature
 {
     public const int CARD_ID = 80;
 
-    public override int getCardId()
-    {
-        return CARD_ID;
-    }
-
     public override int getStartingRange()
     {
         return 1;
     }
 
     private static List<Card> cardReferences = new List<Card>();
+
+    public override int cardId => CARD_ID;
+
     public override void onInitialization()
     {
         if (cardReferences.Count == 0)
@@ -24,7 +22,8 @@ public class PowerMage : Creature
             cardReferences.Add(GameManager.Get().createCardById(PowerDraw.CARD_ID, controller));
             cardReferences.Add(GameManager.Get().createCardById(PowerBlast.CARD_ID, controller));
             cardReferences.Add(GameManager.Get().createCardById(Inferno.CARD_ID, controller));
-        }
+            foreach (Card c in cardReferences)
+                c.removeGraphicsAndCollidersFromScene();        }
     }
     private void OnDestroy() // clear the list when game ends. 
     {
@@ -33,10 +32,9 @@ public class PowerMage : Creature
 
     public override void onCreation()
     {
-        //GameManager.Get().queueCardPickerEffect(controller, cardReferences, this, 1, 1, true, "Select a card to add to your hand");
         CardPicker.CreateAndQueue(cardReferences, 1, 1, "Select a card to add to your hand", controller, delegate (List<Card> cardList)
         {
-            GameManager.Get().createCardById(cardList[0].getCardId(), controller).moveToCardPile(controller.hand, sourceCard);
+            GameManager.Get().createCardById(cardList[0].cardId, controller).moveToCardPile(controller.hand, sourceCard);
         });
     }
 

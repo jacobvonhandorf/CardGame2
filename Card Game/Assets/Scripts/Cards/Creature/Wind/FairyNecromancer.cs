@@ -4,22 +4,9 @@ using UnityEngine;
 
 public class FairyNecromancer : Creature
 {
-    public override int getCardId()
-    {
-        return 47;
-    }
+    public override int cardId => 47;
 
-    public override int getStartingRange()
-    {
-        return 1;
-    }
-
-    public override List<Card.Tag> getTags()
-    {
-        List<Card.Tag> tags = new List<Card.Tag>();
-        tags.Add(Card.Tag.Fairy);
-        return tags;
-    }
+    public override List<Card.Tag> getTags() => new List<Card.Tag>() { Card.Tag.Fairy };
 
     public override void onCreation()
     {

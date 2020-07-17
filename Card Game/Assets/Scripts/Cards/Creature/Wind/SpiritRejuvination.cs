@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class SpiritRejuvination : SpellCard, Effect
 {
-    public override int getCardId()
-    {
-        return 1;
-    }
+    public override int cardId => 1;
 
     public override List<Tile> getLegalTargetTiles()
     {

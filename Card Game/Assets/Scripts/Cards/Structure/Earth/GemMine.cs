@@ -8,20 +8,7 @@ public class GemMine : Structure, Effect
 
     private bool effectUsedThisTurn = false;
 
-    public override bool canDeployFrom()
-    {
-        return true;
-    }
-
-    public override bool canWalkOn()
-    {
-        return false;
-    }
-
-    public override int getCardId()
-    {
-        return CARD_ID;
-    }
+    public override int cardId => CARD_ID;
 
     public override void onPlaced()
     {

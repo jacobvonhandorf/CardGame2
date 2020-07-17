@@ -4,27 +4,14 @@ using UnityEngine;
 
 public class FairyFortress : Structure, Effect
 {
-    public override bool canDeployFrom()
-    {
-        return false;
-    }
-
-    public override bool canWalkOn()
-    {
-        return false;
-    }
+    public override int cardId => 50;
 
     public override Effect getEffect()
     {
         return this;
     }
 
-    public override List<Card.Tag> getTags()
-    {
-        List<Card.Tag> returnList = new List<Card.Tag>();
-        returnList.Add(Card.Tag.Fairy);
-        return returnList;
-    }
+    public override List<Card.Tag> getTags() => new List<Card.Tag>() { Card.Tag.Fairy };
 
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
@@ -53,7 +40,7 @@ public class FairyFortress : Structure, Effect
         {
             ownersCreature = t.creature;
         });
-        SingleTileTargetEffect secondSelection = new SingleTileTargetEffect(GameManager.Get().getAllTilesWithCreatures(controller, true), delegate (Tile t)
+        SingleTileTargetEffect secondSelection = new SingleTileTargetEffect(GameManager.Get().getAllTilesWithCreatures(controller.getOppositePlayer(), true), delegate (Tile t)
         {
             opponentsCreature = t.creature;
             ownersCreature.bounce(sourceCard);
@@ -63,11 +50,5 @@ public class FairyFortress : Structure, Effect
         CompoundQueueableCommand cqc = new CompoundQueueableCommand.Builder().addCommand(firstSelection).addCommand(secondSelection).Build();
         InformativeAnimationsQueue.instance.addAnimation(cqc);
         #endregion
-    }
-
-
-    public override int getCardId()
-    {
-        return 50;
     }
 }

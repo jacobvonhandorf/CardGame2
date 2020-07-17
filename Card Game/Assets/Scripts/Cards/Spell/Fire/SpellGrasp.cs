@@ -6,6 +6,8 @@ public class SpellGrasp : SpellCard, Effect
 {
     public const int CARD_ID = 3;
 
+    public override int cardId => CARD_ID;
+
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
         CardPicker.CreateAndQueue(owner.deck.getAllCardsWithTag(Tag.Arcane), 1, 1, "Select a card to add to your hand", owner, delegate (List<Card> cardList)
@@ -22,6 +24,11 @@ public class SpellGrasp : SpellCard, Effect
         });
     }
 
+    public override void onInitialization()
+    {
+        toolTipInfos.Add(ToolTipInfo.arcaneSpell);
+    }
+
     public override List<Tile> getLegalTargetTiles()
     {
         return GameManager.Get().allTiles();
@@ -30,10 +37,5 @@ public class SpellGrasp : SpellCard, Effect
     protected override Effect getEffect()
     {
         return this;
-    }
-
-    public override int getCardId()
-    {
-        return CARD_ID;
     }
 }

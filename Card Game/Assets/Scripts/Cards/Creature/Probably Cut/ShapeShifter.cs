@@ -7,20 +7,9 @@ public class ShapeShifter : Creature, Effect
     private const string ATTACK = "+1 Attack";
     private const string HEALTH = "+2 Health";
 
-    public override int getCardId()
-    {
-        return 55;
-    }
+    public override int cardId => 55;
 
-    public override int getStartingRange()
-    {
-        return 1;
-    }
-
-    public override List<Card.Tag> getTags()
-    {
-        return new List<Card.Tag>() { Card.Tag.Arcane };
-    }
+    public override List<Card.Tag> getTags() => new List<Card.Tag>() { Card.Tag.Arcane };
 
     public override void onAnySpellCast(SpellCard spell)
     {

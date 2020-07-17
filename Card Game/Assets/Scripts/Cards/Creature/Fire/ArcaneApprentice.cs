@@ -6,6 +6,8 @@ public class ArcaneApprentice : Creature, Effect
 {
     public const int EFFECT_RANGE = 2;
 
+    public override int cardId => 66;
+
     public override int getStartingRange()
     {
         return 1;
@@ -21,11 +23,6 @@ public class ArcaneApprentice : Creature, Effect
         List<Card.Tag> tags = new List<Card.Tag>();
         tags.Add(Card.Tag.Arcane);
         return tags;
-    }
-
-    public override int getCardId()
-    {
-        return 66;
     }
 
     private void OnEnable()

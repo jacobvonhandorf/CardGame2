@@ -5,16 +5,8 @@ using UnityEngine;
 public class Market : Structure
 {
     public const int CARD_ID = 29;
-
-    public override bool canDeployFrom()
-    {
-        return true;
-    }
-
-    public override bool canWalkOn()
-    {
-        return false;
-    }
+    public override int cardId => CARD_ID;
+    public override List<Card.Tag> getTags() => new List<Card.Tag>() { Card.Tag.Income };
 
     public override void onPlaced()
     {
@@ -24,17 +16,5 @@ public class Market : Structure
     public override void onRemoved()
     {
         controller.increaseGoldPerTurn(-1);
-    }
-
-    public override List<Card.Tag> getTags()
-    {
-        List<Card.Tag> tags = new List<Card.Tag>();
-        tags.Add(Card.Tag.Income);
-        return tags;
-    }
-
-    public override int getCardId()
-    {
-        return CARD_ID;
     }
 }

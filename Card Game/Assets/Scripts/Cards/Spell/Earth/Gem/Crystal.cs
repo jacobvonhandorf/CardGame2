@@ -6,6 +6,8 @@ public class Crystal : SpellCard
 {
     public const int CARD_ID = 26;
 
+    public override int cardId => CARD_ID;
+
     public override bool canBePlayed()
     {
         return false;
@@ -44,10 +46,5 @@ public class Crystal : SpellCard
         List<Tag> tags = new List<Tag>();
         tags.Add(Tag.Gem);
         return tags;
-    }
-
-    public override int getCardId()
-    {
-        return CARD_ID;
     }
 }

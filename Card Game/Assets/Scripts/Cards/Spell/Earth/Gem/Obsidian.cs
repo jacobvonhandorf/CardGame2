@@ -7,10 +7,7 @@ public class Obsidian : SpellCard
     public const int CARD_ID = 81;
     private const int DAMAGE_AMOUNT = 2;
 
-    public override int getCardId()
-    {
-        return CARD_ID;
-    }
+    public override int cardId => CARD_ID;
 
     private List<Tile> emptyList = new List<Tile>();
     public override List<Tile> getLegalTargetTiles()
@@ -47,8 +44,5 @@ public class Obsidian : SpellCard
         });
     }
 
-    protected override List<Tag> getTags()
-    {
-        return new List<Tag>() { Tag.Gem };
-    }
+    protected override List<Tag> getTags() => new List<Tag>() { Tag.Gem };
 }

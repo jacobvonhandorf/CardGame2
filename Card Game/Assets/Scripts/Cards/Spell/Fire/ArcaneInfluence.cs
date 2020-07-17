@@ -7,15 +7,17 @@ public class ArcaneInfluence : SpellCard, Effect
     public const int CARD_ID = 75;
     public const int NUM_COUNTERS = 2;
 
+    public override int cardId => CARD_ID;
+
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
         targetCreature.addCounters(Counters.arcane, NUM_COUNTERS);
         sourcePlayer.drawCard();
     }
 
-    public override int getCardId()
+    public override void onInitialization()
     {
-        return CARD_ID;
+        toolTipInfos.Add(ToolTipInfo.arcaneSpell);
     }
 
     public override List<Tile> getLegalTargetTiles()

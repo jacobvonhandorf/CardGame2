@@ -8,11 +8,7 @@ public class SlaveToMana : Creature
     private const string YES = "Yes";
     private const string NO = "No";
 
-
-    public override int getCardId()
-    {
-        return CARD_ID;
-    }
+    public override int cardId => CARD_ID;
 
     public override void onInitialization()
     {
@@ -26,6 +22,8 @@ public class SlaveToMana : Creature
     }
 
     private static bool effectTriggeredThisTurn = false;
+
+
     private void GameEvents_E_TurnStart(object sender, System.EventArgs e)
     {
         effectTriggeredThisTurn = false;
@@ -50,7 +48,7 @@ public class SlaveToMana : Creature
             {
                 if (deploy)
                 {
-                    sourceCard.moveToCardPile(sourceCard.owner.hand, sourceCard); // this is jank. Could cause errors in the future
+                    //sourceCard.moveToCardPile(sourceCard.owner.hand, sourceCard); // this is jank. Could cause errors in the future
                                                                                   // for now it's to stop bugs because "play" bugs out if the card is in deck
                     sourceCard.play(t);
                 }

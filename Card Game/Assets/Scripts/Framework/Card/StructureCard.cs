@@ -10,6 +10,8 @@ public class StructureCard : Card
     public bool isStructure;
     [SerializeField] private CounterController counterCountroller;
 
+    public override int cardId => structure.cardId;
+
     protected override void Start()
     {
         base.Start();
@@ -104,11 +106,6 @@ public class StructureCard : Card
             return false;
         else
             return true;
-    }
-
-    public override int getCardId()
-    {
-        return structure.getCardId();
     }
 
     public CounterController getCounterController() => counterCountroller;

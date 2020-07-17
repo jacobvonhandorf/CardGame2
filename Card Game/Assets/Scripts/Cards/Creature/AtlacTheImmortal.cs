@@ -4,15 +4,7 @@ using UnityEngine;
 
 public class AtlacTheImmortal : Creature
 {
-    public override int getCardId()
-    {
-        return 28;
-    }
-
-    public override int getStartingRange()
-    {
-        return 1;
-    }
+    public override int cardId => 28;
 
     public override void onSentToGrave()
     {
@@ -21,7 +13,6 @@ public class AtlacTheImmortal : Creature
         setHealth(baseHealth);
         setAttack(baseAttack);
 
-        Debug.Log("Card pile when sent to grave " + sourceCard.getCardPile());
         sourceCard.moveToCardPile(sourceCard.owner.deck, sourceCard);
         sourceCard.owner.deck.shuffle();
     }

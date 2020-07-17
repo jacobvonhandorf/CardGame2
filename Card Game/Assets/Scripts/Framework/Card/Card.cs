@@ -9,6 +9,7 @@ using UnityEngine.UI;
 
 public abstract class Card : MonoBehaviour
 {
+    #region Enums
     public enum Tag
     {
         Human, Fairy, Arcane,
@@ -28,6 +29,7 @@ public abstract class Card : MonoBehaviour
     {
         Fire = 0, Water = 1, Wind = 2, Earth = 3, Nuetral = 4 // numbered so cards can be sorted by element
     }
+    #endregion
 
     private List<Tag> tags = new List<Tag>();
     //private List<CardKeywords> keywords = new List<CardKeywords>();
@@ -71,7 +73,11 @@ public abstract class Card : MonoBehaviour
         public Card source { get; set; }
     }
     public delegate void AddedToCardPileHandler(object sender, AddedToCardPileArgs e);
-    public void TriggerAddedToCardPileEffects(object sender, AddedToCardPileArgs args) { if (E_AddedToCardPile != null) E_AddedToCardPile.Invoke(sender, args); }
+    public void TriggerAddedToCardPileEffects(object sender, AddedToCardPileArgs args)
+    {
+        if (E_AddedToCardPile != null)
+            E_AddedToCardPile.Invoke(sender, args);
+    }
     #endregion
 
     // Start is called before the first frame update
@@ -80,7 +86,6 @@ public abstract class Card : MonoBehaviour
         positionInHand = cardStatsScript.cardRoot.position;
         tags = getTags();
     }
-
     private void Awake()
     {
         viewersDisplayingThisCard = new List<CardViewer>();
@@ -105,9 +110,7 @@ public abstract class Card : MonoBehaviour
         transformManager = getRootTransform().GetComponent<TransformManager>();
     }
 
-    /*
-     * Returns true if this card has the the tag passed to this method
-     */
+    // Returns true if this card has the the tag passed to this method
     public bool hasTag(Tag tag)
     {
         return tags.Contains(tag);
@@ -145,8 +148,6 @@ public abstract class Card : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
-
-    // reverses phaseOut()
     public void phaseIn()
     {
         gameObject.SetActive(true);
@@ -192,6 +193,7 @@ public abstract class Card : MonoBehaviour
         return currentCardPile;
     }
 
+    #region HoveringEffects
     private bool hovered = false;
     // when card becomse hovered show it in the main card preview
     private void OnMouseEnter()
@@ -206,9 +208,7 @@ public abstract class Card : MonoBehaviour
         hovered = true;
         StartCoroutine(checkHoverForTooltips());
     }
-
     private const float hoverOffset = .7f;
-
     // move card back down when it is no longer being hovered
     private void OnMouseExit()
     {
@@ -216,15 +216,15 @@ public abstract class Card : MonoBehaviour
         hovered = false;
         foreach (CardViewer cv in viewersDisplayingThisCard)
             cv.clearToolTips();
-        transformManager.UnLock();
+        //transformManager.UnLock();
     }
+    #endregion
 
-    // methods for drag and drop
     #region ClickAndDrag
     private Vector3 offset;
     void OnMouseDown()
     {
-        if (owner.locked)
+        if (owner.isLocked())
             return;
         if (positionLocked)
         {
@@ -234,6 +234,8 @@ public abstract class Card : MonoBehaviour
         isBeingDragged = true;
         offset = getRootTransform().position -
             Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.0f));
+        GameManager.Get().setAllTilesToDefault();
+        NetInterface.Get().getLocalPlayer().heldCreature = null;
 
         List<Tile> validTiles = getLegalTargetTiles();
         foreach (Tile tile in validTiles)
@@ -252,7 +254,7 @@ public abstract class Card : MonoBehaviour
     }
     void OnMouseDrag()
     {
-        if (positionLocked || owner.locked)
+        if (positionLocked || owner.isLocked())
         {
             Debug.Log("Card Position locked");
             return;
@@ -276,7 +278,7 @@ public abstract class Card : MonoBehaviour
     }
     private void OnMouseUp()
     {
-        if (owner.locked)
+        if (owner.isLocked())
         {
             Debug.Log("Owner is locked");
             return;
@@ -332,7 +334,7 @@ public abstract class Card : MonoBehaviour
     private void cancelDrag()
     {
         Debug.Log("Cancel drag called");
-        if (owner.locked || !isBeingDragged)
+        if (owner.isLocked() || !isBeingDragged)
             return;
         isBeingDragged = false;
         setSpriteAlpha(1f);
@@ -342,8 +344,6 @@ public abstract class Card : MonoBehaviour
         GameManager.Get().setAllTilesToNotActive();
         transformManager.UnLock();
     }
-    #endregion
-
     // change the alpha for all sprites related to this card
     private void setSpriteAlpha(float value)
     {
@@ -354,7 +354,6 @@ public abstract class Card : MonoBehaviour
             image.color = tmp;
         }
     }
-
     private Tile getTileMouseIsOver()
     {
         Vector2 origin = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x,
@@ -368,6 +367,7 @@ public abstract class Card : MonoBehaviour
         }
         return null;
     }
+    #endregion
 
     private EffectGraphic effectGraphic; // initialized in awake
     public void showInEffectsView()
@@ -389,13 +389,12 @@ public abstract class Card : MonoBehaviour
         positionOnScene = getRootTransform().position;
         getRootTransform().position = new Vector3(99999f, 99999f, 99999f);
         transformManager.Lock();
+        transformManager.enabled = false;
         //interuptMove = true;
         onScene = false;
     }
     public void returnGraphicsAndCollidersToScene()
     {
-        //if (onScene)
-        //    return;
         if (GameManager.gameMode == GameManager.GameMode.online)
         {
             // if card is in hand and the owner is not the local player then don't do anything
@@ -405,7 +404,7 @@ public abstract class Card : MonoBehaviour
             }
         }
 
-        //interuptMove = false;
+        transformManager.enabled = true;
         transformManager.UnLock();
         getRootTransform().position = positionOnScene;
         onScene = true;
@@ -425,32 +424,6 @@ public abstract class Card : MonoBehaviour
         //StopAllCoroutines();
         //StartCoroutine(moveToPositionCoroutine(position, smoothing));
     }
-    /*
-    private bool interuptMove = false; // only thing toggling this right now is removing/return graphics. Might need to refactor this if more things start affecting the card
-    IEnumerator moveToCoroutine(Transform target, float speed)
-    {
-        if (interuptMove)
-            yield break;
-        Transform parent = getRootTransform();
-        while (Vector3.Distance(parent.position, target.position) > 0.02f && !isBeingDragged && !interuptMove)
-        {
-            parent.position = Vector3.Lerp(parent.position, target.position, speed * Time.deltaTime);
-
-            yield return null;
-        }
-    }
-    IEnumerator moveToPositionCoroutine(Vector3 targetPosition, float speed)
-    {
-        if (interuptMove)
-            yield break;
-        Transform parent = getRootTransform();
-        while (Vector3.Distance(parent.position, targetPosition) > 0.02f && !isBeingDragged && !interuptMove)
-        {
-            parent.position = Vector3.Lerp(parent.position, targetPosition, speed * Time.deltaTime);
-
-            yield return null;
-        }
-    }*/
     #endregion
 
     public Transform getRootTransform()
@@ -640,13 +613,13 @@ public abstract class Card : MonoBehaviour
         }
     }
 
-    #region OverridableMethods
+    #region OverrideMethods
     // ABSTRACT METHODS
     public abstract CardType getCardType();
     public abstract List<Tile> getLegalTargetTiles();
     public abstract void play(Tile t);
     public abstract bool canBePlayed();
-    public abstract int getCardId();
+    public abstract int cardId { get; }
 
     // VIRTUAL METHODS
     public virtual void initialize() { onInitialization(); }

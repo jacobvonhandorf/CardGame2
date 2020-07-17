@@ -77,7 +77,6 @@ public class Graveyard : ViewableCardPile
 
     protected override void onCardRemoved(Card c)
     {
-        Debug.Log("Removing card from graveyard");
         // if the card being removed is the being displayed on top of the grave then update the card
         if (c == topCard)
         {

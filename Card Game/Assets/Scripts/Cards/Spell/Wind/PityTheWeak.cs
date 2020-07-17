@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class PityTheWeak : SpellCard, Effect
 {
-    public override int getCardId()
-    {
-        return 7;
-    }
+    public override int cardId => 7;
 
     public override List<Tile> getLegalTargetTiles()
     {

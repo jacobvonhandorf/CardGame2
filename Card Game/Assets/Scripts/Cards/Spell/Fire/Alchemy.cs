@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class Alchemy : SpellCard
 {
-    public override int getCardId()
-    {
-        return 16;
-    }
+    public override int cardId => 16;
 
     public override List<Tile> getLegalTargetTiles()
     {

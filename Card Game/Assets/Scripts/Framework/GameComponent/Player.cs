@@ -37,7 +37,7 @@ public class Player : MonoBehaviour
 
     private State state = State.Default;
     public Effect heldEffect;
-    public bool locked;
+    //public bool locked;
 
     enum State {Default, Attacking, UsingEfect} // enum for defining what action the player is in the process of doing (ex: declaring attack, declaring targets for effect)
                                                     // not used right now. Might not ever use
@@ -64,9 +64,6 @@ public class Player : MonoBehaviour
             }
             else
                 GameManager.Get().playerHasDrawnOutDeck(this);
-            //Card cardToAdd = deck.draw();
-            //hand.addCard(cardToAdd);
-            //cardToAdd.onCardDrawn();
         }
     }
 
@@ -79,6 +76,19 @@ public class Player : MonoBehaviour
         }
         hand.resetCardPositions();
     }
+
+    #region Locking
+    private List<object> locks = new List<object>();
+    public void addLock(object newLock)
+    {
+        locks.Add(newLock);
+    }
+    public void removeLock(object lockToRemove)
+    {
+        locks.Remove(lockToRemove);
+    }
+    public bool isLocked() => locks.Count > 0;
+    #endregion
 
     public void setToActivePlayer()
     {

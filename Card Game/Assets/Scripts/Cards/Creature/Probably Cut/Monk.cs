@@ -4,19 +4,11 @@ using UnityEngine;
 
 public class Monk : Creature
 {
-    public override int getStartingRange()
-    {
-        return 1;
-    }
+    public override int cardId => 58;
 
     public override Effect getEffect()
     {
         return new MonkEffect();
-    }
-
-    public override int getCardId()
-    {
-        return 58;
     }
 
     // give creature +1/+1 at the cost of an action

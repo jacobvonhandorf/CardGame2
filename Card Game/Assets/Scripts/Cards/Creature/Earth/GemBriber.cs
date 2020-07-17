@@ -4,15 +4,7 @@ using UnityEngine;
 
 public class GemBriber : Creature
 {
-    public override int getCardId()
-    {
-        return 72;
-    }
-
-    public override int getStartingRange()
-    {
-        return 1;
-    }
+    public override int cardId => 72;
 
     public override void onCreation()
     {
@@ -25,12 +17,5 @@ public class GemBriber : Creature
         }
     }
 
-    public override List<Keyword> getInitialKeywords()
-    {
-        return new List<Keyword>()
-        {
-            Keyword.deploy,
-            Keyword.defender1
-        };
-    }
+    public override List<Keyword> getInitialKeywords() => new List<Keyword>() { Keyword.deploy, Keyword.defender1 };
 }

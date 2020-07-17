@@ -4,25 +4,16 @@ using UnityEngine;
 
 public class GemExchange : SpellCard, Effect
 {
-    public override List<Tile> getLegalTargetTiles()
-    {
-        return GameManager.Get().allTiles();
-    }
+    public override int cardId => 27;
+
+    public override List<Tile> getLegalTargetTiles() => GameManager.Get().allTiles();
 
     protected override Effect getEffect()
     {
         return this;
     }
 
-    public override bool canBePlayed()
-    {
-        return owner.hand.getAllCardsWithTag(Tag.Gem).Count > 0 && base.canBePlayed();
-    }
-
-    public override int getCardId()
-    {
-        return 27;
-    }
+    public override bool additionalCanBePlayedChecks() => owner.hand.getAllCardsWithTag(Tag.Gem).Count > 0;
 
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {

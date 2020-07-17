@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class FuelTheFires : SpellCard, Effect
 {
+    public override int cardId => 6;
+
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
         CardPicker.CreateAndQueue(sourcePlayer.hand.getCardList(), 0, sourcePlayer.hand.getCardList().Count, "Select cards to disard", sourcePlayer, delegate (List<Card> cardList)
@@ -11,6 +13,11 @@ public class FuelTheFires : SpellCard, Effect
             foreach (Card c in cardList)
                 c.moveToCardPile(sourcePlayer.graveyard, this);
         });
+    }
+
+    public override void onInitialization()
+    {
+        toolTipInfos.Add(ToolTipInfo.arcaneSpell);
     }
 
     public override List<Tile> getLegalTargetTiles()
@@ -38,10 +45,5 @@ public class FuelTheFires : SpellCard, Effect
     protected override Effect getEffect()
     {
         return this;
-    }
-
-    public override int getCardId()
-    {
-        return 6;
     }
 }

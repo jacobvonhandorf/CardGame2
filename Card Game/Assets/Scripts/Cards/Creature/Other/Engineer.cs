@@ -7,15 +7,11 @@ using UnityEngine;
 public class Engineer : Creature, Effect
 {
     public const int CARD_ID = 61;
+    public override int cardId => CARD_ID;
 
     public override Effect getEffect()
     {
         return this;
-    }
-
-    public override int getCardId()
-    {
-        return CARD_ID;
     }
 
     public override List<Keyword> getInitialKeywords()
@@ -46,8 +42,12 @@ public class Engineer : Creature, Effect
             else
                 selectedCardId = CommandTower.CARD_ID;
         });
-        QueueableCommand selectTileCmd = SingleTileTargetEffect.CreateCommand(currentTile.getAdjacentTiles(), delegate (Tile t)
+        List<Tile> validTargets = GameManager.Get().getLegalStructurePlacementTiles(sourcePlayer);
+        validTargets.RemoveAll(t => t.getDistanceTo(sourceTile) > 1);
+        validTargets.RemoveAll(t => t.creature != null);
+        QueueableCommand selectTileCmd = SingleTileTargetEffect.CreateCommand(validTargets, delegate (Tile t)
         {
+            removeCounters(Counters.build, 1);
             StructureCard structureToPlace = GameManager.Get().createCardById(selectedCardId, controller) as StructureCard;
             GameManager.Get().createStructureOnTile(structureToPlace.structure, t, controller, structureToPlace);
         });

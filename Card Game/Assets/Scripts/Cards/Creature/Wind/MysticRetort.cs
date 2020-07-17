@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class MysticRetort : SpellCard, Effect
 {
+    public override int cardId => 0;
+
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
         List<Creature> creaturesToBounce = new List<Creature>();
@@ -11,11 +13,6 @@ public class MysticRetort : SpellCard, Effect
             creaturesToBounce.Add(c);
         foreach (Creature c in creaturesToBounce)
             c.bounce(this);
-    }
-
-    public override int getCardId()
-    {
-        return 0;
     }
 
     public override List<Tile> getLegalTargetTiles()

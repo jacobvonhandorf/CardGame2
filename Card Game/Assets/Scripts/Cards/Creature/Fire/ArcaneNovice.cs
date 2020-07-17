@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class ArcaneNovice : Creature
 {
-    public override int getStartingRange()
-    {
-        return 1;
-    }
+    public override int cardId => 64;
 
     public override void onAnySpellCast(SpellCard spell)
     {
@@ -28,11 +25,6 @@ public class ArcaneNovice : Creature
         List<Card.Tag> tags = new List<Card.Tag>();
         tags.Add(Card.Tag.Arcane);
         return tags;
-    }
-
-    public override int getCardId()
-    {
-        return 64;
     }
 
     public override List<Keyword> getInitialKeywords()

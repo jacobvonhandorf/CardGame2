@@ -6,11 +6,7 @@ using static Card;
 public class FairyNeophyte : Creature
 {
     public const int CARD_ID = 46;
-
-    public override int getStartingRange()
-    {
-        return 1;
-    }
+    public override int cardId => CARD_ID;
 
     public override void onCreation()
     {
@@ -21,24 +17,6 @@ public class FairyNeophyte : Creature
         });
     }
 
-    public override List<Tag> getTags()
-    {
-        List<Tag> tags = new List<Tag>();
-        tags.Add(Tag.Fairy);
-        return tags;
-    }
-
-    public override int getCardId()
-    {
-        return CARD_ID;
-    }
-
-    public override List<Keyword> getInitialKeywords()
-    {
-        return new List<Keyword>()
-        {
-            Keyword.deploy
-        };
-    }
-
+    public override List<Tag> getTags() => new List<Tag>() { Tag.Fairy };
+    public override List<Keyword> getInitialKeywords() => new List<Keyword>() { Keyword.deploy };
 }

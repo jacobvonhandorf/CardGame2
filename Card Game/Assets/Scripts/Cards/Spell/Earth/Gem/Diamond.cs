@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Diamond : SpellCard
 {
+    public override int cardId => 25;
+
     public override List<Tile> getLegalTargetTiles()
     {
         return new List<Tile>();
@@ -12,11 +14,6 @@ public class Diamond : SpellCard
     protected override Effect getEffect()
     {
         return null;
-    }
-
-    public override bool canBePlayed()
-    {
-        return false;
     }
 
     public override void onInitialization()
@@ -38,15 +35,5 @@ public class Diamond : SpellCard
         }
     }
 
-    protected override List<Tag> getTags()
-    {
-        List<Tag> tags = new List<Tag>();
-        tags.Add(Tag.Gem);
-        return tags;
-    }
-
-    public override int getCardId()
-    {
-        return 25;
-    }
+    protected override List<Tag> getTags() => new List<Tag>() { Tag.Gem };
 }

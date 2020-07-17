@@ -4,10 +4,8 @@ using UnityEngine;
 
 public class ManaWorm : Creature
 {
-    public override int getStartingRange()
-    {
-        return 1;
-    }
+    public override int cardId => 62;
+    public override List<Card.Tag> getTags() => new List<Card.Tag>() { Card.Tag.Arcane };
 
     public override void onAnySpellCast(SpellCard spell)
     {
@@ -15,17 +13,5 @@ public class ManaWorm : Creature
         {
             addAttack(1);
         }
-    }
-
-    public override List<Card.Tag> getTags()
-    {
-        List<Card.Tag> tags = new List<Card.Tag>();
-        tags.Add(Card.Tag.Arcane);
-        return tags;
-    }
-
-    public override int getCardId()
-    {
-        return 62;
     }
 }

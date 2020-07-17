@@ -4,14 +4,11 @@ using UnityEngine;
 
 public class Arson : SpellCard, Effect
 {
+    public override int cardId => 15;
+
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
         targetTile.structure.takeDamage(2);
-    }
-
-    public override int getCardId()
-    {
-        return 15;
     }
 
     public override List<Tile> getLegalTargetTiles()

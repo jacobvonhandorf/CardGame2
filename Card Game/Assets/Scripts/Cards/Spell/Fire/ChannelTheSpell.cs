@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class ChannelTheSpell : SpellCard, Effect
 {
+    public override int cardId => 13;
+
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
         int numCardsToReduce = 3;
@@ -33,6 +35,11 @@ public class ChannelTheSpell : SpellCard, Effect
         return this;
     }
 
+    public override void onInitialization()
+    {
+        toolTipInfos.Add(ToolTipInfo.arcaneSpell);
+    }
+
     public override bool additionalCanBePlayedChecks()
     {
         foreach (Creature c in owner.getAllControlledCreatures())
@@ -48,10 +55,5 @@ public class ChannelTheSpell : SpellCard, Effect
         List<Tag> tags = new List<Tag>();
         tags.Add(Tag.Arcane);
         return tags;
-    }
-
-    public override int getCardId()
-    {
-        return 13;
     }
 }

@@ -4,30 +4,19 @@ using UnityEngine;
 
 public abstract class ToolTipInfo
 {
-    // enum
-    /*
-    public static ToolTipInfo deploy { get; } = new Deploy();
-    public static ToolTipInfo defender1 { get; } = new Defender1();
-    public static ToolTipInfo quick { get; } = new Quick();
-    */
+    #region GlobalToolTips
+    public static ToolTipInfo arcaneSpell { get; } = new ArcaneSpell();
+    #endregion
 
     // convert keyword to tool tip
-    public static ToolTipInfo getToolTipInfoFromKeyword(Keyword k)
-    {
-        return new KeywordInfo(k);
-    }
+    public static ToolTipInfo getToolTipInfoFromKeyword(Keyword k) => new KeywordInfo(k);
 
-    // properties
+    #region Properties
     public abstract string headerText { get; }
     public abstract string descriptionText { get; }
+    #endregion
 
-    // data
-    /*
-    private class Deploy : ToolTipInfo
-    {
-        public override string headerText => "Deploy";
-        public override string descriptionText => "Deploy abilites trigger when the creature is played";
-    }*/
+    #region Data
     private class KeywordInfo : ToolTipInfo
     {
         public Keyword keyword;
@@ -38,16 +27,10 @@ public abstract class ToolTipInfo
             keyword = k;
         }
     }
-    /*
-    private class Quick : ToolTipInfo
+    private class ArcaneSpell : ToolTipInfo
     {
-        public override string headerText => Keyword.quick.Name;
-        public override string descriptionText => Keyword.quick.DescriptionText;
+        public override string headerText => "Arcane Spell";
+        public override string descriptionText => "Arcane spells can only be cast while you control an Arcane creature";
     }
-    private class Defender1 : ToolTipInfo
-    {
-        public override string headerText => Keyword.defender1.Name;
-        public override string descriptionText => Keyword.defender1.DescriptionText;
-    }
-    */
+    #endregion
 }

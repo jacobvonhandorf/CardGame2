@@ -28,29 +28,6 @@ public class CardIdChecker : MonoBehaviour
 
     }
 
-    /*
-    private List<Card> getAllCardsFromResources()
-    {
-        List<Card> returnList = new List<Card>();
-
-        GameObject[] loadedPrefabs = Resources.LoadAll<GameObject>(cardsPath);
-        foreach (GameObject prefab in loadedPrefabs)
-        {
-            GameObject newGameObject = Instantiate(prefab);
-            Card newCard = newGameObject.GetComponentInChildren<Card>();
-            if (newCard == null)
-            {
-                Debug.Log(newGameObject + " had no Card component");
-                continue;
-            }
-            newCard.removeGraphicsAndCollidersFromScene();
-            returnList.Add(newCard);
-        }
-
-        return returnList;
-    }
-    */
-
     public static void runAsStatic()
     {
         if (checkForDuplicateIDs())
@@ -78,14 +55,14 @@ public class CardIdChecker : MonoBehaviour
                 continue;
             }
 
-            if (usedIds.Contains(newCard.getCardId()))
+            if (usedIds.Contains(newCard.cardId))
             {
                 duplicateFound = true;
-                Debug.LogError(newCard.getCardName() + " has duplicate ID " + newCard.getCardId());
+                Debug.LogError(newCard.getCardName() + " has duplicate ID " + newCard.cardId);
             }
             else
             {
-                usedIds.Add(newCard.getCardId());
+                usedIds.Add(newCard.cardId);
             }
 
             // Destroy card when finished with it
@@ -120,7 +97,7 @@ public class CardIdChecker : MonoBehaviour
             Debug.Log(pathInResources);
             GameObject card = Resources.Load(pathInResources) as GameObject;
             GameObject objectToDestroy =  Instantiate(card, new Vector3(999, 999), Quaternion.identity);
-            cardIdMap.Add(card.GetComponentInChildren<Card>().getCardId(), pathInResources);
+            cardIdMap.Add(card.GetComponentInChildren<Card>().cardId, pathInResources);
             Destroy(objectToDestroy);
         }
 

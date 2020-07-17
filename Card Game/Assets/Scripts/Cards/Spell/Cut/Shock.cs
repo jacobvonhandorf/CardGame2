@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class Shock : SpellCard
 {
-    public override int getCardId()
-    {
-        return 2;
-    }
+    public override int cardId => 2;
 
     public override List<Tile> getLegalTargetTiles()
     {

@@ -4,15 +4,8 @@ using UnityEngine;
 
 public class Miner : Creature
 {
-    public override int getCardId()
-    {
-        return 68;
-    }
-
-    public override int getStartingRange()
-    {
-        return 1;
-    }
+    public override int cardId => 68;
+    public override List<Keyword> getInitialKeywords() => new List<Keyword>() { Keyword.deploy, Keyword.armored1 };
 
     public override void onCreation()
     {
@@ -21,14 +14,4 @@ public class Miner : Creature
             cardList[0].moveToCardPile(controller.hand, sourceCard);
         });
     }
-
-    public override List<Keyword> getInitialKeywords()
-    {
-        return new List<Keyword>()
-        {
-            Keyword.deploy,
-            Keyword.armored1
-        };
-    }
-
 }

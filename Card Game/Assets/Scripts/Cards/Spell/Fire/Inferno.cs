@@ -7,6 +7,8 @@ public class Inferno : SpellCard, Effect
     private const int DAMAGE_AMOUNT = 4;
     public const int CARD_ID = 14;
 
+    public override int cardId => CARD_ID;
+
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
         List<Creature> tempList = new List<Creature>();
@@ -16,6 +18,11 @@ public class Inferno : SpellCard, Effect
             if (!c.hasTag(Tag.Arcane))
                 c.takeDamage(DAMAGE_AMOUNT);
         }
+    }
+
+    public override void onInitialization()
+    {
+        toolTipInfos.Add(ToolTipInfo.arcaneSpell);
     }
 
     public override List<Tile> getLegalTargetTiles()
@@ -43,10 +50,5 @@ public class Inferno : SpellCard, Effect
         List<Tag> tags = new List<Tag>();
         tags.Add(Tag.Arcane);
         return tags;
-    }
-
-    public override int getCardId()
-    {
-        return CARD_ID;
     }
 }

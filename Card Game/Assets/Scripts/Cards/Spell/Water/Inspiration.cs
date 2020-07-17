@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class Inspiration : SpellCard
 {
-    public override int getCardId()
-    {
-        return 9;
-    }
+    public override int cardId => 9;
 
     public override List<Tile> getLegalTargetTiles()
     {

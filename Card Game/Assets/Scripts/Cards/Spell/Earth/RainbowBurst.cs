@@ -8,11 +8,7 @@ public class RainbowBurst : SpellCard, Effect
     private const int DAMAGE = 5;
     private const int CARDS_DRAWN = 3;
     private const int CARDS_TO_SHUFFLE_BACK = 3;
-
-    public override int getCardId()
-    {
-        return CARD_ID;
-    }
+    public override int cardId => CARD_ID;
 
     public override List<Tile> getLegalTargetTiles()
     {
@@ -25,9 +21,9 @@ public class RainbowBurst : SpellCard, Effect
         List<int> usedIds = new List<int>();
         foreach (Card c in owner.hand.getCardList())
         {
-            if (c.hasTag(Tag.Gem) && !usedIds.Contains(c.getCardId()))
+            if (c.hasTag(Tag.Gem) && !usedIds.Contains(c.cardId))
             {
-                usedIds.Add(c.getCardId());
+                usedIds.Add(c.cardId);
                 numUniqueGemsInHand++;
             }
         }
@@ -42,6 +38,8 @@ public class RainbowBurst : SpellCard, Effect
     private List<int> selectedCardIds = new List<int>();
     private List<Card> cardsToShuffleBack = new List<Card>();
     private int gemsNeededToShuffleBack;
+
+
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
         // reset values
@@ -55,7 +53,7 @@ public class RainbowBurst : SpellCard, Effect
         {
             QueueableCommand cmd = CardPicker.CreateCommand(pickableCards, 1, 1, "Select a gem to shuffle back. " + gemsNeededToShuffleBack + " remaining", sourcePlayer, delegate (List<Card> cardList)
             {
-                pickableCards.RemoveAll(c => c.getCardId() == cardList[0].getCardId()); // remove already selected cards
+                pickableCards.RemoveAll(c => c.cardId == cardList[0].cardId); // remove already selected cards
                 cardsToShuffleBack.Add(cardList[0]);
                 gemsNeededToShuffleBack--;
             });

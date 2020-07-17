@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class FairyCavalier : Creature
 {
+    public override int cardId => 51;
+
     public override List<Card.Tag> getTags()
     {
         List<Card.Tag> tags = new List<Card.Tag>();
@@ -17,16 +19,6 @@ public class FairyCavalier : Creature
         {
             t.creature.bounce(sourceCard);
         });
-    }
-
-    public override int getStartingRange()
-    {
-        return 1;
-    }
-
-    public override int getCardId()
-    {
-        return 51;
     }
 
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)

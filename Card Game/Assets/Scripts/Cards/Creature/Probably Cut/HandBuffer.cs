@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class HandBuffer : Creature
 {
-    public override int getCardId()
-    {
-        return 60;
-    }
+    public override int cardId => 60;
 
     /*
     public override void onCreation()

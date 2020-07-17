@@ -5,34 +5,7 @@ using UnityEngine;
 public class ManaWell : Structure, Effect
 {
     public const int CARD_ID = 73;
-
-    public override bool canDeployFrom()
-    {
-        return true;
-    }
-
-    public override bool canWalkOn()
-    {
-        return false;
-    }
-
-    public override int getCardId()
-    {
-        return CARD_ID;
-    }
-
-    /*
-    public override void onAnySpellCast(SpellCard spell)
-    {
-        if (spell.owner == controller && isActiveAndEnabled)
-            addCounters(Counters.well, 1);
-    }
-
-    public override void onTurnStart()
-    {
-        if (GameManager.Get().activePlayer == controller)
-            addCounters(Counters.well, 1);
-    }*/
+    public override int cardId => CARD_ID;
 
     private void OnEnable()
     {
@@ -54,7 +27,6 @@ public class ManaWell : Structure, Effect
             sourceCard.showInEffectsView();
         }
     }
-
 
     private void GameEvents_SpellCastEvent(object sender, GameEvents.SpellCastEventArgs e)
     {

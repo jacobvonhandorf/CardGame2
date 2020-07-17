@@ -6,10 +6,7 @@ public class Garnet : SpellCard
 {
     public const int CARD_ID = 24;
 
-    public override bool canBePlayed()
-    {
-        return false;
-    }
+    public override int cardId => CARD_ID;
 
     public override List<Tile> getLegalTargetTiles()
     {
@@ -20,7 +17,6 @@ public class Garnet : SpellCard
     {
         E_AddedToCardPile += Garnet_E_AddedToCardPile;
     }
-
     private void OnDestroy()
     {
         E_AddedToCardPile -= Garnet_E_AddedToCardPile;
@@ -45,10 +41,5 @@ public class Garnet : SpellCard
         List<Tag> tags = new List<Tag>();
         tags.Add(Tag.Gem);
         return tags;
-    }
-
-    public override int getCardId()
-    {
-        return CARD_ID;
     }
 }

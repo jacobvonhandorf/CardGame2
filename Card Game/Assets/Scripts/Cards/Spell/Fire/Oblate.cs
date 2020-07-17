@@ -6,6 +6,8 @@ public class Oblate : SpellCard, Effect
 {
     public static bool alreadyActivatedThisTurn = false;
 
+    public override int cardId => 4;
+
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
         Card sourceCard;
@@ -23,19 +25,22 @@ public class Oblate : SpellCard, Effect
         sourcePlayer.addMana(amount);
         sourcePlayer.drawCards(amount);
 
-        // handle OPT stuff
         alreadyActivatedThisTurn = true;
-        EffectActuator resetEffect = new EffectActuator();
-        resetEffect.effect = new ResetOPTRestriction();
-        //GameManager.Get().beginningOfTurnEffectsList.Add(resetEffect);
     }
 
-    private class ResetOPTRestriction : Effect
+    public override void onInitialization()
     {
-        public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-        {
-            alreadyActivatedThisTurn = false;
-        }
+        GameEvents.E_TurnStart += GameEvents_E_TurnStart;
+        toolTipInfos.Add(ToolTipInfo.arcaneSpell);
+    }
+    private void OnDestroy()
+    {
+        GameEvents.E_TurnStart -= GameEvents_E_TurnStart;
+    }
+
+    private void GameEvents_E_TurnStart(object sender, System.EventArgs e)
+    {
+        alreadyActivatedThisTurn = false;
     }
 
     protected override List<Tag> getTags()
@@ -70,10 +75,5 @@ public class Oblate : SpellCard, Effect
             }
         }
         return false;
-    }
-
-    public override int getCardId()
-    {
-        return 4;
     }
 }

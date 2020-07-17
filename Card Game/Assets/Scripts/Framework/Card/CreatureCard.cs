@@ -11,11 +11,7 @@ public class CreatureCard : Card
     [SerializeField] private CounterController counterCountroller;
     public bool isCreature = false; // true when is being treated as a creature. False when treated as card
 
-    protected override void Start()
-    {
-        base.Start();
-        //creature.initialize();
-    }
+    public override int cardId => creature.cardId;
 
     public override void initialize()
     {
@@ -35,6 +31,7 @@ public class CreatureCard : Card
         creatureStatsScript.setTextSortingLayer(SpriteLayers.CreatureAbove);
         phaseOut();
         owner.hand.resetCardPositions();
+        GameEvents.TriggerCreaturePlayedEvents(null, new GameEvents.CreaturePlayedArgs() { creature = creature });
     }
 
     public override List<Tile> getLegalTargetTiles()
@@ -49,8 +46,6 @@ public class CreatureCard : Card
 
     internal void swapToCreature(Tile onTile)
     {
-        //creature.initialize();
-
         // disable card functionality
         gameObject.SetActive(false);
 
@@ -60,8 +55,8 @@ public class CreatureCard : Card
         // resize
         creatureStatsScript.swapToCreature(this, onTile);
 
-        // set card pile to null so it is no longer in hand
-        currentCardPile = null;
+        // set card pile to board
+        moveToCardPile(Board.instance, null); // null to signal by game mechanics
 
         isCreature = true;
     }
@@ -141,11 +136,6 @@ public class CreatureCard : Card
     public CounterController getCounterController()
     {
         return counterCountroller;
-    }
-
-    public override int getCardId()
-    {
-        return creature.getCardId();
     }
 
     public override List<Keyword> getInitialKeywords()

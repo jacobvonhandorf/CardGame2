@@ -4,15 +4,9 @@ using UnityEngine;
 
 public class RecklessDraw : SpellCard, Effect
 {
-    public override int getCardId()
-    {
-        return 12;
-    }
+    public override int cardId => 12;
 
-    public override List<Tile> getLegalTargetTiles()
-    {
-        return GameManager.Get().allTiles();
-    }
+    public override List<Tile> getLegalTargetTiles() => GameManager.Get().allTiles();
 
     protected override Effect getEffect()
     {

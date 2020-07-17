@@ -89,7 +89,7 @@ public class DeckBuilderCardsView : MonoBehaviour
                 Debug.LogError(newGameObject + " had no Card component");
                 continue;
             }
-            cardIdMap.Add(newCard.getCardId(), newCard);
+            cardIdMap.Add(newCard.cardId, newCard);
             newCard.removeGraphicsAndCollidersFromScene();
             returnList.Add(newCard);
         }

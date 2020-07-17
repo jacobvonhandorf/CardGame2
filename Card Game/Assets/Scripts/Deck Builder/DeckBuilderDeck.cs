@@ -42,7 +42,7 @@ public class DeckBuilderDeck : MonoBehaviour
         bool cardAlreadyInList = false;
         foreach (CardAmountPair pair in cardList)
         {
-            if (pair.card.getCardId() == newCard.getCardId())
+            if (pair.card.cardId == newCard.cardId)
             {
                 cardAlreadyInList = true;
                 if (pair.amount == maxCopiesOfCard) // can't put more than 3 cards in deck
@@ -130,7 +130,7 @@ public class DeckBuilderDeck : MonoBehaviour
         foreach (CardAmountPair pair in cardList)
         {
 
-            int id = pair.card.getCardId();
+            int id = pair.card.cardId;
             int amount = pair.amount;
             idToAmountMap.Add(id, amount);
         }

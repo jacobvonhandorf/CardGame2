@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class MightMakesRight : SpellCard, Effect
 {
-    public override int getCardId()
-    {
-        return 17;
-    }
+    public override int cardId => 17;
 
     public override List<Tile> getLegalTargetTiles()
     {

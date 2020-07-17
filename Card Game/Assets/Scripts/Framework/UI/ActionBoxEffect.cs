@@ -16,9 +16,7 @@ public class ActionBoxEffect : MonoBehaviour
 
     void OnMouseDown()
     {
-        if (!creature.hasDoneActionThisTurn && creature.effectActionCost > 0)
-            GameManager.Get().setUpCreatureEffect(creature);
-        else if (creature.effectActionCost == 0)
+        if (!creature.hasDoneActionThisTurn)
             GameManager.Get().setUpCreatureEffect(creature);
         else
             GameManager.Get().showToast("This creature's action is unavailable");

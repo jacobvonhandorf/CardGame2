@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Accelerate : SpellCard, Effect
 {
+    public override int cardId => 18;
+
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
         sourcePlayer.drawCard();
@@ -17,6 +19,11 @@ public class Accelerate : SpellCard, Effect
     protected override Effect getEffect()
     {
         return this;
+    }
+
+    public override void onInitialization()
+    {
+        toolTipInfos.Add(ToolTipInfo.arcaneSpell);
     }
 
     public override bool additionalCanBePlayedChecks()
@@ -34,10 +41,5 @@ public class Accelerate : SpellCard, Effect
         List<Tag> tags = new List<Tag>();
         tags.Add(Tag.Arcane);
         return tags;
-    }
-
-    public override int getCardId()
-    {
-        return 18;
     }
 }

@@ -4,15 +4,7 @@ using UnityEngine;
 
 public class Prospector : Creature
 {
-    public override int getCardId()
-    {
-        return 67;
-    }
-
-    public override int getStartingRange()
-    {
-        return 1;
-    }
+    public override int cardId => 67;
 
     public override void onCreation()
     {
@@ -29,14 +21,7 @@ public class Prospector : Creature
         shuffleObsidianIntoDeck();
     }
 
-    public override List<Keyword> getInitialKeywords()
-    {
-        return new List<Keyword>()
-        {
-            Keyword.deploy,
-            Keyword.combatant
-        };
-    }
+    public override List<Keyword> getInitialKeywords() => new List<Keyword>() { Keyword.deploy, Keyword.combatant };
 
     private void shuffleObsidianIntoDeck()
     {
@@ -49,7 +34,6 @@ public class Prospector : Creature
         // shuffle deck
         controller.deck.shuffle();
     }
-
 
     /* old code
     public override void onAttack()

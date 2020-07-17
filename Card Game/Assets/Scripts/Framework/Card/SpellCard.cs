@@ -11,12 +11,10 @@ public abstract class SpellCard : Card
 
     public override void play(Tile t)
     {
-        GameManager.Get().onSpellCastEffects(this);
         getEffect().activate(owner, GameManager.Get().getOppositePlayer(owner), t, t, t.creature, t.creature);
         moveToCardPile(owner.graveyard, null);
         owner.hand.resetCardPositions();
-        //GameManager.Get().afterSpellCastEffects();
-
+        GameManager.Get().onSpellCastEffects(this);
     }
 
     protected abstract Effect getEffect();

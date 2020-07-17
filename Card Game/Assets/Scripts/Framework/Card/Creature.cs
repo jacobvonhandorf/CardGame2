@@ -10,7 +10,6 @@ using static Card;
 public abstract class Creature : MonoBehaviour, Damageable
 {
     [SerializeField] private CreatureStatsGetter statsScript;
-    //[SerializeField] private ParticleSystem onAttackParticles;
     public CreatureCard sourceCard; // card associated with this creature
     public string cardName;
 
@@ -24,10 +23,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     [SerializeField] public int range;
     [SerializeField] private int movement;
 
-    public int effectActionCost = 1; // CURRENTLY DISABLED can be set to 0 in child class if effect shouldn't consume an action
-    // public Effect activeEffect;
     public Tile currentTile;
-    //public Player owner;
     public Player controller;
     public bool hasMovedThisTurn = false;
     public bool hasDoneActionThisTurn = false; // action is attack or effect
@@ -40,8 +36,6 @@ public abstract class Creature : MonoBehaviour, Damageable
     protected void Awake()
     {
         counterController = sourceCard.getCounterController();
-        if (!initialized)
-            initialize();
     }
 
     public void initialize()
@@ -55,10 +49,12 @@ public abstract class Creature : MonoBehaviour, Damageable
         canDeployFrom = getCanDeployFrom();
 
         initialized = true;
+        onInitialization();
     }
 
     public void resetToBaseStats()
     {
+        Debug.LogError("reset to base stats called");
         // only owner is resposible for resetting to base stats
         // might need to write a thing to request a base stat change depending on effects added in future
         // but for now this should not be called by card scripts
@@ -67,7 +63,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         {
             return;
         }
-
+        Debug.LogError("Resetting to base stats");
         setHealth(baseHealth);
         setAttack(baseAttack);
         //setArmor(baseDefense);
@@ -234,7 +230,8 @@ public abstract class Creature : MonoBehaviour, Damageable
     {
         actualMove(tile);
         NetInterface.Get().syncCreatureCoordinates(this, currentTile.x, currentTile.y, true);
-        onForceMoved();
+        //GameEvents.TriggerMovedEvents(this, new GameEvents.CreatureMovedArgs() { creature = this, byEffect = true });
+        //onForceMoved();
     }
     public void forceMove(int x, int y)
     {
@@ -326,12 +323,12 @@ public abstract class Creature : MonoBehaviour, Damageable
     {
         if (GameManager.gameMode == GameManager.GameMode.online)
         {
-            if (controller != NetInterface.Get().getLocalPlayer() || NetInterface.Get().getLocalPlayer().locked)
+            if (controller != NetInterface.Get().getLocalPlayer() || NetInterface.Get().getLocalPlayer().isLocked())
                 return;
         }
         else
         {
-            if (controller != GameManager.Get().activePlayer || controller.locked)
+            if (controller != GameManager.Get().activePlayer || controller.isLocked())
                 return;
         }
         // what to do if controller is trying to do something with this creature while they have no actions
@@ -627,11 +624,8 @@ public abstract class Creature : MonoBehaviour, Damageable
     public virtual List<Keyword> getInitialKeywords() { return new List<Keyword>(); }
     #endregion
 
-
-    // ABSTRACT METHODS
-    public abstract int getCardId();
-
     #region ExtendedMethods
+    public abstract int cardId { get; }
     protected virtual bool getCanDeployFrom() { return false; }
     public virtual Effect getEffect() { return null; }
     public virtual List<Tag> getTags() { return new List<Tag>(); }

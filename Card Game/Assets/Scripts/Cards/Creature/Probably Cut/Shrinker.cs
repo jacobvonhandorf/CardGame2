@@ -4,19 +4,11 @@ using UnityEngine;
 
 public class Shrinker : Creature
 {
-    public override int getStartingRange()
-    {
-        return 1;
-    }
+    public override int cardId => 54;
 
     public override Effect getEffect()
     {
         return null;
-    }
-
-    public override int getCardId()
-    {
-        return 54;
     }
 
     /*
