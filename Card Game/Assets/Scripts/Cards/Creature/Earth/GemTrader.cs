@@ -7,7 +7,18 @@ public class GemTrader : Creature
     public override int cardId => 70;
     public override List<Keyword> getInitialKeywords() => new List<Keyword>() { Keyword.deploy };
 
-    public override void onCreation()
+    public override void onInitialization()
+    {
+        E_Death += GemTrader_E_Death;
+        E_OnDeployed += GemTrader_E_OnDeployed;
+    }
+    private void OnDestroy()
+    {
+        E_Death -= GemTrader_E_Death;
+        E_OnDeployed -= GemTrader_E_OnDeployed;
+    }
+
+    private void GemTrader_E_OnDeployed(object sender, System.EventArgs e)
     {
         CardPicker.CreateAndQueue(controller.hand.getAllCardsWithTag(Card.Tag.Gem), 1, 1, "Select a card to shuffle into your deck", controller, delegate (List<Card> cardList)
         {
@@ -26,8 +37,7 @@ public class GemTrader : Creature
             }
         });
     }
-
-    public override void onDeath()
+    private void GemTrader_E_Death(object sender, System.EventArgs e)
     {
         Card obsidian = GameManager.Get().createCardById(Obsidian.CARD_ID, controller);
         obsidian.moveToCardPile(controller.deck, sourceCard);

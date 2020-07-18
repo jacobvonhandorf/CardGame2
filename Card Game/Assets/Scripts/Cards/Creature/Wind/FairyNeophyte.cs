@@ -7,8 +7,15 @@ public class FairyNeophyte : Creature
 {
     public const int CARD_ID = 46;
     public override int cardId => CARD_ID;
+    public override List<Tag> getTags() => new List<Tag>() { Tag.Fairy };
+    public override List<Keyword> getInitialKeywords() => new List<Keyword>() { Keyword.deploy };
 
-    public override void onCreation()
+    public override void onInitialization()
+    {
+        E_OnDeployed += FairyNeophyte_E_OnDeployed;
+    }
+
+    private void FairyNeophyte_E_OnDeployed(object sender, System.EventArgs e)
     {
         CardPicker.CreateAndQueue(controller.hand.getAllCardsWithType(CardType.Creature), 1, 1, "Select a card to give +1/+1", controller, delegate (List<Card> cardList)
         {
@@ -16,7 +23,4 @@ public class FairyNeophyte : Creature
             (cardList[0] as CreatureCard).creature.addHealth(1);
         });
     }
-
-    public override List<Tag> getTags() => new List<Tag>() { Tag.Fairy };
-    public override List<Keyword> getInitialKeywords() => new List<Keyword>() { Keyword.deploy };
 }

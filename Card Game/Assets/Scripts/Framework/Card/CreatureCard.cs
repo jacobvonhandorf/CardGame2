@@ -12,6 +12,8 @@ public class CreatureCard : Card
     public bool isCreature = false; // true when is being treated as a creature. False when treated as card
 
     public override int cardId => creature.cardId;
+    public override CardType getCardType() => CardType.Creature;
+    public override List<Tile> getLegalTargetTiles() => GameManager.Get().getAllDeployableTiles(owner);
 
     public override void initialize()
     {
@@ -34,15 +36,6 @@ public class CreatureCard : Card
         GameEvents.TriggerCreaturePlayedEvents(null, new GameEvents.CreaturePlayedArgs() { creature = creature });
     }
 
-    public override List<Tile> getLegalTargetTiles()
-    {
-        return GameManager.Get().getAllDeployableTiles(owner);
-    }
-
-    public override CardType getCardType()
-    {
-        return CardType.Creature;
-    }
 
     internal void swapToCreature(Tile onTile)
     {
@@ -94,25 +87,9 @@ public class CreatureCard : Card
         creature.resetToBaseStatsWithoutSyncing();
     }
 
-    public override void onSentToGrave()
-    {
-        creature.onSentToGrave();
-    }
-
     protected override List<Tag> getTags()
     {
         return creature.getTags();
-    }
-
-    public override void onAnyCreaturePlayed(Creature c)
-    {
-        creature.onAnyCreaturePlayed(c);
-    }
-
-    public override void onAnySpellCast(SpellCard s)
-    {
-        Debug.Log("On any spell cast in creature");
-        creature.onAnySpellCast(s);
     }
 
     // returns true if the card can be played right now

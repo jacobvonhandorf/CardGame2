@@ -33,6 +33,24 @@ public abstract class Creature : MonoBehaviour, Damageable
 
     private CounterController counterController;
 
+    #region Events
+    public event EventHandler E_Death;
+    public void TriggerOnDeathEvents(object sender) { if (E_Death != null) E_Death.Invoke(sender, EventArgs.Empty); }
+
+    public event EventHandler E_OnDeployed;
+    public void TriggerOnDeployed(object sender) { if (E_OnDeployed != null) E_OnDeployed.Invoke(sender, EventArgs.Empty); }
+
+    public event EventHandler<OnAttackArgs> E_OnAttack;
+    public class OnAttackArgs : EventArgs { public Damageable target { get; set; } }
+    public delegate void onAttackHandler(OnAttackArgs e);
+    public void TriggerOnAttackEvents(object sender, OnAttackArgs args) { if (E_OnAttack != null) E_OnAttack.Invoke(sender, args); }
+
+    public event EventHandler<OnDefendArgs> E_OnDefend;
+    public class OnDefendArgs : EventArgs { public Creature attacker { get; set; } }
+    public delegate void onDefendHandler(OnDefendArgs e);
+    public void TriggerOnDefendEvents(object sender, OnDefendArgs args) { if (E_OnDefend != null) E_OnDefend.Invoke(sender, args); }
+    #endregion
+
     protected void Awake()
     {
         counterController = sourceCard.getCounterController();
@@ -54,7 +72,6 @@ public abstract class Creature : MonoBehaviour, Damageable
 
     public void resetToBaseStats()
     {
-        Debug.LogError("reset to base stats called");
         // only owner is resposible for resetting to base stats
         // might need to write a thing to request a base stat change depending on effects added in future
         // but for now this should not be called by card scripts
@@ -151,9 +168,9 @@ public abstract class Creature : MonoBehaviour, Damageable
 
         // only trigger effects if the local player is the owner
         if (NetInterface.Get().getLocalPlayer() == controller)
-            onAttack();
+            TriggerOnAttackEvents(this, new OnAttackArgs() { target = defender });
         if (NetInterface.Get().getLocalPlayer() == defender.getController())
-            defender.onDefend();
+            defender.TriggerOnDefendEvents(this, new OnDefendArgs() { attacker = this });
 
         // perform damage calc
         defender.takeDamage(attackRoll); // do damage text in takeDamage()
@@ -226,17 +243,16 @@ public abstract class Creature : MonoBehaviour, Damageable
 
     #region moving
     // Use to move a creature to a tile by an effect
-    public void forceMove(Tile tile)
+    public void forceMove(Tile tile, Card source)
     {
         actualMove(tile);
-        NetInterface.Get().syncCreatureCoordinates(this, currentTile.x, currentTile.y, true);
-        //GameEvents.TriggerMovedEvents(this, new GameEvents.CreatureMovedArgs() { creature = this, byEffect = true });
-        //onForceMoved();
+        NetInterface.Get().syncCreatureCoordinates(this, currentTile.x, currentTile.y, source);
+        GameEvents.TriggerMovedEvents(this, new GameEvents.CreatureMovedArgs() { creature = this, source = source });
     }
-    public void forceMove(int x, int y)
+    public void forceMove(int x, int y, Card source)
     {
         Tile t = GameManager.Get().board.getTileByCoordinate(x, y);
-        forceMove(t);
+        forceMove(t, source);
     }
     // Used to have a creature move itself
     public void move(Tile tile)
@@ -247,8 +263,8 @@ public abstract class Creature : MonoBehaviour, Damageable
         if (!hasDoneActionThisTurn)
             controller.subtractActions(1);
         actualMove(tile);
-        NetInterface.Get().syncCreatureCoordinates(this, currentTile.x, currentTile.y, false);
-        onMove();
+        NetInterface.Get().syncCreatureCoordinates(this, currentTile.x, currentTile.y, null);
+        GameEvents.TriggerMovedEvents(this, new GameEvents.CreatureMovedArgs() { source = null, creature = this });
         updateHasActedIndicators();
     }
     public void move(int x, int y)
@@ -283,7 +299,6 @@ public abstract class Creature : MonoBehaviour, Damageable
         statsScript.updateHasActedIndicator(hasDoneActionThisTurn, hasMovedThisTurn);
     }
 
-    // if overriding this you must call the base class
     public void resetForNewTurn()
     {
         hasMovedThisTurn = false;
@@ -292,8 +307,6 @@ public abstract class Creature : MonoBehaviour, Damageable
         updateHasActedIndicators();
         // update border
         updateFriendOrFoeBorder();
-
-        onTurnStart();
     }
     public void addToCardViewer(CardViewer viewer)
     {
@@ -464,17 +477,13 @@ public abstract class Creature : MonoBehaviour, Damageable
     }
     #endregion
 
-    /*
-     * Returns true if this card has the the tag passed to this method
-     */
+    // Returns true if this card has the the tag passed to this method
     public bool hasTag(Tag tag)
     {
         return sourceCard.hasTag(tag);
     }
 
-    /*
-     * returns true if this card is the type passed to it
-     */
+    // returns true if this card is the type passed to it
     public bool isType(CardType type)
     {
         return sourceCard.isType(type);
@@ -501,6 +510,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         return sourceCard;
     }
 
+    #region NetworkSyncing
     // need seperate method for this so net messages don't create an infinite loop
     public void recieveCreatureStatsFromNet(int atk, int batk, int hp, int bhp, int bmv, int brange, Player ctrl, int mv, int range)
     {
@@ -524,6 +534,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         needToSync = true;
     }
     private bool needToSync = false;
+    #endregion
     private void Update()
     {
         if (needToSync && NetInterface.Get().gameSetupComplete)
@@ -629,21 +640,11 @@ public abstract class Creature : MonoBehaviour, Damageable
     protected virtual bool getCanDeployFrom() { return false; }
     public virtual Effect getEffect() { return null; }
     public virtual List<Tag> getTags() { return new List<Tag>(); }
-    public virtual void onForceMoved() { } // When moved by others
-    public virtual void onMove() { } // When moved by self or others
-    public virtual void onCreation() { } //ETBs
-    public virtual void onDeath() { }
-    public virtual void onAttack() { }
-    public virtual void onDefend() { }
     public virtual void onDamaged() { }
-    public virtual void onSentToGrave() { } // Whenever added to grave. death, mill or discard
-    public virtual void onAnyCreatureDeath(Creature c) { }
     public virtual void onKillingACreature(Creature c) { }
     public virtual void onLeavesTheField() { }
-    public virtual void onAnyCreaturePlayed(Creature c) { }
     public virtual bool additionalCanBePlayedChecks() { return true; } // if some conditions need to be met before playing this creature then do them in this method. Return true if can be played
     public virtual void onAnySpellCast(SpellCard spell) { }
-    public virtual void onTurnStart() { }
     public virtual void onInitialization() { }
     public virtual int getStartingRange() { return 1; } // 1 by default
     #endregion

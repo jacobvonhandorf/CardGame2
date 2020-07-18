@@ -32,13 +32,13 @@ public class GameEvents
     public static void TriggerCreaturePlayedEvents(object sender, CreaturePlayedArgs args) { if (E_CreatureDeath != null) E_CreaturePlayed.Invoke(sender, args); }
     #endregion
     #region OnCreatureMoved
-    // TODO invoke
     public static event EventHandler<CreatureMovedArgs> E_CreatureMoved;
     public class CreatureMovedArgs : EventArgs {
         public Creature creature { get; set; }
         public Card source { get; set; }
     }
     public delegate void CreatureMovedEventHandler(CreatureMovedArgs e);
-    public static void TriggerMovedEvents(object sender, CreatureMovedArgs args) { if (E_CreatureDeath != null) E_CreaturePlayed.Invoke(sender, args); }
+    public static void TriggerMovedEvents(object sender, CreatureMovedArgs args) { if (E_CreatureDeath != null) E_CreatureMoved.Invoke(sender, args); }
     #endregion
+
 }

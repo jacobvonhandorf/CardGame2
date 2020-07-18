@@ -5,34 +5,23 @@ using UnityEngine;
 public class FairyCavalier : Creature
 {
     public override int cardId => 51;
+    public override List<Card.Tag> getTags() => new List<Card.Tag>() { Card.Tag.Fairy };
+    public override List<Keyword> getInitialKeywords() => new List<Keyword>() { Keyword.deploy };
 
-    public override List<Card.Tag> getTags()
+    public override void onInitialization()
     {
-        List<Card.Tag> tags = new List<Card.Tag>();
-        tags.Add(Card.Tag.Fairy);
-        return tags;
+        E_OnDeployed += FairyCavalier_E_OnDeployed;
+    }
+    private void OnDestroy()
+    {
+        E_OnDeployed -= FairyCavalier_E_OnDeployed;
     }
 
-    public override void onCreation()
+    private void FairyCavalier_E_OnDeployed(object sender, System.EventArgs e)
     {
         SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(controller, true), delegate (Tile t)
         {
             t.creature.bounce(sourceCard);
         });
     }
-
-    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-    {
-        Debug.Log("Cavalier effect activated");
-        targetTile.creature.bounce(sourceCard);
-    }
-
-    public override List<Keyword> getInitialKeywords()
-    {
-        return new List<Keyword>()
-        {
-            Keyword.deploy
-        };
-    }
-
 }

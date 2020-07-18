@@ -5,8 +5,15 @@ using UnityEngine;
 public class ManaGorger : Creature
 {
     public override int cardId => 63;
+    public override List<Card.Tag> getTags() => new List<Card.Tag>() { Card.Tag.Arcane };
+    public override List<Keyword> getInitialKeywords() => new List<Keyword>() { Keyword.deploy };
 
-    public override void onCreation()
+    public override void onInitialization()
+    {
+        E_OnDeployed += ManaGorger_E_OnDeployed;
+    }
+
+    private void ManaGorger_E_OnDeployed(object sender, System.EventArgs e)
     {
         int manaSpent = controller.getMana();
         controller.addMana(-manaSpent);
@@ -16,7 +23,4 @@ public class ManaGorger : Creature
         if (manaSpent >= 3)
             controller.drawCard();
     }
-
-    public override List<Card.Tag> getTags() => new List<Card.Tag>() { Card.Tag.Arcane };
-    public override List<Keyword> getInitialKeywords() => new List<Keyword>() { Keyword.deploy };
 }

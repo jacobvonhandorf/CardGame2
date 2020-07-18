@@ -28,7 +28,7 @@ public class ManaWell : Structure, Effect
         }
     }
 
-    private void GameEvents_SpellCastEvent(object sender, GameEvents.SpellCastEventArgs e)
+    private void GameEvents_SpellCastEvent(object sender, GameEvents.SpellCastArgs e)
     {
         if (e.spell.owner == controller)
         {

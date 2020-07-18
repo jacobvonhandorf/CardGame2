@@ -138,21 +138,25 @@ public class NetInterface
         }
         deck.syncOrderFromNetwork(newCardList);
     }
-    public void syncCreatureCoordinates(Creature c, int x, int y, bool wasForceMove)
+    public void syncCreatureCoordinates(Creature c, int x, int y, Card source)
     {
         int creatureCardId = cardMap.get(c.sourceCard).netId;
         Net_SyncCreatureCoordinates msg = new Net_SyncCreatureCoordinates();
         msg.creatureCardId = creatureCardId;
         msg.x = (byte)x;
         msg.y = (byte)y;
-        msg.wasForceMove = wasForceMove;
+        if (source == null)
+            msg.sourceCardId = 0;
+        else
+            msg.sourceCardId = cardMap.get(source).netId;
         relayMessage(msg);
     }
-    public void recieveCreatureCoordinates(int creatureCardId, int x, int y, bool wasForceMove)
+    public void recieveCreatureCoordinates(int creatureCardId, int x, int y, object source)
     {
         Creature c = (cardMap.get(creatureCardId).cardObject as CreatureCard).creature;
-        if (wasForceMove)
-            c.forceMove(x, y);
+
+        if (source is Card)
+            c.forceMove(x, y, source as Card);
         else
             c.move(x, y);
     }

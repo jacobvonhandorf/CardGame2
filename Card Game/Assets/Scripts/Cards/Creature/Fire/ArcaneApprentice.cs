@@ -33,7 +33,7 @@ public class ArcaneApprentice : Creature, Effect
     {
         GameEvents.E_SpellCast -= GameEvents_E_SpellCast;
     }
-    private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastEventArgs e)
+    private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastArgs e)
     {
         if (e.spell.owner == controller)
             addCounters(Counters.arcane, 1);

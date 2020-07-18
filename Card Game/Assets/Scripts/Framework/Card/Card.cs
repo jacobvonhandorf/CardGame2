@@ -188,10 +188,7 @@ public abstract class Card : MonoBehaviour
         TriggerAddedToCardPileEffects(source, new AddedToCardPileArgs(previousPile, newPile, source));
     }
 
-    public CardPile getCardPile()
-    {
-        return currentCardPile;
-    }
+    public CardPile getCardPile() => currentCardPile;
 
     #region HoveringEffects
     private bool hovered = false;
@@ -219,7 +216,6 @@ public abstract class Card : MonoBehaviour
         //transformManager.UnLock();
     }
     #endregion
-
     #region ClickAndDrag
     private Vector3 offset;
     void OnMouseDown()
@@ -556,7 +552,6 @@ public abstract class Card : MonoBehaviour
     public ElementIdentity getElementIdentity() { return elementIdentity; }
     public void setElementIdentity(ElementIdentity eId) { cardStatsScript.setElementIdentity(eId); }
     #endregion
-
     #region Keyword
     private List<Keyword> keywordList = new List<Keyword>();
     public void addKeyword(Keyword keyword)
@@ -625,11 +620,6 @@ public abstract class Card : MonoBehaviour
     public virtual void initialize() { onInitialization(); }
     public virtual void onInitialization() { } // last thing to be called at the end of init
                                                 // use to register effects
-    // triggered effects
-    public virtual void onGameStart() { }
-    public virtual void onSentToGrave() { }//
-    public virtual void onAnyCreaturePlayed(Creature c) { }//
-    public virtual void onAnySpellCast(SpellCard s) { }//
     protected virtual List<Tag> getTags() // TODO needs to be changed to getInitialTags
     {
         return tags;

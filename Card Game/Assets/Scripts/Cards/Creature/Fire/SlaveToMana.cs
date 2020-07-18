@@ -28,7 +28,7 @@ public class SlaveToMana : Creature
     {
         effectTriggeredThisTurn = false;
     }
-    private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastEventArgs e)
+    private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastArgs e)
     {
         if (e.spell.owner == sourceCard.owner && sourceCard.getCardPile() is Deck && sourceCard.owner.numSpellsCastThisTurn == 3 && !effectTriggeredThisTurn)
         {

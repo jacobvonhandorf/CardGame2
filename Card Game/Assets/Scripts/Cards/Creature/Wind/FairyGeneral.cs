@@ -7,17 +7,21 @@ public class FairyGeneral : Creature
     public override int cardId => 49;
     public override List<Card.Tag> getTags() => new List<Card.Tag>() { Card.Tag.Fairy };
 
-    public override void onInitialization()
+    private void OnEnable()
     {
-        //GameEvents.E_
+        GameEvents.E_CreaturePlayed += GameEvents_E_CreaturePlayed;
     }
-    public override void onAnyCreaturePlayed(Creature c)
+    private void OnDisable()
     {
-        if (sourceCard.isCreature && c.controller == controller && c != this)
+        GameEvents.E_CreaturePlayed -= GameEvents_E_CreaturePlayed;
+    }
+
+    private void GameEvents_E_CreaturePlayed(object sender, GameEvents.CreaturePlayedArgs e)
+    {
+        if (e.creature.controller == controller && e.creature != this)
         {
             addAttack(1);
             addHealth(1);
         }
     }
-
 }

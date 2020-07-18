@@ -23,19 +23,20 @@ public class ArcaneGrandmaster : Creature
     public override void onInitialization()
     {
         GameEvents.E_SpellCast += GameEvents_E_SpellCast;
+        E_OnDeployed += ArcaneGrandmaster_E_OnDeployed;
     }
     private void OnDestroy()
     {
         GameEvents.E_SpellCast -= GameEvents_E_SpellCast;
+        E_OnDeployed -= ArcaneGrandmaster_E_OnDeployed;
     }
 
-    private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastEventArgs e)
+    private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastArgs e)
     {
         if (sourceCard.getCardPile() is Hand && e.spell.owner == sourceCard.owner)
             addAttack(1);
     }
-
-    public override void onCreation()
+    private void ArcaneGrandmaster_E_OnDeployed(object sender, System.EventArgs e)
     {
         if (getAttack() >= FIRST_THRESHOLD)
         {

@@ -5,34 +5,37 @@ using UnityEngine;
 public class ArcaneNovice : Creature
 {
     public override int cardId => 64;
+    public override List<Card.Tag> getTags() => new List<Card.Tag>() { Card.Tag.Arcane };
+    public override List<Keyword> getInitialKeywords() => new List<Keyword>() { Keyword.deploy };
 
-    public override void onAnySpellCast(SpellCard spell)
+    public override void onInitialization()
     {
-        if (sourceCard.isCreature && hasCounter(Counters.arcane) > 0 && spell.owner == controller)
+        E_OnDeployed += ArcaneNovice_E_OnDeployed;
+    }
+    private void OnDestroy()
+    {
+        E_OnDeployed -= ArcaneNovice_E_OnDeployed;
+    }
+    private void OnEnable()
+    {
+        GameEvents.E_SpellCast += GameEvents_E_SpellCast;
+    }
+    private void OnDisable()
+    {
+        GameEvents.E_SpellCast -= GameEvents_E_SpellCast;
+    }
+
+    private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastArgs e)
+    {
+        if (sourceCard.isCreature && hasCounter(Counters.arcane) > 0 && e.spell.owner == controller)
         {
             controller.drawCard();
             removeCounters(Counters.arcane, 1);
         }
     }
-
-    public override void onCreation()
+    private void ArcaneNovice_E_OnDeployed(object sender, System.EventArgs e)
     {
         addCounters(Counters.arcane, 1);
-    }
-
-    public override List<Card.Tag> getTags()
-    {
-        List<Card.Tag> tags = new List<Card.Tag>();
-        tags.Add(Card.Tag.Arcane);
-        return tags;
-    }
-
-    public override List<Keyword> getInitialKeywords()
-    {
-        return new List<Keyword>()
-        {
-            Keyword.deploy
-        };
     }
 
 }

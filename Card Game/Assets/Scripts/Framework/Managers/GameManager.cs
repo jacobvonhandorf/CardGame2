@@ -257,7 +257,7 @@ public class GameManager : MonoBehaviour
     }
     public void onSpellCastEffects(SpellCard spell)
     {
-        TriggerSpellCastEvents(this, new SpellCastEventArgs() { spell = spell });
+        TriggerSpellCastEvents(this, new SpellCastArgs() { spell = spell });
     }
     #endregion
 
@@ -492,21 +492,8 @@ public class GameManager : MonoBehaviour
         NetInterface.Get().syncPermanentPlaced(sourceCard, tile);
 
         // trigger effects that need to be triggered
-        creature.onCreation();
-        foreach(Creature c in allCreatures)
-        {
-            c.onAnyCreaturePlayed(creature);
-        }
-
-        List<Card> allCards = new List<Card>(); // all cards not in play
-        allCards.AddRange(player1.hand.getCardList());
-        allCards.AddRange(player2.hand.getCardList());
-        allCards.AddRange(player1.graveyard.getCardList());
-        allCards.AddRange(player2.graveyard.getCardList());
-        foreach (Card c in allCards)
-        {
-            c.onAnyCreaturePlayed(creature);
-        }
+        creature.TriggerOnDeployed(this);
+        TriggerCreaturePlayedEvents(this, new CreaturePlayedArgs() { creature = creature });
     }
 
     private void createCreatureActual(CreatureCard sourceCard, Tile tile, Player owner, Creature creature)
@@ -684,14 +671,10 @@ public class GameManager : MonoBehaviour
         {
             structure.onAnyCreatureDeath(creature);
         }
-        foreach (Creature c in allCreatures)
-        {
-            c.onAnyCreatureDeath(creature);
-        }
-        TriggerCreatureDeathEvents(this, new CreatureDeathEventArgs() { creature = creature });
+        TriggerCreatureDeathEvents(this, new CreatureDeathArgs() { creature = creature });
 
         allCreatures.Remove(creature);
-        creature.onDeath();
+        creature.TriggerOnDeathEvents(this);
         creature.onLeavesTheField();
         creature.sendToGrave();
     }

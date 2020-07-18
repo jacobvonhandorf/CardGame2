@@ -139,7 +139,7 @@ public class Client : MonoBehaviour
                 break;
             case NetOP.SyncCreatureCoordinates:
                 Net_SyncCreatureCoordinates scc = (Net_SyncCreatureCoordinates)msg;
-                NetInterface.Get().recieveCreatureCoordinates(scc.creatureCardId, scc.x, scc.y, scc.wasForceMove);
+                NetInterface.Get().recieveCreatureCoordinates(scc.creatureCardId, scc.x, scc.y, scc.sourceCardId);
                 break;
             case NetOP.SyncAttack:
                 Net_SyncAttack sa = (Net_SyncAttack)msg;

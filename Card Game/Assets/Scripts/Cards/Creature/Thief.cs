@@ -6,7 +6,12 @@ public class Thief : Creature
 {
     public override int cardId => 53;
 
-    public override void onAttack()
+    public override void onInitialization()
+    {
+        E_OnAttack += Thief_E_OnAttack;
+    }
+
+    private void Thief_E_OnAttack(object sender, OnAttackArgs e)
     {
         controller.addGold(1);
     }

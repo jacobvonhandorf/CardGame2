@@ -6,7 +6,12 @@ public class GemGiant : Creature
 {
     public override int cardId => 71;
 
-    public override void onCreation()
+    public override void onInitialization()
+    {
+        E_OnDeployed += GemGiant_E_OnDeployed;
+    }
+
+    private void GemGiant_E_OnDeployed(object sender, System.EventArgs e)
     {
         // add 1 attack and 2 hp for each gem in hand
         int numGemsInHand = controller.hand.getAllCardsWithTag(Card.Tag.Gem).Count;

@@ -52,9 +52,6 @@ public class Graveyard : ViewableCardPile
 
         // change image being displayed
         topCardViewer.setCard(c);
-
-        // let the card know it's been sent to grave
-        c.onSentToGrave();
     }
 
     private void removeStructureFromTile(Structure structure)

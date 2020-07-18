@@ -8,12 +8,6 @@ public class FairyNecromancer : Creature
 
     public override List<Card.Tag> getTags() => new List<Card.Tag>() { Card.Tag.Fairy };
 
-    public override void onCreation()
-    {
-        throw new System.Exception("Not implemented");
-        //GameManager.Get().queueCardPickerEffect(controller, controller.graveyard.getAllCardWithTagAndType(Card.Tag.Fairy, Card.CardType.Creature), this, 1, 1, false, "Choose a card to add to your hand");
-    }
-
     public void receiveCardList(List<Card> cardList)
     {
         foreach (Card c in cardList)
@@ -24,6 +18,7 @@ public class FairyNecromancer : Creature
 
     public override List<Keyword> getInitialKeywords()
     {
+        throw new System.Exception("Not implemented");
         return new List<Keyword>()
         {
             Keyword.deploy
