@@ -5,25 +5,13 @@ using UnityEngine;
 public class Rush : SpellCard
 {
     public override int cardId => 10;
+    public override List<Tile> legalTargetTiles => GameManager.Get().getAllTilesWithCreatures(owner, true);
 
-    public override List<Tile> getLegalTargetTiles()
+    protected override void doEffect(Tile t)
     {
-        return GameManager.Get().getAllTilesWithCreatures(owner);
-    }
-
-    protected override Effect getEffect()
-    {
-        return new RushEffect();
-    }
-
-    private class RushEffect : Effect
-    {
-        public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-        {
-            targetCreature.hasMovedThisTurn = false;
-            targetCreature.hasDoneActionThisTurn = false;
-            targetCreature.updateHasActedIndicators();
-            sourcePlayer.addActions(1);
-        }
+        t.creature.hasMovedThisTurn = false;
+        t.creature.hasDoneActionThisTurn = false;
+        t.creature.updateHasActedIndicators();
+        owner.addActions(1);
     }
 }

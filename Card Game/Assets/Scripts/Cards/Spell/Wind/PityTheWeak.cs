@@ -2,24 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PityTheWeak : SpellCard, Effect
+public class PityTheWeak : SpellCard
 {
     public override int cardId => 7;
+    public override List<Tile> legalTargetTiles => GameManager.Get().allTiles();
 
-    public override List<Tile> getLegalTargetTiles()
-    {
-        return GameManager.Get().allTiles();
-    }
-
-    protected override Effect getEffect()
-    {
-        return this;
-    }
-
-    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
+    protected override void doEffect(Tile t)
     {
         CreatureCard cardToAdd = null;
-        foreach (CreatureCard c in sourcePlayer.deck.getAllCardsWithType(CardType.Creature))
+        foreach (CreatureCard c in owner.deck.getAllCardsWithType(CardType.Creature))
         {
             if (cardToAdd == null)
                 cardToAdd = c;
@@ -30,7 +21,7 @@ public class PityTheWeak : SpellCard, Effect
         if (cardToAdd != null)
         {
             cardToAdd.setGoldCost(cardToAdd.getGoldCost() - 1);
-            cardToAdd.moveToCardPile(sourcePlayer.hand, this);
+            cardToAdd.moveToCardPile(owner.hand, this);
         }
         else
         {

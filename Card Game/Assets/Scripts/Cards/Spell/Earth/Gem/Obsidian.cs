@@ -5,20 +5,11 @@ using UnityEngine;
 public class Obsidian : SpellCard
 {
     public const int CARD_ID = 81;
-    private const int DAMAGE_AMOUNT = 2;
-
     public override int cardId => CARD_ID;
-
+    private const int DAMAGE_AMOUNT = 2;
     private List<Tile> emptyList = new List<Tile>();
-    public override List<Tile> getLegalTargetTiles()
-    {
-        return emptyList;
-    }
-
-    protected override Effect getEffect()
-    {
-        return null;
-    }
+    public override List<Tile> legalTargetTiles => emptyList;
+    protected override List<Tag> getTags() => new List<Tag>() { Tag.Gem };
 
     public override void onInitialization()
     {
@@ -40,9 +31,9 @@ public class Obsidian : SpellCard
         owner.drawCard();
         SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(GameManager.Get().getOppositePlayer(owner), false), delegate (Tile t)
         {
-            t.creature.takeDamage(DAMAGE_AMOUNT);
+            t.creature.takeDamage(DAMAGE_AMOUNT, this);
         });
     }
 
-    protected override List<Tag> getTags() => new List<Tag>() { Tag.Gem };
+    protected override void doEffect(Tile t) { }
 }

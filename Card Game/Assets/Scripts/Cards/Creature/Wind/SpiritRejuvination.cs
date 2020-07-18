@@ -2,23 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpiritRejuvination : SpellCard, Effect
+public class SpiritRejuvination : SpellCard
 {
     public override int cardId => 1;
+    public override List<Tile> legalTargetTiles => GameManager.Get().getAllTilesWithCreatures(owner);
 
-    public override List<Tile> getLegalTargetTiles()
+    protected override void doEffect(Tile t)
     {
-        return GameManager.Get().getAllTilesWithCreatures(owner);
-    }
-
-    protected override Effect getEffect()
-    {
-        return this;
-    }
-
-    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-    {
-        targetCreature.bounce(this);
-        sourcePlayer.drawCards(2);
+        t.creature.bounce(this);
+        owner.drawCards(2);
     }
 }

@@ -27,6 +27,11 @@ public abstract class Structure : MonoBehaviour, Damageable
     [SerializeField] protected StructureStatsGetter statsScript;
     private CounterController counterController;
 
+    #region Events
+    public event EventHandler<OnDefendArgs> E_OnDefend;
+    public void TriggerOnDefendEvents(object sender, OnDefendArgs args) { if (E_OnDefend != null) E_OnDefend.Invoke(sender, args); }
+    #endregion
+
     private void Awake()
     {
         counterController = sourceCard.getCounterController();
@@ -52,7 +57,7 @@ public abstract class Structure : MonoBehaviour, Damageable
         return statsScript.getRootTransform();
     }
 
-    public void takeDamage(int amount)
+    public void takeDamage(int amount, Card source)
     {
         addHealth(-amount);
     }

@@ -2,22 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Arson : SpellCard, Effect
+public class Arson : SpellCard
 {
     public override int cardId => 15;
+    public override List<Tile> legalTargetTiles => GameManager.Get().getAllTilesWithStructures(GameManager.Get().getOppositePlayer(owner));
 
-    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
+    protected override void doEffect(Tile t)
     {
-        targetTile.structure.takeDamage(2);
-    }
-
-    public override List<Tile> getLegalTargetTiles()
-    {
-        return GameManager.Get().getAllTilesWithStructures(GameManager.Get().getOppositePlayer(owner));
-    }
-
-    protected override Effect getEffect()
-    {
-        return this;
+        t.structure.takeDamage(2, this);
     }
 }

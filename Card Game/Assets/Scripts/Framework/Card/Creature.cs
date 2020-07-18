@@ -46,9 +46,12 @@ public abstract class Creature : MonoBehaviour, Damageable
     public void TriggerOnAttackEvents(object sender, OnAttackArgs args) { if (E_OnAttack != null) E_OnAttack.Invoke(sender, args); }
 
     public event EventHandler<OnDefendArgs> E_OnDefend;
-    public class OnDefendArgs : EventArgs { public Creature attacker { get; set; } }
-    public delegate void onDefendHandler(OnDefendArgs e);
     public void TriggerOnDefendEvents(object sender, OnDefendArgs args) { if (E_OnDefend != null) E_OnDefend.Invoke(sender, args); }
+
+    public event EventHandler<OnDamagedArgs> E_OnDamaged;
+    public class OnDamagedArgs : EventArgs { public Card source { get; set; } }
+    public delegate void onDamagedHandler(OnDamagedArgs e);
+    public void TriggerOnDamagedEvents(object sender, OnDamagedArgs args) { if (E_OnDamaged != null) E_OnDamaged.Invoke(sender, args); }
     #endregion
 
     protected void Awake()
@@ -108,7 +111,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     }
 
     #region takeDamageAndAttacking
-    public void takeDamage(int damage)
+    public void takeDamage(int damage, Card source)
     {
         if (damage == 0) // dealing 0 damage is illegal :)
             return;
@@ -127,19 +130,19 @@ public abstract class Creature : MonoBehaviour, Damageable
         // subtract armored damage
         if (hasKeyword(Keyword.armored1))
             damage--;
-        takeDamageActual(damage);
+        takeDamageActual(damage, source);
     }
     public void takeWardDamage(int damage)
     {
         if (hasKeyword(Keyword.armored1))
             damage--;
-        takeDamageActual(damage);
+        takeDamageActual(damage, null);
     }
-    private void takeDamageActual(int damage)
+    private void takeDamageActual(int damage, Card source)
     {
         GameManager.Get().showDamagedText(getRootTransform().position, damage);
         setHealthWithoutKilling(currentHealth - damage);
-        onDamaged();
+        TriggerOnDamagedEvents(this, new OnDamagedArgs() { source = source });
         if (currentHealth <= 0)
             GameManager.Get().destroyCreature(this);
     }
@@ -173,8 +176,8 @@ public abstract class Creature : MonoBehaviour, Damageable
             defender.TriggerOnDefendEvents(this, new OnDefendArgs() { attacker = this });
 
         // perform damage calc
-        defender.takeDamage(attackRoll); // do damage text in takeDamage()
-        takeDamage(KeywordUtils.getDefenderValue(defender.getSourceCard()));
+        defender.takeDamage(attackRoll, sourceCard); // do damage text in takeDamage()
+        takeDamage(KeywordUtils.getDefenderValue(defender.getSourceCard()), sourceCard);
 
         // gray out creature to show it has already acted
         updateHasActedIndicators();
@@ -640,11 +643,9 @@ public abstract class Creature : MonoBehaviour, Damageable
     protected virtual bool getCanDeployFrom() { return false; }
     public virtual Effect getEffect() { return null; }
     public virtual List<Tag> getTags() { return new List<Tag>(); }
-    public virtual void onDamaged() { }
     public virtual void onKillingACreature(Creature c) { }
     public virtual void onLeavesTheField() { }
     public virtual bool additionalCanBePlayedChecks() { return true; } // if some conditions need to be met before playing this creature then do them in this method. Return true if can be played
-    public virtual void onAnySpellCast(SpellCard spell) { }
     public virtual void onInitialization() { }
     public virtual int getStartingRange() { return 1; } // 1 by default
     #endregion

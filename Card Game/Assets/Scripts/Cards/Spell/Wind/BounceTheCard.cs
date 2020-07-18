@@ -2,22 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BounceTheCard : SpellCard, Effect
+public class BounceTheCard : SpellCard
 {
     public override int cardId => 8;
+    public override List<Tile> legalTargetTiles => GameManager.Get().getAllTilesWithCreatures(false);
 
-    public override List<Tile> getLegalTargetTiles()
+    protected override void doEffect(Tile t)
     {
-        return GameManager.Get().getAllTilesWithCreatures(false);
-    }
-
-    protected override Effect getEffect()
-    {
-        return this;
-    }
-
-    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-    {
-        targetCreature.bounce(this);
+        t.creature.bounce(this);
     }
 }

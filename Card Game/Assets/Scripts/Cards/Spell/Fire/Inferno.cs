@@ -2,37 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Inferno : SpellCard, Effect
+public class Inferno : SpellCard
 {
-    private const int DAMAGE_AMOUNT = 4;
     public const int CARD_ID = 14;
-
     public override int cardId => CARD_ID;
-
-    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-    {
-        List<Creature> tempList = new List<Creature>();
-        tempList.AddRange(GameManager.Get().allCreatures);
-        foreach (Creature c in tempList)
-        {
-            if (!c.hasTag(Tag.Arcane))
-                c.takeDamage(DAMAGE_AMOUNT);
-        }
-    }
+    private const int DAMAGE_AMOUNT = 4;
+    public override List<Tile> legalTargetTiles => GameManager.Get().allTiles();
 
     public override void onInitialization()
     {
         toolTipInfos.Add(ToolTipInfo.arcaneSpell);
-    }
-
-    public override List<Tile> getLegalTargetTiles()
-    {
-        return GameManager.Get().allTiles();
-    }
-
-    protected override Effect getEffect()
-    {
-        return this;
     }
 
     public override bool additionalCanBePlayedChecks()
@@ -50,5 +29,16 @@ public class Inferno : SpellCard, Effect
         List<Tag> tags = new List<Tag>();
         tags.Add(Tag.Arcane);
         return tags;
+    }
+
+    protected override void doEffect(Tile t)
+    {
+        List<Creature> tempList = new List<Creature>();
+        tempList.AddRange(GameManager.Get().allCreatures);
+        foreach (Creature c in tempList)
+        {
+            if (!c.hasTag(Tag.Arcane))
+                c.takeDamage(DAMAGE_AMOUNT, this);
+        }
     }
 }

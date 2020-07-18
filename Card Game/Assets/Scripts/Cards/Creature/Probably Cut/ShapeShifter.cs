@@ -11,12 +11,19 @@ public class ShapeShifter : Creature, Effect
 
     public override List<Card.Tag> getTags() => new List<Card.Tag>() { Card.Tag.Arcane };
 
-    public override void onAnySpellCast(SpellCard spell)
+    private void OnEnable()
     {
-        if (sourceCard.isCreature && spell.owner == controller)
-        {
+        GameEvents.E_SpellCast += GameEvents_E_SpellCast;
+    }
+    private void OnDisable()
+    {
+        GameEvents.E_SpellCast -= GameEvents_E_SpellCast;
+    }
+
+    private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastArgs e)
+    {
+        if (e.spell.owner == controller)
             addCounters(Counters.arcane, 1);
-        }
     }
 
     public override Effect getEffect()

@@ -5,22 +5,10 @@ using UnityEngine;
 public class GrindToDust : SpellCard
 {
     public override int cardId => 19;
+    public override List<Tile> legalTargetTiles => GameManager.Get().getAllTilesWithCreatures(GameManager.Get().getOppositePlayer(owner), false);
 
-    public override List<Tile> getLegalTargetTiles()
+    protected override void doEffect(Tile t)
     {
-        return GameManager.Get().getAllTilesWithCreatures(GameManager.Get().getOppositePlayer(owner), false);
-    }
-
-    protected override Effect getEffect()
-    {
-        return new GTDEffect();
-    }
-
-    private class GTDEffect : Effect
-    {
-        public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-        {
-            targetCreature.takeDamage(sourcePlayer.hand.getAllCardsWithTag(Tag.Gem).Count);
-        }
+        t.creature.takeDamage(owner.hand.getAllCardsWithTag(Tag.Gem).Count, this);
     }
 }

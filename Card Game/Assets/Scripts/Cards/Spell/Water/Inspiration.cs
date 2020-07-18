@@ -5,22 +5,10 @@ using UnityEngine;
 public class Inspiration : SpellCard
 {
     public override int cardId => 9;
+    public override List<Tile> legalTargetTiles => GameManager.Get().allTiles();
 
-    public override List<Tile> getLegalTargetTiles()
+    protected override void doEffect(Tile t)
     {
-        return GameManager.Get().allTiles();
-    }
-
-    protected override Effect getEffect()
-    {
-        return new InspirationEffect();
-    }
-
-    private class InspirationEffect : Effect
-    {
-        public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-        {
-            sourcePlayer.drawCards(2);
-        }
+        owner.drawCards(2);
     }
 }

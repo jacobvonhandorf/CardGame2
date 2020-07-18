@@ -2,13 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpellGrasp : SpellCard, Effect
+public class SpellGrasp : SpellCard
 {
     public const int CARD_ID = 3;
-
     public override int cardId => CARD_ID;
+    public override List<Tile> legalTargetTiles => GameManager.Get().allTiles();
 
-    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
+    public override void onInitialization()
+    {
+        toolTipInfos.Add(ToolTipInfo.arcaneSpell);
+    }
+
+    protected override void doEffect(Tile t)
     {
         CardPicker.CreateAndQueue(owner.deck.getAllCardsWithTag(Tag.Arcane), 1, 1, "Select a card to add to your hand", owner, delegate (List<Card> cardList)
         {
@@ -22,20 +27,5 @@ public class SpellGrasp : SpellCard, Effect
                 }
             }
         });
-    }
-
-    public override void onInitialization()
-    {
-        toolTipInfos.Add(ToolTipInfo.arcaneSpell);
-    }
-
-    public override List<Tile> getLegalTargetTiles()
-    {
-        return GameManager.Get().allTiles();
-    }
-
-    protected override Effect getEffect()
-    {
-        return this;
     }
 }

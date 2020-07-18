@@ -3,37 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChannelTheSpell : SpellCard, Effect
+public class ChannelTheSpell : SpellCard
 {
     public override int cardId => 13;
-
-    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-    {
-        int numCardsToReduce = 3;
-        foreach (Card c in sourcePlayer.deck.getCardList())
-        {
-            if (c.isType(CardType.Spell))
-            {
-                c.setManaCost(c.getManaCost() - 1);
-                if (c.getManaCost() < 0)
-                    c.setManaCost(0);
-                numCardsToReduce--;
-                if (numCardsToReduce == 0)
-                    break;
-            }
-        }
-        sourcePlayer.drawCard();
-    }
-
-    public override List<Tile> getLegalTargetTiles()
-    {
-        return GameManager.Get().allTiles();
-    }
-
-    protected override Effect getEffect()
-    {
-        return this;
-    }
+    public override List<Tile> legalTargetTiles => GameManager.Get().allTiles();
 
     public override void onInitialization()
     {
@@ -55,5 +28,23 @@ public class ChannelTheSpell : SpellCard, Effect
         List<Tag> tags = new List<Tag>();
         tags.Add(Tag.Arcane);
         return tags;
+    }
+
+    protected override void doEffect(Tile t)
+    {
+        int numCardsToReduce = 3;
+        foreach (Card c in owner.deck.getCardList())
+        {
+            if (c.isType(CardType.Spell))
+            {
+                c.setManaCost(c.getManaCost() - 1);
+                if (c.getManaCost() < 0)
+                    c.setManaCost(0);
+                numCardsToReduce--;
+                if (numCardsToReduce == 0)
+                    break;
+            }
+        }
+        owner.drawCard();
     }
 }

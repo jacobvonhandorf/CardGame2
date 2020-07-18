@@ -5,16 +5,8 @@ using UnityEngine;
 public class Ruby : SpellCard
 {
     public override int cardId => 21;
-
-    public override List<Tile> getLegalTargetTiles()
-    {
-        return new List<Tile>();
-    }
-
-    protected override Effect getEffect()
-    {
-        return null;
-    }
+    public override List<Tile> legalTargetTiles => new List<Tile>();
+    protected override List<Tag> getTags() => new List<Tag>() { Tag.Gem };
 
     public override void onInitialization()
     {
@@ -34,8 +26,6 @@ public class Ruby : SpellCard
         }
     }
 
-    protected override List<Tag> getTags() => new List<Tag>() { Tag.Gem };
-
     private void doEffect()
     {
         SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(owner), delegate (Tile t)
@@ -44,4 +34,6 @@ public class Ruby : SpellCard
             t.creature.addHealth(1);
         });
     }
+
+    protected override void doEffect(Tile t) { }
 }

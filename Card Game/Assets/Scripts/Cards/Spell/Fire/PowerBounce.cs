@@ -2,31 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PowerBounce : SpellCard, Effect
+public class PowerBounce : SpellCard
 {
     public const int CARD_ID = 79;
-
     public override int cardId => CARD_ID;
+    public override List<Tile> legalTargetTiles => GameManager.Get().getAllTilesWithCreatures(false);
 
-    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
+    protected override void doEffect(Tile t)
     {
         List<Tile> validTargets = GameManager.Get().getAllTilesWithCreatures(false);
-        validTargets.Remove(targetCreature.currentTile);
+        validTargets.Remove(t.creature.currentTile);
         if (validTargets.Count > 0)
-            SingleTileTargetEffect.CreateAndQueue(validTargets, delegate (Tile t)
+            SingleTileTargetEffect.CreateAndQueue(validTargets, delegate (Tile targetTile)
             {
-                targetCreature.bounce(this);
+                targetTile.creature.bounce(this);
                 t.creature.bounce(this);
             });
-    }
-
-    protected override Effect getEffect()
-    {
-        return this;
-    }
-
-    public override List<Tile> getLegalTargetTiles()
-    {
-        return GameManager.Get().getAllTilesWithCreatures(false);
     }
 }

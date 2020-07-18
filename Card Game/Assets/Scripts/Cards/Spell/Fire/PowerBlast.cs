@@ -2,25 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PowerBlast : SpellCard, Effect
+public class PowerBlast : SpellCard
 {
     public const int CARD_ID = 77;
-    private const int DAMAGE_AMOUNT = 4;
-
     public override int cardId => CARD_ID;
+    private const int DAMAGE_AMOUNT = 4;
+    public override List<Tile> legalTargetTiles => GameManager.Get().getAllTilesWithCreatures(GameManager.Get().getOppositePlayer(owner));
 
-    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
+    protected override void doEffect(Tile t)
     {
-        targetCreature.takeDamage(DAMAGE_AMOUNT);
-    }
-
-    public override List<Tile> getLegalTargetTiles()
-    {
-        return GameManager.Get().getAllTilesWithCreatures(GameManager.Get().getOppositePlayer(owner));
-    }
-
-    protected override Effect getEffect()
-    {
-        return this;
+        t.creature.takeDamage(DAMAGE_AMOUNT, this);
     }
 }

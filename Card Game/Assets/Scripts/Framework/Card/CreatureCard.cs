@@ -8,12 +8,14 @@ public class CreatureCard : Card
 {
     public Creature creature;
     [SerializeField] private CreatureStatsGetter creatureStatsScript;
-    [SerializeField] private CounterController counterCountroller;
+    [SerializeField] private CounterController counterController;
     public bool isCreature = false; // true when is being treated as a creature. False when treated as card
 
     public override int cardId => creature.cardId;
     public override CardType getCardType() => CardType.Creature;
-    public override List<Tile> getLegalTargetTiles() => GameManager.Get().getAllDeployableTiles(owner);
+    public override List<Tile> legalTargetTiles => GameManager.Get().getAllDeployableTiles(owner);
+    public CounterController getCounterController() => counterController;
+    public override List<Keyword> getInitialKeywords() => creature.getInitialKeywords();
 
     public override void initialize()
     {
@@ -35,7 +37,6 @@ public class CreatureCard : Card
         owner.hand.resetCardPositions();
         GameEvents.TriggerCreaturePlayedEvents(null, new GameEvents.CreaturePlayedArgs() { creature = creature });
     }
-
 
     internal void swapToCreature(Tile onTile)
     {
@@ -71,7 +72,7 @@ public class CreatureCard : Card
         GameManager.Get().allCreatures.Remove(creature);
 
         // counters don't say on cards when they aren't creatures so clear them
-        counterCountroller.clearAll();
+        counterController.clearAll();
 
         isCreature = false;
     }
@@ -108,15 +109,5 @@ public class CreatureCard : Card
         }
         else
             return true;
-    }
-
-    public CounterController getCounterController()
-    {
-        return counterCountroller;
-    }
-
-    public override List<Keyword> getInitialKeywords()
-    {
-        return creature.getInitialKeywords();
     }
 }

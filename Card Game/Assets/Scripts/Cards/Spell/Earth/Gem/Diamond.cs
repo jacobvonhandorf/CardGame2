@@ -5,16 +5,8 @@ using UnityEngine;
 public class Diamond : SpellCard
 {
     public override int cardId => 25;
-
-    public override List<Tile> getLegalTargetTiles()
-    {
-        return new List<Tile>();
-    }
-
-    protected override Effect getEffect()
-    {
-        return null;
-    }
+    public override List<Tile> legalTargetTiles => new List<Tile>();
+    protected override List<Tag> getTags() => new List<Tag>() { Tag.Gem };
 
     public override void onInitialization()
     {
@@ -35,5 +27,5 @@ public class Diamond : SpellCard
         }
     }
 
-    protected override List<Tag> getTags() => new List<Tag>() { Tag.Gem };
+    protected override void doEffect(Tile t) { }
 }

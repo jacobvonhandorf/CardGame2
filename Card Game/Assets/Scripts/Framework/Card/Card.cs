@@ -233,8 +233,7 @@ public abstract class Card : MonoBehaviour
         GameManager.Get().setAllTilesToDefault();
         NetInterface.Get().getLocalPlayer().heldCreature = null;
 
-        List<Tile> validTiles = getLegalTargetTiles();
-        foreach (Tile tile in validTiles)
+        foreach (Tile tile in legalTargetTiles)
         {
             tile.setActive(true);
         }
@@ -290,7 +289,7 @@ public abstract class Card : MonoBehaviour
         Tile tile = getTileMouseIsOver();
         if (tile != null)
         {
-            if (getLegalTargetTiles().Contains(tile))
+            if (legalTargetTiles.Contains(tile))
             {
                 Debug.Log("Attempting to play card");
                 if (canBePlayed())
@@ -596,7 +595,7 @@ public abstract class Card : MonoBehaviour
         }
         yield return null;
     }
-    public abstract List<Keyword> getInitialKeywords();
+    public virtual List<Keyword> getInitialKeywords() { return new List<Keyword>(); }
     #endregion
 
     private void Update()
@@ -611,10 +610,10 @@ public abstract class Card : MonoBehaviour
     #region OverrideMethods
     // ABSTRACT METHODS
     public abstract CardType getCardType();
-    public abstract List<Tile> getLegalTargetTiles();
     public abstract void play(Tile t);
     public abstract bool canBePlayed();
     public abstract int cardId { get; }
+    public abstract List<Tile> legalTargetTiles { get; }
 
     // VIRTUAL METHODS
     public virtual void initialize() { onInitialization(); }

@@ -2,26 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PowerDraw : SpellCard, Effect
+public class PowerDraw : SpellCard
 {
     public const int CARD_ID = 78;
-    private const int NUM_DRAWN_CARDS = 3;
-
     public override int cardId => CARD_ID;
+    private const int NUM_DRAWN_CARDS = 3;
+    public override List<Tile> legalTargetTiles => GameManager.Get().allTiles();
 
-    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
+    protected override void doEffect(Tile t)
     {
-        sourcePlayer.drawCards(NUM_DRAWN_CARDS);
+        owner.drawCards(NUM_DRAWN_CARDS);
     }
-
-    public override List<Tile> getLegalTargetTiles()
-    {
-        return GameManager.Get().allTiles();
-    }
-
-    protected override Effect getEffect()
-    {
-        return this;
-    }
-    
 }

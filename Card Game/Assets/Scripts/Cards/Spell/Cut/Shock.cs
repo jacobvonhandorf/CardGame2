@@ -5,22 +5,10 @@ using UnityEngine;
 public class Shock : SpellCard
 {
     public override int cardId => 2;
+    public override List<Tile> legalTargetTiles => GameManager.Get().getAllTilesWithCreatures(false);
 
-    public override List<Tile> getLegalTargetTiles()
+    protected override void doEffect(Tile t)
     {
-        return GameManager.Get().getAllTilesWithCreatures(false);
-    }
-
-    protected override Effect getEffect()
-    {
-        return new ShockEffect();
-    }
-
-    private class ShockEffect : Effect
-    {
-        public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-        {
-            targetCreature.takeDamage(2);
-        }
+        t.creature.takeDamage(2, this);
     }
 }

@@ -55,7 +55,7 @@ public class ArcaneApprentice : Creature, Effect
         QueueableCommand targetSelect = SingleTileTargetEffect.CreateCommand(GameManager.Get().getAllTilesWithCreatures(controller.getOppositePlayer(), false), delegate (Tile t)
         {
             removeCounters(Counters.arcane, selectedValue);
-            t.creature.takeDamage(selectedValue);
+            t.creature.takeDamage(selectedValue, sourceCard);
             hasDoneActionThisTurn = true;
         });
         new CompoundQueueableCommand.Builder().addCommand(xPickCmd).addCommand(targetSelect).BuildAndQueue();

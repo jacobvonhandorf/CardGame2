@@ -2,27 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FuelTheFires : SpellCard, Effect
+public class FuelTheFires : SpellCard
 {
     public override int cardId => 6;
-
-    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-    {
-        CardPicker.CreateAndQueue(sourcePlayer.hand.getCardList(), 0, sourcePlayer.hand.getCardList().Count, "Select cards to disard", sourcePlayer, delegate (List<Card> cardList)
-        {
-            foreach (Card c in cardList)
-                c.moveToCardPile(sourcePlayer.graveyard, this);
-        });
-    }
+    public override List<Tile> legalTargetTiles => GameManager.Get().allTiles();
 
     public override void onInitialization()
     {
         toolTipInfos.Add(ToolTipInfo.arcaneSpell);
-    }
-
-    public override List<Tile> getLegalTargetTiles()
-    {
-        return GameManager.Get().allTiles();
     }
 
     public override bool additionalCanBePlayedChecks()
@@ -42,8 +29,12 @@ public class FuelTheFires : SpellCard, Effect
         return tags;
     }
 
-    protected override Effect getEffect()
+    protected override void doEffect(Tile t)
     {
-        return this;
+        CardPicker.CreateAndQueue(owner.hand.getCardList(), 0, owner.hand.getCardList().Count, "Select cards to disard", owner, delegate (List<Card> cardList)
+        {
+            foreach (Card c in cardList)
+                c.moveToCardPile(owner.graveyard, this);
+        });
     }
 }

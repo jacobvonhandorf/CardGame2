@@ -5,21 +5,8 @@ using UnityEngine;
 public class Topaz : SpellCard
 {
     public override int cardId => 20;
-
-    public override bool additionalCanBePlayedChecks()
-    {
-        return false;
-    }
-
-    public override List<Tile> getLegalTargetTiles()
-    {
-        return new List<Tile>();
-    }
-
-    protected override Effect getEffect()
-    {
-        return null;
-    }
+    protected override List<Tag> getTags() => new List<Tag>() { Tag.Gem };
+    public override List<Tile> legalTargetTiles => new List<Tile>();
 
     public override void onInitialization()
     {
@@ -40,5 +27,5 @@ public class Topaz : SpellCard
         }
     }
 
-    protected override List<Tag> getTags() => new List<Tag>() { Tag.Gem };
+    protected override void doEffect(Tile t) { }
 }

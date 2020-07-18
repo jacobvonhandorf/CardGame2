@@ -9,7 +9,8 @@ public class StructureCard : Card
     public Structure structure;
     public bool isStructure;
     [SerializeField] private CounterController counterCountroller;
-
+    public override List<Tile> legalTargetTiles => GameManager.Get().getLegalStructurePlacementTiles(owner);
+    public override CardType getCardType() => CardType.Structure;
     public override int cardId => structure.cardId;
 
     protected override void Start()
@@ -23,19 +24,10 @@ public class StructureCard : Card
         onInitialization();
     }
 
-    public override CardType getCardType()
-    {
-        return CardType.Structure;
-    }
 
     protected override List<Tag> getTags()
     {
         return structure.getTags();
-    }
-
-    public override List<Tile> getLegalTargetTiles()
-    {
-        return GameManager.Get().getLegalStructurePlacementTiles(owner);
     }
 
     public override void play(Tile t)

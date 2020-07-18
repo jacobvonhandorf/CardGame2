@@ -4,20 +4,17 @@ using UnityEngine;
 
 public abstract class SpellCard : Card
 {
-    public override CardType getCardType()
-    {
-        return CardType.Spell;
-    }
+    public override CardType getCardType() => CardType.Spell;
 
     public override void play(Tile t)
     {
-        getEffect().activate(owner, GameManager.Get().getOppositePlayer(owner), t, t, t.creature, t.creature);
+        doEffect(t);
         moveToCardPile(owner.graveyard, null);
         owner.hand.resetCardPositions();
         GameManager.Get().onSpellCastEffects(this);
     }
 
-    protected abstract Effect getEffect();
+    protected abstract void doEffect(Tile t);
 
     public override bool canBePlayed()
     {
@@ -28,11 +25,5 @@ public abstract class SpellCard : Card
         return true;
     }
 
-    public override List<Keyword> getInitialKeywords()
-    {
-        return getSpellInitialKeywords();
-    }
-
     public virtual bool additionalCanBePlayedChecks() { return true; } // if some conditions need to be met before playing this spell then do them in this method. Return true if can be played
-    public virtual List<Keyword> getSpellInitialKeywords() { return new List<Keyword>(); }
 }

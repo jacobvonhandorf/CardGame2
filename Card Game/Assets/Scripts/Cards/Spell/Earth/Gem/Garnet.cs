@@ -5,13 +5,8 @@ using UnityEngine;
 public class Garnet : SpellCard
 {
     public const int CARD_ID = 24;
-
     public override int cardId => CARD_ID;
-
-    public override List<Tile> getLegalTargetTiles()
-    {
-        return new List<Tile>();
-    }
+    public override List<Tile> legalTargetTiles => new List<Tile>();
 
     public override void onInitialization()
     {
@@ -31,15 +26,12 @@ public class Garnet : SpellCard
         }
     }
 
-    protected override Effect getEffect()
-    {
-        return null;
-    }
-
     protected override List<Tag> getTags()
     {
         List<Tag> tags = new List<Tag>();
         tags.Add(Tag.Gem);
         return tags;
     }
+
+    protected override void doEffect(Tile t) { }
 }

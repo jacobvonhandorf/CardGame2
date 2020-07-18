@@ -2,31 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Oblate : SpellCard, Effect
+public class Oblate : SpellCard
 {
     public static bool alreadyActivatedThisTurn = false;
-
     public override int cardId => 4;
-
-    public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-    {
-        Card sourceCard;
-        if (targetTile.creature != null)
-        {
-            sourceCard = targetTile.creature.sourceCard;
-            GameManager.Get().destroyCreature(targetTile.creature);
-        }
-        else
-        {
-            sourceCard = targetTile.structure.sourceCard;
-            GameManager.Get().destroyStructure(targetTile.structure, this);
-        }
-        int amount = sourceCard.getTotalCost();
-        sourcePlayer.addMana(amount);
-        sourcePlayer.drawCards(amount);
-
-        alreadyActivatedThisTurn = true;
-    }
+    public override List<Tile> legalTargetTiles => getLegalTargetTiles();
 
     public override void onInitialization()
     {
@@ -50,16 +30,11 @@ public class Oblate : SpellCard, Effect
         return tags;
     }
 
-    public override List<Tile> getLegalTargetTiles()
+    public List<Tile> getLegalTargetTiles()
     {
         List<Tile> returnList = GameManager.Get().getAllTilesWithStructures(owner);
         returnList.AddRange(GameManager.Get().getAllTilesWithCreatures(owner, true));
         return returnList;
-    }
-
-    protected override Effect getEffect()
-    {
-        return this;
     }
 
     // must control arcane creature to play
@@ -75,5 +50,25 @@ public class Oblate : SpellCard, Effect
             }
         }
         return false;
+    }
+
+    protected override void doEffect(Tile t)
+    {
+        Card sourceCard;
+        if (t.creature != null)
+        {
+            sourceCard = t.creature.sourceCard;
+            GameManager.Get().destroyCreature(t.creature);
+        }
+        else
+        {
+            sourceCard = t.structure.sourceCard;
+            GameManager.Get().destroyStructure(t.structure, this);
+        }
+        int amount = sourceCard.getTotalCost();
+        owner.addMana(amount);
+        owner.drawCards(amount);
+
+        alreadyActivatedThisTurn = true;
     }
 }
