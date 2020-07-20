@@ -18,9 +18,9 @@ MonoBehaviour:
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
       Culture=neutral, PublicKeyToken=null
   buttonBackground: {fileID: 1542164766172517065}
-  up: {r: 1, g: 1, b: 1, a: 1}
-  hovered: {r: 0.8784314, g: 0.8784314, b: 0.8784314, a: 1}
-  down: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+  up: {r: 0.20392157, g: 0.59607846, b: 0.85882354, a: 1}
+  hovered: {r: 0.16078432, g: 0.5019608, b: 0.7254902, a: 1}
+  down: {r: 0.16078432, g: 0.5019608, b: 0.7254902, a: 1}
   textMesh: {fileID: 1542164767442040001}
 --- !u!1001 &7455670220650910515
 PrefabInstance:
@@ -42,7 +42,7 @@ PrefabInstance:
     - target: {fileID: 8219353266556568056, guid: 172056cdebc6fb646911badf058da3a5,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 4.21
       objectReference: {fileID: 0}
     - target: {fileID: 8219353266556568056, guid: 172056cdebc6fb646911badf058da3a5,
         type: 3}
@@ -89,33 +89,7 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8219353265420789744, guid: 172056cdebc6fb646911badf058da3a5,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8219353265420789746, guid: 172056cdebc6fb646911badf058da3a5,
-        type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 8219353265420789746, guid: 172056cdebc6fb646911badf058da3a5,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8219353265420789746, guid: 172056cdebc6fb646911badf058da3a5,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8219353265420789746, guid: 172056cdebc6fb646911badf058da3a5,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 8219353266556568059, guid: 172056cdebc6fb646911badf058da3a5, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 172056cdebc6fb646911badf058da3a5, type: 3}
 --- !u!1 &1542164766172517063 stripped
 GameObject:

@@ -6,7 +6,7 @@ using UnityEngine;
 public class ChannelTheSpell : SpellCard
 {
     public override int cardId => 13;
-    public override List<Tile> legalTargetTiles => GameManager.Get().allTiles();
+    public override List<Tile> legalTargetTiles => Board.instance.allTiles;
 
     public override void onInitialization()
     {

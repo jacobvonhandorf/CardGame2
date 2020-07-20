@@ -83,7 +83,6 @@ public abstract class Creature : MonoBehaviour, Damageable
         {
             return;
         }
-        Debug.LogError("Resetting to base stats");
         setHealth(baseHealth);
         setAttack(baseAttack);
         //setArmor(baseDefense);
@@ -167,8 +166,6 @@ public abstract class Creature : MonoBehaviour, Damageable
     // stuff done after animation
     private void AttackPart2(Damageable defender, int attackRoll)
     {
-        // triggered effects methods
-
         // only trigger effects if the local player is the owner
         if (NetInterface.Get().getLocalPlayer() == controller)
             TriggerOnAttackEvents(this, new OnAttackArgs() { target = defender });
@@ -279,14 +276,12 @@ public abstract class Creature : MonoBehaviour, Damageable
     private void actualMove(Tile tile)
     {
         currentTile.removeCreature();
-        tile.addCreature(this);
+        tile.creature = this;
         setCoordinates(tile);
         currentTile = tile;
     }
     private void setCoordinates(Tile tile)
     {
-        //Vector2 tileCoordinates = tile.transform.position;
-        //statsScript.cardRoot.position = tileCoordinates;
         TransformStruct ts = new TransformStruct(sourceCard.transformManager.transform);
         ts.position = tile.transform.position;
         sourceCard.transformManager.moveToInformativeAnimation(ts);
@@ -352,8 +347,8 @@ public abstract class Creature : MonoBehaviour, Damageable
         {
             if (hasMovedThisTurn && !hasDoneActionThisTurn)
             {
-                GameManager.Get().createActionBox(this);
-                GameManager.Get().setAllTilesToDefault();
+                ActionBox.instance.show(this);
+                Board.instance.setAllTilesToDefault();
                 controller.heldCreature = null;
                 return;
             }
@@ -367,13 +362,13 @@ public abstract class Creature : MonoBehaviour, Damageable
         // if this creature was already clicked once then simulate a move in place
         if (controller.heldCreature == this)
         {
-            GameManager.Get().createActionBox(this);
-            GameManager.Get().setAllTilesToDefault();
+            ActionBox.instance.show(this);
+            Board.instance.setAllTilesToDefault();
             controller.heldCreature = null;
             return;
         }
 
-        GameManager.Get().setAllTilesToDefault();
+        Board.instance.setAllTilesToDefault();
         // in hot seat mode don't let a player move their opponents creatures
         if (GameManager.gameMode == GameManager.GameMode.hotseat && GameManager.Get().activePlayer != controller)
             return;
@@ -388,7 +383,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         }
         else if (hasMovedThisTurn && !hasDoneActionThisTurn)
         {
-            GameManager.Get().createActionBox(this);
+            ActionBox.instance.show(this);
         }
         else
         {
@@ -400,7 +395,6 @@ public abstract class Creature : MonoBehaviour, Damageable
     private void OnMouseEnter()
     {
         sourceCard.addToCardViewer(GameManager.Get().getCardViewer());
-        //statsScript.setCardViewer(GameManager.Get().getCardViewer());
         hovered = true;
         StartCoroutine(checkHoverForTooltips());
     }
@@ -649,5 +643,4 @@ public abstract class Creature : MonoBehaviour, Damageable
     public virtual void onInitialization() { }
     public virtual int getStartingRange() { return 1; } // 1 by default
     #endregion
-
 }

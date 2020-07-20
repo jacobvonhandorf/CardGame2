@@ -2,16 +2,24 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
 public class ActionBoxCancel : MonoBehaviour
 {
-    public AfterMoveBox afterMoveBox;
-    public GameManager gameManager;
+    [SerializeField] GameObject hoverEffect;
 
-    private void OnMouseDown()
+    private void OnMouseUpAsButton()
     {
-        afterMoveBox.hide();
-        Player activePlayer = gameManager.activePlayer;
-        activePlayer.heldCreature = null;
-        gameManager.setAllTilesToDefault();
+        AfterMoveBox.instance.gameObject.SetActive(false);
+        GameManager.Get().activePlayer.heldCreature = null;
+        Board.instance.setAllTilesToDefault();
+    }
+    private void OnMouseEnter()
+    {
+        hoverEffect.SetActive(true);
+    }
+    private void OnMouseExit()
+    {
+        hoverEffect.SetActive(false);
     }
 }
+*/

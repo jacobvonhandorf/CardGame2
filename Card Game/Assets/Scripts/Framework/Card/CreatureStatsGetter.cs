@@ -18,8 +18,6 @@ public class CreatureStatsGetter : CardStatsGetter
     [SerializeField] private TextMeshPro hasActedTextIndicator;
     [SerializeField] private SpriteRenderer friendOrFoeBorder;
 
-    //[SerializeField] private CounterController counterController;
-
     // called to set creature stats on creature cards when they are created
     public void setCreatureStats(Creature creature)
     {
@@ -33,25 +31,10 @@ public class CreatureStatsGetter : CardStatsGetter
         creature.resetToBaseStatsWithoutSyncing();
     }
 
-    /*
-    public void switchBetweenCreatureOrCard(CreatureCard card)
-    {
-        if (card.isCreature)
-        {
-            swapToCard(card);
-        }
-        else
-        {
-            swapToCreature(card);
-        }
-    }
-    */
-
     // Called when a card is played to a creature.
     // if the topology of a card is changed this method may need to be changed
     public void swapToCreature(CreatureCard card, Tile creatureTile)
     {
-
         List<Transform> iconsToResize = new List<Transform>();
         iconsToResize.Add(hpText.transform.parent);
         iconsToResize.Add(armorText.transform.parent);
@@ -60,8 +43,9 @@ public class CreatureStatsGetter : CardStatsGetter
         Vector3 newIconScale = new Vector3(scalingCoefficient, scalingCoefficient, 1);
         Vector3 newRootScale = new Vector3(entireCardScaleCoefficient, entireCardScaleCoefficient, 1);
 
-        //StartCoroutine(resizeToCreature(cardRoot, newRootScale, iconsToResize, newIconScale));
-        InformativeAnimationsQueue.instance.addAnimation(new SwapToCreatureAnimation(this, iconsToResize, newIconScale, newRootScale, creatureTile.transform.position));
+        Vector3 newPosition = creatureTile.transform.position;
+        newPosition.z = 0;
+        InformativeAnimationsQueue.instance.addAnimation(new SwapToCreatureAnimation(this, iconsToResize, newIconScale, newRootScale, newPosition));
     }
     private class SwapToCreatureAnimation : QueueableCommand
     {
@@ -92,7 +76,6 @@ public class CreatureStatsGetter : CardStatsGetter
     [SerializeField] private float resizeSpeed = .1f;
     [SerializeField] private float pauseBetweenResize = .5f;
     [SerializeField] private float iconResizeSpeed = 2f;
-    private float timePaused = 0f;
     private bool resizeToCreatureFinished;
     IEnumerator resizeToCreature(Transform cardRoot, Vector3 newRootScale, List<Transform> iconsToEnlarge, Vector3 newIconScale, Vector3 newPosition)
     {
@@ -102,12 +85,11 @@ public class CreatureStatsGetter : CardStatsGetter
         Vector3 positionEnd = newPosition;
         Vector3 scaleStart = cardRoot.localScale;
         Vector3 scaleEnd = newRootScale;
-
+        Debug.LogError(positionEnd);
         // resize root
         float currentPercentage = 0;
         float timeForTotalAnimation = .3f;
         float timePassed = 0;
-        //while (Vector3.Distance(cardRoot.localScale, newRootScale) > 0.02f)
         while (currentPercentage < .98f)
         {
             timePassed += Time.deltaTime;
@@ -119,20 +101,13 @@ public class CreatureStatsGetter : CardStatsGetter
         }
 
         // pause
-        while (timePaused <  pauseBetweenResize)
-        {
-            timePaused += Time.deltaTime;
-        }
-        timePaused = 0f;
+        yield return new WaitForSeconds(pauseBetweenResize);
 
         // resize icons
         while (Vector3.Distance(iconsToEnlarge[0].localScale, newIconScale) > 0.02f)
         {
             foreach (Transform t in iconsToEnlarge)
-            {
                 t.localScale = Vector3.MoveTowards(t.localScale, newIconScale, iconResizeSpeed * Time.deltaTime);
-            }
-            //cardRoot.localScale = Vector3.MoveTowards(cardRoot.localScale, newRootScale, iconResizeSpeed * Time.deltaTime);
             yield return null;
         }
         resizeToCreatureFinished = true;
@@ -229,10 +204,6 @@ public class CreatureStatsGetter : CardStatsGetter
 
     public void updateHasActedIndicator(bool hasDoneActionThisTurn, bool hasMovedThisTurn)
     {
-        //if (hasDoneActionThisTurn == hasMovedThisTurn)
-            //hasActedTextIndicator.text = "";
-        //else if (hasDoneActionThisTurn && !hasMovedThisTurn)
-        //    hasActedTextIndicator.text = "M";
         if (!hasDoneActionThisTurn && hasMovedThisTurn)
             hasActedTextIndicator.text = "A";
         else
@@ -307,8 +278,5 @@ public class CreatureStatsGetter : CardStatsGetter
         {
             throw new NotImplementedException();
         }
-
     }
-
-    //public CounterController getCounterController() => counterController;
 }

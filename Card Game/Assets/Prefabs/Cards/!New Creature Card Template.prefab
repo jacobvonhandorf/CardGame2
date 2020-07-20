@@ -804,7 +804,7 @@ MonoBehaviour:
   hoverTimeForToolTips: 0.5
   creature: {fileID: 0}
   creatureStatsScript: {fileID: 8633300247516055440}
-  counterCountroller: {fileID: 8838799526555295834}
+  counterController: {fileID: 8838799526555295834}
   isCreature: 0
 --- !u!61 &3350987535851525645
 BoxCollider2D:
@@ -2258,6 +2258,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59300d8fe0ebae4439ec644fbde6cfdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  removedFromScene: 0
   speed: 9
 --- !u!1 &7003494207759442377
 GameObject:

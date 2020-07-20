@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &93013061758958914
+--- !u!1 &8745040398158492373
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,22 +8,22 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 93013061758958915}
-  - component: {fileID: 93013061758958924}
+  - component: {fileID: 7089900407670942334}
+  - component: {fileID: 4693276146431632609}
   m_Layer: 0
-  m_Name: Game Manager
+  m_Name: Prefab Holder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &93013061758958915
+--- !u!4 &7089900407670942334
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 93013061758958914}
+  m_GameObject: {fileID: 8745040398158492373}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -31,38 +31,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &93013061758958924
+--- !u!114 &4693276146431632609
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 93013061758958914}
+  m_GameObject: {fileID: 8745040398158492373}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 438a211e4c196e74b82fa13d074a4179, type: 3}
+  m_Script: {fileID: 11500000, guid: 53a0d9bd8f91da14c9685b43e97be822, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player1: {fileID: 0}
-  player2: {fileID: 0}
-  activePlayer: {fileID: 0}
-  nonActivePlayer: {fileID: 0}
-  board: {fileID: 0}
-  allCreatures: []
-  allStructures: []
-  cardPreview: {fileID: 0}
-  toaster: {fileID: 0}
-  glassBackground: {fileID: 0}
-  activePlayerText: {fileID: 0}
-  cancelEffectButton: {fileID: 0}
-  endTurnButton: {fileID: 0}
-  damageText: {fileID: 0}
-  endGamePopUp: {fileID: 0}
-  cardPickerPrefab: {fileID: 0}
-  optionButton: {fileID: 0}
-  optionSelectBoxPrefab: {fileID: 0}
   xPickerPrefab: {fileID: 3986563060002899856, guid: 3b1c60563bcbd0149be115b4ee7272bc,
     type: 3}
-  headquartersPrefab: {fileID: 0}
-  onAttackParticles: {fileID: 0}
-  gameInProgress: 1

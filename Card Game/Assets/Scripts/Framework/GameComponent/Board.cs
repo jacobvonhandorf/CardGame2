@@ -10,7 +10,7 @@ public class Board : CardPile
     public int boardWidth;
     public int boardHeight;
     public Tile[,] tileArray;
-    public List<Tile> allTiles = new List<Tile>();
+    public List<Tile> allTiles { get; private set; }
     [SerializeField] private Transform tileContainer; // used to organize tiles in inspector
 
     private List<Vector2> powerTileCoordinates;
@@ -20,6 +20,7 @@ public class Board : CardPile
     {
         base.Awake();
         instance = this;
+        allTiles = new List<Tile>();
         powerTileCoordinates = new List<Vector2>();
         // add power tiles to power tile list
         powerTileCoordinates.Add(new Vector2(3, 3));
@@ -47,33 +48,8 @@ public class Board : CardPile
         }
     }
 
-    public int getPowerTileCount(Player player)
-    {
-        int count = 0;
-        foreach (Vector2 coordinate in powerTileCoordinates)
-        {
-            Tile powerTile = getTileByCoordinate((int)coordinate.x, (int)coordinate.y);
-            if (powerTile.creature != null && powerTile.creature.controller == player)
-                count++;
-        }
-        return count;
-    }
-
-    // Use this when moving the creature from one tile to another
-    public void moveCreatureToTile(Creature creature, Tile tile)
-    {
-        creature.move(tile);
-    }
-
     #region GetMovableTiles
-    /*
-     * Returns all tiles that the creature can move to
-     */
-    public List<Tile> getAllMovableTiles(Creature creature)
-    {
-        return _getAllMovableTiles(creature.getMovement(), creature.getCoordinates(), new List<Tile>(), creature.controller, new List<TileMovePair>());
-    }
-
+    public List<Tile> getAllMovableTiles(Creature creature) => _getAllMovableTiles(creature.getMovement(), creature.getCoordinates(), new List<Tile>(), creature.controller, new List<TileMovePair>());
     private List<Tile> _getAllMovableTiles(int remainingMove, Vector2 coord, List<Tile> returnList, Player controller, List<TileMovePair> tileMovePairs)
     {
         // base cases
@@ -105,7 +81,6 @@ public class Board : CardPile
 
         return returnList;
     }
-
     private bool tileMoveAlreadyChecked(List<TileMovePair> tiles, TileMovePair t)
     {
         foreach (TileMovePair pair in tiles)
@@ -114,7 +89,6 @@ public class Board : CardPile
                     return true;
         return false;
     }
-
     private class TileMovePair
     {
         public Tile tile;
@@ -123,12 +97,22 @@ public class Board : CardPile
         public TileMovePair(Tile tile, int remainingMove)
         {
             this.tile = tile;
-            this.move = remainingMove;
+            move = remainingMove;
         }
     }
     #endregion
-
     #region UtilityMethods
+    public int getPowerTileCount(Player player)
+    {
+        int count = 0;
+        foreach (Vector2 coordinate in powerTileCoordinates)
+        {
+            Tile powerTile = getTileByCoordinate((int)coordinate.x, (int)coordinate.y);
+            if (powerTile.creature != null && powerTile.creature.controller == player)
+                count++;
+        }
+        return count;
+    }
     public List<Structure> getAllStructures()
     {
         List<Structure> returnList = new List<Structure>();
@@ -139,7 +123,15 @@ public class Board : CardPile
         }
         return returnList;
     }
-
+    public void setAllTilesToDefault()
+    {
+        foreach (Tile t in allTiles)
+        {
+            t.setActive(false);
+            t.setAttackable(false);
+            t.setEffectableFalse();
+        }
+    }
     public List<Structure> getAllStructures(Player controller)
     {
         List<Structure> returnList = new List<Structure>();
@@ -150,14 +142,12 @@ public class Board : CardPile
         }
         return returnList;
     }
-
     public Tile getTileByCoordinate(int x, int y)
     {
         if (x < 0 || y < 0 || x > boardWidth - 1 || y > boardHeight - 1)
             return null;
         return tileArray[x, y];
     }
-
     public List<Tile> getAllTilesWithCreatures(Player controller, bool includeUntargetable)
     {
         List<Tile> returnList = new List<Tile>();
@@ -170,7 +160,6 @@ public class Board : CardPile
 
         return returnList;
     }
-
     public List<Tile> getAllTilesWithCreatures(bool includeUntargetable)
     {
         List<Tile> returnList = new List<Tile>();
@@ -194,8 +183,7 @@ public class Board : CardPile
 
         return returnList;
     }
-
-    internal List<Tile> getAllTilesWithStructures()
+    public List<Tile> getAllTilesWithStructures()
     {
         List<Structure> allStructures = GameManager.Get().allStructures;
         List<Tile> returnList = new List<Tile>();
@@ -206,8 +194,7 @@ public class Board : CardPile
         }
         return returnList;
     }
-
-    internal List<Tile> getAllTilesWithStructures(Player controller)
+    public List<Tile> getAllTilesWithStructures(Player controller)
     {
         List<Structure> allStructures = GameManager.Get().allStructures;
         List<Tile> returnList = new List<Tile>();
@@ -218,8 +205,6 @@ public class Board : CardPile
         }
         return returnList;
     }
-
-
     public List<Tile> getAllTilesWithinExactRangeOfTile(Tile tile, int range)
     {
         List<Tile> returnList = new List<Tile>();
@@ -244,12 +229,10 @@ public class Board : CardPile
 
         return returnList;
     }
-
     public List<Tile> getAllTilesWithinRangeOfTile(Tile tile, int range)
     {
         return _getAllTilesWithinRangeOfTile(tile, range, new List<Tile>(), new List<TileMovePair>());
     }
-
     private List<Tile> _getAllTilesWithinRangeOfTile(Tile tile, int range, List<Tile> returnList, List<TileMovePair> pairs)
     {
         // base case
@@ -273,12 +256,6 @@ public class Board : CardPile
 
         return returnList;
     }
-
-    internal List<Tile> getAllTilesOnRow(int row)
-    {
-        return Enumerable.Range(0, tileArray.GetLength(0))
-                .Select(x => tileArray[x, row])
-                .ToArray().ToList();
-    }
+    public List<Tile> getAllTilesOnRow(int row) => Enumerable.Range(0, tileArray.GetLength(0)).Select(x => tileArray[x, row]).ToArray().ToList();
     #endregion
 }

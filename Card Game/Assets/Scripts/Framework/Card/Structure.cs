@@ -62,14 +62,11 @@ public abstract class Structure : MonoBehaviour, Damageable
         addHealth(-amount);
     }
 
+    #region BasicStatGetterAndSetters
     public void addHealth(int amount)
     {
-        Debug.Log("adding health: " + amount);
-        Debug.Log("Health before damage " + health);
-        
         health += amount;
         statsScript.setHealth(health, baseHealth);
-        Debug.Log("Health after damage " + health);
         if (health <= 0)
             GameManager.Get().destroyStructure(this, null);
     }
@@ -97,6 +94,7 @@ public abstract class Structure : MonoBehaviour, Damageable
     {
         return sourceCard.getCardName();
     }
+    #endregion
 
     // if you want to kill a creature do not call this. Call destroy creature in game manager
     public void sendToGrave(Card source)
@@ -111,7 +109,6 @@ public abstract class Structure : MonoBehaviour, Damageable
     {
         setHealth(baseHealth);
     }
-
     public void resetToBaseStatsWithoutSyncing()
     {
         health = baseHealth;
@@ -170,17 +167,13 @@ public abstract class Structure : MonoBehaviour, Damageable
         this.statsScript = statsScript;
     }
 
-    /*
-     * Returns true if this card has the the tag passed to this method
-     */
+    // Returns true if this card has the the tag passed to this method
     public bool hasTag(Tag tag)
     {
         return sourceCard.hasTag(tag);
     }
 
-    /*
-     * returns true if this card is the type passed to it
-     */
+    // returns true if this card is the type passed to it
     public bool isType(CardType type)
     {
         return sourceCard.isType(type);
@@ -208,11 +201,7 @@ public abstract class Structure : MonoBehaviour, Damageable
     {
         return new Vector2(tile.x, tile.y);
     }
-    public Player getController()
-    {
-        return controller;
-    }
-
+    public Player getController() => controller;
     public void updateFriendOrFoeBorder()
     {
         if (GameManager.gameMode != GameManager.GameMode.online)
@@ -224,17 +213,12 @@ public abstract class Structure : MonoBehaviour, Damageable
             statsScript.setAsAlly(NetInterface.Get().getLocalPlayer() == controller);
         }
     }
-
     public void resetForNewTurn()
     {
         updateFriendOrFoeBorder();
     }
-
-    public Card getSourceCard()
-    {
-        return sourceCard;
-    }
-
+    public Card getSourceCard() => sourceCard;
+    #region Counters
     public void addCounters(CounterClass counterType, int amount)
     {
         counterController.addCounters(counterType, amount);
@@ -264,9 +248,9 @@ public abstract class Structure : MonoBehaviour, Damageable
         else
             Debug.LogError("Trying to set counters to a value it's already set to. This shouldn't happen under normal circumstances");
     }
-
+    #endregion
+    #region Overideable
     // MAY BE OVERWRITTEN
-    public virtual void onCreatureRemoved(Creature c) { }
     public virtual void onAnyStructurePlayed(Structure s) { }
     public virtual void onAnyCreaturePlayed(Structure s) { }
     public virtual void onAnyCreatureDeath(Creature c) { }
@@ -284,5 +268,5 @@ public abstract class Structure : MonoBehaviour, Damageable
 
     // MUST BE OVERWRITTEN
     public abstract int cardId { get; }
-
+    #endregion
 }

@@ -6,7 +6,7 @@ public class SpellGrasp : SpellCard
 {
     public const int CARD_ID = 3;
     public override int cardId => CARD_ID;
-    public override List<Tile> legalTargetTiles => GameManager.Get().allTiles();
+    public override List<Tile> legalTargetTiles => Board.instance.allTiles;
 
     public override void onInitialization()
     {

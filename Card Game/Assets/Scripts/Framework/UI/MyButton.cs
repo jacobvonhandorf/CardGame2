@@ -23,17 +23,14 @@ public class MyButton : MonoBehaviour
     {
         buttonBackground.color = hovered;
     }
-
     private void OnMouseExit()
     {
-        buttonBackground.color = up;
+        setTextToUp();
     }
-
     private void OnMouseDown()
     {
         buttonBackground.color = down;
     }
-
     private void OnMouseUp()
     {
         buttonBackground.color = up;
@@ -41,7 +38,7 @@ public class MyButton : MonoBehaviour
 
     public void setTextToUp()
     {
-        OnMouseExit();
+        buttonBackground.color = up;
     }
 
     public void addAction(UnityAction action)
@@ -56,7 +53,7 @@ public class MyButton : MonoBehaviour
 
     public void enable()
     {
-        buttonBackground.color = up;
+        setTextToUp();
         gameObject.SetActive(true);
     }
 
@@ -64,5 +61,10 @@ public class MyButton : MonoBehaviour
     {
         setTextToUp();
         gameObject.SetActive(false);
+    }
+
+    private void OnDisable()
+    {
+        setTextToUp();
     }
 }

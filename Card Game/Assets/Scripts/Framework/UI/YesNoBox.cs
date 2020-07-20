@@ -12,6 +12,17 @@ public class YesNoBox : MonoBehaviour
     [SerializeField] private GameObject yesButtonGO;
     [SerializeField] private GameObject noButtonGO;
     private YesNoHandler handler;
+    public delegate void ButtonClickHandler();
+    private ButtonClickHandler yesHandler;
+    private ButtonClickHandler noHandler;
+
+    public void setUp(ButtonClickHandler yesHandler, ButtonClickHandler noHandler, string headerText, string descriptionText)
+    {
+        this.yesHandler = yesHandler;
+        this.noHandler = noHandler;
+        this.headerText.text = headerText;
+        this.descriptionText.text = descriptionText;
+    }
 
     public void setUp(YesNoHandler handler, string headerText, string descriptionText)
     {
@@ -22,6 +33,7 @@ public class YesNoBox : MonoBehaviour
 
     public void yesClicked()
     {
+        yesHandler?.Invoke();
         if (handler != null)
             handler.onYesClicked();
         Destroy(gameObject);
@@ -29,6 +41,7 @@ public class YesNoBox : MonoBehaviour
 
     public void onNoClicked()
     {
+        noHandler?.Invoke();
         if (handler != null)
             handler.onNoClicked();
         Destroy(gameObject);

@@ -5,7 +5,7 @@ using UnityEngine;
 public class RecklessDraw : SpellCard
 {
     public override int cardId => 12;
-    public override List<Tile> legalTargetTiles => GameManager.Get().allTiles();
+    public override List<Tile> legalTargetTiles => Board.instance.allTiles;
 
     protected override void doEffect(Tile t)
     {

@@ -42,16 +42,16 @@ public class XPickerBox : MonoBehaviour
             this.handler = handler;
         }
 
-        public override bool isFinished => xPicker.finished || forceFinished;
+        public override bool isFinished => forceFinished || xPicker.finished;
 
         public override void execute()
         {
-            if (NetInterface.Get().getLocalPlayer() != owner)
+            if (owner != null && NetInterface.Get().getLocalPlayer() != owner)
             {
                 forceFinished = true;
                 return;
             }
-            xPicker = Instantiate(GameManager.Get().xPickerPrefab);
+            xPicker = Instantiate(PrefabHolder.Instance.xPickerPrefab);
             xPicker.setUp(minValue, maxValue, headerText, handler);
         }
     }

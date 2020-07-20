@@ -14,6 +14,13 @@ public class TestScript : MonoBehaviour
     private void Start()
     {
         // setup test
+        GameObject go = Instantiate(new GameObject("Animations Queue"));
+        go.AddComponent<InformativeAnimationsQueue>();
+
+        XPickerBox.CreateAndQueue(0, 5, "Test", null, delegate (int x)
+        {
+            Debug.Log("X = " + x);
+        });
     }
 
     private void doTestOnKeyPress()

@@ -1,20 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/*
 public class ActionBoxAttack : MonoBehaviour
 {
-    public Player activePlayer;
     public Creature creature;
-    public AfterMoveBox afterMoveBox;
+    [SerializeField] GameObject hoverEffect;
 
-    public void setUp(Player activePlayer, Creature creature)
+    public void setUp(Creature creature)
     {
-        this.activePlayer = activePlayer;
         this.creature = creature;
     }
 
-    void OnMouseDown()
+    void OnMouseUpAsButton()
     {
         if (creature.hasDoneActionThisTurn)
         {
@@ -22,6 +20,15 @@ public class ActionBoxAttack : MonoBehaviour
             return;
         }
         GameManager.Get().setUpCreatureAttack(creature);
-        afterMoveBox.hide();
+        AfterMoveBox.instance.gameObject.SetActive(false);
+    }
+    private void OnMouseEnter()
+    {
+        hoverEffect.SetActive(true);
+    }
+    private void OnMouseExit()
+    {
+        hoverEffect.SetActive(false);
     }
 }
+*/

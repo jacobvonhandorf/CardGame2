@@ -50,6 +50,8 @@ public class Engineer : Creature, Effect
             removeCounters(Counters.build, 1);
             StructureCard structureToPlace = GameManager.Get().createCardById(selectedCardId, controller) as StructureCard;
             GameManager.Get().createStructureOnTile(structureToPlace.structure, t, controller, structureToPlace);
+            hasDoneActionThisTurn = true;
+            updateHasActedIndicators();
         });
         new CompoundQueueableCommand.Builder().addCommand(selectCommand).addCommand(selectTileCmd).BuildAndQueue();
     }

@@ -230,7 +230,7 @@ public abstract class Card : MonoBehaviour
         isBeingDragged = true;
         offset = getRootTransform().position -
             Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.0f));
-        GameManager.Get().setAllTilesToDefault();
+        Board.instance.setAllTilesToDefault();
         NetInterface.Get().getLocalPlayer().heldCreature = null;
 
         foreach (Tile tile in legalTargetTiles)
@@ -316,15 +316,11 @@ public abstract class Card : MonoBehaviour
                 }
             }
             else
-            {
                 moveTo(positionInHand);
-            }
         }
         else
-        {
             moveTo(positionInHand);
-        }
-        GameManager.Get().setAllTilesToNotActive();
+        Board.instance.setAllTilesToDefault();
     }
     private void cancelDrag()
     {
@@ -336,7 +332,7 @@ public abstract class Card : MonoBehaviour
         setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
         moveTo(positionInHand);
         
-        GameManager.Get().setAllTilesToNotActive();
+        Board.instance.setAllTilesToDefault();
         transformManager.UnLock();
     }
     // change the alpha for all sprites related to this card

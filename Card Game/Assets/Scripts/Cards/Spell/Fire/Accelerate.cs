@@ -5,7 +5,7 @@ using UnityEngine;
 public class Accelerate : SpellCard
 {
     public override int cardId => 18;
-    public override List<Tile> legalTargetTiles => GameManager.Get().allTiles();
+    public override List<Tile> legalTargetTiles => Board.instance.allTiles;
 
     public override void onInitialization()
     {

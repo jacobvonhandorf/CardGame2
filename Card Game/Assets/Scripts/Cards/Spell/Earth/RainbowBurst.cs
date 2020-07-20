@@ -9,7 +9,7 @@ public class RainbowBurst : SpellCard
     private const int CARDS_DRAWN = 3;
     private const int CARDS_TO_SHUFFLE_BACK = 3;
     public override int cardId => CARD_ID;
-    public override List<Tile> legalTargetTiles => GameManager.Get().allTiles();
+    public override List<Tile> legalTargetTiles => Board.instance.allTiles;
 
     public override bool additionalCanBePlayedChecks()
     {

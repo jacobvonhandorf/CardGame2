@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 using static GameEvents;
 /*
 * Master game object that controls the flow of the game
-* and contains utility methods for other classes to call
+* and holds references to other game objects
 */
 public class GameManager : MonoBehaviour
 {
@@ -37,7 +37,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] private TextMeshPro activePlayerText;
     [SerializeField] private MyButton cancelEffectButton;
     [SerializeField] private MyButton endTurnButton;
-    [SerializeField] private AfterMoveBox afterMoveBox;
     [SerializeField] private DamageText damageText;
     [SerializeField] private EndGamePopUp endGamePopUp;
 
@@ -45,8 +44,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] public CardPicker cardPickerPrefab;
     [SerializeField] private OptionButton optionButton;
     [SerializeField] public OptionSelectBox optionSelectBoxPrefab;
-    [SerializeField] public XPickerBox xPickerPrefab;
-    [SerializeField] private GameObject engineerPrefab;
+    //[SerializeField] public XPickerBox xPickerPrefab;
     [SerializeField] private GameObject headquartersPrefab;
 
     [SerializeField] private ParticleSystem onAttackParticles;
@@ -86,6 +84,8 @@ public class GameManager : MonoBehaviour
 
     private void hotSeatSetup()
     {
+        throw new NotImplementedException();
+        /*
         // see if decks need to be loaded and if so load them
         Debug.Log(p1DeckName);
         Debug.Log(p2DeckName);
@@ -126,6 +126,7 @@ public class GameManager : MonoBehaviour
         headquartersCard2.structure.updateFriendOrFoeBorder();
 
         activePlayerText.text = activePlayer.getPlayerName() + "'s turn";
+        */
     }
 
     private object activePlayerLock = new object();
@@ -136,7 +137,6 @@ public class GameManager : MonoBehaviour
         // disable end turn button if going second
         endTurnButton.gameObject.SetActive(NetInterface.Get().localPlayerIsP1());
         // lock local player if they are going second
-        //localPlayer.locked = !NetInterface.Get().localPlayerIsP1();
         if (!NetInterface.Get().localPlayerIsP1())
             localPlayer.addLock(activePlayerLock);
 
@@ -172,8 +172,6 @@ public class GameManager : MonoBehaviour
         // network setup is done so wait for opponent to catch up if needed
         while (!NetInterface.Get().finishedWithSetup) { yield return null; }
         // lock local player if they are going second
-        //localPlayer.locked = !NetInterface.Get().localPlayerIsP1();
-        Debug.Log("Setup complete");
         NetInterface.Get().gameSetupComplete = true;
 
         // starting mulligan
@@ -278,7 +276,7 @@ public class GameManager : MonoBehaviour
         Creature attacker = activePlayer.heldCreature;
         int damageRoll = attacker.Attack(defender);
         NetInterface.Get().syncAttack(attacker, defender, damageRoll);
-        setAllTilesToNotAttackable();
+        Board.instance.setAllTilesToDefault();
     }
 
     private void switchActivePlayer()
@@ -309,7 +307,6 @@ public class GameManager : MonoBehaviour
             endTurnButton.gameObject.SetActive(false);
             // lock local player
             NetInterface.Get().getLocalPlayer().addLock(activePlayerLock);
-            //NetInterface.Get().getLocalPlayer().locked = true;
             // reset player for new turn
             NetInterface.Get().getLocalPlayer().startOfTurn();
             // trigger effects
@@ -319,14 +316,12 @@ public class GameManager : MonoBehaviour
                 c.resetForNewTurn();
             foreach (Structure s in allStructures)
                 s.resetForNewTurn();
-            afterMoveBox.hide();
+            ActionBox.instance.gameObject.SetActive(false);
             // send opponent message
             NetInterface.Get().syncEndTurn();
             return;
         }
 
-        //Debug.Log("Active player " + activePlayer.locked);
-        //Debug.Log("Nonactive player " + nonActivePlayer.locked);
         if (activePlayer.isLocked())
         {
             showToast("Must finish resolving effects before ending turn");
@@ -338,7 +333,7 @@ public class GameManager : MonoBehaviour
             c.resetForNewTurn();
         foreach (Structure s in allStructures)
             s.resetForNewTurn();
-        afterMoveBox.hide();
+        ActionBox.instance.gameObject.SetActive(false);
         takeTurn();
     }
 
@@ -360,7 +355,6 @@ public class GameManager : MonoBehaviour
         beginningOfTurnEffects();
         // unlock local player
         NetInterface.Get().getLocalPlayer().removeLock(activePlayerLock);
-        //NetInterface.Get().getLocalPlayer().locked = false;
     }
 
     public List<Tile> getMovableTilesForCreature(Creature creature)
@@ -368,48 +362,7 @@ public class GameManager : MonoBehaviour
         return board.getAllMovableTiles(creature);
     }
 
-    public void moveCreatureToTile(Creature creature, Tile tile)
-    {
-        board.moveCreatureToTile(creature, tile);
-        setAllTilesToDefault();
-        createActionBox(creature);
-    }
-
-    public void createActionBox(Creature creature)
-    {
-        Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePosition.z++;
-        afterMoveBox.show(creature.currentTile.x-2.4f, creature.currentTile.y-2, activePlayer, creature);
-    }
-
-    // Reset all temporary effects on all Tiles
-    public void setAllTilesToDefault()
-    {
-        foreach (Tile t in board.allTiles)
-        {
-            t.setActive(false);
-            t.setAttackable(false);
-            t.setEffectableFalse();
-        }
-    }
-    public void setAllTilesToNotActive()
-    {
-        foreach (Tile t in board.allTiles)
-        {
-            t.setActive(false);
-        }
-    }
-    public void setAllTilesToNotAttackable()
-    {
-        foreach (Tile t in board.allTiles)
-        {
-            t.setAttackable(false);
-        }
-    }
-
-    /*
-     * Returns a list of all tiles that a creature could be deployed to
-     */ 
+    // Returns a list of all tiles that a creature could be deployed to
     public List<Tile> getAllDeployableTiles(Player player)
     {
         List<Tile> returnList = new List<Tile>();
@@ -508,7 +461,6 @@ public class GameManager : MonoBehaviour
         sourceCard.transformManager.enabled = true;
 
         // set owner if it hasn't been set already
-        // creature.owner = owner; changed so only source card knows the owner
         creature.controller = owner;
 
         // set creature to has moved and acted unless it is quick
@@ -518,18 +470,6 @@ public class GameManager : MonoBehaviour
             creature.hasDoneActionThisTurn = true;
             creature.updateHasActedIndicators();
         }
-
-        // need to do this for tokens where source card doesn't have a controller (might not be needed anymore)
-        if (sourceCard != null && sourceCard.owner == null)
-            sourceCard.owner = owner;
-
-        // move card from player's hand and parent it to the board
-        /*
-        if (owner.hand.getCardList().Contains(sourceCard))
-            owner.hand.removeCard(sourceCard).getRootTransform().SetParent(board.transform);
-        else
-            creature.getRootTransform().SetParent(board.transform);
-            */
 
         tile.creature = creature;
         creature.currentTile = tile;
@@ -732,90 +672,6 @@ public class GameManager : MonoBehaviour
         creature.updateHasActedIndicators();
     }
 
-    // Creature, Structure and textToDisplay can be null
-    /*
-    public void setUpSingleTileTargetEffect(SingleTileTargetEffect effect, Player effectOwner, Tile sourceTile, Creature creature, Structure structure, string textToDisplay, bool isPartOfChain)
-    {
-        if (!isPartOfChain)
-            EffectsManager.Get().addEffect(new WrapperSingleTileTargetEffect(effect, effectOwner, sourceTile, creature, structure), textToDisplay, effectOwner);
-        else
-            EffectsManager.Get().addEffectToStartOfQueue(new WrapperSingleTileTargetEffect(effect, effectOwner, sourceTile, creature, structure), textToDisplay, effectOwner);
-    }
-    */
-
-    /*
-    // an effect actuator whoes effect activates a SingleTileTargetEffect
-    private class WrapperSingleTileTargetEffect : EffectActuator
-    {
-        //private SingleTileTargetEffect wrappedEffect;
-        private Structure structure;
-
-        // needs to be passed all the information the effect needs to be activated
-        public WrapperSingleTileTargetEffect(SingleTileTargetEffect effect, Player effectOwner, Tile sourceTile, Creature creature, Structure structure)
-        {
-            //wrappedEffect = effect;
-            this.sourceTile = sourceTile;
-            sourcePlayer = effectOwner;
-            targetPlayer = Get().getOppositePlayer(sourcePlayer);
-            this.effect = new WrappedEffectActivator(effect, effectOwner, sourceTile, creature, structure);
-        }
-
-        // effect that activates a SingleTileTargetEffect
-        private class WrappedEffectActivator : Effect
-        {
-            private SingleTileTargetEffect effect;
-            private Player effectOwner;
-            private Tile sourceTile;
-            private Creature sourceCreature;
-            Structure sourceStructure;
-
-            // needs to be passed all information the effect to be activated needs
-            public WrappedEffectActivator(SingleTileTargetEffect effect, Player effectOwner, Tile sourceTile, Creature sourceCreature, Structure sourceStructure)
-            {
-                this.effect = effect;
-                this.effectOwner = effectOwner;
-                this.sourceTile = sourceTile;
-                this.sourceCreature = sourceCreature;
-                this.sourceStructure = sourceStructure;
-            }
-
-            public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-            {
-
-                List<Tile> validTargetTiles = effect.getValidTargetTiles(effectOwner, targetPlayer, this.sourceTile);
-                bool effectValid = false;
-                foreach (Tile tile in validTargetTiles)
-                {
-                    if (this.sourceCreature != null)
-                        tile.setEffectable(true, this.sourceCreature, effect);
-                    else if (sourceStructure != null)
-                        tile.setEffectable(sourceStructure, effect);
-                    else
-                        tile.setEffectable(true, effectOwner, effect);
-                    effectValid = true;
-                }
-
-                if (effectValid)
-                {
-                    if (effect.canBeCancelled())
-                        Get().cancelEffectButton.enable();
-                    effectOwner.heldEffect = effect;
-                    effectOwner.readyEffect();
-                }
-                else
-                {
-                    if (sourceCreature != null)
-                        Get().showToast("No valid targets for " + this.sourceCreature.cardName + "'s effect");
-                    else if (sourceStructure != null)
-                        Get().showToast("No valid targets for " + this.sourceStructure.getCardName() + "'s effect");
-
-                    EffectsManager.Get().signalEffectFinished();
-                }
-            }
-        }
-    }
-    */
-
     public void setUpStructureEffect(Structure structure)
     {
         Debug.Log("Setting up structure effect");
@@ -937,152 +793,9 @@ public class GameManager : MonoBehaviour
         glassBackground.SetActive(value);
     }
 
-    // headerText can be null
-    /*
-    public void queueCardPickerEffect(Player effectOwner, List<Card> pickableCards, CanReceivePickedCards receiver, int minCards, int maxCards, bool isPartOfChain, string headerText)
-    {
-        if (pickableCards.Count >= minCards)
-        {
-            if (!isPartOfChain)
-                EffectsManager.Get().addEffect(new WrappedCardPickerEffect(pickableCards, receiver, minCards, maxCards, headerText), effectOwner);
-            else
-                EffectsManager.Get().addEffectToStartOfQueue(new WrappedCardPickerEffect(pickableCards, receiver, minCards, maxCards, headerText), null, effectOwner);
-        }
-        else
-            Debug.LogError("Not enough cards for card picker effect");
-    }*/
-
-        /*
-    private class WrappedCardPickerEffect : EffectActuator
-    {
-        public WrappedCardPickerEffect(List<Card> pickableCards, CanReceivePickedCards receiver, int minCards, int maxCards, string headerText)
-        {
-            effect = new CardPickerEffect(pickableCards, receiver, minCards, maxCards, headerText);
-        }
-
-        private class CardPickerEffect : Effect
-        {
-            List<Card> pickableCards;
-            int minCards;
-            int maxCards;
-            string headerText;
-            CanReceivePickedCards receiver;
-
-            public CardPickerEffect(List<Card> pickableCards, CanReceivePickedCards receiver, int minCards, int maxCards, string headerText)
-            {
-                this.pickableCards = pickableCards;
-                this.minCards = minCards;
-                this.maxCards = maxCards;
-                this.headerText = headerText;
-                this.receiver = receiver;
-            }
-
-            public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-            {
-                CardPicker cardPicker = Instantiate(Get().cardPickerPrefab, new Vector3(0, 0, -1), Quaternion.identity);
-                cardPicker.setUp(pickableCards, receiver, minCards, maxCards, headerText);
-                Get().setPopUpGlassActive(true);
-            }
-        }
-    }
-    */
-    /*
-    // headerText can be null
-    public void queueOptionSelectBoxEffect(List<string> options, OptionBoxHandler handler, string headerText, bool isPartOfChain, Player effectOwner)
-    {
-        if (!isPartOfChain)
-            EffectsManager.Get().addEffect(new WrappedOptionBoxEffect(options, handler, headerText), effectOwner);
-        else
-            EffectsManager.Get().addEffectToStartOfQueue(new WrappedOptionBoxEffect(options, handler, headerText), null, effectOwner);
-    }
-    private class WrappedOptionBoxEffect : EffectActuator
-    {
-        public WrappedOptionBoxEffect(List<string> options, OptionBoxHandler handler, string headerText)
-        {
-            effect = new OptionSelectBoxEffect(options, handler, headerText);
-        }
-
-        private class OptionSelectBoxEffect : Effect
-        {
-            List<string> options;
-            OptionBoxHandler handler;
-            string headerText;
-
-            public OptionSelectBoxEffect(List<string> options, OptionBoxHandler handler, string headerText)
-            {
-                this.options = options;
-                this.handler = handler;
-                this.headerText = headerText;
-            }
-
-            public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-            {
-                OptionSelectBox optionBox = Instantiate(Get().optionSelectBoxPrefab, Vector3.zero, Quaternion.identity);
-                optionBox.setUp(options, handler, headerText);
-            }
-        }
-    }
-    */
-
-        /*
-    public void queueXPickerEffect(CanRecieveXPick receiver, string headerText, int minValue, int maxValue, bool isPartOfChain, Player effectOwner)
-    {
-        if (!isPartOfChain)
-            EffectsManager.Get().addEffect(new WrappedXPickerEffect(receiver, minValue, maxValue, headerText), "", effectOwner);
-        else
-            EffectsManager.Get().addEffectToStartOfQueue(new WrappedXPickerEffect(receiver, minValue, maxValue, headerText), "", effectOwner);
-    }
-
-    private class WrappedXPickerEffect : EffectActuator
-    {
-        public WrappedXPickerEffect(CanRecieveXPick receiver, int minValue, int maxValue, string headerText)
-        {
-            effect = new XPickerEffect(receiver, minValue, maxValue, headerText);
-        }
-
-        private class XPickerEffect : Effect
-        {
-            public CanRecieveXPick receiver;
-            public int minValue;
-            public int maxValue;
-            public string headerText;
-
-            public XPickerEffect(CanRecieveXPick receiver, int minValue, int maxValue, string headerText)
-            {
-                this.receiver = receiver;
-                this.minValue = minValue;
-                this.maxValue = maxValue;
-                this.headerText = headerText;
-            }
-
-            public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
-            {
-                XPickerBox xPicker = Instantiate(Get().xPickerPrefab);
-                xPicker.setUp(receiver, minValue, maxValue, headerText);
-            }
-        }
-    }
-    */
-
-    /*
-    public void queueCardPickerEffect(Player effectOwner, List<Card> pickableCards, int minCards, int maxCards, bool isPartOfChain, string headerText, CanReceivePickedCards receiver)
-    {
-        if (pickableCards.Count >= minCards)
-        {
-            if (!isPartOfChain)
-                EffectsManager.Get().addEffect(new WrappedCardPickerEffect(pickableCards, receiver, minCards, maxCards, headerText), effectOwner);
-            else
-                EffectsManager.Get().addEffectToStartOfQueue(new WrappedCardPickerEffect(pickableCards, receiver, minCards, maxCards, headerText), null, effectOwner);
-        }
-        else
-            Debug.LogError("Not enough cards for card picker effect");
-    }
-    */
-
     public void getOnAttackParticles(Vector3 position, Vector3 rotation)
     {
         ParticleSystem particleSystem =  Instantiate(onAttackParticles);
-        //particleSystem.transform.position = position;
         particleSystem.transform.localEulerAngles = rotation;
         particleSystem.transform.position = position;
     }
@@ -1092,15 +805,9 @@ public class GameManager : MonoBehaviour
         return optionButton;
     }
 
-    internal List<Tile> allTiles()
-    {
-        return board.allTiles;
-    }
-
     public void showDamagedText(Vector3 position, int damage)
     {
         position.x += .2f; // offset so number is above health value
         damageText.showText(damage, position);
     }
-
 }

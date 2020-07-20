@@ -7,7 +7,7 @@ public class Inferno : SpellCard
     public const int CARD_ID = 14;
     public override int cardId => CARD_ID;
     private const int DAMAGE_AMOUNT = 4;
-    public override List<Tile> legalTargetTiles => GameManager.Get().allTiles();
+    public override List<Tile> legalTargetTiles => Board.instance.allTiles;
 
     public override void onInitialization()
     {

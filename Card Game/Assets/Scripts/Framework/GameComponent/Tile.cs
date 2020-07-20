@@ -29,27 +29,11 @@ public class Tile : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
     }
 
-    public void addCreature(Creature creature)
-    {
-        this.creature = creature;
-        onCreatureAdded();
-    }
-
-    private void onCreatureAdded()
-    {
-    }
-
-    private void onCreatureRemoved()
-    {
-        if (structure != null)
-            structure.onCreatureRemoved(creature);
-    }
-
-    internal void setAsPowerTile()
+    public void setAsPowerTile()
     {
         powerTile = true;
         defaultColor = powerTileColor;
-        GetComponent<SpriteRenderer>().color = powerTileColor;
+        setColor(powerTileColor);
     }
 
     public bool isPowerTile()
@@ -72,7 +56,6 @@ public class Tile : MonoBehaviour
 
     public void removeCreature()
     {
-        onCreatureRemoved();
         creature = null;
     }
 
@@ -132,7 +115,7 @@ public class Tile : MonoBehaviour
         else if (attackable)
         {
             GameManager.Get().doAttackOn(creature);
-            GameManager.Get().setAllTilesToNotAttackable();
+            Board.instance.setAllTilesToDefault();
         }
         else
         {
@@ -147,7 +130,7 @@ public class Tile : MonoBehaviour
         if (activePlayer.heldCreature != null) // player was attacking or moving
         {
             activePlayer.heldCreature = null;
-            GameManager.Get().setAllTilesToDefault();
+            Board.instance.setAllTilesToDefault();
         }
     }
 
@@ -155,16 +138,13 @@ public class Tile : MonoBehaviour
     {
         Player playerWithCreature;
         if (GameManager.gameMode == GameManager.GameMode.online)
-        {
             playerWithCreature = NetInterface.Get().getLocalPlayer();
-        }
         else
-        {
             playerWithCreature = GameManager.Get().activePlayer;
-        }
         Creature creatureToMove = playerWithCreature.heldCreature;
-        GameManager.Get().moveCreatureToTile(creatureToMove, this);
-        GameManager.Get().setAllTilesToNotActive();
+        creatureToMove.move(this);
+        Board.instance.setAllTilesToDefault();
+        ActionBox.instance.show(creature);
         playerWithCreature.heldCreature = null;
     }
 

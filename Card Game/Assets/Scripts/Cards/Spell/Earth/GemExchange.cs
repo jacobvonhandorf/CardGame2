@@ -5,7 +5,7 @@ using UnityEngine;
 public class GemExchange : SpellCard
 {
     public override int cardId => 27;
-    public override List<Tile> legalTargetTiles => GameManager.Get().allTiles();
+    public override List<Tile> legalTargetTiles => Board.instance.allTiles;
     public override bool additionalCanBePlayedChecks() => owner.hand.getAllCardsWithTag(Tag.Gem).Count > 0;
 
     protected override void doEffect(Tile t)

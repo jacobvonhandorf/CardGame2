@@ -19,6 +19,18 @@ public class OptionSelectBox : MonoBehaviour
     private OptionBoxHandler handler;
     private bool finished = false;
 
+    private void Start()
+    {
+        return;
+        List<string> testOptions = new List<string>()
+        {
+            "Option A",
+            "Option B",
+            "Option C",
+        };
+        setUp(testOptions, "Test Test test", null);
+    }
+
     #region Command
     public static void CreateAndQueue(List<string> options, string headerText, Player owner, OptionBoxHandler handler)
     {
@@ -77,7 +89,6 @@ public class OptionSelectBox : MonoBehaviour
         backgroundSprite.size = new Vector2(backgroundWidth, backgroundHeight);
 
         // create a button for each option
-        optionButtonPrefab = GameManager.Get().getOptionButtonPrefab();
         int index = 0;
         foreach (string option in options)
         {

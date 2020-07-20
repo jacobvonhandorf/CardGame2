@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class HomeScreenManager : MonoBehaviour
 {
+    [SerializeField] private GameObject settingsMenu;
+
     public void onlineButtonPressed()
     {
         SceneManager.LoadScene(ScenesEnum.MMDeckSelect);
@@ -14,7 +16,6 @@ public class HomeScreenManager : MonoBehaviour
     public void hotSeatButtonPressed()
     {
         SceneManager.LoadScene(ScenesEnum.GameSetup);
-        //SceneManager.SetActiveScene(SceneManager.GetSceneByName("Hot Seat Game Mode"));
     }
 
     public void deckbuilderButtonPressed()
@@ -24,7 +25,7 @@ public class HomeScreenManager : MonoBehaviour
 
     public void settingsButtonPressed()
     {
-        throw new NotImplementedException();
+        settingsMenu.SetActive(true);
     }
 
     public void onQuitClicked()

@@ -27,12 +27,14 @@ public class InformativeAnimationsQueue : MonoBehaviour
         if (currentAnimation != null && currentAnimation.isFinished) // command finishes
         {
             currentAnimation = null;
-            NetInterface.Get().getLocalPlayer().removeLock(playingAnimationsLock);
+            if (NetInterface.Get().getLocalPlayer() != null)
+                NetInterface.Get().getLocalPlayer().removeLock(playingAnimationsLock);
         }
         if (animationQueue.Count == 0) // command is finished but there is no new command
             return;
         currentAnimation = animationQueue.Dequeue();
-        NetInterface.Get().getLocalPlayer().addLock(playingAnimationsLock);
+        if (NetInterface.Get().getLocalPlayer() != null)
+            NetInterface.Get().getLocalPlayer().addLock(playingAnimationsLock);
         currentAnimation.execute();
     }
 
