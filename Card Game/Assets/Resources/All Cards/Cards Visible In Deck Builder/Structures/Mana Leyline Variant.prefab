@@ -1,12 +1,12 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &309515218
+--- !u!114 &9142617629266027464
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6487509702800330498}
+  m_GameObject: {fileID: 1632760291471733659}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c1ddac0bca1887f42bd13e630468c0db, type: 3}
@@ -15,13 +15,14 @@ MonoBehaviour:
   owner: {fileID: 0}
   controller: {fileID: 0}
   tile: {fileID: 0}
-  sourceCard: {fileID: 6675632578457429181}
+  sourceCard: {fileID: 0}
   effectActionsCost: 0
   effectGoldCost: 0
   effectManaCost: 0
   health: 0
   baseHealth: 0
-  statsScript: {fileID: 6259392904245373851}
+  statsScript: {fileID: 0}
+  hoverTimeForToolTips: 0.5
 --- !u!1001 &1774242139252323963
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -93,7 +94,7 @@ PrefabInstance:
         type: 3}
       propertyPath: structure
       value: 
-      objectReference: {fileID: 309515218}
+      objectReference: {fileID: 0}
     - target: {fileID: 4916738532956115654, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: owner
@@ -280,33 +281,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6bc8d40ccc7ebdf4db06c7782aad2910, type: 3}
---- !u!114 &6675632578457429181 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4916738532956115654, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-    type: 3}
-  m_PrefabInstance: {fileID: 1774242139252323963}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 693617c42d79e7b47bd15e951f97f411, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &6487509702800330498 stripped
+--- !u!1 &1632760291471733659 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 4798335129178716537, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+  m_CorrespondingSourceObject: {fileID: 1024539257926108640, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
     type: 3}
   m_PrefabInstance: {fileID: 1774242139252323963}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &6259392904245373851 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5639223054565154272, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-    type: 3}
-  m_PrefabInstance: {fileID: 1774242139252323963}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cedc23185b022984691570e8bc15da9b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

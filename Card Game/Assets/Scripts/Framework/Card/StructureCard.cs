@@ -13,6 +13,12 @@ public class StructureCard : Card
     public override CardType getCardType() => CardType.Structure;
     public override int cardId => structure.cardId;
 
+    protected override void Awake()
+    {
+        base.Awake();
+        structure = GetComponent<Structure>();
+    }
+
     protected override void Start()
     {
         base.Start();
@@ -42,7 +48,7 @@ public class StructureCard : Card
         setSpritesToSortingLayer(SpriteLayers.Creature);
 
         // disable card functionality
-        gameObject.SetActive(false);
+        enabled = false;
 
         // enable creature functionality
         structure.gameObject.SetActive(true);
@@ -51,9 +57,7 @@ public class StructureCard : Card
         structure.initialize();
 
         // resize
-        if (!isStructure)
-            (cardStatsScript as StructureStatsGetter).swapToStructure(onTile);
-        //cardStatsScript.switchBetweenCreatureOrCard(this);
+        (cardStatsScript as StructureStatsGetter).swapToStructure(onTile);
 
         isStructure = true;
     }
@@ -61,7 +65,7 @@ public class StructureCard : Card
     internal void swapToCard()
     {
         // enable card functionality
-        gameObject.SetActive(true);
+        enabled = true;
 
         // disable structure functionality
         structure.gameObject.SetActive(false);

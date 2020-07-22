@@ -34,10 +34,10 @@ public class Player : MonoBehaviour
     public int numSpellsCastThisTurn = 0;
     public int numCreaturesThisTurn = 0;
     public int numStructuresThisTurn = 0;
+    public Dictionary<ExtraStatsKey, int> extraStats = new Dictionary<ExtraStatsKey, int>(); // use when scripting cards to store other stats that are attached to a player
+                                                                                                   // ex number of times a card with x name has been played by this player
 
-    private State state = State.Default;
     public Effect heldEffect;
-    //public bool locked;
 
     enum State {Default, Attacking, UsingEfect} // enum for defining what action the player is in the process of doing (ex: declaring attack, declaring targets for effect)
                                                     // not used right now. Might not ever use
@@ -246,16 +246,6 @@ public class Player : MonoBehaviour
     {
         return GameManager.Get().getOppositePlayer(this);
     }
-
-    public void readyAttack()
-    {
-        state = State.Attacking;
-    }
-    internal void readyEffect()
-    {
-        state = State.UsingEfect;
-    }
-
 
     private void syncPlayerStats()
     {

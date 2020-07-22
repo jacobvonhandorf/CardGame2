@@ -1,12 +1,12 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &840773132211300222
+--- !u!114 &366769218556168270
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 137191983873014186}
+  m_GameObject: {fileID: 5470538475893419663}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eee9516ec9a65314381c5de8f3d74b6b, type: 3}
@@ -17,9 +17,11 @@ MonoBehaviour:
   isBeingDragged: 0
   positionLocked: 0
   positionInHand: {x: 0, y: 0, z: 0}
-  cardStatsScript: {fileID: 837159052992034451}
+  cardStatsScript: {fileID: 0}
   viewersDisplayingThisCard: []
+  transformManager: {fileID: 0}
   positionOnScene: {x: 0, y: 0, z: 0}
+  hoverTimeForToolTips: 0.5
 --- !u!1001 &3247886646717556046
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -221,21 +223,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f30ba095c2be8fa4bbb42c9caddb391c, type: 3}
---- !u!1 &137191983873014186 stripped
+--- !u!1 &5470538475893419663 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 3239681133580754148, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+  m_CorrespondingSourceObject: {fileID: 7420118472789478337, guid: f30ba095c2be8fa4bbb42c9caddb391c,
     type: 3}
   m_PrefabInstance: {fileID: 3247886646717556046}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &837159052992034451 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2777841409611404253, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-    type: 3}
-  m_PrefabInstance: {fileID: 3247886646717556046}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f093f1f753f0fb94e9d171fa4d1c8a53, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

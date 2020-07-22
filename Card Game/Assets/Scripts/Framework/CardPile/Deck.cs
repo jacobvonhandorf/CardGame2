@@ -19,7 +19,7 @@ public class Deck : CardPile
         if (GameManager.gameMode == GameManager.GameMode.online)
         {
             foreach (Card c in GetComponentsInChildren<Card>())
-                Destroy(c.getRootTransform().gameObject);
+                Destroy(c.gameObject);
             return;
         }
         foreach (Card card in GetComponentsInChildren<CreatureCard>())
@@ -114,7 +114,7 @@ public class Deck : CardPile
         Debug.Log("Printing deck cardList");
         foreach(Card c in cardList)
         {
-            Debug.Log(c.getRootTransform().name);
+            Debug.Log(c.transform.name);
         }
     }
 
@@ -123,7 +123,7 @@ public class Deck : CardPile
     {
         foreach (Card c in cardList)
         {
-            Destroy(c.getRootTransform().gameObject);
+            Destroy(c.gameObject);
         }
         cardList.Clear();
         cardCountText.text = "0";

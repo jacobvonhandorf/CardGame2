@@ -230,7 +230,7 @@ public class GameManager : MonoBehaviour
     public void destroyCard(Card c)
     {
         Debug.Log("Destroy card not implemented yet");
-        Destroy(c.getRootTransform().gameObject);
+        Destroy(c.gameObject);
         // needs to sync card destruction if gameMode is online
     }
 
@@ -437,28 +437,28 @@ public class GameManager : MonoBehaviour
     }
 
     // places teh creature passed to it on the tile passed
-    public void createCreatureOnTile(Creature creature, Tile tile, Player owner, CreatureCard sourceCard)
+    public void createCreatureOnTile(Creature creature, Tile tile, Player owner)
     {
         creature.initialize();
-        createCreatureActual(sourceCard, tile, owner, creature);
+        createCreatureActual(tile, owner, creature);
         // sync creature creation
-        NetInterface.Get().syncPermanentPlaced(sourceCard, tile);
+        NetInterface.Get().syncPermanentPlaced(creature.sourceCard, tile);
 
         // trigger effects that need to be triggered
         creature.TriggerOnDeployed(this);
         TriggerCreaturePlayedEvents(this, new CreaturePlayedArgs() { creature = creature });
     }
 
-    private void createCreatureActual(CreatureCard sourceCard, Tile tile, Player owner, Creature creature)
+    private void createCreatureActual(Tile tile, Player owner, Creature creature)
     {
         // resize creature, stop treating it as a card and start treating it as a creature
-        sourceCard.swapToCreature(tile);
+        (creature.sourceCard as CreatureCard).swapToCreature(tile);
 
         // place creature in correct location
-        Vector3 newPostion = creature.getRootTransform().position;
+        Vector3 newPostion = creature.transform.position;
         newPostion.z = 1; // change z so that the card is always above tile and can be clicked
-        creature.getRootTransform().position = newPostion;
-        sourceCard.transformManager.enabled = true;
+        creature.transform.position = newPostion;
+        creature.sourceCard.transformManager.enabled = true;
 
         // set owner if it hasn't been set already
         creature.controller = owner;
@@ -484,7 +484,7 @@ public class GameManager : MonoBehaviour
         Debug.Log("Syncing creature placement");
         // animate showing card
         InformativeAnimationsQueue.instance.addAnimation(new ShowCardCmd(card, true, this));
-        createCreatureActual(card, tile, owner, card.creature);
+        createCreatureActual(tile, owner, card.creature);
     }
     private bool showCardFinished = false;
     private class ShowCardCmd : QueueableCommand
@@ -515,9 +515,9 @@ public class GameManager : MonoBehaviour
         tm.Lock();
         // set starting location
         if (fromTop)
-            card.getRootTransform().position = new Vector3(0, 10);
+            card.transform.position = new Vector3(0, 10);
         else
-            card.getRootTransform().position = new Vector3(0, -10);
+            card.transform.position = new Vector3(0, -10);
 
         // move to center of screen
         Transform cardTransform = card.transformManager.transform;
@@ -548,33 +548,34 @@ public class GameManager : MonoBehaviour
 
     private void createStructureOnTileActual(Structure structure, Tile tile, Player controller)
     {
-        StructureCard sourceCard = structure.sourceCard;
+        Card sourceCard = structure.sourceCard;
 
         // resize structure and stop treating it as a card and start treating is as a structure
-        sourceCard.swapToStructure(tile);
+        (sourceCard as StructureCard).swapToStructure(tile);
 
         // place structure in correct location
-        Vector3 newPosition = structure.getRootTransform().position;
+        Vector3 newPosition = structure.transform.position;
         newPosition.z = 1;
-        structure.getRootTransform().position = newPosition;
+        structure.transform.position = newPosition;
 
         // parent structure to board
-        structure.getRootTransform().SetParent(board.transform);
+        structure.transform.SetParent(board.transform);
 
         // move card from player's hand and parent it to the board
+        /*
         try
         {
-            controller.hand.removeCard(sourceCard).getRootTransform().SetParent(board.transform);
+            controller.hand.removeCard(sourceCard).getRootTransf.SetParent(board.transform);
         }
         catch (NullReferenceException e)
         {
             Debug.Log("Card not found in hand: " + e.Message);
         }
+        */
 
         tile.structure = structure;
         structure.tile = tile;
         structure.controller = controller;
-        structure.sourceCard = sourceCard;
         if (sourceCard.owner != null) // normal cards will already have an owner
             structure.owner = sourceCard.owner;
         else // "token" cards will not have an owner at this point so just use the controller
@@ -708,7 +709,6 @@ public class GameManager : MonoBehaviour
         if (validAttack)
         {
             activePlayer.heldCreature = creature;
-            activePlayer.readyAttack();
         }
         else
         {

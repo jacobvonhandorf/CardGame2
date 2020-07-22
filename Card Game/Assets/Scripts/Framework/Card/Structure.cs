@@ -12,7 +12,7 @@ public abstract class Structure : MonoBehaviour, Damageable
     public Player owner;
     public Player controller;
     public Tile tile;
-    public StructureCard sourceCard;
+    public Card sourceCard { get; private set; }
     public int effectActionsCost = 0;
     public int effectGoldCost = 0;
     public int effectManaCost = 0;
@@ -34,7 +34,9 @@ public abstract class Structure : MonoBehaviour, Damageable
 
     private void Awake()
     {
-        counterController = sourceCard.getCounterController();
+        counterController = GetComponentInChildren<CounterController>();
+        statsScript = GetComponent<StructureStatsGetter>();
+        sourceCard = GetComponent<StructureCard>();
     }
 
     public void initialize()
@@ -50,11 +52,6 @@ public abstract class Structure : MonoBehaviour, Damageable
         baseHealth = health;
 
         initialized = true;
-    }
-
-    public Transform getRootTransform()
-    {
-        return statsScript.getRootTransform();
     }
 
     public void takeDamage(int amount, Card source)
@@ -99,7 +96,6 @@ public abstract class Structure : MonoBehaviour, Damageable
     // if you want to kill a creature do not call this. Call destroy creature in game manager
     public void sendToGrave(Card source)
     {
-        sourceCard.isStructure = false;
         resetToBaseStats();
         sourceCard.moveToCardPile(owner.graveyard, null);
         sourceCard.removeGraphicsAndCollidersFromScene();
@@ -117,6 +113,8 @@ public abstract class Structure : MonoBehaviour, Damageable
 
     private void OnMouseUpAsButton()
     {
+        if (!enabled)
+            return;
         if (GameManager.Get().activePlayer != controller || controller.isLocked())
             return;
         if (getEffect() == null)
@@ -127,12 +125,16 @@ public abstract class Structure : MonoBehaviour, Damageable
     private bool hovered = false;
     private void OnMouseEnter()
     {
+        if (!enabled)
+            return;
         hovered = true;
         sourceCard.addToCardViewer(GameManager.Get().getCardViewer());
         StartCoroutine(checkHoverForTooltips());
     }
     private void OnMouseExit()
     {
+        if (!enabled)
+            return;
         hovered = false;
         foreach (CardViewer cv in sourceCard.viewersDisplayingThisCard)
             cv.clearToolTips();
@@ -217,7 +219,6 @@ public abstract class Structure : MonoBehaviour, Damageable
     {
         updateFriendOrFoeBorder();
     }
-    public Card getSourceCard() => sourceCard;
     #region Counters
     public void addCounters(CounterClass counterType, int amount)
     {

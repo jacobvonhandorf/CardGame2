@@ -163,7 +163,7 @@ public class NetInterface
     public void syncAttack(Creature attacker, Damageable defender, int damageRoll)
     {
         int attackerId = cardMap.get(attacker.sourceCard).netId;
-        int defenderId = cardMap.get(defender.getSourceCard()).netId;
+        int defenderId = cardMap.get(defender.sourceCard).netId;
 
         Net_SyncAttack msg = new Net_SyncAttack();
         msg.attackerId = attackerId;
@@ -181,7 +181,7 @@ public class NetInterface
         else if (card is StructureCard)
             defender = (card as StructureCard).structure;
         else
-            throw new Exception("Invalid defender for attack " + card.getRootTransform());
+            throw new Exception("Invalid defender for attack " + card.transform);
         attacker.Attack(defender, damageRoll);
     }
     public void syncPlayerStats(Player p)

@@ -1,12 +1,12 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &8718978376586546750
+--- !u!114 &2719618923345742868
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8512419985413115795}
+  m_GameObject: {fileID: 4336427971713685686}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 29e53512b8e2e8c418ac7a61e5e2a876, type: 3}
@@ -17,9 +17,11 @@ MonoBehaviour:
   isBeingDragged: 0
   positionLocked: 0
   positionInHand: {x: 0, y: 0, z: 0}
-  cardStatsScript: {fileID: 8960888067907092650}
+  cardStatsScript: {fileID: 0}
   viewersDisplayingThisCard: []
+  transformManager: {fileID: 0}
   positionOnScene: {x: 0, y: 0, z: 0}
+  hoverTimeForToolTips: 0.5
 --- !u!1001 &6545867931738280823
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -92,6 +94,12 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 21300000, guid: ba1431e8181b1b14a90ba49f05e54020,
+        type: 3}
+    - target: {fileID: 2612218924776104405, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 51cc112d96508b74e9e62fae5d19487c,
         type: 3}
     - target: {fileID: 2348075572656073411, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
@@ -219,29 +227,11 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 2612218924776104405, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 51cc112d96508b74e9e62fae5d19487c,
-        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f30ba095c2be8fa4bbb42c9caddb391c, type: 3}
---- !u!1 &8512419985413115795 stripped
+--- !u!1 &4336427971713685686 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 3239681133580754148, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+  m_CorrespondingSourceObject: {fileID: 7420118472789478337, guid: f30ba095c2be8fa4bbb42c9caddb391c,
     type: 3}
   m_PrefabInstance: {fileID: 6545867931738280823}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8960888067907092650 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2777841409611404253, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-    type: 3}
-  m_PrefabInstance: {fileID: 6545867931738280823}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f093f1f753f0fb94e9d171fa4d1c8a53, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

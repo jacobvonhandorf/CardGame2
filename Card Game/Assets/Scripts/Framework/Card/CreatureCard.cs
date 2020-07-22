@@ -9,13 +9,26 @@ public class CreatureCard : Card
     public Creature creature;
     [SerializeField] private CreatureStatsGetter creatureStatsScript;
     [SerializeField] private CounterController counterController;
-    public bool isCreature = false; // true when is being treated as a creature. False when treated as card
+    //public bool isCreature = false; // true when is being treated as a creature. False when treated as card
 
     public override int cardId => creature.cardId;
     public override CardType getCardType() => CardType.Creature;
     public override List<Tile> legalTargetTiles => GameManager.Get().getAllDeployableTiles(owner);
     public CounterController getCounterController() => counterController;
     public override List<Keyword> getInitialKeywords() => creature.getInitialKeywords();
+
+    protected override void Awake()
+    {
+        base.Awake();
+        Debug.Log("In creatureCard awake");
+        creature = GetComponent<Creature>();
+        creatureStatsScript = GetComponent<CreatureStatsGetter>();
+    }
+
+    private void OnDisable()
+    {
+        Debug.Log("CreatureCard disabled");
+    }
 
     public override void initialize()
     {
@@ -30,7 +43,7 @@ public class CreatureCard : Card
     {
         GameManager gameManager = GameManager.Get();
 
-        gameManager.createCreatureOnTile(creature, t, owner, this); // this makes the assumption that a card will always be played by it's owner
+        gameManager.createCreatureOnTile(creature, t, owner); // this makes the assumption that a card will always be played by it's owner
         setSpritesToSortingLayer(SpriteLayers.Creature);
         creatureStatsScript.setTextSortingLayer(SpriteLayers.CreatureAbove);
         phaseOut();
@@ -41,30 +54,28 @@ public class CreatureCard : Card
     internal void swapToCreature(Tile onTile)
     {
         // disable card functionality
-        gameObject.SetActive(false);
+        enabled = false;
 
         // enable creature functionality
-        creature.gameObject.SetActive(true);
+        creature.enabled = true;
 
         // resize
         creatureStatsScript.swapToCreature(this, onTile);
 
         // set card pile to board
         moveToCardPile(Board.instance, null); // null to signal by game mechanics
-
-        isCreature = true;
     }
 
     internal void swapToCard()
     {
         // enable card functinality
-        gameObject.SetActive(true);
+        enabled = true;
 
         // disable creature functionality
-        creature.gameObject.SetActive(false);
+        creature.enabled = true;
 
         // resize
-        creatureStatsScript.swapToCard(this);
+        creatureStatsScript.swapToCard();
 
         // no longer a creature so forget the tile it's on
         creature.currentTile = null;
@@ -73,8 +84,6 @@ public class CreatureCard : Card
 
         // counters don't say on cards when they aren't creatures so clear them
         counterController.clearAll();
-
-        isCreature = false;
     }
 
     public override void resetToBaseStats()

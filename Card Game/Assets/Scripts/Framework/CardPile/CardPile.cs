@@ -27,7 +27,7 @@ public abstract class CardPile : MonoBehaviour
             return;
         cardList.Add(c);
 
-        c.getRootTransform().SetParent(transform);
+        c.transform.SetParent(transform);
         onCardAdded(c);
     }
 

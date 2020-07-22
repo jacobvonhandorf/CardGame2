@@ -1,12 +1,12 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &4023620809185402325
+--- !u!114 &6745673209119214143
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7309989570649550439}
+  m_GameObject: {fileID: 3013670862256149246}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0bdaacab579ff1f4180b6d32d2468e79, type: 3}
@@ -15,13 +15,14 @@ MonoBehaviour:
   owner: {fileID: 0}
   controller: {fileID: 0}
   tile: {fileID: 0}
-  sourceCard: {fileID: 7196350938893436376}
+  sourceCard: {fileID: 0}
   effectActionsCost: 0
   effectGoldCost: 0
   effectManaCost: 0
   health: 0
   baseHealth: 0
-  statsScript: {fileID: 7613295406207027966}
+  statsScript: {fileID: 0}
+  hoverTimeForToolTips: 0.5
 --- !u!1001 &2874792620731258654
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -93,41 +94,56 @@ PrefabInstance:
         type: 3}
       propertyPath: structure
       value: 
-      objectReference: {fileID: 4023620809185402325}
-    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: m_text
-      value: Increase your gold income by 1 while you control this structure
       objectReference: {fileID: 0}
-    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 63
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.wordCount
-      value: 11
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.lineCount
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.pageCount
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
-      propertyPath: m_textInfo.spaceCount
-      value: 10
+      propertyPath: m_text
+      value: 4
       objectReference: {fileID: 0}
-    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 5213023479865107682, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
-      propertyPath: m_fontColor32.rgba
-      value: 4278190080
+      propertyPath: m_textInfo.characterCount
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5213023479865107682, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5213023479865107682, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5213023479865107682, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5213023479865107682, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+        type: 3}
+      propertyPath: m_text
+      value: Market
       objectReference: {fileID: 0}
     - target: {fileID: 7077602755901041962, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
@@ -174,57 +190,42 @@ PrefabInstance:
       propertyPath: m_textInfo.pageCount
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 5213023479865107682, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+        type: 3}
+      propertyPath: m_text
+      value: Increase your gold income by 1 while you control this structure
+      objectReference: {fileID: 0}
+    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 6
+      value: 63
       objectReference: {fileID: 0}
-    - target: {fileID: 5213023479865107682, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.wordCount
-      value: 1
+      value: 11
       objectReference: {fileID: 0}
-    - target: {fileID: 5213023479865107682, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.lineCount
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 5213023479865107682, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_textInfo.pageCount
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 5213023479865107682, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
-      propertyPath: m_text
-      value: Market
+      propertyPath: m_textInfo.spaceCount
+      value: 10
       objectReference: {fileID: 0}
-    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 1860083724658122749, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 1
+      propertyPath: m_fontColor32.rgba
+      value: 4278190080
       objectReference: {fileID: 0}
-    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6171379241733598415, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: m_text
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 719019182562246573, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 8066800186961034129, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_Mesh
       value: 
@@ -234,12 +235,7 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
-    - target: {fileID: 8066800186961034129, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 7025039981317298199, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+    - target: {fileID: 719019182562246573, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
         type: 3}
       propertyPath: m_Mesh
       value: 
@@ -249,35 +245,16 @@ PrefabInstance:
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 7025039981317298199, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6bc8d40ccc7ebdf4db06c7782aad2910, type: 3}
---- !u!114 &7196350938893436376 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4916738532956115654, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-    type: 3}
-  m_PrefabInstance: {fileID: 2874792620731258654}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 693617c42d79e7b47bd15e951f97f411, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &7309989570649550439 stripped
+--- !u!1 &3013670862256149246 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 4798335129178716537, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+  m_CorrespondingSourceObject: {fileID: 1024539257926108640, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
     type: 3}
   m_PrefabInstance: {fileID: 2874792620731258654}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7613295406207027966 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5639223054565154272, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
-    type: 3}
-  m_PrefabInstance: {fileID: 2874792620731258654}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cedc23185b022984691570e8bc15da9b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

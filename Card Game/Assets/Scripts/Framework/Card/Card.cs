@@ -33,7 +33,7 @@ public abstract class Card : MonoBehaviour
 
     private List<Tag> tags = new List<Tag>();
     //private List<CardKeywords> keywords = new List<CardKeywords>();
-    private string cardName;
+    public string cardName { get { return cardStatsScript.getCardName(); } }
     [HideInInspector] private bool hidden = true; // if true then all players can see the card
     [SerializeField] protected CardPile currentCardPile; // card pile the card is currently in. Use moveToCardPile to change
     public Player owner; // set this to readonly after done using TestCard
@@ -47,7 +47,7 @@ public abstract class Card : MonoBehaviour
     private int baseGoldCost;
     private int manaCost;
     private int baseManaCost;
-    private ElementIdentity elementIdentity;
+    private ElementIdentity elementIdentity { get { return cardStatsScript.getElementIdentity(); }}
 
     [SerializeField] protected CardStatsGetter cardStatsScript;
 
@@ -83,13 +83,20 @@ public abstract class Card : MonoBehaviour
     // Start is called before the first frame update
     protected virtual void Start()
     {
-        positionInHand = cardStatsScript.cardRoot.position;
-        tags = getTags();
+        positionInHand = transform.position;
+        tags = getInitialTags();
     }
-    private void Awake()
+    protected virtual void Awake()
     {
+        Debug.Log("Base awake");
         viewersDisplayingThisCard = new List<CardViewer>();
 
+        sprites = GetComponentsInChildren<SpriteRenderer>();
+        tmps = GetComponentsInChildren<TextMeshPro>();
+        setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
+        effectGraphic = EffectGraphic.NewEffectGraphic(this);
+        transformManager = GetComponent<TransformManager>();
+        cardStatsScript = GetComponent<CardStatsGetter>();
         try
         {
             cardStatsScript.setCardCosts(this);
@@ -100,21 +107,19 @@ public abstract class Card : MonoBehaviour
         {
             Debug.LogError("Error while parsing elements on card. Make sure Card script is linked to StatsGetter script");
         }
-
-        cardName = cardStatsScript.getCardName();
-        sprites = getRootTransform().GetComponentsInChildren<SpriteRenderer>();
-        tmps = getRootTransform().GetComponentsInChildren<TextMeshPro>();
-        setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
-        elementIdentity = cardStatsScript.getElementIdentity();
-        effectGraphic = EffectGraphic.NewEffectGraphic(this);
-        transformManager = getRootTransform().GetComponent<TransformManager>();
     }
 
-    // Returns true if this card has the the tag passed to this method
-    public bool hasTag(Tag tag)
+    #region Tags
+    public bool hasTag(Tag tag) => tags.Contains(tag);
+    public void addTag(Tag tag)
     {
-        return tags.Contains(tag);
+        tags.Add(tag);
     }
+    public void removeTag(Tag tag)
+    {
+        tags.Remove(tag);
+    }
+    #endregion
 
     /*
      * returns true if this card is the type passed to it
@@ -146,11 +151,13 @@ public abstract class Card : MonoBehaviour
      */
     public void phaseOut()
     {
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
+        enabled = false;
     }
     public void phaseIn()
     {
-        gameObject.SetActive(true);
+        //gameObject.SetActive(true);
+        enabled = true;
     }
 
     /*
@@ -185,7 +192,7 @@ public abstract class Card : MonoBehaviour
         currentCardPile = newPile;
 
         newPile.addCard(this);
-        TriggerAddedToCardPileEffects(source, new AddedToCardPileArgs(previousPile, newPile, source));
+        TriggerAddedToCardPileEffects(this, new AddedToCardPileArgs(previousPile, newPile, source));
     }
 
     public CardPile getCardPile() => currentCardPile;
@@ -195,6 +202,8 @@ public abstract class Card : MonoBehaviour
     // when card becomse hovered show it in the main card preview
     private void OnMouseEnter()
     {
+        if (!enabled)
+            return;
         GameManager.Get().getCardViewer().setCard(this);
 
         // also move card up a bit
@@ -209,6 +218,8 @@ public abstract class Card : MonoBehaviour
     // move card back down when it is no longer being hovered
     private void OnMouseExit()
     {
+        if (!enabled)
+            return;
         moveTo(positionInHand);
         hovered = false;
         foreach (CardViewer cv in viewersDisplayingThisCard)
@@ -220,6 +231,8 @@ public abstract class Card : MonoBehaviour
     private Vector3 offset;
     void OnMouseDown()
     {
+        if (!enabled)
+            return;
         if (owner.isLocked())
             return;
         if (positionLocked)
@@ -228,7 +241,7 @@ public abstract class Card : MonoBehaviour
         }
 
         isBeingDragged = true;
-        offset = getRootTransform().position -
+        offset = transform.position -
             Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.0f));
         Board.instance.setAllTilesToDefault();
         NetInterface.Get().getLocalPlayer().heldCreature = null;
@@ -249,6 +262,8 @@ public abstract class Card : MonoBehaviour
     }
     void OnMouseDrag()
     {
+        if (!enabled)
+            return;
         if (positionLocked || owner.isLocked())
         {
             Debug.Log("Card Position locked");
@@ -258,7 +273,7 @@ public abstract class Card : MonoBehaviour
             return;
 
         Vector3 newPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, -1.0f);
-        cardStatsScript.cardRoot.position = Camera.main.ScreenToWorldPoint(newPosition) + offset;
+        transform.position = Camera.main.ScreenToWorldPoint(newPosition) + offset;
         //isBeingDragged = true;
         Tile aboveTile = getTileMouseIsOver();
         if (aboveTile != null)
@@ -273,6 +288,8 @@ public abstract class Card : MonoBehaviour
     }
     private void OnMouseUp()
     {
+        if (!enabled)
+            return;
         if (owner.isLocked())
         {
             Debug.Log("Owner is locked");
@@ -377,8 +394,8 @@ public abstract class Card : MonoBehaviour
         //if (!onScene) not sure if this is needed. Commenting it out fixed card not going to grave when killed over network
         //    return;
 
-        positionOnScene = getRootTransform().position;
-        getRootTransform().position = new Vector3(99999f, 99999f, 99999f);
+        positionOnScene = transform.position;
+        transform.position = new Vector3(99999f, 99999f, 99999f);
         transformManager.Lock();
         transformManager.enabled = false;
         //interuptMove = true;
@@ -397,7 +414,7 @@ public abstract class Card : MonoBehaviour
 
         transformManager.enabled = true;
         transformManager.UnLock();
-        getRootTransform().position = positionOnScene;
+        transform.position = positionOnScene;
         onScene = true;
     }
     public bool isOnScene()
@@ -416,12 +433,6 @@ public abstract class Card : MonoBehaviour
         //StartCoroutine(moveToPositionCoroutine(position, smoothing));
     }
     #endregion
-
-    public Transform getRootTransform()
-    {
-        return cardStatsScript.cardRoot;
-    }
-
     #region Sprites
     public void setSpritesToSortingLayer(SpriteLayers layer)
     {
@@ -615,7 +626,7 @@ public abstract class Card : MonoBehaviour
     public virtual void initialize() { onInitialization(); }
     public virtual void onInitialization() { } // last thing to be called at the end of init
                                                 // use to register effects
-    protected virtual List<Tag> getTags() // TODO needs to be changed to getInitialTags
+    protected virtual List<Tag> getInitialTags() // TODO needs to be changed to getInitialTags
     {
         return tags;
     }

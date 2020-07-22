@@ -10,7 +10,7 @@ using static Card;
 public abstract class Creature : MonoBehaviour, Damageable
 {
     [SerializeField] private CreatureStatsGetter statsScript;
-    public CreatureCard sourceCard; // card associated with this creature
+    public Card sourceCard { get; private set; } // card associated with this creature
     public string cardName;
 
     // synced variables. Serialized for debugging purposes
@@ -27,6 +27,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     public Player controller;
     public bool hasMovedThisTurn = false;
     public bool hasDoneActionThisTurn = false; // action is attack or effect
+    //public Transform Transform => trans;
 
     internal bool canDeployFrom = false; // if new creatures can be deployed from this creature
     private bool initialized = false;
@@ -56,7 +57,14 @@ public abstract class Creature : MonoBehaviour, Damageable
 
     protected void Awake()
     {
-        counterController = sourceCard.getCounterController();
+        sourceCard = GetComponent<CreatureCard>();
+        statsScript = GetComponent<CreatureStatsGetter>();
+        counterController = GetComponentInChildren<CounterController>();
+        enabled = false;
+    }
+    private void OnDisable()
+    {
+        Debug.Log("Creature disabled");
     }
 
     public void initialize()
@@ -139,7 +147,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     }
     private void takeDamageActual(int damage, Card source)
     {
-        GameManager.Get().showDamagedText(getRootTransform().position, damage);
+        GameManager.Get().showDamagedText(transform.position, damage);
         setHealthWithoutKilling(currentHealth - damage);
         TriggerOnDamagedEvents(this, new OnDamagedArgs() { source = source });
         if (currentHealth <= 0)
@@ -174,41 +182,40 @@ public abstract class Creature : MonoBehaviour, Damageable
 
         // perform damage calc
         defender.takeDamage(attackRoll, sourceCard); // do damage text in takeDamage()
-        takeDamage(KeywordUtils.getDefenderValue(defender.getSourceCard()), sourceCard);
+        takeDamage(KeywordUtils.getDefenderValue(defender.sourceCard), sourceCard);
 
         // gray out creature to show it has already acted
         updateHasActedIndicators();
 
         // trigger after combat stuff
         // poison
-        if (hasKeyword(Keyword.poison) && defender.getSourceCard() is CreatureCard)
-            GameManager.Get().destroyCreature((defender.getSourceCard() as CreatureCard).creature);
+        if (hasKeyword(Keyword.poison) && defender.sourceCard is CreatureCard)
+            GameManager.Get().destroyCreature((defender.sourceCard as CreatureCard).creature);
     }
     private IEnumerator attackAnimation(Damageable defender, int attackRoll)
     {
-        Vector3 direction = getRootTransform().position - defender.getRootTransform().position;
+        Vector3 direction = transform.position - defender.transform.position;
         Vector2 defenderCoords = defender.getCoordinates();
-        Vector3 defenderPosition = defender.getRootTransform().position;
-        Transform root = getRootTransform();
+        Vector3 defenderPosition = defender.transform.position;
         direction.Normalize();
         float attackAnimationSpeedAway = 10f;
         float attackAnimationSpeedTowards = 20f;
 
         // move away to wind up
-        Vector3 returnTarget = getRootTransform().position;
-        Vector3 awayTarget = root.position;
+        Vector3 returnTarget = transform.position;
+        Vector3 awayTarget = transform.position;
         awayTarget += direction * .5f;
-        while (Vector3.Distance(root.position, awayTarget) > 0.05f)
+        while (Vector3.Distance(transform.position, awayTarget) > 0.05f)
         {
-            root.position = Vector3.MoveTowards(root.position, awayTarget, attackAnimationSpeedAway * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, awayTarget, attackAnimationSpeedAway * Time.deltaTime);
             yield return null;
         }
 
 
         // move in to hit
-        while (Vector3.Distance(root.position, returnTarget) > 0.05f)
+        while (Vector3.Distance(transform.position, returnTarget) > 0.05f)
         {
-            root.position =  Vector3.MoveTowards(root.position, returnTarget, attackAnimationSpeedTowards * Time.deltaTime);
+            transform.position =  Vector3.MoveTowards(transform.position, returnTarget, attackAnimationSpeedTowards * Time.deltaTime);
             yield return null;
         }
 
@@ -322,7 +329,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         updateHasActedIndicators();
         GameManager.Get().allCreatures.Remove(this);
         currentTile.creature = null;
-        statsScript.swapToCard(sourceCard);
+        statsScript.swapToCard();
         setSpriteColor(Color.white); // reset sprite color in case card is greyed out
         resetToBaseStats();
         sourceCard.moveToCardPile(sourceCard.owner.hand, source);
@@ -332,6 +339,8 @@ public abstract class Creature : MonoBehaviour, Damageable
 
     void OnMouseUpAsButton()
     {
+        if (!enabled)
+            return;
         if (GameManager.gameMode == GameManager.GameMode.online)
         {
             if (controller != NetInterface.Get().getLocalPlayer() || NetInterface.Get().getLocalPlayer().isLocked())
@@ -394,12 +403,16 @@ public abstract class Creature : MonoBehaviour, Damageable
     private bool hovered = false;
     private void OnMouseEnter()
     {
+        if (!enabled)
+            return;
         sourceCard.addToCardViewer(GameManager.Get().getCardViewer());
         hovered = true;
         StartCoroutine(checkHoverForTooltips());
     }
     private void OnMouseExit()
     {
+        if (!enabled)
+            return;
         hovered = false;
         foreach (CardViewer cv in sourceCard.viewersDisplayingThisCard)
             cv.clearToolTips();
@@ -408,13 +421,10 @@ public abstract class Creature : MonoBehaviour, Damageable
     // if you want to kill a creature do not call this. Call destroy creature in game manager
     public void sendToGrave()
     {
-        sourceCard.isCreature = false;
         resetToBaseStats();
         sourceCard.moveToCardPile(sourceCard.owner.graveyard, null);
         sourceCard.removeGraphicsAndCollidersFromScene();
     }
-
-    public Transform getRootTransform() => statsScript.cardRoot;
 
     #region basicStatsGettersAndSetters
     // health

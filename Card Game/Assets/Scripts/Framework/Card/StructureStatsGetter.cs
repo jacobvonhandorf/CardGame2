@@ -112,7 +112,7 @@ public class StructureStatsGetter : CardStatsGetter
         public override void execute()
         {
             statsGetter.resizeToCreatureFinished = false;
-            statsGetter.StartCoroutine(statsGetter.resizeToCreature(statsGetter.cardRoot, newRootScale, iconsToResize, newIconScale, newPostion));
+            statsGetter.StartCoroutine(statsGetter.resizeToCreature(statsGetter.transform, newRootScale, iconsToResize, newIconScale, newPostion));
         }
     }
 
@@ -182,12 +182,7 @@ public class StructureStatsGetter : CardStatsGetter
         }
 
         Vector3 newRootScale = new Vector3(.5f, .5f, 1);
-        cardRoot.localScale = newRootScale;
-    }
-
-    public Transform getRootTransform()
-    {
-        return cardRoot;
+        transform.localScale = newRootScale;
     }
 
     // used to update the friend or foe border

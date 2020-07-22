@@ -18,7 +18,7 @@ public class ManaWorm : Creature
 
     private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastArgs e)
     {
-        if (e.spell.owner == controller && sourceCard.isCreature)
+        if (e.spell.owner == controller)
         {
             addAttack(1);
         }

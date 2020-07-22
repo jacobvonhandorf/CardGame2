@@ -57,14 +57,11 @@ public class ResourceManager : MonoBehaviour
         structureGameObject = Instantiate(structureGameObject);
 
         Structure structure = structureGameObject.transform.Find("Graphics Root/Structure Script").GetComponent<Structure>();
-        StructureCard sourceCard = structureGameObject.GetComponentInChildren<StructureCard>();
         StructureStatsGetter statsScript = structureGameObject.GetComponentInChildren<StructureStatsGetter>();
 
-        structure.sourceCard = sourceCard;
         structure.owner = owner;
         structure.controller = owner;
         structure.setStatsScript(statsScript);
-        sourceCard.structure = structure;
 
         return structure;
     }

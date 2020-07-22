@@ -27,7 +27,7 @@ public class ArcaneNovice : Creature
 
     private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastArgs e)
     {
-        if (sourceCard.isCreature && hasCounter(Counters.arcane) > 0 && e.spell.owner == controller)
+        if (enabled && hasCounter(Counters.arcane) > 0 && e.spell.owner == controller)
         {
             controller.drawCard();
             removeCounters(Counters.arcane, 1);

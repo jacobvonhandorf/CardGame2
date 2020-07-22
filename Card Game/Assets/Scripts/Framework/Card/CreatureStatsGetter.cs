@@ -69,7 +69,7 @@ public class CreatureStatsGetter : CardStatsGetter
         public override void execute()
         {
             statsGetter.resizeToCreatureFinished = false;
-            statsGetter.StartCoroutine(statsGetter.resizeToCreature(statsGetter.cardRoot, newRootScale, iconsToResize, newIconScale, newPostion));
+            statsGetter.StartCoroutine(statsGetter.resizeToCreature(statsGetter.transform, newRootScale, iconsToResize, newIconScale, newPostion));
         }
     }
 
@@ -85,7 +85,6 @@ public class CreatureStatsGetter : CardStatsGetter
         Vector3 positionEnd = newPosition;
         Vector3 scaleStart = cardRoot.localScale;
         Vector3 scaleEnd = newRootScale;
-        Debug.LogError(positionEnd);
         // resize root
         float currentPercentage = 0;
         float timeForTotalAnimation = .3f;
@@ -115,7 +114,7 @@ public class CreatureStatsGetter : CardStatsGetter
 
     // called when a creature leaves the field and needs to act like a card again
     // if the topology of a card is changed this method may need to be changed
-    public void swapToCard(CreatureCard card)
+    public void swapToCard()
     {
         friendOrFoeBorder.gameObject.SetActive(false);
 
@@ -131,7 +130,7 @@ public class CreatureStatsGetter : CardStatsGetter
         }
 
         Vector3 newRootScale = new Vector3(.5f, .5f, 1);
-        cardRoot.localScale = newRootScale;
+        transform.localScale = newRootScale;
     }
 
     // sets the card viewer to the card attached to this stats getter

@@ -1,12 +1,12 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &1594695816
+--- !u!114 &8005896174290953090
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7616297049662475913}
+  m_GameObject: {fileID: 2575675754533558700}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ed1f9667bdbf03341b83c4b691dfe87c, type: 3}
@@ -17,8 +17,11 @@ MonoBehaviour:
   isBeingDragged: 0
   positionLocked: 0
   positionInHand: {x: 0, y: 0, z: 0}
-  cardStatsScript: {fileID: 7191066666856563120}
+  cardStatsScript: {fileID: 0}
+  viewersDisplayingThisCard: []
+  transformManager: {fileID: 0}
   positionOnScene: {x: 0, y: 0, z: 0}
+  hoverTimeForToolTips: 0.5
 --- !u!1001 &4992008206166348397
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -101,81 +104,12 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: 0.92
       objectReference: {fileID: 0}
-    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+    - target: {fileID: 3229681692039047396, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 44
-      objectReference: {fileID: 0}
-    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 0b6d4880204a87f4b908752faedf91ea,
         type: 3}
-      propertyPath: m_textInfo.spaceCount
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_text
-      value: Return all creature's to their owner's hand.
-      objectReference: {fileID: 0}
-    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_text
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2348075572656073411, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -206,23 +140,92 @@ PrefabInstance:
       propertyPath: m_textInfo.spaceCount
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 3229681692039047396, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
-      propertyPath: m_Sprite
+      propertyPath: m_textInfo.characterCount
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 354915078557109928, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9035081783321408059, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_text
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 44
+      objectReference: {fileID: 0}
+    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8151008708419457500, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_text
+      value: Return all creature's to their owner's hand.
+      objectReference: {fileID: 0}
+    - target: {fileID: 521682469348668848, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+        type: 3}
+      propertyPath: m_Mesh
       value: 
-      objectReference: {fileID: 21300000, guid: 0b6d4880204a87f4b908752faedf91ea,
-        type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 7004244579710857612, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_Mesh
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 8421197355409777506, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 521682469348668848, guid: f30ba095c2be8fa4bbb42c9caddb391c,
         type: 3}
       propertyPath: m_Mesh
       value: 
@@ -234,21 +237,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f30ba095c2be8fa4bbb42c9caddb391c, type: 3}
---- !u!1 &7616297049662475913 stripped
+--- !u!1 &2575675754533558700 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 3239681133580754148, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+  m_CorrespondingSourceObject: {fileID: 7420118472789478337, guid: f30ba095c2be8fa4bbb42c9caddb391c,
     type: 3}
   m_PrefabInstance: {fileID: 4992008206166348397}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &7191066666856563120 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2777841409611404253, guid: f30ba095c2be8fa4bbb42c9caddb391c,
-    type: 3}
-  m_PrefabInstance: {fileID: 4992008206166348397}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f093f1f753f0fb94e9d171fa4d1c8a53, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

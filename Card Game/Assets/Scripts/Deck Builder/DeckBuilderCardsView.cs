@@ -89,7 +89,14 @@ public class DeckBuilderCardsView : MonoBehaviour
                 Debug.LogError(newGameObject + " had no Card component");
                 continue;
             }
-            cardIdMap.Add(newCard.cardId, newCard);
+            try
+            {
+                cardIdMap.Add(newCard.cardId, newCard);
+            } catch (NullReferenceException e)
+            {
+                Debug.Log("Check for missing creature/structure component on " + newCard.gameObject);
+                throw e;
+            }
             newCard.removeGraphicsAndCollidersFromScene();
             returnList.Add(newCard);
         }

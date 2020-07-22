@@ -24,7 +24,7 @@ public class VivianTheUntouchable : Creature
         if (e.newCardPile is Hand && e.source != null)
             SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllDeployableTiles(sourceCard.owner), delegate (Tile t)
             {
-                GameManager.Get().createCreatureOnTile(this, t, sourceCard.owner, sourceCard);
+                GameManager.Get().createCreatureOnTile(this, t, sourceCard.owner);
             });
     }
 }

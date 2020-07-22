@@ -1,19 +1,19 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &1401671416
+--- !u!114 &5649654679118156116
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7420229950826300047}
+  m_GameObject: {fileID: 3051481998421802518}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8b3d10d0ee380cb4db0a22665efbd21f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  statsScript: {fileID: 4370680219160477115}
-  sourceCard: {fileID: 7056442993406410202}
+  statsScript: {fileID: 0}
+  sourceCard: {fileID: 0}
   cardName: 
   baseHealth: 0
   baseAttack: 0
@@ -23,11 +23,11 @@ MonoBehaviour:
   attack: 0
   range: 0
   movement: 0
-  effectActionCost: 1
   currentTile: {fileID: 0}
   controller: {fileID: 0}
   hasMovedThisTurn: 0
   hasDoneActionThisTurn: 0
+  hoverTimeForToolTips: 0.5
 --- !u!1001 &5433701071352396331
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -119,7 +119,7 @@ PrefabInstance:
         type: 3}
       propertyPath: creature
       value: 
-      objectReference: {fileID: 1401671416}
+      objectReference: {fileID: 0}
     - target: {fileID: 8563266676545232416, guid: 54dd3f0ca07c104429e52ed9eb04601e,
         type: 3}
       propertyPath: m_text
@@ -434,33 +434,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 54dd3f0ca07c104429e52ed9eb04601e, type: 3}
---- !u!114 &7056442993406410202 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3064110009858525169, guid: 54dd3f0ca07c104429e52ed9eb04601e,
-    type: 3}
-  m_PrefabInstance: {fileID: 5433701071352396331}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca0d4bdb06c171b4984d9d95f197269f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &7420229950826300047 stripped
+--- !u!1 &3051481998421802518 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 3283565609637984420, guid: 54dd3f0ca07c104429e52ed9eb04601e,
+  m_CorrespondingSourceObject: {fileID: 7003494207221417021, guid: 54dd3f0ca07c104429e52ed9eb04601e,
     type: 3}
   m_PrefabInstance: {fileID: 5433701071352396331}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &4370680219160477115 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8633300247516055440, guid: 54dd3f0ca07c104429e52ed9eb04601e,
-    type: 3}
-  m_PrefabInstance: {fileID: 5433701071352396331}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8faaa84e21273764ebce0961327a25ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

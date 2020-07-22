@@ -5,7 +5,6 @@ using static Card;
 
 public abstract class CardStatsGetter : MonoBehaviour
 {
-    public Transform cardRoot;
     // public Transform cardGraphicsRoot;
     [SerializeField] protected TextMeshPro manaText1;
     [SerializeField] protected TextMeshPro manaText2;
