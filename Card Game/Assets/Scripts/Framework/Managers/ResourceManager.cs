@@ -71,14 +71,7 @@ public class ResourceManager : MonoBehaviour
         if (idToPathPairs == null)
             setupNameToPathPairs();
         string pathToCard;
-        try
-        {
-            pathToCard = idToPathPairs[id];
-        } catch (KeyNotFoundException e)
-        {
-            Debug.LogError("Id not found + " + id);
-            throw e;
-        }
+        pathToCard = idToPathPairs[id];
         GameObject gameObject = Resources.Load(pathToCard) as GameObject;
         if (gameObject == null)
         {
@@ -89,9 +82,6 @@ public class ResourceManager : MonoBehaviour
         if (card == null)
             throw new System.Exception("Error loading card from resources");
 
-        // if online game is in progress then sync the new card
-        //if (GameManager.Get().gameInProgress && GameManager.gameMode == GameManager.GameMode.online && syncAcrossNetwork)
-        //    NetInterface.Get().syncNewCardToOpponent(card);
         return card;
     }
 

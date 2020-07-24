@@ -9,6 +9,7 @@ public class SlaveToMana : Creature
     private const string NO = "No";
 
     public override int cardId => CARD_ID;
+    public override List<Card.Tag> getInitialTags() => new List<Card.Tag>() { Card.Tag.Arcane };
 
     public override void onInitialization()
     {
@@ -57,11 +58,4 @@ public class SlaveToMana : Creature
         }
     }
 
-    public override List<Card.Tag> getTags()
-    {
-        return new List<Card.Tag>()
-        {
-            Card.Tag.Arcane
-        };
-    }
 }

@@ -26,7 +26,7 @@ public class Garnet : SpellCard
         }
     }
 
-    protected override List<Tag> getTags()
+    protected override List<Tag> getInitialTags()
     {
         List<Tag> tags = new List<Tag>();
         tags.Add(Tag.Gem);

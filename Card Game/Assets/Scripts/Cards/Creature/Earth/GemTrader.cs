@@ -5,7 +5,6 @@ using UnityEngine;
 public class GemTrader : Creature
 {
     public override int cardId => 70;
-    public override List<Keyword> getInitialKeywords() => new List<Keyword>() { Keyword.deploy };
 
     public override void onInitialization()
     {

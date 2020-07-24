@@ -31,7 +31,7 @@ public class StructureCard : Card
     }
 
 
-    protected override List<Tag> getTags()
+    protected override List<Tag> getInitialTags()
     {
         return structure.getTags();
     }
@@ -105,9 +105,4 @@ public class StructureCard : Card
     }
 
     public CounterController getCounterController() => counterCountroller;
-
-    public override List<Keyword> getInitialKeywords()
-    {
-        return structure.getInitialKeywords();
-    }
 }

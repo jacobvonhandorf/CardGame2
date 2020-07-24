@@ -5,7 +5,7 @@ using UnityEngine;
 public class FairyGeneral : Creature
 {
     public override int cardId => 49;
-    public override List<Card.Tag> getTags() => new List<Card.Tag>() { Card.Tag.Fairy };
+    public override List<Card.Tag> getInitialTags() => new List<Card.Tag>() { Card.Tag.Fairy };
 
     private void OnEnable()
     {

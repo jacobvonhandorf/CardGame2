@@ -6,7 +6,7 @@ public class Ruby : SpellCard
 {
     public override int cardId => 21;
     public override List<Tile> legalTargetTiles => new List<Tile>();
-    protected override List<Tag> getTags() => new List<Tag>() { Tag.Gem };
+    protected override List<Tag> getInitialTags() => new List<Tag>() { Tag.Gem };
 
     public override void onInitialization()
     {

@@ -5,7 +5,7 @@ using UnityEngine;
 public class Topaz : SpellCard
 {
     public override int cardId => 20;
-    protected override List<Tag> getTags() => new List<Tag>() { Tag.Gem };
+    protected override List<Tag> getInitialTags() => new List<Tag>() { Tag.Gem };
     public override List<Tile> legalTargetTiles => new List<Tile>();
 
     public override void onInitialization()

@@ -11,7 +11,6 @@ public class StructureStatsGetter : CardStatsGetter
 
     [SerializeField] private TextMeshPro hpText;
     [SerializeField] private SpriteRenderer friendOrFoeBorder;
-    public TextMeshPro effectText; // must be public so HQ can set effect text
 
     public override void setCardViewer(CardViewer viewer)
     {
@@ -24,7 +23,6 @@ public class StructureStatsGetter : CardStatsGetter
         viewer.setManaActive(manaText1.gameObject.activeInHierarchy);
         viewer.setManaLowerActive(manaText2.gameObject.activeInHierarchy);
         viewer.setFullBodyTextActive(true);
-        viewer.setArmorActive(false);
         viewer.setAttackActive(false);
         viewer.setMoveActive(false);
         viewer.setHalfBodyTextActive(false);
@@ -34,7 +32,7 @@ public class StructureStatsGetter : CardStatsGetter
         viewer.goldText.text = goldText.text;
         viewer.manaText1.text = manaText1.text;
         viewer.manaText2.text = manaText2.text;
-        viewer.fullBodyText.text = bodyText.text;
+        viewer.fullBodyText.text = effectText.text;
         viewer.nameText.text = nameText.text;
         viewer.typeText.text = typeText.text;
 
@@ -65,20 +63,6 @@ public class StructureStatsGetter : CardStatsGetter
         else
             hpText.color = Color.white;
     }
-
-    /*
-    public void switchBetweenStructureOrCard(StructureCard structureCard)
-    {
-        if (structureCard.isStructure)
-        {
-            swapToCard();
-        }
-        else
-        {
-            swapToStructure();
-        }
-    }
-    */
 
     public void swapToStructure(Tile structureTile)
     {

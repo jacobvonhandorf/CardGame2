@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a53d22fb8d4c2f46991850ee8d1c547, type: 3}
+  m_Name: Engineer
+  m_EditorClassIdentifier: 
+  id: 61
+  cardName: Engineer
+  art: {fileID: 21300000, guid: e4cee17eeb3d41045ac31ce39b8dfdbc, type: 3}
+  effectText: 'This creature starts with 3 build counters.\nAction, Remove one build
+    counter: Place your choice of a Market, Altar, or Tower on an adjacent tile.\n<b>Quick,
+    Untargetable'
+  manaCost: 0
+  goldCost: 2
+  elementalIdentity: 4
+  tags: 
+  keywords: 0000000001000000
+  health: 2
+  attack: 1
+  movement: 3
+  range: 1
+  activatedEffects:
+  - {fileID: 3456646298372034904, guid: 2d7df10023118204da0c4ba36167bb78, type: 3}

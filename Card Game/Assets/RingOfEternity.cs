@@ -27,7 +27,7 @@ public class RingOfEternity : SpellCard
         Creature targetCreature = t.creature;
         // add last breath effect
         targetCreature.sourceCard.E_AddedToCardPile += SourceCard_E_AddedToCardPile;
-        targetCreature.addKeyword(Keyword.lastBreath);
+        targetCreature.addKeyword(Keyword.LastBreath);
 
         if (owner.extraStats[ExtraStatsKey.NumRingOfEternityPlayed] >= FIRST_THRESHOLD)
         {
@@ -61,10 +61,10 @@ public class RingOfEternity : SpellCard
             }
 
             // make sure to remove effect and tool tip
-            effectCreature.removeKeyword(Keyword.lastBreath);
+            effectCreature.removeKeyword(Keyword.LastBreath);
             effectCreature.sourceCard.E_AddedToCardPile -= SourceCard_E_AddedToCardPile;
         }
     }
 
-    protected override List<Tag> getTags() => new List<Tag>() { Tag.Arcane };
+    protected override List<Tag> getInitialTags() => new List<Tag>() { Tag.Arcane };
 }

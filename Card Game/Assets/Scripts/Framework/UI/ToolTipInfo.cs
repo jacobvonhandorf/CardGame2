@@ -9,7 +9,7 @@ public abstract class ToolTipInfo
     #endregion
 
     // convert keyword to tool tip
-    public static ToolTipInfo getToolTipInfoFromKeyword(Keyword k) => new KeywordInfo(k);
+    public static ToolTipInfo getToolTipInfoFromKeyword(KeywordData k) => new KeywordInfo(k);
 
     #region Properties
     public abstract string headerText { get; }
@@ -19,10 +19,10 @@ public abstract class ToolTipInfo
     #region Data
     private class KeywordInfo : ToolTipInfo
     {
-        public Keyword keyword;
+        public KeywordData keyword;
         public override string headerText => keyword.Name;
         public override string descriptionText => keyword.DescriptionText;
-        public KeywordInfo(Keyword k)
+        public KeywordInfo(KeywordData k)
         {
             keyword = k;
         }

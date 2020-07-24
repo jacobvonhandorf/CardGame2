@@ -6,8 +6,7 @@ public class PowerMage : Creature
 {
     public const int CARD_ID = 80;
     public override int cardId => CARD_ID;
-    public override List<Card.Tag> getTags() => new List<Card.Tag>() { Card.Tag.Arcane };
-    public override List<Keyword> getInitialKeywords() => new List<Keyword>() { Keyword.deploy };
+    public override List<Card.Tag> getInitialTags() => new List<Card.Tag>() { Card.Tag.Arcane };
 
     private static List<Card> cardReferences = new List<Card>();
 

@@ -5,8 +5,7 @@ using UnityEngine;
 public class VivianTheUntouchable : Creature
 {
     public override int cardId => 45;
-    public override List<Keyword> getInitialKeywords() => new List<Keyword>() { Keyword.quick };
-    public override List<Card.Tag> getTags() => new List<Card.Tag>() { Card.Tag.Fairy };
+    public override List<Card.Tag> getInitialTags() => new List<Card.Tag>() { Card.Tag.Fairy };
 
     public override void onInitialization()
     {

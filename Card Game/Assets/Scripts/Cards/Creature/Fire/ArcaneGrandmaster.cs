@@ -15,11 +15,6 @@ public class ArcaneGrandmaster : Creature
         return 1;
     }
 
-    public override List<Keyword> getInitialKeywords()
-    {
-        return new List<Keyword>() { Keyword.deploy };
-    }
-
     public override void onInitialization()
     {
         GameEvents.E_SpellCast += GameEvents_E_SpellCast;

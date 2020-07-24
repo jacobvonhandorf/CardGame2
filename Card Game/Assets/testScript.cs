@@ -9,18 +9,15 @@ using UnityEngine.SceneManagement;
 
 public class TestScript : MonoBehaviour
 {
-    public CardPicker prefab;
+    public CardData creatureData;
 
     private void Start()
     {
         // setup test
-        GameObject go = Instantiate(new GameObject("Animations Queue"));
-        go.AddComponent<InformativeAnimationsQueue>();
+        //Card testCard = ResourceManager.Get().instantiateCardById(GemMercenary.CARD_ID);
+        //Creature testCreature = (testCard as CreatureCard).creature;
+        CardBuilder.Instance.BuildFromCardData(creatureData);
 
-        XPickerBox.CreateAndQueue(0, 5, "Test", null, delegate (int x)
-        {
-            Debug.Log("X = " + x);
-        });
     }
 
     private void doTestOnKeyPress()

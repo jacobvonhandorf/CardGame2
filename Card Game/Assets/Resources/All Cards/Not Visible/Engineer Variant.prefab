@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   statsScript: {fileID: 0}
-  sourceCard: {fileID: 0}
   cardName: 
   baseHealth: 0
   baseAttack: 0
@@ -28,6 +27,7 @@ MonoBehaviour:
   hasMovedThisTurn: 0
   hasDoneActionThisTurn: 0
   hoverTimeForToolTips: 0.5
+  data: {fileID: 11400000, guid: 26b245b893be0224d9045946e2b37c8d, type: 2}
 --- !u!1001 &692853264362111039
 PrefabInstance:
   m_ObjectHideFlags: 0

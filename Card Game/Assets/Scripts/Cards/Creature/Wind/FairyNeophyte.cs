@@ -7,8 +7,7 @@ public class FairyNeophyte : Creature
 {
     public const int CARD_ID = 46;
     public override int cardId => CARD_ID;
-    public override List<Tag> getTags() => new List<Tag>() { Tag.Fairy };
-    public override List<Keyword> getInitialKeywords() => new List<Keyword>() { Keyword.deploy };
+    public override List<Tag> getInitialTags() => new List<Tag>() { Tag.Fairy };
 
     public override void onInitialization()
     {

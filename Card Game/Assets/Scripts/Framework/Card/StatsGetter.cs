@@ -9,8 +9,8 @@ public abstract class CardStatsGetter : MonoBehaviour
     [SerializeField] protected TextMeshPro manaText1;
     [SerializeField] protected TextMeshPro manaText2;
     [SerializeField] protected TextMeshPro goldText;
-    [SerializeField] protected TextMeshPro nameText;
-    [SerializeField] protected TextMeshPro bodyText;
+    [SerializeField] public TextMeshPro nameText;
+    [SerializeField] public TextMeshPro effectText;
     [SerializeField] protected TextMeshPro typeText;
     [SerializeField] protected SpriteRenderer background;
     [SerializeField] protected SpriteRenderer cardArt;
@@ -62,7 +62,7 @@ public abstract class CardStatsGetter : MonoBehaviour
 
     public string getEffectText()
     {
-        return bodyText.text;
+        return effectText.text;
     }
 
     public SpriteRenderer getBackgroundSprite()
@@ -72,6 +72,10 @@ public abstract class CardStatsGetter : MonoBehaviour
     public SpriteRenderer getArtSprite()
     {
         return cardArt;
+    }
+    public void setSprite(Sprite sprite)
+    {
+        cardArt.sprite = sprite;
     }
 
     public abstract void setCardViewer(CardViewer viewer);
@@ -131,7 +135,27 @@ public abstract class CardStatsGetter : MonoBehaviour
 
     public void setElementIdentity(ElementIdentity newId)
     {
-        background.sprite.name = elementIdToString(newId);
+
+        background.sprite = elementIdToSprite(newId);
+    }
+
+    private Sprite elementIdToSprite(ElementIdentity eId)
+    {
+        switch (eId)
+        {
+            case ElementIdentity.Fire:
+                return fireBackground;
+            case ElementIdentity.Water:
+                return waterBackground;
+            case ElementIdentity.Wind:
+                return windBackground;
+            case ElementIdentity.Earth:
+                return earthBackground;
+            case ElementIdentity.Nuetral:
+                return earthBackground;
+            default:
+                return earthBackground;
+        }
     }
 
     private string elementIdToString(ElementIdentity eId)

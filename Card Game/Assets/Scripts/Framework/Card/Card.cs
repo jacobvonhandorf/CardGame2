@@ -33,7 +33,7 @@ public abstract class Card : MonoBehaviour
 
     private List<Tag> tags = new List<Tag>();
     //private List<CardKeywords> keywords = new List<CardKeywords>();
-    public string cardName { get { return cardStatsScript.getCardName(); } }
+    public string cardName;
     [HideInInspector] private bool hidden = true; // if true then all players can see the card
     [SerializeField] protected CardPile currentCardPile; // card pile the card is currently in. Use moveToCardPile to change
     public Player owner; // set this to readonly after done using TestCard
@@ -49,7 +49,7 @@ public abstract class Card : MonoBehaviour
     private int baseManaCost;
     private ElementIdentity elementIdentity { get { return cardStatsScript.getElementIdentity(); }}
 
-    [SerializeField] protected CardStatsGetter cardStatsScript;
+    [SerializeField] public CardStatsGetter cardStatsScript;
 
     protected SpriteRenderer[] sprites; // all sprites so card alpha can be changed all at once
     protected TextMeshPro[] tmps; // all text objects for this card
@@ -88,7 +88,6 @@ public abstract class Card : MonoBehaviour
     }
     protected virtual void Awake()
     {
-        Debug.Log("Base awake");
         viewersDisplayingThisCard = new List<CardViewer>();
 
         sprites = GetComponentsInChildren<SpriteRenderer>();
@@ -97,16 +96,7 @@ public abstract class Card : MonoBehaviour
         effectGraphic = EffectGraphic.NewEffectGraphic(this);
         transformManager = GetComponent<TransformManager>();
         cardStatsScript = GetComponent<CardStatsGetter>();
-        try
-        {
-            cardStatsScript.setCardCosts(this);
-        } catch (FormatException)
-        {
-            Debug.LogError("Error while parsing elements on card. Check that all cards have proper values set in their text fields");
-        } catch (NullReferenceException)
-        {
-            Debug.LogError("Error while parsing elements on card. Make sure Card script is linked to StatsGetter script");
-        }
+        cardStatsScript.setCardCosts(this);
     }
 
     #region Tags
@@ -121,9 +111,7 @@ public abstract class Card : MonoBehaviour
     }
     #endregion
 
-    /*
-     * returns true if this card is the type passed to it
-     */
+    // returns true if this card is the type passed to it
     public bool isType(CardType type)
     {
         return getCardType().Equals(type);
@@ -145,27 +133,16 @@ public abstract class Card : MonoBehaviour
     }
 
     /*
-     * Makes card not visible or affect game 
      * Used when a creature card is played so the 'card' doesn't exist anywhere
      * but will need to be put in grave if creature dies so it can't be destroyed
      */
     public void phaseOut()
     {
-        //gameObject.SetActive(false);
         enabled = false;
     }
     public void phaseIn()
     {
-        //gameObject.SetActive(true);
         enabled = true;
-    }
-
-    /*
-     * Makes the card visible to both players regardless of where it is at
-     */
-    public void reveal()
-    {
-        throw new NotImplementedException();
     }
 
     // move card to a pile and remove it from the old one
@@ -224,7 +201,11 @@ public abstract class Card : MonoBehaviour
         hovered = false;
         foreach (CardViewer cv in viewersDisplayingThisCard)
             cv.clearToolTips();
-        //transformManager.UnLock();
+    }
+    private void OnDisable()
+    {
+        foreach (CardViewer cv in viewersDisplayingThisCard)
+            cv.clearToolTips();
     }
     #endregion
     #region ClickAndDrag
@@ -563,12 +544,12 @@ public abstract class Card : MonoBehaviour
     public void addKeyword(Keyword keyword)
     {
         keywordList.Add(keyword);
-        toolTipInfos.Add(keyword.info);
+        toolTipInfos.Add(KeywordData.getData(keyword).info);
     }
     public void removeKeyword(Keyword keyword)
     {
         keywordList.Remove(keyword);
-        toolTipInfos.Remove(keyword.info);
+        toolTipInfos.Remove(KeywordData.getData(keyword).info);
     }
     public bool hasKeyword(Keyword keyword)
     {
@@ -602,7 +583,6 @@ public abstract class Card : MonoBehaviour
         }
         yield return null;
     }
-    public virtual List<Keyword> getInitialKeywords() { return new List<Keyword>(); }
     #endregion
 
     private void Update()

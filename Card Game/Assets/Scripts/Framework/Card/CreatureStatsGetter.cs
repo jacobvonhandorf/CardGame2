@@ -160,7 +160,7 @@ public class CreatureStatsGetter : CardStatsGetter
         cardViewer.moveValueText.text = moveValueText.text;
         cardViewer.typeText.text = typeText.text;
         cardViewer.nameText.text = nameText.text;
-        cardViewer.halfBodyText.text = bodyText.text;
+        cardViewer.halfBodyText.text = effectText.text;
 
         // set all colors that need to be set. Will need to add more things here later probably
         cardViewer.hpText.color = hpText.color;
@@ -191,7 +191,7 @@ public class CreatureStatsGetter : CardStatsGetter
         armorText.sortingLayerID = layerId;
         moveValueText.sortingLayerID = layerId;
         moveText.sortingLayerID = layerId;
-        bodyText.sortingLayerID = layerId;
+        effectText.sortingLayerID = layerId;
         typeText.sortingLayerID = layerId;
         goldText.sortingLayerID = layerId;
         nameText.sortingLayerID = layerId;

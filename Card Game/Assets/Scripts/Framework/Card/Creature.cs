@@ -27,7 +27,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     public Player controller;
     public bool hasMovedThisTurn = false;
     public bool hasDoneActionThisTurn = false; // action is attack or effect
-    //public Transform Transform => trans;
+    [SerializeField] public List<CreatureActivatedEffect> activatedEffects { get; } = new List<CreatureActivatedEffect>();
 
     internal bool canDeployFrom = false; // if new creatures can be deployed from this creature
     private bool initialized = false;
@@ -61,10 +61,6 @@ public abstract class Creature : MonoBehaviour, Damageable
         statsScript = GetComponent<CreatureStatsGetter>();
         counterController = GetComponentInChildren<CounterController>();
         enabled = false;
-    }
-    private void OnDisable()
-    {
-        Debug.Log("Creature disabled");
     }
 
     public void initialize()
@@ -100,6 +96,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     }
 
     // usually used for when a creature is removed from the board
+    // both clients know how to do this so no need for syncing
     public void resetToBaseStatsWithoutSyncing()
     {
         if (GameManager.gameMode != GameManager.GameMode.online)
@@ -127,7 +124,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         List<Tile> adjacentTiles = currentTile.getAdjacentTiles();
         foreach(Tile t in adjacentTiles)
         {
-            if (t.creature != null && t.creature.hasKeyword(Keyword.ward))
+            if (t.creature != null && t.creature.hasKeyword(Keyword.Ward))
             {
                 t.creature.takeWardDamage(damage);
                 return;
@@ -135,13 +132,13 @@ public abstract class Creature : MonoBehaviour, Damageable
         }
 
         // subtract armored damage
-        if (hasKeyword(Keyword.armored1))
+        if (hasKeyword(Keyword.Armored1))
             damage--;
         takeDamageActual(damage, source);
     }
     public void takeWardDamage(int damage)
     {
-        if (hasKeyword(Keyword.armored1))
+        if (hasKeyword(Keyword.Armored1))
             damage--;
         takeDamageActual(damage, null);
     }
@@ -189,7 +186,7 @@ public abstract class Creature : MonoBehaviour, Damageable
 
         // trigger after combat stuff
         // poison
-        if (hasKeyword(Keyword.poison) && defender.sourceCard is CreatureCard)
+        if (hasKeyword(Keyword.Poison) && defender.sourceCard is CreatureCard)
             GameManager.Get().destroyCreature((defender.sourceCard as CreatureCard).creature);
     }
     private IEnumerator attackAnimation(Damageable defender, int attackRoll)
@@ -320,6 +317,15 @@ public abstract class Creature : MonoBehaviour, Damageable
     public void setSpriteColor(Color color)
     {
         sourceCard.setSpriteColor(color);
+    }
+
+    public void addEffect(CreatureActivatedEffect effect)
+    {
+        activatedEffects.Add(effect);
+    }
+    public void removeEffect(CreatureActivatedEffect effect)
+    {
+        activatedEffects.Remove(effect);
     }
 
     public void bounce(Card source)
@@ -462,7 +468,6 @@ public abstract class Creature : MonoBehaviour, Damageable
             return;
         attack = value;
         statsScript.setAttack(attack, baseAttack);
-        Debug.Log("Setting attack " + value);
         syncCreatureStats();
     }
     public void addAttack(int value)
@@ -639,14 +644,13 @@ public abstract class Creature : MonoBehaviour, Damageable
             }
         }
     }
-    public virtual List<Keyword> getInitialKeywords() { return new List<Keyword>(); }
     #endregion
 
     #region ExtendedMethods
     public abstract int cardId { get; }
     protected virtual bool getCanDeployFrom() { return false; }
     public virtual Effect getEffect() { return null; }
-    public virtual List<Tag> getTags() { return new List<Tag>(); }
+    public virtual List<Tag> getInitialTags() { return new List<Tag>(); }
     public virtual void onKillingACreature(Creature c) { }
     public virtual void onLeavesTheField() { }
     public virtual bool additionalCanBePlayedChecks() { return true; } // if some conditions need to be met before playing this creature then do them in this method. Return true if can be played

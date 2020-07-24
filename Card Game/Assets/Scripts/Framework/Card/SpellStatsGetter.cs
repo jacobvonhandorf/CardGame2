@@ -25,7 +25,7 @@ public class SpellStatsGetter : CardStatsGetter
         cardViewer.goldText.text = goldText.text;
         cardViewer.typeText.text = typeText.text;
         cardViewer.nameText.text = nameText.text;
-        cardViewer.fullBodyText.text = bodyText.text;
+        cardViewer.fullBodyText.text = effectText.text;
         cardViewer.manaText1.text = manaText1.text;
         cardViewer.manaText2.text = manaText2.text;
 

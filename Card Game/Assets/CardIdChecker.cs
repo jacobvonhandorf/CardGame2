@@ -30,9 +30,12 @@ public class CardIdChecker : MonoBehaviour
 
     public static void runAsStatic()
     {
-        if (checkForDuplicateIDs())
-            throw new Exception("Duplicate card IDs found. Fix before continuing");
+        long startTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        //if (checkForDuplicateIDs())
+        //    throw new Exception("Duplicate card IDs found. Fix before continuing");
         generateAndSaveCardMap();
+        long endTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        Debug.Log("Finished generating and saving map in " + (endTime - startTime) + "ms");
     }
 
     // returns true if there are duplicate IDs
@@ -81,33 +84,33 @@ public class CardIdChecker : MonoBehaviour
 
     private static void generateAndSaveCardMap()
     {
+        GameObject[] allCards = Resources.LoadAll<GameObject>(cardsPath);
+        Vector3 tempPosition = new Vector3(999, 999, 999);
+        foreach (GameObject go in allCards)
+        {
+            GameObject instantiatedGo = Instantiate(go, tempPosition, Quaternion.identity);
+            //cardIdMap.Add(instantiatedGo.GetComponent<Card>().cardId, )
+            Destroy(instantiatedGo);
+        }
+
         Dictionary<int, string> cardIdMap = new Dictionary<int, string>(); // ID, path to card
         DirectoryInfo dir = new DirectoryInfo(Application.dataPath + "/Resources/" + cardsPath);
         FileInfo[] files = dir.GetFiles("*.prefab", SearchOption.AllDirectories);
 
-        Debug.Log(files.Length);
+        Debug.Log("Number of cards detected " + files.Length);
         foreach (FileInfo f in files)
         {
-            Debug.Log(f.FullName);
+            //Debug.Log(f.FullName);
             string pathToRemove = Application.dataPath.Replace("/", "\\");
             string pathInResources = f.FullName.Replace(pathToRemove, "");
             pathInResources = pathInResources.Replace("\\", "/");
             pathInResources = pathInResources.Replace("/Resources/", "");
             pathInResources = pathInResources.Replace(".prefab", "");
-            Debug.Log(pathInResources);
+            //Debug.Log(pathInResources);
             GameObject card = Resources.Load(pathInResources) as GameObject;
             GameObject objectToDestroy =  Instantiate(card, new Vector3(999, 999), Quaternion.identity);
-            cardIdMap.Add(card.GetComponentInChildren<Card>().cardId, pathInResources);
+            cardIdMap.Add(objectToDestroy.GetComponent<Card>().cardId, pathInResources);
             Destroy(objectToDestroy);
-        }
-
-        // print map for double checking
-        foreach (int id in cardIdMap.Keys)
-        {
-            if (cardIdMap.TryGetValue(id, out string path))
-                Debug.Log(id + ", " + path);
-            else
-                Debug.LogError("Unable to find card for ID " + id);
         }
 
         // save map

@@ -5,7 +5,6 @@ using UnityEngine;
 public class GemBriber : Creature
 {
     public override int cardId => 72;
-    public override List<Keyword> getInitialKeywords() => new List<Keyword>() { Keyword.deploy, Keyword.defender1 };
 
     public override void onInitialization()
     {

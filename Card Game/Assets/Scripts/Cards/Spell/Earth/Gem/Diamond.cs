@@ -6,7 +6,7 @@ public class Diamond : SpellCard
 {
     public override int cardId => 25;
     public override List<Tile> legalTargetTiles => new List<Tile>();
-    protected override List<Tag> getTags() => new List<Tag>() { Tag.Gem };
+    protected override List<Tag> getInitialTags() => new List<Tag>() { Tag.Gem };
 
     public override void onInitialization()
     {

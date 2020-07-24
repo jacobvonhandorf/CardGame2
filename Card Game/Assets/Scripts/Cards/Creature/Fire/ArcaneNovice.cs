@@ -5,8 +5,7 @@ using UnityEngine;
 public class ArcaneNovice : Creature
 {
     public override int cardId => 64;
-    public override List<Card.Tag> getTags() => new List<Card.Tag>() { Card.Tag.Arcane };
-    public override List<Keyword> getInitialKeywords() => new List<Keyword>() { Keyword.deploy };
+    public override List<Card.Tag> getInitialTags() => new List<Card.Tag>() { Card.Tag.Arcane };
 
     public override void onInitialization()
     {

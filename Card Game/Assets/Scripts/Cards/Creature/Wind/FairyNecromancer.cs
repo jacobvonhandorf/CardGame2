@@ -6,7 +6,7 @@ public class FairyNecromancer : Creature
 {
     public override int cardId => 47;
 
-    public override List<Card.Tag> getTags() => new List<Card.Tag>() { Card.Tag.Fairy };
+    public override List<Card.Tag> getInitialTags() => new List<Card.Tag>() { Card.Tag.Fairy };
 
     public void receiveCardList(List<Card> cardList)
     {
@@ -15,14 +15,4 @@ public class FairyNecromancer : Creature
             c.moveToCardPile(controller.hand, sourceCard);
         }
     }
-
-    public override List<Keyword> getInitialKeywords()
-    {
-        throw new System.Exception("Not implemented");
-        return new List<Keyword>()
-        {
-            Keyword.deploy
-        };
-    }
-
 }

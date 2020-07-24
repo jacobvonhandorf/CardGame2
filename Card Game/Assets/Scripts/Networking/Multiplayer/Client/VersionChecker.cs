@@ -12,7 +12,7 @@ public class VersionChecker : MonoBehaviour
     void Start()
     {
         if (!alreadyRun)
-            //CardIdChecker.runAsStatic();
+            CardIdChecker.runAsStatic();
         alreadyRun = true;
         return;
         instance = this;

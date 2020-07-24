@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class CreatureCard : Card
 {
-    public Creature creature;
+    public Creature creature { get; private set; }
     [SerializeField] private CreatureStatsGetter creatureStatsScript;
     [SerializeField] private CounterController counterController;
     //public bool isCreature = false; // true when is being treated as a creature. False when treated as card
@@ -15,27 +15,17 @@ public class CreatureCard : Card
     public override CardType getCardType() => CardType.Creature;
     public override List<Tile> legalTargetTiles => GameManager.Get().getAllDeployableTiles(owner);
     public CounterController getCounterController() => counterController;
-    public override List<Keyword> getInitialKeywords() => creature.getInitialKeywords();
 
     protected override void Awake()
     {
         base.Awake();
-        Debug.Log("In creatureCard awake");
         creature = GetComponent<Creature>();
         creatureStatsScript = GetComponent<CreatureStatsGetter>();
-    }
-
-    private void OnDisable()
-    {
-        Debug.Log("CreatureCard disabled");
     }
 
     public override void initialize()
     {
         creature.initialize();
-        foreach (Keyword k in getInitialKeywords())
-            addKeyword(k);
-
         onInitialization(); // keep this on last line
     }
 
@@ -97,10 +87,7 @@ public class CreatureCard : Card
         creature.resetToBaseStatsWithoutSyncing();
     }
 
-    protected override List<Tag> getTags()
-    {
-        return creature.getTags();
-    }
+    protected override List<Tag> getInitialTags() => creature.getInitialTags();
 
     // returns true if the card can be played right now
     public override bool canBePlayed()

@@ -1969,7 +1969,7 @@ MonoBehaviour:
   manaText2: {fileID: 7680246458776729851}
   goldText: {fileID: 954270350380510455}
   nameText: {fileID: 2836965240563950911}
-  bodyText: {fileID: 8563266676545232416}
+  effectText: {fileID: 8563266676545232416}
   typeText: {fileID: 226323414284861780}
   background: {fileID: 3106011441812989720}
   cardArt: {fileID: 6644448863597342829}
@@ -2001,6 +2001,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca0d4bdb06c171b4984d9d95f197269f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cardName: 
   currentCardPile: {fileID: 0}
   owner: {fileID: 0}
   isBeingDragged: 0
@@ -2011,10 +2012,8 @@ MonoBehaviour:
   transformManager: {fileID: 0}
   positionOnScene: {x: 0, y: 0, z: 0}
   hoverTimeForToolTips: 0.5
-  creature: {fileID: 0}
   creatureStatsScript: {fileID: 0}
   counterController: {fileID: 8838799526555295834}
-  isCreature: 0
 --- !u!61 &5812891816437587559
 BoxCollider2D:
   m_ObjectHideFlags: 0

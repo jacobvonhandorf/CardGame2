@@ -5,7 +5,6 @@ using UnityEngine;
 public class Prospector : Creature
 {
     public override int cardId => 67;
-    public override List<Keyword> getInitialKeywords() => new List<Keyword>() { Keyword.deploy, Keyword.combatant };
 
     public override void onInitialization()
     {

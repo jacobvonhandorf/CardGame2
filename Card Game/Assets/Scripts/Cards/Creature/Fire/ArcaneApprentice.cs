@@ -18,7 +18,7 @@ public class ArcaneApprentice : Creature, Effect
         return this;
     }
 
-    public override List<Card.Tag> getTags()
+    public override List<Card.Tag> getInitialTags()
     {
         List<Card.Tag> tags = new List<Card.Tag>();
         tags.Add(Card.Tag.Arcane);

@@ -176,7 +176,7 @@ public class Board : CardPile
         {
             foreach (Tile t in allTiles)
             {
-                if (t.creature != null && !t.creature.hasKeyword(Keyword.untargetable))
+                if (t.creature != null && !t.creature.hasKeyword(Keyword.Untargetable))
                     returnList.Add(t);
             }
         }

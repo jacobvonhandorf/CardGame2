@@ -23,7 +23,7 @@ public class Oblate : SpellCard
         alreadyActivatedThisTurn = false;
     }
 
-    protected override List<Tag> getTags()
+    protected override List<Tag> getInitialTags()
     {
         List<Tag> tags = new List<Tag>();
         tags.Add(Tag.Arcane);

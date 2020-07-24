@@ -5,7 +5,6 @@ using UnityEngine;
 public class Miner : Creature
 {
     public override int cardId => 68;
-    public override List<Keyword> getInitialKeywords() => new List<Keyword>() { Keyword.deploy, Keyword.armored1 };
 
     public override void onInitialization()
     {

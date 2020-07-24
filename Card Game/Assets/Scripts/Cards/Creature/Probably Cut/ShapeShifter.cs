@@ -9,7 +9,7 @@ public class ShapeShifter : Creature, Effect
 
     public override int cardId => 55;
 
-    public override List<Card.Tag> getTags() => new List<Card.Tag>() { Card.Tag.Arcane };
+    public override List<Card.Tag> getInitialTags() => new List<Card.Tag>() { Card.Tag.Arcane };
 
     private void OnEnable()
     {

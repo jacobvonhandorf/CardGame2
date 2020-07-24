@@ -5,8 +5,7 @@ using UnityEngine;
 public class FairyCavalier : Creature
 {
     public override int cardId => 51;
-    public override List<Card.Tag> getTags() => new List<Card.Tag>() { Card.Tag.Fairy };
-    public override List<Keyword> getInitialKeywords() => new List<Keyword>() { Keyword.deploy };
+    public override List<Card.Tag> getInitialTags() => new List<Card.Tag>() { Card.Tag.Fairy };
 
     public override void onInitialization()
     {

@@ -9,7 +9,7 @@ public class Obsidian : SpellCard
     private const int DAMAGE_AMOUNT = 2;
     private List<Tile> emptyList = new List<Tile>();
     public override List<Tile> legalTargetTiles => emptyList;
-    protected override List<Tag> getTags() => new List<Tag>() { Tag.Gem };
+    protected override List<Tag> getInitialTags() => new List<Tag>() { Tag.Gem };
 
     public override void onInitialization()
     {

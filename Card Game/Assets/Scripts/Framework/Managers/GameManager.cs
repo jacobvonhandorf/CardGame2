@@ -464,7 +464,7 @@ public class GameManager : MonoBehaviour
         creature.controller = owner;
 
         // set creature to has moved and acted unless it is quick
-        if (!creature.hasKeyword(Keyword.quick))
+        if (!creature.hasKeyword(Keyword.Quick))
         {
             creature.hasMovedThisTurn = true;
             creature.hasDoneActionThisTurn = true;
@@ -663,14 +663,21 @@ public class GameManager : MonoBehaviour
 
     public void setUpCreatureEffect(Creature creature)
     {
-        Effect effect = creature.getEffect();
-        if (effect == null)
+        // check for creature not having an effect
+        if (creature.activatedEffects.Count == 0)
         {
             showToast("This creature has no effect");
             return;
         }
-        effect.activate(creature.controller, null, creature.currentTile, null, creature, null);
-        creature.updateHasActedIndicators();
+        else if (creature.activatedEffects.Count > 1)
+        {
+            throw new Exception("Not implemented");
+        }
+        else
+        {
+            // there is only 1 effect so just activate it
+            creature.activatedEffects[0].activate(creature);
+        }
     }
 
     public void setUpStructureEffect(Structure structure)
