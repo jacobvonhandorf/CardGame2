@@ -32,7 +32,6 @@ public abstract class Card : MonoBehaviour
     #endregion
 
     private List<Tag> tags = new List<Tag>();
-    //private List<CardKeywords> keywords = new List<CardKeywords>();
     public string cardName;
     [HideInInspector] private bool hidden = true; // if true then all players can see the card
     [SerializeField] protected CardPile currentCardPile; // card pile the card is currently in. Use moveToCardPile to change
@@ -54,7 +53,7 @@ public abstract class Card : MonoBehaviour
     protected SpriteRenderer[] sprites; // all sprites so card alpha can be changed all at once
     protected TextMeshPro[] tmps; // all text objects for this card
 
-    public List<CardViewer> viewersDisplayingThisCard;
+    public HashSet<CardViewer> viewersDisplayingThisCard;
     public List<ToolTipInfo> toolTipInfos = new List<ToolTipInfo>();
     public TransformManager transformManager;
 
@@ -88,7 +87,7 @@ public abstract class Card : MonoBehaviour
     }
     protected virtual void Awake()
     {
-        viewersDisplayingThisCard = new List<CardViewer>();
+        viewersDisplayingThisCard = new HashSet<CardViewer>();
 
         sprites = GetComponentsInChildren<SpriteRenderer>();
         tmps = GetComponentsInChildren<TextMeshPro>();

@@ -77,29 +77,7 @@ public class DeckBuilderCardsView : MonoBehaviour
     private List<Card> getAllCardsFromResources()
     {
         long startTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        List<Card> returnList = new List<Card>();
-
-        GameObject[] loadedPrefabs = Resources.LoadAll<GameObject>(cardsPath);
-        foreach (GameObject prefab in loadedPrefabs)
-        {
-            GameObject newGameObject = Instantiate(prefab, cardContainer);
-            Card newCard = newGameObject.GetComponentInChildren<Card>();
-            if (newCard == null)
-            {
-                Debug.LogError(newGameObject + " had no Card component");
-                continue;
-            }
-            try
-            {
-                cardIdMap.Add(newCard.cardId, newCard);
-            } catch (NullReferenceException e)
-            {
-                Debug.Log("Check for missing creature/structure component on " + newCard.gameObject);
-                throw e;
-            }
-            newCard.removeGraphicsAndCollidersFromScene();
-            returnList.Add(newCard);
-        }
+        List<Card> returnList = ResourceManager.Get().getAllCardsVisibleInDeckBuilder();
         long endTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
         Debug.Log("Loaded all cards in " + (endTime - startTime) + " ms");
 

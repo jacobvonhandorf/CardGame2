@@ -9,7 +9,6 @@ public class CardViewer : MonoBehaviour
     public Card sourceCard;
 
     public GameObject hpGameObject;
-    public GameObject armorGameObject;
     public GameObject attackGameObject;
     public GameObject goldGameObject;
     public GameObject manaGameObject;
@@ -22,7 +21,6 @@ public class CardViewer : MonoBehaviour
     public TextMeshPro nameText;
     public TextMeshPro hpText;
     public TextMeshPro attackText;
-    public TextMeshPro armorText;
     public TextMeshPro moveValueText;
     public TextMeshPro moveText;
     public TextMeshPro halfBodyText; //used by creatures
@@ -55,10 +53,6 @@ public class CardViewer : MonoBehaviour
     public void setHpActive(bool active)
     {
         hpGameObject.SetActive(active);
-    }
-    public void setArmorActive(bool active)
-    {
-        armorGameObject.SetActive(active);
     }
     public void setAttackActive(bool active)
     {

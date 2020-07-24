@@ -905,13 +905,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 693617c42d79e7b47bd15e951f97f411, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cardName: 
   currentCardPile: {fileID: 0}
   owner: {fileID: 0}
   isBeingDragged: 0
   positionLocked: 0
   positionInHand: {x: 0, y: 0, z: 0}
   cardStatsScript: {fileID: 0}
-  viewersDisplayingThisCard: []
   transformManager: {fileID: 0}
   positionOnScene: {x: 0, y: 0, z: 0}
   hoverTimeForToolTips: 0.5
@@ -960,7 +960,7 @@ MonoBehaviour:
   manaText2: {fileID: 401729184634124582}
   goldText: {fileID: 7077602755901041962}
   nameText: {fileID: 5213023479865107682}
-  bodyText: {fileID: 1860083724658122749}
+  effectText: {fileID: 1860083724658122749}
   typeText: {fileID: 7791933331743768713}
   background: {fileID: 4907878052653917893}
   cardArt: {fileID: 6127932839820109763}
@@ -968,11 +968,11 @@ MonoBehaviour:
   windBackground: {fileID: 21300000, guid: 0b6d4880204a87f4b908752faedf91ea, type: 3}
   waterBackground: {fileID: 21300000, guid: 075c56a54ebb12b469a1033cd9e2ce54, type: 3}
   earthBackground: {fileID: 21300000, guid: ba1431e8181b1b14a90ba49f05e54020, type: 3}
+  nuetralBackground: {fileID: 21300000, guid: 56ac1c0ac6ec0fb4eb24e8a49f7f179f, type: 3}
   aboveBaseColor: {r: 0.30628183, g: 0.8773585, b: 0.19037022, a: 1}
   belowBaseColor: {r: 0.8584906, g: 0.1214845, b: 0.1214845, a: 1}
   hpText: {fileID: 6171379241733598415}
   friendOrFoeBorder: {fileID: 1114521955692890925}
-  effectText: {fileID: 1860083724658122749}
   resizeSpeed: 1.3
   pauseBetweenResize: 0.5
   iconResizeSpeed: 10

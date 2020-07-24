@@ -1977,6 +1977,7 @@ MonoBehaviour:
   windBackground: {fileID: 21300000, guid: 0b6d4880204a87f4b908752faedf91ea, type: 3}
   waterBackground: {fileID: 21300000, guid: 075c56a54ebb12b469a1033cd9e2ce54, type: 3}
   earthBackground: {fileID: 21300000, guid: ba1431e8181b1b14a90ba49f05e54020, type: 3}
+  nuetralBackground: {fileID: 21300000, guid: 56ac1c0ac6ec0fb4eb24e8a49f7f179f, type: 3}
   aboveBaseColor: {r: 0.30628183, g: 0.8773585, b: 0.19037022, a: 1}
   belowBaseColor: {r: 0.8584906, g: 0.1214845, b: 0.1214845, a: 1}
   hpText: {fileID: 4225407104599502098}
@@ -2008,7 +2009,6 @@ MonoBehaviour:
   positionLocked: 0
   positionInHand: {x: 0, y: 0, z: 0}
   cardStatsScript: {fileID: 0}
-  viewersDisplayingThisCard: []
   transformManager: {fileID: 0}
   positionOnScene: {x: 0, y: 0, z: 0}
   hoverTimeForToolTips: 0.5

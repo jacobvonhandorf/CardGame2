@@ -13,7 +13,6 @@ public class SpellStatsGetter : CardStatsGetter
         cardViewer.setGoldActive(goldText.gameObject.activeInHierarchy);
         cardViewer.setManaActive(manaText1.gameObject.activeInHierarchy);
         cardViewer.setManaLowerActive(manaText2.gameObject.activeInHierarchy);
-        cardViewer.setArmorActive(false);
         cardViewer.setHpActive(false);
         cardViewer.setAttackActive(false);
         cardViewer.setMoveActive(false);

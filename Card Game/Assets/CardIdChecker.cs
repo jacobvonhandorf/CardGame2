@@ -84,6 +84,7 @@ public class CardIdChecker : MonoBehaviour
 
     private static void generateAndSaveCardMap()
     {
+        return;
         GameObject[] allCards = Resources.LoadAll<GameObject>(cardsPath);
         Vector3 tempPosition = new Vector3(999, 999, 999);
         foreach (GameObject go in allCards)

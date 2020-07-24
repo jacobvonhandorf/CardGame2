@@ -18,6 +18,7 @@ public abstract class CardStatsGetter : MonoBehaviour
     [SerializeField] protected Sprite windBackground;
     [SerializeField] protected Sprite waterBackground;
     [SerializeField] protected Sprite earthBackground;
+    [SerializeField] protected Sprite nuetralBackground;
     [SerializeField] protected Color aboveBaseColor;
     [SerializeField] protected Color belowBaseColor;
 
@@ -152,7 +153,7 @@ public abstract class CardStatsGetter : MonoBehaviour
             case ElementIdentity.Earth:
                 return earthBackground;
             case ElementIdentity.Nuetral:
-                return earthBackground;
+                return nuetralBackground;
             default:
                 return earthBackground;
         }

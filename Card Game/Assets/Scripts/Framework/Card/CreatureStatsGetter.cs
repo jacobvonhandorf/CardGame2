@@ -74,7 +74,7 @@ public class CreatureStatsGetter : CardStatsGetter
     }
 
     [SerializeField] private float resizeSpeed = .1f;
-    [SerializeField] private float pauseBetweenResize = .5f;
+    [SerializeField] private float pauseBetweenResize = .2f;
     [SerializeField] private float iconResizeSpeed = 2f;
     private bool resizeToCreatureFinished;
     IEnumerator resizeToCreature(Transform cardRoot, Vector3 newRootScale, List<Transform> iconsToEnlarge, Vector3 newIconScale, Vector3 newPosition)
@@ -109,6 +109,7 @@ public class CreatureStatsGetter : CardStatsGetter
                 t.localScale = Vector3.MoveTowards(t.localScale, newIconScale, iconResizeSpeed * Time.deltaTime);
             yield return null;
         }
+        friendOrFoeBorder.gameObject.SetActive(true);
         resizeToCreatureFinished = true;
     }
 
@@ -142,7 +143,6 @@ public class CreatureStatsGetter : CardStatsGetter
         // flip everything to active that needs to be active
         // and flip everything to inactive that should be inactive
         cardViewer.hpGameObject.SetActive(hpText.gameObject.activeInHierarchy);
-        cardViewer.setArmorActive(armorText.gameObject.activeInHierarchy);
         cardViewer.setAttackActive(attackText.gameObject.activeInHierarchy);
         cardViewer.setGoldActive(goldText.gameObject.activeInHierarchy);
         cardViewer.setManaActive(manaText1.gameObject.activeInHierarchy);
@@ -153,7 +153,6 @@ public class CreatureStatsGetter : CardStatsGetter
 
         // set all values that need to be set
         cardViewer.hpText.text = hpText.text;
-        cardViewer.armorText.text = armorText.text;
         cardViewer.attackText.text = attackText.text;
         cardViewer.goldText.text = goldText.text;
         cardViewer.moveText.text = moveText.text;
@@ -255,7 +254,7 @@ public class CreatureStatsGetter : CardStatsGetter
     // used to update the friend or foe border
     public void setAsAlly(bool isAlly)
     {
-        friendOrFoeBorder.gameObject.SetActive(true);
+        // friendOrFoeBorder.gameObject.SetActive(true);
         if (isAlly)
             friendOrFoeBorder.color = Color.blue;
         else

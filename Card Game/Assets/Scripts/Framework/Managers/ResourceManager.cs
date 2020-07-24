@@ -7,9 +7,9 @@ using UnityEngine;
 public class ResourceManager : MonoBehaviour
 {
     private static ResourceManager instance;
-    private static Dictionary<int, string> idToPathPairs;
+    private static Dictionary<int, CardData> cardDataMap;
 
-    private void Start()
+    private void Awake()
     {
         if (instance == null)
             instance = this;
@@ -20,19 +20,17 @@ public class ResourceManager : MonoBehaviour
             return;
         }
         // Get path for all cards
-        if (idToPathPairs == null)
-            setupNameToPathPairs();
+        if (cardDataMap == null)
+            setupCardDataMap();
     }
 
-    private void setupNameToPathPairs()
+    private void setupCardDataMap()
     {
-        if (!File.Exists(Application.persistentDataPath + "/cardData.dat"))
-            CardIdChecker.runAsStatic();
-
-        BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.OpenRead(Application.persistentDataPath + "/cardData.dat");
-        idToPathPairs = (Dictionary<int, string>)bf.Deserialize(file);
-        file.Close();
+        Debug.Log("Generating card data map");
+        cardDataMap = new Dictionary<int, CardData>();
+        CardData[] dataArray = Resources.LoadAll<CardData>("Card Data");
+        foreach (CardData data in dataArray)
+            cardDataMap.Add(data.id, data);
     }
 
     public static ResourceManager Get()
@@ -40,49 +38,25 @@ public class ResourceManager : MonoBehaviour
         if (instance == null)
         {
             // if an instance doesn't exist then instantiate one
-            // this method of instantiation is not desired because it is inefficient. Place a resource manager in scene instead.
             GameObject resourceManager = new GameObject();
             resourceManager.name = "Resource Manager";
-            ResourceManager newInstance = resourceManager.AddComponent<ResourceManager>();
-            return newInstance;
+            instance = resourceManager.AddComponent<ResourceManager>();
         }
-        else
-            return instance;
+        return instance;
     }
 
-    // if you call this then make sure you disable either the card or structure script
-    public Structure getStructureFromResources(Player owner, string structureName)
+    public Card instantiateCardById(int id) => CardBuilder.Instance.BuildFromCardData(cardDataMap[id]);
+
+    public List<Card> getAllCardsVisibleInDeckBuilder()
     {
-        GameObject structureGameObject = Resources.Load("TokenPrefabs/Structure/" + structureName + " Variant") as GameObject;
-        structureGameObject = Instantiate(structureGameObject);
-
-        Structure structure = structureGameObject.transform.Find("Graphics Root/Structure Script").GetComponent<Structure>();
-        StructureStatsGetter statsScript = structureGameObject.GetComponentInChildren<StructureStatsGetter>();
-
-        structure.owner = owner;
-        structure.controller = owner;
-        structure.setStatsScript(statsScript);
-
-        return structure;
-    }
-
-    public Card instantiateCardById(int id)
-    {
-        if (idToPathPairs == null)
-            setupNameToPathPairs();
-        string pathToCard;
-        pathToCard = idToPathPairs[id];
-        GameObject gameObject = Resources.Load(pathToCard) as GameObject;
-        if (gameObject == null)
+        List<Card> returnList = new List<Card>();
+        foreach (CardData data in cardDataMap.Values)
         {
-            throw new System.Exception("Error loading card: id=" + id + ", path=" + pathToCard);
+            if (data.visibleInDeckBuilder)
+                returnList.Add(CardBuilder.Instance.BuildFromCardData(data));
         }
-        GameObject instantiatedGameObject = Instantiate(gameObject);
-        Card card = instantiatedGameObject.GetComponentInChildren<Card>();
-        if (card == null)
-            throw new System.Exception("Error loading card from resources");
-
-        return card;
+        return returnList;
     }
 
+    public CardData getCardDataById(int id) => cardDataMap[id];
 }

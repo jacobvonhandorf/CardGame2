@@ -45,7 +45,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spellCardPrefab: {fileID: 7420118472789478337, guid: f30ba095c2be8fa4bbb42c9caddb391c,
     type: 3}
-  structureCardPrefab: {fileID: 1024539257926108640, guid: 6bc8d40ccc7ebdf4db06c7782aad2910,
+  structureCardPrefab: {fileID: 7975894839807247856, guid: 8be107c339050a34182b3d2fb1cad601,
     type: 3}
   creatureCardPrefab: {fileID: 7294523776317941941, guid: 633b21a4d7f2384419d85fb002181202,
     type: 3}

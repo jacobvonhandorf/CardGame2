@@ -5,6 +5,15 @@ using UnityEngine;
 
 public class GameEvents
 {
+    public static void clearEvents()
+    {
+        E_SpellCast = null;
+        E_CreatureDeath = null;
+        E_TurnStart = null;
+        E_TurnEnd = null;
+        E_CreaturePlayed = null;
+        E_CreatureMoved = null;
+    }
     #region OnSpellCast
     public static event EventHandler<SpellCastArgs> E_SpellCast;
     public class SpellCastArgs : EventArgs { public SpellCard spell { get; set; } }

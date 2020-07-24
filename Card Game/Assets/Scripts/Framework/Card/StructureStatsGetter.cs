@@ -118,7 +118,6 @@ public class StructureStatsGetter : CardStatsGetter
         float currentPercentage = 0;
         float timeForTotalAnimation = .3f;
         float timePassed = 0;
-        //while (Vector3.Distance(cardRoot.localScale, newRootScale) > 0.02f)
         while (currentPercentage < .98f)
         {
             timePassed += Time.deltaTime;
@@ -146,6 +145,8 @@ public class StructureStatsGetter : CardStatsGetter
             //cardRoot.localScale = Vector3.MoveTowards(cardRoot.localScale, newRootScale, iconResizeSpeed * Time.deltaTime);
             yield return null;
         }
+
+        friendOrFoeBorder.gameObject.SetActive(true);
         resizeToCreatureFinished = true;
     }
 
@@ -172,7 +173,6 @@ public class StructureStatsGetter : CardStatsGetter
     // used to update the friend or foe border
     public void setAsAlly(bool isAlly)
     {
-        friendOrFoeBorder.gameObject.SetActive(true);
         if (isAlly)
             friendOrFoeBorder.color = Color.blue;
         else

@@ -19,17 +19,11 @@ public class StructureCard : Card
         structure = GetComponent<Structure>();
     }
 
-    protected override void Start()
-    {
-        base.Start();
-    }
-
     public override void initialize()
     {
         structure.initialize();
         onInitialization();
     }
-
 
     protected override List<Tag> getInitialTags()
     {
@@ -51,7 +45,7 @@ public class StructureCard : Card
         enabled = false;
 
         // enable creature functionality
-        structure.gameObject.SetActive(true);
+        structure.enabled = true;
 
         // initialize the structure if it hasn't already been initialized
         structure.initialize();
@@ -68,7 +62,7 @@ public class StructureCard : Card
         enabled = true;
 
         // disable structure functionality
-        structure.gameObject.SetActive(false);
+        structure.enabled = false;
 
         // resize
         if (isStructure)

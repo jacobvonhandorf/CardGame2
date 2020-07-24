@@ -8,14 +8,14 @@ public enum Keyword
     Defender1 = 1,
     Defender2 = 2,
     Defender3 = 3,
-    Ward = 3,
-    Armored1 = 4,
-    Anthem = 5,
-    Deploy = 6,
-    Combatant = 7,
-    LastBreath = 8,
-    Untargetable = 9,
-    Poison = 10,
+    Ward = 4,
+    Armored1 = 5,
+    Anthem = 6,
+    Deploy = 7,
+    Combatant = 8,
+    LastBreath = 9,
+    Untargetable = 10,
+    Poison = 11,
 }
 
 public abstract class KeywordData

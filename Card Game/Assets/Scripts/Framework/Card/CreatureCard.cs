@@ -25,6 +25,7 @@ public class CreatureCard : Card
 
     public override void initialize()
     {
+        creature.enabled = false;
         creature.initialize();
         onInitialization(); // keep this on last line
     }
@@ -62,7 +63,7 @@ public class CreatureCard : Card
         enabled = true;
 
         // disable creature functionality
-        creature.enabled = true;
+        creature.enabled = false;
 
         // resize
         creatureStatsScript.swapToCard();

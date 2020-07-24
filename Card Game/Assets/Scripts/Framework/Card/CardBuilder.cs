@@ -18,7 +18,7 @@ public class CardBuilder : MonoBehaviour
     }
     private static CardBuilder instance;
 
-    private Vector3 instantiationLocation = new Vector3(999, 999, 999); // instantiate cards off screen
+    private Vector3 instantiationLocation = new Vector3(0, 0, 0); // instantiate cards off screen
     [SerializeField] private GameObject spellCardPrefab;
     [SerializeField] private GameObject structureCardPrefab;
     [SerializeField] private GameObject creatureCardPrefab;
@@ -47,6 +47,7 @@ public class CardBuilder : MonoBehaviour
         card.setBaseGoldCost(cardData.goldCost);
         card.setGoldCost(cardData.goldCost);
         card.cardName = cardData.cardName;
+        card.gameObject.name = cardData.cardName;
         card.cardStatsScript.nameText.text = cardData.cardName;
         card.cardStatsScript.setSprite(cardData.art);
         card.cardStatsScript.effectText.text = cardData.effectText;
@@ -57,36 +58,78 @@ public class CardBuilder : MonoBehaviour
         return card;
     }
 
-    private Card creatureSetup(CreatureCardData creatureData)
+    private Card creatureSetup(CreatureCardData data)
     {
         CreatureCard card = Instantiate(creatureCardPrefab, instantiationLocation, Quaternion.identity).GetComponent<CreatureCard>();
         BlankCreature creature = card.creature as BlankCreature;
-        creature.baseHealth = creatureData.health;
-        creature.setHealth(creatureData.health);
-        creature.baseAttack = creatureData.attack;
-        creature.setAttack(creatureData.attack);
-        creature.baseMovement = creatureData.movement;
-        creature.setMovement(creatureData.movement);
-        creature.range = creatureData.range;
-        creature.baseRange = creatureData.range;
-        creature.creatureCardId = creatureData.id;
-        foreach (UnityEngine.Object eff in creatureData.activatedEffects)
-        {
-            Type effType = eff.GetType();
-            CreatureActivatedEffect effectInstance = creature.gameObject.AddComponent(effType) as CreatureActivatedEffect;
-            creature.addEffect(effectInstance);
-        }
-        creatureData.onInitilization.onInitialization(card);
+        creature.baseHealth = data.health;
+        creature.setHealth(data.health);
+        creature.baseAttack = data.attack;
+        creature.setAttack(data.attack);
+        creature.baseMovement = data.movement;
+        creature.setMovement(data.movement);
+        creature.range = data.range;
+        creature.baseRange = data.range;
+        creature.creatureCardId = data.id;
+
+        // Effects
+        if (data.effects == null)
+            return card;
+        CreatureEffects effs = card.gameObject.AddComponent(data.effects.GetType()) as CreatureEffects;
+        //CreatureEffects effs = creatureData.effects;
+        effs.card = card;
+        effs.creature = creature;
+
+        effs.onInitilization?.Invoke();
+        // register activated Effect
+        if (effs.activatedEffect != null)
+            creature.activatedEffects.Add(effs.activatedEffect);
+        // register triggers
+        if (effs.onDeploy != null)
+            creature.E_OnDeployed += effs.onDeploy;
+        if (effs.onDeath != null)
+            creature.E_Death += effs.onDeath;
+        if (effs.onAttack != null)
+            creature.E_OnAttack += effs.onAttack;
+        if (effs.onDefend != null)
+            creature.E_OnDefend += effs.onDefend;
+        if (effs.onDamaged != null)
+            creature.E_OnDamaged += effs.onDamaged;
 
         return card;
     }
+
     private Card structureSetup(StructureCardData data)
     {
         StructureCard card = Instantiate(structureCardPrefab, instantiationLocation, Quaternion.identity).GetComponent<StructureCard>();
-        Structure structure = card.structure;
+        BlankStructure structure = card.structure as BlankStructure;
         structure.setBaseHealth(data.health);
         structure.setHealth(data.health);
+        structure.structureCardId = data.id;
+
+        StructureEffects effs = card.gameObject.AddComponent(data.effects.GetType()) as StructureEffects;
+        effs.structure = structure;
+        effs.card = card;
+        if (effs == null)
+            return card;
+        effs.onInitilization?.Invoke();
+        // register effects
+        if (effs.activatedEffect != null)
+            structure.activatedEffects.Add(effs.activatedEffect);
+        if (effs.onDefend != null)
+            structure.E_OnDefend += effs.onDefend;
+        if (effs.onDeploy != null)
+            structure.E_OnDeployed += effs.onDeploy;
+        if (effs.onLeavesField != null)
+            structure.E_OnLeavesField += effs.onLeavesField;
+        if (effs.onMoveToCardPile != null)
+            card.E_AddedToCardPile += effs.onMoveToCardPile;
 
         return card;
+    }
+
+    private Card spellSetup(SpellCardData data)
+    {
+        throw new Exception("Unimplemented");
     }
 }

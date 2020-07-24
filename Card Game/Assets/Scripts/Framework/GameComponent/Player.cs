@@ -77,6 +77,11 @@ public class Player : MonoBehaviour
         hand.resetCardPositions();
     }
 
+    public void makeLose()
+    {
+        GameManager.Get().makePlayerLose(this);
+    }
+
     #region Locking
     private List<object> locks = new List<object>();
     public void addLock(object newLock)

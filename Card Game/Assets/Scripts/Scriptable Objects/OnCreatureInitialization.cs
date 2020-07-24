@@ -1,7 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/*
 public abstract class OnCreatureInitialization : MonoBehaviour
 {
-    public abstract void onInitialization(CreatureCard card);
+    [HideInInspector] public Creature creature;
+    [HideInInspector] public CreatureCard card;
+    public abstract void onInitialization();
 }
+*/

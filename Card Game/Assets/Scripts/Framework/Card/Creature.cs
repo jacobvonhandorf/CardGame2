@@ -27,7 +27,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     public Player controller;
     public bool hasMovedThisTurn = false;
     public bool hasDoneActionThisTurn = false; // action is attack or effect
-    [SerializeField] public List<CreatureActivatedEffect> activatedEffects { get; } = new List<CreatureActivatedEffect>();
+    [SerializeField] public List<EmptyHandler> activatedEffects { get; } = new List<EmptyHandler>();
 
     internal bool canDeployFrom = false; // if new creatures can be deployed from this creature
     private bool initialized = false;
@@ -36,22 +36,19 @@ public abstract class Creature : MonoBehaviour, Damageable
 
     #region Events
     public event EventHandler E_Death;
-    public void TriggerOnDeathEvents(object sender) { if (E_Death != null) E_Death.Invoke(sender, EventArgs.Empty); }
+    public void TriggerOnDeathEvents(object sender) { E_Death?.Invoke(sender, EventArgs.Empty); }
 
     public event EventHandler E_OnDeployed;
-    public void TriggerOnDeployed(object sender) { if (E_OnDeployed != null) E_OnDeployed.Invoke(sender, EventArgs.Empty); }
+    public void TriggerOnDeployed(object sender) { E_OnDeployed?.Invoke(sender, EventArgs.Empty); }
 
     public event EventHandler<OnAttackArgs> E_OnAttack;
     public class OnAttackArgs : EventArgs { public Damageable target { get; set; } }
-    public delegate void onAttackHandler(OnAttackArgs e);
     public void TriggerOnAttackEvents(object sender, OnAttackArgs args) { if (E_OnAttack != null) E_OnAttack.Invoke(sender, args); }
 
     public event EventHandler<OnDefendArgs> E_OnDefend;
     public void TriggerOnDefendEvents(object sender, OnDefendArgs args) { if (E_OnDefend != null) E_OnDefend.Invoke(sender, args); }
 
     public event EventHandler<OnDamagedArgs> E_OnDamaged;
-    public class OnDamagedArgs : EventArgs { public Card source { get; set; } }
-    public delegate void onDamagedHandler(OnDamagedArgs e);
     public void TriggerOnDamagedEvents(object sender, OnDamagedArgs args) { if (E_OnDamaged != null) E_OnDamaged.Invoke(sender, args); }
     #endregion
 
@@ -75,6 +72,11 @@ public abstract class Creature : MonoBehaviour, Damageable
 
         initialized = true;
         onInitialization();
+    }
+
+    private void OnEnable()
+    {
+        Debug.Log("Creature emabled");
     }
 
     public void resetToBaseStats()
@@ -319,15 +321,6 @@ public abstract class Creature : MonoBehaviour, Damageable
         sourceCard.setSpriteColor(color);
     }
 
-    public void addEffect(CreatureActivatedEffect effect)
-    {
-        activatedEffects.Add(effect);
-    }
-    public void removeEffect(CreatureActivatedEffect effect)
-    {
-        activatedEffects.Remove(effect);
-    }
-
     public void bounce(Card source)
     {
         hasDoneActionThisTurn = false;
@@ -511,6 +504,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     }
     public void updateFriendOrFoeBorder()
     {
+        Debug.Log("Update FoF called");
         if (GameManager.gameMode != GameManager.GameMode.online)
             statsScript.setAsAlly(GameManager.Get().activePlayer == controller);
         else

@@ -217,6 +217,11 @@ public class GameManager : MonoBehaviour
         newP2Deck.shuffle();
     }
 
+    private void OnDestroy()
+    {
+        clearEvents();
+    }
+
     public Card createCardById(int id, Player owner)
     {
         Card newCard = ResourceManager.Get().instantiateCardById(id);
@@ -404,6 +409,7 @@ public class GameManager : MonoBehaviour
     }
     public List<Tile> getLegalStructurePlacementTiles(Player player)
     {
+        Debug.Log("Getting placement tiles for " + player);
         List<Tile> returnList = new List<Tile>();
         List<Tile> invalidTiles = new List<Tile>();
         // add all possible placement tiles to the list
@@ -539,11 +545,10 @@ public class GameManager : MonoBehaviour
 
     public void createStructureOnTile(Structure structure, Tile tile, Player controller, StructureCard sourceCard)
     {
-        // if gamemode is online check to see if 
         createStructureOnTileActual(structure, tile, controller);
         NetInterface.Get().syncPermanentPlaced(sourceCard, tile);
         // trigger ETBS
-        structure.onPlaced();
+        structure.TriggerOnDeployEvents(this);
     }
 
     private void createStructureOnTileActual(Structure structure, Tile tile, Player controller)
@@ -562,16 +567,7 @@ public class GameManager : MonoBehaviour
         structure.transform.SetParent(board.transform);
 
         // move card from player's hand and parent it to the board
-        /*
-        try
-        {
-            controller.hand.removeCard(sourceCard).getRootTransf.SetParent(board.transform);
-        }
-        catch (NullReferenceException e)
-        {
-            Debug.Log("Card not found in hand: " + e.Message);
-        }
-        */
+        sourceCard.moveToCardPile(board, null);
 
         tile.structure = structure;
         structure.tile = tile;
@@ -676,7 +672,8 @@ public class GameManager : MonoBehaviour
         else
         {
             // there is only 1 effect so just activate it
-            creature.activatedEffects[0].activate(creature);
+            // creature.activatedEffects[0].doEffect(this);
+            creature.activatedEffects[0].Invoke();
         }
     }
 

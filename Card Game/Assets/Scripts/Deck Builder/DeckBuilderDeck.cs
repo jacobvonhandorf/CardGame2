@@ -335,20 +335,30 @@ public class DeckBuilderDeck : MonoBehaviour
             FileStream file = File.OpenRead(Application.persistentDataPath + "/decks/" + deckName + ".dek");
             Dictionary<int, int> deckMap = (Dictionary<int, int>)bf.Deserialize(file);
             file.Close();
-            foreach (int id in deckMap.Keys)
+            try
             {
-                Card newCard = DeckBuilderCardsView.instance.getCardById(id);
-                for (int i = 0; i < deckMap[id]; i++)
+                foreach (int id in deckMap.Keys)
                 {
-                    addCard(newCard);
+                    Card newCard = DeckBuilderCardsView.instance.getCardById(id);
+                    for (int i = 0; i < deckMap[id]; i++)
+                    {
+                        addCard(newCard);
+                    }
                 }
+                // set deck name text
+                Debug.Log("Setting deck name text to: " + deckName);
+                deckNameField.text = deckName;
+                loadDeckPopUp.setToValue(deckName);
+                PlayerPrefs.SetString(PlayerPrefEnum.mostRecentDeckName, deckName);
+                unsavedChanges = false;
             }
-            // set deck name text
-            Debug.Log("Setting deck name text to: " + deckName);
-            deckNameField.text = deckName;
-            loadDeckPopUp.setToValue(deckName);
-            PlayerPrefs.SetString(PlayerPrefEnum.mostRecentDeckName, deckName);
-            unsavedChanges = false;
+            catch (Exception e)
+            {
+                Debug.LogError("Error loading deck: " + e.Message);
+                clear();
+                // rework deck builder to use cardData
+                Toaster.Get().doToast("Delete corrupted deck: " + deckName);
+            }
         }
         else
         {

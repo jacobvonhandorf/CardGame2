@@ -23,13 +23,18 @@ public abstract class Structure : MonoBehaviour, Damageable
 
     protected string cardName;
     private bool initialized = false;
+    [SerializeField] public List<EmptyHandler> activatedEffects { get; } = new List<EmptyHandler>();
 
     [SerializeField] protected StructureStatsGetter statsScript;
     private CounterController counterController;
 
     #region Events
     public event EventHandler<OnDefendArgs> E_OnDefend;
-    public void TriggerOnDefendEvents(object sender, OnDefendArgs args) { if (E_OnDefend != null) E_OnDefend.Invoke(sender, args); }
+    public void TriggerOnDefendEvents(object sender, OnDefendArgs args) { E_OnDefend?.Invoke(sender, args); }
+    public event EventHandler E_OnDeployed;
+    public void TriggerOnDeployEvents(object sender) { E_OnDeployed?.Invoke(sender, EventArgs.Empty); }
+    public event EventHandler E_OnLeavesField;
+    public void TriggerOnLeavesField(object sender) { E_OnLeavesField?.Invoke(sender, EventArgs.Empty); }
     #endregion
 
     private void Awake()
@@ -48,10 +53,13 @@ public abstract class Structure : MonoBehaviour, Damageable
         }
 
         statsScript.setStructureStats(this);
-
         baseHealth = health;
-
         initialized = true;
+    }
+
+    public void OnDisable()
+    {
+        Debug.Log("Disable");
     }
 
     public void takeDamage(int amount, Card source)
