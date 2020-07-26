@@ -32,7 +32,7 @@ public class CardBuilder : MonoBehaviour
                 card = creatureSetup(creatureData);
                 break;
             case SpellCardData spellData:
-                card = Instantiate(spellCardPrefab, instantiationLocation, Quaternion.identity).GetComponent<Card>();
+                card = spellSetup(spellData);
                 break;
             case StructureCardData structureData:
                 card = structureSetup(structureData);
@@ -76,7 +76,7 @@ public class CardBuilder : MonoBehaviour
         if (data.effects == null)
             return card;
         CreatureEffects effs = card.gameObject.AddComponent(data.effects.GetType()) as CreatureEffects;
-        //CreatureEffects effs = creatureData.effects;
+        
         effs.card = card;
         effs.creature = creature;
 
@@ -130,6 +130,19 @@ public class CardBuilder : MonoBehaviour
 
     private Card spellSetup(SpellCardData data)
     {
-        throw new Exception("Unimplemented");
+        SpellCard card = Instantiate(spellCardPrefab, instantiationLocation, Quaternion.identity).GetComponent<SpellCard>();
+        BlankSpell spell = card as BlankSpell;
+        spell.spellId = data.id;
+
+        SpellEffects effs = card.gameObject.AddComponent(data.effects.GetType()) as SpellEffects;
+        effs.card = card;
+        if (effs == null)
+            return card;
+        effs.onInitilization?.Invoke();
+        // regist effects
+        if (effs.onMoveToCardPile != null)
+            card.E_AddedToCardPile += effs.onMoveToCardPile;
+
+        return card;
     }
 }

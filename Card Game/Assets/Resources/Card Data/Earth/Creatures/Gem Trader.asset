@@ -15,12 +15,13 @@ MonoBehaviour:
   id: 70
   cardName: Gem Trader
   art: {fileID: 21300000, guid: e4cee17eeb3d41045ac31ce39b8dfdbc, type: 3}
-  effectText: <b>Deploy:</b> Shuffle a Gem from your hand into your deck. Add the
-    first Gem from your deck to your hand.\n<b>Last Words:</b> Shuffle an Obsidian
-    into your deck.
+  effectText: '<b>Deploy:</b> Shuffle a Gem from your hand into your deck. Add the
+    first Gem from your deck to your hand.
+
+    <b>Last Words:</b> Shuffle an Obsidian into your deck.'
   manaCost: 0
   goldCost: 2
-  elementalIdentity: 0
+  elementalIdentity: 3
   tags: 
   keywords: 0600000008000000
   visibleInDeckBuilder: 1

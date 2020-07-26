@@ -15,8 +15,9 @@ MonoBehaviour:
   id: 71
   cardName: Gem Giant
   art: {fileID: 21300000, guid: e4cee17eeb3d41045ac31ce39b8dfdbc, type: 3}
-  effectText: <b>Deploy:</b> Gain 1 attack and 2 hp for each Gem in your hand.\n<b>Ward,
-    Armored, Defender 2</b>
+  effectText: '<b>Deploy:</b> Gain 1 attack and 2 hp for each Gem in your hand.
+
+    <b>Ward, Armored, Defender 2</b>'
   manaCost: 0
   goldCost: 5
   elementalIdentity: 3

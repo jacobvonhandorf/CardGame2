@@ -11,14 +11,6 @@ public class VersionChecker : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (!alreadyRun)
-            CardIdChecker.runAsStatic();
-        alreadyRun = true;
-        return;
-        instance = this;
-        // send message to server asking for current version. Also put up a ui blocker.
-        Net_CheckVersion msg = new Net_CheckVersion();
-        Client.Instance.SendServer(msg);
     }
 
     public void recieveMessage(Net_CheckVersion msg)
@@ -28,7 +20,7 @@ public class VersionChecker : MonoBehaviour
 
         if (clientVersion != serverVersion)
         {
-            CardIdChecker.runAsStatic();
+            //CardIdChecker.runAsStatic();
             // then remove ui blocker
         }
     }

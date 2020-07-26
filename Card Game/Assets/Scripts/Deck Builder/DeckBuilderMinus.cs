@@ -5,10 +5,10 @@ using UnityEngine;
 public class DeckBuilderMinus : MonoBehaviour
 {
     public DeckBuilderDeck deck;
-    public Card card;
+    public int cardId;
 
     private void OnMouseUpAsButton()
     {
-        deck.removeCard(card);
+        deck.removeCard(cardId);
     }
 }

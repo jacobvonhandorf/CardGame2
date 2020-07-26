@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a53d22fb8d4c2f46991850ee8d1c547, type: 3}
+  m_Name: Arcane Novice
+  m_EditorClassIdentifier: 
+  id: 64
+  cardName: Arcane Novice
+  art: {fileID: 21300000, guid: e4cee17eeb3d41045ac31ce39b8dfdbc, type: 3}
+  effectText: 
+  manaCost: 0
+  goldCost: 1
+  elementalIdentity: 0
+  tags: 02000000
+  keywords: 07000000
+  visibleInDeckBuilder: 1
+  health: 2
+  attack: 1
+  movement: 3
+  range: 1
+  effects: {fileID: 4189654254759401656, guid: 25874b802e7477541a4a650cdd45d1fe, type: 3}

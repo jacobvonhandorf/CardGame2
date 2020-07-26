@@ -18,12 +18,12 @@ MonoBehaviour:
   effectText: 
   manaCost: 0
   goldCost: 2
-  elementalIdentity: 0
+  elementalIdentity: 3
   tags: 
   keywords: 
+  visibleInDeckBuilder: 1
   health: 2
   attack: 2
   movement: 3
   range: 1
-  activatedEffects: []
-  onInitilization: {fileID: 0}
+  effects: {fileID: 0}

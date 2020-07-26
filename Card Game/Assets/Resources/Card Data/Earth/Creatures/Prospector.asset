@@ -15,12 +15,14 @@ MonoBehaviour:
   id: 67
   cardName: Prospector
   art: {fileID: 21300000, guid: e4cee17eeb3d41045ac31ce39b8dfdbc, type: 3}
-  effectText: 
+  effectText: '<b>Deploy:</b> Shuffle an Obsidian into your deck.
+
+    <b>Combatant:</b> Shuffle an Obsidian into your deck.'
   manaCost: 0
   goldCost: 4
   elementalIdentity: 3
   tags: 
-  keywords: 0600000007000000
+  keywords: 0800000007000000
   visibleInDeckBuilder: 1
   health: 8
   attack: 2

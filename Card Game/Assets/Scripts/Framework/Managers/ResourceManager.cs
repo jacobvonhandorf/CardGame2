@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 using UnityEngine;
 
 public class ResourceManager : MonoBehaviour
@@ -27,10 +28,14 @@ public class ResourceManager : MonoBehaviour
     private void setupCardDataMap()
     {
         Debug.Log("Generating card data map");
+        System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+        stopwatch.Start();
         cardDataMap = new Dictionary<int, CardData>();
         CardData[] dataArray = Resources.LoadAll<CardData>("Card Data");
         foreach (CardData data in dataArray)
             cardDataMap.Add(data.id, data);
+        stopwatch.Stop();
+        Debug.Log("Time to load card data " + stopwatch.ElapsedMilliseconds + "ms");
     }
 
     public static ResourceManager Get()
@@ -47,16 +52,18 @@ public class ResourceManager : MonoBehaviour
 
     public Card instantiateCardById(int id) => CardBuilder.Instance.BuildFromCardData(cardDataMap[id]);
 
-    public List<Card> getAllCardsVisibleInDeckBuilder()
+    public List<CardData> getAllCardDataVisibleInDeckBuilder()
     {
-        List<Card> returnList = new List<Card>();
+        List<CardData> returnList = new List<CardData>();
         foreach (CardData data in cardDataMap.Values)
         {
             if (data.visibleInDeckBuilder)
-                returnList.Add(CardBuilder.Instance.BuildFromCardData(data));
+                returnList.Add(data);
         }
         return returnList;
     }
+
+    public List<CardData> getAllCardData() => new List<CardData>(cardDataMap.Values);
 
     public CardData getCardDataById(int id) => cardDataMap[id];
 }

@@ -15,8 +15,10 @@ MonoBehaviour:
   id: 72
   cardName: Gem Briber
   art: {fileID: 21300000, guid: e4cee17eeb3d41045ac31ce39b8dfdbc, type: 3}
-  effectText: <b>Deploy:</b> If there is a Gem in your hand gain 1 attack. If there
-    are 3 or more Gems in your hand gain 1 more attack.\n<b>Defender 1</b>
+  effectText: '<b>Deploy:</b> If there is a Gem in your hand gain 1 attack. If there
+    are 3 or more Gems in your hand gain 1 more attack.
+
+    <b>Defender 1</b>'
   manaCost: 0
   goldCost: 3
   elementalIdentity: 3

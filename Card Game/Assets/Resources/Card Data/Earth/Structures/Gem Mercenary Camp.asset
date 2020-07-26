@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c88530ff336ff9e45b59984405d2e502, type: 3}
+  m_Name: Gem Mercenary Camp
+  m_EditorClassIdentifier: 
+  id: 41
+  cardName: Gem mercenary Camp
+  art: {fileID: 21300000, guid: 162652dc0de3b9b49800e84a67632a5f, type: 3}
+  effectText: 'Action, shuffle a gem card from your hand into your deck: Create a
+    2/2 Gem Mercenary on a tile adjacent to this structure'
+  manaCost: 0
+  goldCost: 2
+  elementalIdentity: 3
+  tags: 
+  keywords: 
+  visibleInDeckBuilder: 1
+  health: 4
+  effects: {fileID: 139360468001434699, guid: f4f21e55f98994b48a6435f160a69123, type: 3}

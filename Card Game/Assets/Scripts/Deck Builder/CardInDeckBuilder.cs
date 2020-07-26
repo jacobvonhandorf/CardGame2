@@ -11,6 +11,7 @@ public class CardInDeckBuilder : MonoBehaviour
     [SerializeField] private Color windColor;
     [SerializeField] private Color earthColor;
     [SerializeField] private Color waterColor;
+    [SerializeField] private Color nuetralColor;
     [SerializeField] private DeckBuilderMinus minusButton;
     [SerializeField] private DeckBuilderPlus plusButton;
     [SerializeField] private DeckBuilderCardName cardNameBox;
@@ -27,27 +28,31 @@ public class CardInDeckBuilder : MonoBehaviour
         }
     }
 
-    public void setToCard(Card card, DeckBuilderDeck deck)
+    public void setToCard(CardData card, DeckBuilderDeck deck)
     {
-        cardNameText.text = card.getCardName();
+        cardNameText.text = card.cardName;
         amount = 0;
         incrementAmount();
 
-        if (card.getElementIdentity() == Card.ElementIdentity.Earth)
+        if (card.elementalIdentity == Card.ElementIdentity.Earth)
             setBackgroundColor(earthColor);
-        if (card.getElementIdentity() == Card.ElementIdentity.Fire)
+        else if (card.elementalIdentity == Card.ElementIdentity.Fire)
             setBackgroundColor(fireColor);
-        if (card.getElementIdentity() == Card.ElementIdentity.Water)
+        else if (card.elementalIdentity == Card.ElementIdentity.Water)
             setBackgroundColor(waterColor);
-        if (card.getElementIdentity() == Card.ElementIdentity.Wind)
+        else if (card.elementalIdentity == Card.ElementIdentity.Wind)
             setBackgroundColor(windColor);
+        else if (card.elementalIdentity == Card.ElementIdentity.Nuetral)
+            setBackgroundColor(nuetralColor);
+        else
+            Debug.LogError(card.elementalIdentity);
 
-        minusButton.card = card;
+        minusButton.cardId = card.id;
         minusButton.deck = deck;
-        plusButton.card = card;
+        plusButton.cardId = card.id;
         plusButton.deck = deck;
 
-        cardNameBox.sourceCard = card;
+        cardNameBox.cardId = card.id;
 
         Debug.Log("Setting up card in deck builder");
     }

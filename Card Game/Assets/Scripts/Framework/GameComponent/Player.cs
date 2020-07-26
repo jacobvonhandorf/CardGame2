@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     public bool isActivePlayer = false;
     public bool canDraw = true;
     public Creature heldCreature; // If the player clicks a creature a reference to that creature is held here (so it can be moved or attacked with)
+    public Player oppositePlayer { get { return GameManager.Get().getOppositePlayer(this); } }
 
     public List<Creature> controlledCreatures = new List<Creature>();
     public List<Structure> controlledStructures = new List<Structure>();
@@ -80,6 +81,15 @@ public class Player : MonoBehaviour
     public void makeLose()
     {
         GameManager.Get().makePlayerLose(this);
+    }
+
+    public bool hasCreatureWithTag(Card.Tag tag)
+    {
+        foreach (Creature c in GameManager.Get().getAllCreaturesControlledBy(this))
+            if (c.hasTag(tag))
+                return true;
+
+        return false;
     }
 
     #region Locking
