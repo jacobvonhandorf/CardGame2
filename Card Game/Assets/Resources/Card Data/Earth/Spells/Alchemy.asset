@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 16
   cardName: Alchemy
-  art: {fileID: 21300000, guid: aaa956bd47b7f94499fb2a9f945c7f42, type: 3}
+  art: {fileID: 21300000, guid: a7652e4f188a12d419c19ac3012b8e6c, type: 3}
   effectText: Gain 2 gold.
   manaCost: 1
   goldCost: 0

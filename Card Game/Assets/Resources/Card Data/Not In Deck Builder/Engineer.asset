@@ -22,8 +22,8 @@ MonoBehaviour:
   goldCost: 2
   elementalIdentity: 4
   tags: 00000000
-  keywords: 0000000001000000
-  visibleInDeckBuilder: 1
+  keywords: 000000000a000000
+  visibleInDeckBuilder: 0
   health: 2
   attack: 1
   movement: 3

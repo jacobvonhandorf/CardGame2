@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 11
   cardName: Mana Well
-  art: {fileID: 21300000, guid: 162652dc0de3b9b49800e84a67632a5f, type: 3}
+  art: {fileID: 21300000, guid: d58fe605eba765645987d4a397bdef08, type: 3}
   effectText: 'At the start of your turn or when you play a spell card place a well
     counter on this structure.
 
 
     Remove 3 well counters: gain 1 mana.'
   manaCost: 0
-  goldCost: 0
+  goldCost: 1
   elementalIdentity: 0
   tags: 
   keywords: 
