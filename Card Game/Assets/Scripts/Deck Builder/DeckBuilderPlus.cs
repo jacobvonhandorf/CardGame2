@@ -5,10 +5,10 @@ using UnityEngine;
 public class DeckBuilderPlus : MonoBehaviour
 {
     public DeckBuilderDeck deck;
-    public Card card;
+    public int cardId;
 
     private void OnMouseUpAsButton()
     {
-        deck.addCard(card);
+        deck.addCard(cardId);
     }
 }

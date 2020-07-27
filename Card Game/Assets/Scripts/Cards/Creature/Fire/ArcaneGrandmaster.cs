@@ -2,68 +2,56 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ArcaneGrandmaster : Creature, SingleTileTargetEffect
+public class ArcaneGrandmaster : Creature
 {
-    //private const int effRange = 3;
-    //private const int numCardsNeededForBonusDamage = 4;
-
     private const int FIRST_THRESHOLD = 3;
     private const int SECOND_THRESHOLD = 6;
     private const int THIRD_THRESHOLD = 10;
+
+    public override int cardId => 65;
 
     public override int getStartingRange()
     {
         return 1;
     }
 
-    public override int getCardId()
+    public override void onInitialization()
     {
-        return 65;
+        GameEvents.E_SpellCast += GameEvents_E_SpellCast;
+        E_OnDeployed += ArcaneGrandmaster_E_OnDeployed;
+    }
+    private void OnDestroy()
+    {
+        GameEvents.E_SpellCast -= GameEvents_E_SpellCast;
+        E_OnDeployed -= ArcaneGrandmaster_E_OnDeployed;
     }
 
-    public override List<Keyword> getInitialKeywords()
+    private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastArgs e)
     {
-        return new List<Keyword>() { Keyword.deploy };
-    }
-
-    public override void onAnySpellCast(SpellCard spell)
-    {
-        // if is in hand and the spell was cast by the same owner
-        if (sourceCard.getCardPile() is Hand && spell.owner == sourceCard.owner)
-        {
+        if (sourceCard.getCardPile() is Hand && e.spell.owner == sourceCard.owner)
             addAttack(1);
-        }
     }
-
-    public override void onCreation()
+    private void ArcaneGrandmaster_E_OnDeployed(object sender, System.EventArgs e)
     {
         if (getAttack() >= FIRST_THRESHOLD)
         {
             List<Card> arcaneCards = controller.deck.getAllCardsWithTag(Card.Tag.Arcane);
             int index = Random.Range(0, arcaneCards.Count);
-            arcaneCards[index].moveToCardPile(controller.hand, true);
+            arcaneCards[index].moveToCardPile(controller.hand, sourceCard);
         }
         if (getAttack() >= SECOND_THRESHOLD)
         {
             List<Card> arcaneCards = controller.deck.getAllCardsWithTag(Card.Tag.Arcane);
             int index = Random.Range(0, arcaneCards.Count);
-            arcaneCards[index].moveToCardPile(controller.hand, true);
+            arcaneCards[index].moveToCardPile(controller.hand, sourceCard);
         }
         if (getAttack() >= THIRD_THRESHOLD)
         {
-            if (GameManager.Get().getAllTilesWithCreatures(GameManager.Get().getOppositePlayer(controller)).Count > 0)
-                GameManager.Get().setUpSingleTileTargetEffect(this, controller, currentTile, this, null, "Select a creature to destroy", true);
+            SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(controller.getOppositePlayer(), false), delegate (Tile t)
+            {
+                GameManager.Get().destroyCreature(t.creature);
+            });
         }
-    }
-
-    public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
-    {
-        return GameManager.Get().getAllTilesWithCreatures(oppositePlayer);
-    }
-
-    public bool canBeCancelled()
-    {
-        return true;
     }
 
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)

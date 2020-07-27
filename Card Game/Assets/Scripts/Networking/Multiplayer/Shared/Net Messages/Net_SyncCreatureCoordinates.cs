@@ -7,7 +7,7 @@ public class Net_SyncCreatureCoordinates : NetMsg
     }
 
     public int creatureCardId { get; set; }
-    public bool wasForceMove { get; set; }
+    public int sourceCardId { get; set; }
     public byte x { get; set; }
     public byte y { get; set; }
 }

@@ -4,21 +4,14 @@ using UnityEngine;
 
 public class Shrinker : Creature
 {
-    public override int getStartingRange()
-    {
-        return 1;
-    }
+    public override int cardId => 54;
 
     public override Effect getEffect()
     {
-        return new ShrinkerEffect();
+        return null;
     }
 
-    public override int getCardId()
-    {
-        return 54;
-    }
-
+    /*
     private class ShrinkerEffect : SingleTileTargetEffect
     {
         public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
@@ -41,4 +34,5 @@ public class Shrinker : Creature
             return validTargets;
         }
     }
+    */
 }

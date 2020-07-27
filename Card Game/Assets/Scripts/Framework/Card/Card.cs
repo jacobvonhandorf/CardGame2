@@ -9,6 +9,7 @@ using UnityEngine.UI;
 
 public abstract class Card : MonoBehaviour
 {
+    #region Enums
     public enum Tag
     {
         Human, Fairy, Arcane,
@@ -28,74 +29,89 @@ public abstract class Card : MonoBehaviour
     {
         Fire = 0, Water = 1, Wind = 2, Earth = 3, Nuetral = 4 // numbered so cards can be sorted by element
     }
+    #endregion
 
+    // basic fields
     private List<Tag> tags = new List<Tag>();
-    //private List<CardKeywords> keywords = new List<CardKeywords>();
-    private string cardName;
+    public string cardName;
     [HideInInspector] private bool hidden = true; // if true then all players can see the card
     [SerializeField] protected CardPile currentCardPile; // card pile the card is currently in. Use moveToCardPile to change
     public Player owner; // set this to readonly after done using TestCard
-
-    [HideInInspector] public bool isBeingDragged = false;
-    [HideInInspector] public bool positionLocked = false;
-    [HideInInspector] public Vector3 positionInHand;
+    public EmptyHandler onInitilization;
 
     // synced
     private int goldCost;
     private int baseGoldCost;
     private int manaCost;
     private int baseManaCost;
-    private ElementIdentity elementIdentity;
+    private ElementIdentity elementIdentity { get { return cardStatsScript.getElementIdentity(); }}
 
-    [SerializeField] protected CardStatsGetter cardStatsScript;
-
+    // graphics
+    [SerializeField] public CardStatsGetter cardStatsScript;
     protected SpriteRenderer[] sprites; // all sprites so card alpha can be changed all at once
     protected TextMeshPro[] tmps; // all text objects for this card
+    [HideInInspector] public bool isBeingDragged = false;
+    [HideInInspector] public bool positionLocked = false;
+    [HideInInspector] public Vector3 positionInHand;
+    public HashSet<CardViewer> viewersDisplayingThisCard;
 
-    public List<CardViewer> viewersDisplayingThisCard;
     public List<ToolTipInfo> toolTipInfos = new List<ToolTipInfo>();
+    public TransformManager transformManager;
+
+    #region Events
+    public event EventHandler<AddedToCardPileArgs> E_AddedToCardPile;
+    public class AddedToCardPileArgs : EventArgs
+    {
+        public AddedToCardPileArgs(CardPile previousCardPile, CardPile newCardPile, Card source)
+        {
+            this.previousCardPile = previousCardPile;
+            this.newCardPile = newCardPile;
+            this.source = source;
+        }
+        public CardPile previousCardPile { get; set; }
+        public CardPile newCardPile { get; set; }
+        public Card source { get; set; }
+    }
+    public delegate void AddedToCardPileHandler(object sender, AddedToCardPileArgs e);
+    public void TriggerAddedToCardPileEffects(object sender, AddedToCardPileArgs args)
+    {
+        if (E_AddedToCardPile != null)
+            E_AddedToCardPile.Invoke(sender, args);
+    }
+    #endregion
 
     // Start is called before the first frame update
     protected virtual void Start()
     {
-        positionInHand = cardStatsScript.cardRoot.position;
-        tags = getTags();
+        positionInHand = transform.position;
+        tags = getInitialTags();
     }
-
-    private void Awake()
+    protected virtual void Awake()
     {
-        viewersDisplayingThisCard = new List<CardViewer>();
+        viewersDisplayingThisCard = new HashSet<CardViewer>();
 
-        try
-        {
-            cardStatsScript.setCardCosts(this);
-        } catch (FormatException)
-        {
-            Debug.LogError("Error while parsing elements on card. Check that all cards have proper values set in their text fields");
-        } catch (NullReferenceException)
-        {
-            Debug.LogError("Error while parsing elements on card. Make sure Card script is linked to StatsGetter script");
-        }
-
-        cardName = cardStatsScript.getCardName();
-        sprites = getRootTransform().GetComponentsInChildren<SpriteRenderer>();
-        tmps = getRootTransform().GetComponentsInChildren<TextMeshPro>();
+        sprites = GetComponentsInChildren<SpriteRenderer>();
+        tmps = GetComponentsInChildren<TextMeshPro>();
         setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
-        elementIdentity = cardStatsScript.getElementIdentity();
         effectGraphic = EffectGraphic.NewEffectGraphic(this);
+        transformManager = GetComponent<TransformManager>();
+        cardStatsScript = GetComponent<CardStatsGetter>();
+        cardStatsScript.setCardCosts(this);
     }
 
-    /*
-     * Returns true if this card has the the tag passed to this method
-     */
-    public bool hasTag(Tag tag)
+    #region Tags
+    public bool hasTag(Tag tag) => tags.Contains(tag);
+    public void addTag(Tag tag)
     {
-        return tags.Contains(tag);
+        tags.Add(tag);
     }
+    public void removeTag(Tag tag)
+    {
+        tags.Remove(tag);
+    }
+    #endregion
 
-    /*
-     * returns true if this card is the type passed to it
-     */
+    // returns true if this card is the type passed to it
     public bool isType(CardType type)
     {
         return getCardType().Equals(type);
@@ -117,94 +133,90 @@ public abstract class Card : MonoBehaviour
     }
 
     /*
-     * Makes card not visible or affect game 
      * Used when a creature card is played so the 'card' doesn't exist anywhere
      * but will need to be put in grave if creature dies so it can't be destroyed
      */
     public void phaseOut()
     {
-        gameObject.SetActive(false);
+        enabled = false;
     }
-
-    // reverses phaseOut()
     public void phaseIn()
     {
-        gameObject.SetActive(true);
+        enabled = true;
     }
 
-    /*
-     * Makes the card visible to both players regardless of where it is at
-     */
-    public void reveal()
-    {
-        throw new NotImplementedException();
-    }
+    public abstract void initialize();
 
     // move card to a pile and remove it from the old one
-    public void moveToCardPile(CardPile newPile, bool byEffect)
+    public void moveToCardPile(CardPile newPile, Card source)
     {
-        actualMove(newPile, byEffect);
-        NetInterface.Get().syncMoveCardToPile(this, newPile, byEffect);
+        actualMove(newPile, source);
+        NetInterface.Get().syncMoveCardToPile(this, newPile, source);
     }
 
-    public void syncCardMovement(CardPile newPile, bool byEffect)
+    public void syncCardMovement(CardPile newPile, Card source)
     {
-        actualMove(newPile, byEffect);
+        actualMove(newPile, source);
     }
 
-    private void actualMove(CardPile newPile, bool byEffect)
+    private void actualMove(CardPile newPile, Card source)
     {
-        Debug.Log("Move card by effect:" + byEffect);
         if (currentCardPile != null)
         {
             if (newPile == currentCardPile) // if we're already in the new pile then do nothing
                 return;
             currentCardPile.removeCard(this);
         }
+        CardPile previousPile = currentCardPile;
         currentCardPile = newPile;
 
-        if (byEffect)
-            newPile.addCardByEffect(this);
-        else
-            newPile.addCard(this);
+        newPile.addCard(this);
+        TriggerAddedToCardPileEffects(this, new AddedToCardPileArgs(previousPile, newPile, source));
     }
 
-    public CardPile getCardPile()
-    {
-        return currentCardPile;
-    }
+    public CardPile getCardPile() => currentCardPile;
 
+    #region HoveringEffects
     private bool hovered = false;
     // when card becomse hovered show it in the main card preview
     private void OnMouseEnter()
     {
+        if (!enabled)
+            return;
         GameManager.Get().getCardViewer().setCard(this);
 
         // also move card up a bit
         Vector3 oldPosition = positionInHand;
         Vector3 newPosition = new Vector3(oldPosition.x, oldPosition.y + hoverOffset, oldPosition.z);
-        moveTo(newPosition, 10);
+        moveTo(newPosition);
 
         hovered = true;
         StartCoroutine(checkHoverForTooltips());
     }
-
     private const float hoverOffset = .7f;
-
     // move card back down when it is no longer being hovered
     private void OnMouseExit()
     {
-        moveTo(positionInHand, 10);
+        if (!enabled)
+            return;
+        moveTo(positionInHand);
         hovered = false;
         foreach (CardViewer cv in viewersDisplayingThisCard)
             cv.clearToolTips();
     }
-
-    // methods for drag and drop
+    private void OnDisable()
+    {
+        foreach (CardViewer cv in viewersDisplayingThisCard)
+            cv.clearToolTips();
+    }
+    #endregion
+    #region ClickAndDrag
     private Vector3 offset;
     void OnMouseDown()
     {
-        if (owner.locked)
+        if (!enabled)
+            return;
+        if (owner.isLocked())
             return;
         if (positionLocked)
         {
@@ -212,11 +224,12 @@ public abstract class Card : MonoBehaviour
         }
 
         isBeingDragged = true;
-        offset = getRootTransform().position -
+        offset = transform.position -
             Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.0f));
+        Board.instance.setAllTilesToDefault();
+        NetInterface.Get().getLocalPlayer().heldCreature = null;
 
-        List<Tile> validTiles = getLegalTargetTiles();
-        foreach (Tile tile in validTiles)
+        foreach (Tile tile in legalTargetTiles)
         {
             tile.setActive(true);
         }
@@ -227,10 +240,14 @@ public abstract class Card : MonoBehaviour
         {
             cv.clearToolTips();
         }
+        transformManager.clearQueue();
+        transformManager.Lock();
     }
     void OnMouseDrag()
     {
-        if (positionLocked || owner.locked)
+        if (!enabled)
+            return;
+        if (positionLocked || owner.isLocked())
         {
             Debug.Log("Card Position locked");
             return;
@@ -239,7 +256,7 @@ public abstract class Card : MonoBehaviour
             return;
 
         Vector3 newPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, -1.0f);
-        cardStatsScript.cardRoot.position = Camera.main.ScreenToWorldPoint(newPosition) + offset;
+        transform.position = Camera.main.ScreenToWorldPoint(newPosition) + offset;
         //isBeingDragged = true;
         Tile aboveTile = getTileMouseIsOver();
         if (aboveTile != null)
@@ -250,11 +267,13 @@ public abstract class Card : MonoBehaviour
         {
             setSpriteAlpha(1f);
         }
-
+        transformManager.Lock();
     }
     private void OnMouseUp()
     {
-        if (owner.locked)
+        if (!enabled)
+            return;
+        if (owner.isLocked())
         {
             Debug.Log("Owner is locked");
             return;
@@ -265,13 +284,14 @@ public abstract class Card : MonoBehaviour
         setSpriteAlpha(1f);
         setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
 
+        transformManager.UnLock();
         // if card is above a Tile then play it
         Tile tile = getTileMouseIsOver();
         if (tile != null)
         {
-            if (getLegalTargetTiles().Contains(tile))
+            if (legalTargetTiles.Contains(tile))
             {
-                Debug.Log("Attempting to play card");
+                //Debug.Log("Attempting to play card");
                 if (canBePlayed())
                 {
                     payCosts(owner);
@@ -296,29 +316,25 @@ public abstract class Card : MonoBehaviour
                 }
             }
             else
-            {
                 moveTo(positionInHand);
-            }
         }
         else
-        {
             moveTo(positionInHand);
-        }
-        GameManager.Get().setAllTilesToNotActive();
+        Board.instance.setAllTilesToDefault();
     }
     private void cancelDrag()
     {
         Debug.Log("Cancel drag called");
-        if (owner.locked || !isBeingDragged)
+        if (owner.isLocked() || !isBeingDragged)
             return;
         isBeingDragged = false;
         setSpriteAlpha(1f);
         setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
         moveTo(positionInHand);
         
-        GameManager.Get().setAllTilesToNotActive();
+        Board.instance.setAllTilesToDefault();
+        transformManager.UnLock();
     }
-
     // change the alpha for all sprites related to this card
     private void setSpriteAlpha(float value)
     {
@@ -329,7 +345,6 @@ public abstract class Card : MonoBehaviour
             image.color = tmp;
         }
     }
-
     private Tile getTileMouseIsOver()
     {
         Vector2 origin = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x,
@@ -343,11 +358,12 @@ public abstract class Card : MonoBehaviour
         }
         return null;
     }
+    #endregion
 
     private EffectGraphic effectGraphic; // initialized in awake
-    public void showInEffectsQueue()
+    public void showInEffectsView()
     {
-        EffectGraphicsQueue.Get().addToQueue(effectGraphic);
+        EffectGraphicsView.Get().addToQueue(effectGraphic);
     }
 
     #region MovingGraphicsMethods
@@ -361,15 +377,15 @@ public abstract class Card : MonoBehaviour
         //if (!onScene) not sure if this is needed. Commenting it out fixed card not going to grave when killed over network
         //    return;
 
-        positionOnScene = getRootTransform().position;
-        getRootTransform().position = new Vector3(99999f, 99999f, 99999f);
-        interuptMove = true;
+        positionOnScene = transform.position;
+        transform.position = new Vector3(99999f, 99999f, 99999f);
+        transformManager.Lock();
+        transformManager.enabled = false;
+        //interuptMove = true;
         onScene = false;
     }
     public void returnGraphicsAndCollidersToScene()
     {
-        //if (onScene)
-        //    return;
         if (GameManager.gameMode == GameManager.GameMode.online)
         {
             // if card is in hand and the owner is not the local player then don't do anything
@@ -379,8 +395,9 @@ public abstract class Card : MonoBehaviour
             }
         }
 
-        interuptMove = false;
-        getRootTransform().position = positionOnScene;
+        transformManager.enabled = true;
+        transformManager.UnLock();
+        transform.position = positionOnScene;
         onScene = true;
     }
     public bool isOnScene()
@@ -389,59 +406,17 @@ public abstract class Card : MonoBehaviour
     }
 
     // these methods and coroutines change the cards position smoothly
-    Coroutine previousCoroutine = null;
-    public void moveTo(Transform target)
-    {
-        StopAllCoroutines();
-        previousCoroutine =  StartCoroutine(moveToCoroutine(target, smoothing));
-    }
     public void moveTo(Vector3 position)
     {
-        StopAllCoroutines();
-        StartCoroutine(moveToPositionCoroutine(position, smoothing));
-    }
-    public void moveTo(Transform target, float speed)
-    {
-        StopAllCoroutines();
-        StartCoroutine(moveToCoroutine(target, speed));
-    }
-    public void moveTo(Vector3 position, float speed)
-    {
-        StopAllCoroutines();
-        StartCoroutine(moveToPositionCoroutine(position, speed));
-    }
-    private bool interuptMove = false; // only thing toggling this right now is removing/return graphics. Might need to refactor this if more things start affecting the card
-    IEnumerator moveToCoroutine(Transform target, float speed)
-    {
-        if (interuptMove)
-            yield break;
-        Transform parent = getRootTransform();
-        while (Vector3.Distance(parent.position, target.position) > 0.02f && !isBeingDragged && !interuptMove)
-        {
-            parent.position = Vector3.Lerp(parent.position, target.position, speed * Time.deltaTime);
+        TransformStruct ts = new TransformStruct(transformManager.transform);
+        ts.position = position;
+        transformManager.moveToImmediate(ts);
 
-            yield return null;
-        }
-    }
-    IEnumerator moveToPositionCoroutine(Vector3 targetPosition, float speed)
-    {
-        if (interuptMove)
-            yield break;
-        Transform parent = getRootTransform();
-        while (Vector3.Distance(parent.position, targetPosition) > 0.02f && !isBeingDragged && !interuptMove)
-        {
-            parent.position = Vector3.Lerp(parent.position, targetPosition, speed * Time.deltaTime);
-
-            yield return null;
-        }
+        //StopAllCoroutines();
+        //StartCoroutine(moveToPositionCoroutine(position, smoothing));
     }
     #endregion
-
-    public Transform getRootTransform()
-    {
-        return cardStatsScript.cardRoot;
-    }
-
+    #region Sprites
     public void setSpritesToSortingLayer(SpriteLayers layer)
     {
         foreach (SpriteRenderer spriteRenderer in sprites)
@@ -486,18 +461,19 @@ public abstract class Card : MonoBehaviour
             sprite.color = color;
         }
     }
-
+    #endregion
+    #region CardViewer
     public void addToCardViewer(CardViewer viewer)
     {
         viewersDisplayingThisCard.Add(viewer);
         cardStatsScript.setCardViewer(viewer);
     }
-
     public void removeFromCardViewer(CardViewer viewer)
     {
         if (!viewersDisplayingThisCard.Remove(viewer))
             Debug.Log("Attempting to remove card from viewer it hasn't been registered on");
     }
+    #endregion
 
     public bool ownerCanPayCosts()
     {
@@ -513,6 +489,7 @@ public abstract class Card : MonoBehaviour
         player.addMana(-manaCost);
     }
 
+    #region GettersAndSetters
     public string getCardName()
     {
         return cardStatsScript.getCardName();
@@ -561,18 +538,20 @@ public abstract class Card : MonoBehaviour
         goldCost = baseGoldCost;
         manaCost = baseManaCost;
     }
-
+    public ElementIdentity getElementIdentity() { return elementIdentity; }
+    public void setElementIdentity(ElementIdentity eId) { cardStatsScript.setElementIdentity(eId); }
+    #endregion
     #region Keyword
     private List<Keyword> keywordList = new List<Keyword>();
     public void addKeyword(Keyword keyword)
     {
         keywordList.Add(keyword);
-        toolTipInfos.Add(keyword.info);
+        toolTipInfos.Add(KeywordData.getData(keyword).info);
     }
     public void removeKeyword(Keyword keyword)
     {
         keywordList.Remove(keyword);
-        toolTipInfos.Remove(keyword.info);
+        toolTipInfos.Remove(KeywordData.getData(keyword).info);
     }
     public bool hasKeyword(Keyword keyword)
     {
@@ -606,7 +585,6 @@ public abstract class Card : MonoBehaviour
         }
         yield return null;
     }
-    public abstract List<Keyword> getInitialKeywords();
     #endregion
 
     private void Update()
@@ -618,30 +596,20 @@ public abstract class Card : MonoBehaviour
         }
     }
 
-    public ElementIdentity getElementIdentity() { return elementIdentity; }
-    public void setElementIdentity(ElementIdentity eId) { cardStatsScript.setElementIdentity(eId); }
-
+    #region OverrideMethods
     // ABSTRACT METHODS
     public abstract CardType getCardType();
-    public abstract List<Tile> getLegalTargetTiles();
     public abstract void play(Tile t);
     public abstract bool canBePlayed();
-    public abstract int getCardId();
+    public abstract int cardId { get; }
+    public abstract List<Tile> legalTargetTiles { get; }
 
     // VIRTUAL METHODS
-    public virtual void initialize() { }
-    // triggered effects
-    public virtual void onCardDrawn() { }
-    public virtual void onGameStart() { }
-    public virtual void onSentToGrave() { }
-    public virtual void onCardAddedByEffect() { } // when card is added to a players hand by an effect
-    public virtual void onAnyCreaturePlayed(Creature c) { }
-    public virtual void onAnySpellCast(SpellCard s) { }
-
-    protected virtual List<Tag> getTags()
+    protected virtual List<Tag> getInitialTags() // TODO needs to be changed to getInitialTags
     {
         return tags;
     }
+    #endregion
 }
 
 public class CardComparator : IComparer<Card>

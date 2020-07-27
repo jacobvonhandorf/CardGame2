@@ -4,57 +4,23 @@ using UnityEngine;
 
 public class FairyCavalier : Creature
 {
-    public override List<Card.Tag> getTags()
+    public override int cardId => 51;
+    public override List<Card.Tag> getInitialTags() => new List<Card.Tag>() { Card.Tag.Fairy };
+
+    public override void onInitialization()
     {
-        List<Card.Tag> tags = new List<Card.Tag>();
-        tags.Add(Card.Tag.Fairy);
-        return tags;
+        E_OnDeployed += FairyCavalier_E_OnDeployed;
+    }
+    private void OnDestroy()
+    {
+        E_OnDeployed -= FairyCavalier_E_OnDeployed;
     }
 
-    public override void onCreation()
+    private void FairyCavalier_E_OnDeployed(object sender, System.EventArgs e)
     {
-        GameManager.Get().setUpSingleTileTargetEffect(new FairyCavalierEffect(), controller, currentTile, this, null, "Select a creature to return to bounce", false);
-    }
-
-    public override int getStartingRange()
-    {
-        return 1;
-    }
-
-    public override int getCardId()
-    {
-        return 51;
-    }
-
-    private class FairyCavalierEffect : SingleTileTargetEffect
-    {
-        public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
+        SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(controller, true), delegate (Tile t)
         {
-            Debug.Log("Cavalier effect activated");
-            targetTile.creature.bounce();
-        }
-
-        public List<Tile> getValidTargetTiles(Player sourcePlayer, Player oppositePlayer, Tile sourceTile)
-        {
-            Debug.Log(sourcePlayer);
-            Debug.Log(GameManager.Get().getAllTilesWithCreatures(sourcePlayer).Count);
-            List<Tile> returnList = GameManager.Get().getAllTilesWithCreatures(sourcePlayer);
-            returnList.RemoveAll(t => t.creature is Engineer); // can't bounce engineers
-            return GameManager.Get().getAllTilesWithCreatures(sourcePlayer);
-        }
-
-        public bool canBeCancelled()
-        {
-            return false;
-        }
+            t.creature.bounce(sourceCard);
+        });
     }
-
-    public override List<Keyword> getInitialKeywords()
-    {
-        return new List<Keyword>()
-        {
-            Keyword.deploy
-        };
-    }
-
 }

@@ -7,9 +7,9 @@ using UnityEngine;
 public class CardViewer : MonoBehaviour
 {
     public Card sourceCard;
+    public int sourceCardId { get; private set; }
 
     public GameObject hpGameObject;
-    public GameObject armorGameObject;
     public GameObject attackGameObject;
     public GameObject goldGameObject;
     public GameObject manaGameObject;
@@ -22,7 +22,6 @@ public class CardViewer : MonoBehaviour
     public TextMeshPro nameText;
     public TextMeshPro hpText;
     public TextMeshPro attackText;
-    public TextMeshPro armorText;
     public TextMeshPro moveValueText;
     public TextMeshPro moveText;
     public TextMeshPro halfBodyText; //used by creatures
@@ -33,6 +32,11 @@ public class CardViewer : MonoBehaviour
     public SpriteRenderer cardArt;
 
     [SerializeField] private ToolTipBox toolTipPrefab;
+    [SerializeField] private Sprite earthBackground;
+    [SerializeField] private Sprite fireBackground;
+    [SerializeField] private Sprite waterBackground;
+    [SerializeField] private Sprite airBackground;
+    [SerializeField] private Sprite nuetralBackground;
 
     private void OnDestroy()
     {
@@ -55,10 +59,6 @@ public class CardViewer : MonoBehaviour
     public void setHpActive(bool active)
     {
         hpGameObject.SetActive(active);
-    }
-    public void setArmorActive(bool active)
-    {
-        armorGameObject.SetActive(active);
     }
     public void setAttackActive(bool active)
     {
@@ -87,6 +87,138 @@ public class CardViewer : MonoBehaviour
             sourceCard.removeFromCardViewer(this);
         c.addToCardViewer(this);
         sourceCard = c;
+    }
+    public virtual void setCard(int cardId)
+    {
+        CardData data = ResourceManager.Get().getCardDataById(cardId);
+        setCard(data);
+    }
+    public void setCard(CardData data)
+    {
+        sourceCardId = data.id;
+        nameText.text = data.cardName;
+        cardArt.sprite = data.art;
+        background.sprite = getSpriteFromEId(data.elementalIdentity);
+
+        switch (data)
+        {
+            case CreatureCardData creatureData:
+                setToCard(creatureData);
+                break;
+            case StructureCardData structureData:
+                setToCard(structureData);
+                break;
+            case SpellCardData spellData:
+                setToCard(spellData);
+                break;
+        }
+
+    }
+    private void setToCard(CreatureCardData data)
+    {
+        hpGameObject.SetActive(true);
+        attackGameObject.SetActive(true);
+        goldGameObject.SetActive(true);
+        manaGameObject.SetActive(false);
+        manaLowerGameObject.SetActive(false);
+        moveGameObject.SetActive(true);
+        moveText.gameObject.SetActive(true);
+        moveValueText.gameObject.SetActive(true);
+        halfBodyText.gameObject.SetActive(true);
+        fullBodyText.gameObject.SetActive(false);
+
+        goldText.text = data.goldCost + "";
+        hpText.text = data.health + "";
+        attackText.text = data.attack + "";
+        halfBodyText.text = data.effectText + "";
+        moveValueText.text = data.movement + "";
+
+        if (data.tags.Count == 0)
+        {
+            typeText.text = "Creature";
+        }
+        else
+        {
+            string tagsText = "";
+            foreach (Card.Tag tag in data.tags)
+            {
+                tagsText += tag.ToString() + " ";
+            }
+            typeText.text = "Creature - " + tagsText;
+        }
+    }
+    private void setToCard(StructureCardData data)
+    {
+        hpGameObject.SetActive(true);
+        attackGameObject.SetActive(false);
+        goldGameObject.SetActive(true);
+        fullBodyText.gameObject.SetActive(true);
+        halfBodyText.gameObject.SetActive(false);
+        manaGameObject.SetActive(false);
+        moveGameObject.SetActive(false);
+
+        goldText.text = data.goldCost + "";
+        hpText.text = data.health + "";
+        fullBodyText.text = data.effectText;
+
+        if (data.tags.Count == 0)
+        {
+            typeText.text = "Structure";
+        }
+        else
+        {
+            string tagsText = "";
+            foreach (Card.Tag tag in data.tags)
+            {
+                tagsText += tag.ToString() + " ";
+            }
+            typeText.text = "Structure - " + tagsText;
+        }
+    }
+    private void setToCard(SpellCardData data)
+    {
+        hpGameObject.SetActive(false);
+        attackGameObject.SetActive(false);
+        goldGameObject.SetActive(false);
+        manaGameObject.SetActive(true);
+        moveGameObject.SetActive(false);
+        fullBodyText.gameObject.SetActive(true);
+        halfBodyText.gameObject.SetActive(false);
+
+        manaText1.text = data.manaCost + "";
+        fullBodyText.text = data.effectText;
+
+        if (data.tags.Count == 0)
+        {
+            typeText.text = "Spell";
+        }
+        else
+        {
+            string tagsText = "";
+            foreach (Card.Tag tag in data.tags)
+            {
+                tagsText += tag.ToString() + " ";
+            }
+            typeText.text = "Spell - " + tagsText;
+        }
+
+    }
+    private Sprite getSpriteFromEId(Card.ElementIdentity element)
+    {
+        switch (element)
+        {
+            case Card.ElementIdentity.Fire:
+                return fireBackground;
+            case Card.ElementIdentity.Water:
+                return waterBackground;
+            case Card.ElementIdentity.Wind:
+                return airBackground;
+            case Card.ElementIdentity.Earth:
+                return earthBackground;
+            case Card.ElementIdentity.Nuetral:
+                return nuetralBackground;
+        }
+        throw new Exception("wtf");
     }
 
     private List<ToolTipBox> toolTips = new List<ToolTipBox>();

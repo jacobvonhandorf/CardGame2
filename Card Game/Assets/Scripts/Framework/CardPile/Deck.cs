@@ -19,7 +19,7 @@ public class Deck : CardPile
         if (GameManager.gameMode == GameManager.GameMode.online)
         {
             foreach (Card c in GetComponentsInChildren<Card>())
-                Destroy(c.getRootTransform().gameObject);
+                Destroy(c.gameObject);
             return;
         }
         foreach (Card card in GetComponentsInChildren<CreatureCard>())
@@ -27,7 +27,7 @@ public class Deck : CardPile
             card.owner = deckOwner;
             //(card as CreatureCard).creature.owner = deckOwner; Creatures don't know owner anymore
             (card as CreatureCard).creature.controller = deckOwner;
-            card.moveToCardPile(this, false);
+            card.moveToCardPile(this, null);
         }
         foreach (Card card in GetComponentsInChildren<StructureCard>())
         {
@@ -35,13 +35,13 @@ public class Deck : CardPile
             (card as StructureCard).structure.owner = deckOwner;
             (card as StructureCard).structure.controller = deckOwner;
             addCard(card);
-            card.moveToCardPile(this, false);
+            card.moveToCardPile(this, null);
         }
         foreach (Card card in GetComponentsInChildren<SpellCard>())
         {
             card.owner = deckOwner;
             addCard(card);
-            card.moveToCardPile(this, false);
+            card.moveToCardPile(this, null);
         }
         shuffle();
     }
@@ -114,7 +114,7 @@ public class Deck : CardPile
         Debug.Log("Printing deck cardList");
         foreach(Card c in cardList)
         {
-            Debug.Log(c.getRootTransform().name);
+            Debug.Log(c.transform.name);
         }
     }
 
@@ -123,14 +123,9 @@ public class Deck : CardPile
     {
         foreach (Card c in cardList)
         {
-            Destroy(c.getRootTransform().gameObject);
+            Destroy(c.gameObject);
         }
         cardList.Clear();
         cardCountText.text = "0";
-    }
-
-    protected override void onCardAddedByEffect(Card c)
-    {
-        Debug.Log("Card added to deck by effect. No trigger implemented for this yet");
     }
 }

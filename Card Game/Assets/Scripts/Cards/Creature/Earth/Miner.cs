@@ -4,47 +4,18 @@ using UnityEngine;
 
 public class Miner : Creature
 {
-    public override int getCardId()
+    public override int cardId => 68;
+
+    public override void onInitialization()
     {
-        return 68;
+        E_OnDeployed += Miner_E_OnDeployed;
     }
 
-    public override int getStartingRange()
+    private void Miner_E_OnDeployed(object sender, System.EventArgs e)
     {
-        return 1;
-    }
-
-    public override void onCreation()
-    {
-        GameManager.Get().queueCardPickerEffect(controller, controller.deck.getAllCardsWithTag(Card.Tag.Gem), new ETBReceiver(controller), 1, 1, false, "Select a Gem to add to your hand");
-
-    }
-
-    private class ETBReceiver : CanReceivePickedCards
-    {
-        private Player controller;
-
-        public ETBReceiver(Player controller)
+        CardPicker.CreateAndQueue(controller.deck.getAllCardsWithTag(Card.Tag.Gem), 1, 1, "Select a card to add to your hand", controller, delegate (List<Card> cardList)
         {
-            this.controller = controller;
-        }
-
-        public void receiveCardList(List<Card> cardList)
-        {
-            foreach (Card c in cardList)
-            {
-                controller.hand.addCardByEffect(c);
-            }
-        }
+            cardList[0].moveToCardPile(controller.hand, sourceCard);
+        });
     }
-
-    public override List<Keyword> getInitialKeywords()
-    {
-        return new List<Keyword>()
-        {
-            Keyword.deploy,
-            Keyword.armored1
-        };
-    }
-
 }

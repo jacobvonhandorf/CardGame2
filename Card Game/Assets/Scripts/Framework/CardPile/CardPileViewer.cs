@@ -82,6 +82,7 @@ public class CardPileViewer : MonoBehaviour
         Debug.Log(scroller.minY);
         scroller.maxY = -(index / cardsPerRow) * yPosCoeff + scrollerOffset;
         Debug.Log(scroller.maxY);
+        scroller.setMinAndMax(scroller.minY, scroller.maxY);
         scroller.updateContentPosition(new Vector3(-999, -999, 0)); // move scroller to the top
         gameObject.SetActive(true);
     }

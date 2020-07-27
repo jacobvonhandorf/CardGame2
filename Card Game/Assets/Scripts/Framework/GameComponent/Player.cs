@@ -13,6 +13,7 @@ public class Player : MonoBehaviour
     public bool isActivePlayer = false;
     public bool canDraw = true;
     public Creature heldCreature; // If the player clicks a creature a reference to that creature is held here (so it can be moved or attacked with)
+    public Player oppositePlayer { get { return GameManager.Get().getOppositePlayer(this); } }
 
     public List<Creature> controlledCreatures = new List<Creature>();
     public List<Structure> controlledStructures = new List<Structure>();
@@ -34,10 +35,10 @@ public class Player : MonoBehaviour
     public int numSpellsCastThisTurn = 0;
     public int numCreaturesThisTurn = 0;
     public int numStructuresThisTurn = 0;
+    public Dictionary<ExtraStatsKey, int> extraStats = new Dictionary<ExtraStatsKey, int>(); // use when scripting cards to store other stats that are attached to a player
+                                                                                                   // ex number of times a card with x name has been played by this player
 
-    private State state = State.Default;
     public Effect heldEffect;
-    public bool locked;
 
     enum State {Default, Attacking, UsingEfect} // enum for defining what action the player is in the process of doing (ex: declaring attack, declaring targets for effect)
                                                     // not used right now. Might not ever use
@@ -60,15 +61,10 @@ public class Player : MonoBehaviour
             if (deck.getCardList().Count > 0)
             {
                 Card cardToAdd = deck.getTopCard();
-                //deck.getTopCard().moveToCardPile(hand);
-                cardToAdd.moveToCardPile(hand, false);
-                cardToAdd.onCardDrawn();
+                cardToAdd.moveToCardPile(hand, null);
             }
             else
                 GameManager.Get().playerHasDrawnOutDeck(this);
-            //Card cardToAdd = deck.draw();
-            //hand.addCard(cardToAdd);
-            //cardToAdd.onCardDrawn();
         }
     }
 
@@ -82,11 +78,32 @@ public class Player : MonoBehaviour
         hand.resetCardPositions();
     }
 
-    public void addCardToHandByEffect(Card c)
+    public void makeLose()
     {
-        //hand.addCardByEffect(c);
-        c.moveToCardPile(hand, true);
+        GameManager.Get().makePlayerLose(this);
     }
+
+    public bool hasCreatureWithTag(Card.Tag tag)
+    {
+        foreach (Creature c in GameManager.Get().getAllCreaturesControlledBy(this))
+            if (c.hasTag(tag))
+                return true;
+
+        return false;
+    }
+
+    #region Locking
+    private List<object> locks = new List<object>();
+    public void addLock(object newLock)
+    {
+        locks.Add(newLock);
+    }
+    public void removeLock(object lockToRemove)
+    {
+        locks.Remove(lockToRemove);
+    }
+    public bool isLocked() => locks.Count > 0;
+    #endregion
 
     public void setToActivePlayer()
     {
@@ -240,16 +257,10 @@ public class Player : MonoBehaviour
     {
         return playerNameText.text;
     }
-
-    public void readyAttack()
+    public Player getOppositePlayer()
     {
-        state = State.Attacking;
+        return GameManager.Get().getOppositePlayer(this);
     }
-    internal void readyEffect()
-    {
-        state = State.UsingEfect;
-    }
-
 
     private void syncPlayerStats()
     {

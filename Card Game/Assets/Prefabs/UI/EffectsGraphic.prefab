@@ -547,56 +547,6 @@ PrefabInstance:
       propertyPath: m_LocalScale.y
       value: 0.7
       objectReference: {fileID: 0}
-    - target: {fileID: 2578174525652678607, guid: 35592a3d91af2e140ac5fb70ac221cdf,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 475970631687389001, guid: 35592a3d91af2e140ac5fb70ac221cdf,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1400889903239720359, guid: 35592a3d91af2e140ac5fb70ac221cdf,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 9024378370768428349, guid: 35592a3d91af2e140ac5fb70ac221cdf,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8932741934767475229, guid: 35592a3d91af2e140ac5fb70ac221cdf,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8464944124737710491, guid: 35592a3d91af2e140ac5fb70ac221cdf,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5592705976568463832, guid: 35592a3d91af2e140ac5fb70ac221cdf,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5608669493420237833, guid: 35592a3d91af2e140ac5fb70ac221cdf,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4816201356143774294, guid: 35592a3d91af2e140ac5fb70ac221cdf,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 6318630887019504518, guid: 35592a3d91af2e140ac5fb70ac221cdf,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 35592a3d91af2e140ac5fb70ac221cdf, type: 3}
 --- !u!4 &3991119007629148078 stripped

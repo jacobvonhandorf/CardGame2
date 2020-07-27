@@ -11,26 +11,24 @@ public class DeckBuilderCardsView : MonoBehaviour
     [SerializeField] private Transform contentTransform;
     [SerializeField] private Transform cardContainer;
     [SerializeField] private DeckBuilderDeck deck;
-    private List<Card> cardList; // list of cards being displayed on screen. Used for updating filter
-    private List<Card> allCards; // all cards even ones not being displayed on screen
+    private List<CardData> cardList; // list of cards being displayed on screen. Used for updating filter
+    private List<CardData> allCards; // all cards even ones not being displayed on screen
     private List<CardViewerForDeckBuilder> cardViewers;
     public CardFilterObject filter;
 
     private Dictionary<int, Card> cardIdMap = new Dictionary<int, Card>();
-    private Dictionary<Card, CardViewerForDeckBuilder> cardToViewerMap = new Dictionary<Card, CardViewerForDeckBuilder>();
+    private Dictionary<int, CardViewerForDeckBuilder> cardIdToViewerMap = new Dictionary<int, CardViewerForDeckBuilder>();
 
     public static DeckBuilderCardsView instance;
 
     private void Awake()
     {
-        // get a list of all cards that need to be displayed
-        //getAllCardsFromResources();
         cardViewers = new List<CardViewerForDeckBuilder>();
-        allCards = getAllCardsFromResources();
-        allCards.Sort(new CardComparator());
-        cardList = new List<Card>();
+        allCards = ResourceManager.Get().getAllCardDataVisibleInDeckBuilder();
+        allCards.Sort();
+        cardList = new List<CardData>();
         cardList.AddRange(allCards);
-        setup(allCards);
+        setup(cardList);
         filter = new CardFilterObject();
         instance = this;
     }
@@ -41,11 +39,12 @@ public class DeckBuilderCardsView : MonoBehaviour
     public float yCoeff = -3f;
     public float scrollerCoeff = -3;
     public float scrollerOffset = -3;
-    public void setup(List<Card> cardList) // cards must be instantiated before calling this
+    public void setup(List<CardData> cardList) // cards must be instantiated before calling this
     {
         int index = 0;
-        foreach (Card c in cardList)
+        foreach (CardData data in cardList)
         {
+            int id = data.id;
             CardViewerForDeckBuilder cardViewer;
             if (index < cardViewers.Count)
             {
@@ -54,10 +53,10 @@ public class DeckBuilderCardsView : MonoBehaviour
             }
             else
                 cardViewer = Instantiate(cardViewerPrefab, contentTransform);
-            cardViewer.setCard(c);
+            cardViewer.setCard(id);
             cardViewer.deckBeingBuilt = deck;
-            if (!cardToViewerMap.ContainsKey(c))
-                cardToViewerMap.Add(c, cardViewer);
+            if (!cardIdToViewerMap.ContainsKey(id))
+                cardIdToViewerMap.Add(id, cardViewer);
             Vector3 newPosition = new Vector3(xOffset + (index % 5) * xCoeff, yOffset + yCoeff * (index / 5), -1);
             cardViewer.transform.localPosition = newPosition;
             if (!cardViewers.Contains(cardViewer))
@@ -74,69 +73,44 @@ public class DeckBuilderCardsView : MonoBehaviour
         scroller.updateContentPosition(new Vector3(-999, -999, 0)); // move scroller to the top
     }
 
-    private List<Card> getAllCardsFromResources()
-    {
-        long startTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        List<Card> returnList = new List<Card>();
-
-        GameObject[] loadedPrefabs = Resources.LoadAll<GameObject>(cardsPath);
-        foreach (GameObject prefab in loadedPrefabs)
-        {
-            GameObject newGameObject = Instantiate(prefab, cardContainer);
-            Card newCard = newGameObject.GetComponentInChildren<Card>();
-            if (newCard == null)
-            {
-                Debug.LogError(newGameObject + " had no Card component");
-                continue;
-            }
-            cardIdMap.Add(newCard.getCardId(), newCard);
-            newCard.removeGraphicsAndCollidersFromScene();
-            returnList.Add(newCard);
-        }
-        long endTime = DateTimeOffset.Now.ToUnixTimeMilliseconds();
-        Debug.Log("Loaded all cards in " + (endTime - startTime) + " ms");
-
-        return returnList;
-    }
-
     public Card getCardById(int id)
     {
         return cardIdMap[id];
     }
 
-    public void notifyAddCard(Card card)
+    public void notifyAddCard(int cardId)
     {
-        cardToViewerMap[card].incrementCountText();
+        cardIdToViewerMap[cardId].incrementCountText();
     }
-    public void notifyRemoveCard(Card card)
+    public void notifyRemoveCard(int cardId)
     {
-        cardToViewerMap[card].decrementCountText();
+        cardIdToViewerMap[cardId].decrementCountText();
     }
 
-    private List<Card> filterCards(CardFilterObject filter)
+    private List<CardData> filterCards(CardFilterObject filter)
     {
 
-        List<Card> filteredCardList = new List<Card>();
-        foreach (Card c in allCards)
+        List<CardData> filteredCardList = new List<CardData>();
+        foreach (CardData data in allCards)
         {
             // elements
             if (filter.elements != null && filter.elements.Count > 0)
-                if (!filter.elements.Contains(c.getElementIdentity()))
+                if (!filter.elements.Contains(data.elementalIdentity))
                     continue;
             // total cost
             if (filter.totalCosts != null && filter.totalCosts.Count > 0)
-                if (!filter.totalCosts.Contains(c.getTotalCost()))
+                if (!filter.totalCosts.Contains(data.totalCost))
                     continue;
             // card types
             if (filter.cardTypes != null && filter.cardTypes.Count > 0)
-                if (!filter.cardTypes.Contains(c.getCardType()))
+                if (!filter.cardTypes.Contains(data.cardType))
                     continue;
             // tags
             if (filter.tags != null && filter.tags.Count > 0)
             {
                 bool hasTag = false;
                 foreach (Card.Tag tag in filter.tags)
-                    if (c.hasTag(tag))
+                    if (data.tags.Contains(tag))
                     {
                         hasTag = true;
                         break;
@@ -149,7 +123,7 @@ public class DeckBuilderCardsView : MonoBehaviour
             {
                 bool hasKeyword = false;
                 foreach (Keyword keyword in filter.keywords)
-                    if (c.hasKeyword(keyword))
+                    if (data.keywords.Contains(keyword))
                     {
                         hasKeyword = true;
                         break;
@@ -160,16 +134,16 @@ public class DeckBuilderCardsView : MonoBehaviour
             // name
             if (filter.nameTextSearch != null && filter.nameTextSearch != "")
             {
-                if (!c.getCardName().ToLower().Contains(filter.nameTextSearch.ToLower()))
+                if (!data.cardName.ToLower().Contains(filter.nameTextSearch.ToLower()))
                     continue;
             }
             // description
             if (filter.descriptionTextSearch != null && filter.descriptionTextSearch != "")
             {
-                if (!c.getEffectText().ToLower().Contains(filter.descriptionTextSearch.ToLower()))
+                if (!data.effectText.ToLower().Contains(filter.descriptionTextSearch.ToLower()))
                     continue;
             }
-            filteredCardList.Add(c);
+            filteredCardList.Add(data);
         }
 
 

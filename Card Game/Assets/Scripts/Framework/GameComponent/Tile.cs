@@ -11,9 +11,7 @@ public class Tile : MonoBehaviour
     public int x;
     public int y;
     private bool active = false;
-    private bool hovered = false;
     private bool attackable = false;
-    private bool effectable;
 
     [SerializeField] private GameObject attackableFilter; // prefab to instantiate
     [SerializeField] private GameObject effectableFilter; // prefab to instantiate
@@ -24,31 +22,18 @@ public class Tile : MonoBehaviour
     [SerializeField] private Color powerTileColor;
     private GameObject attackFilterLocal; // keeps track of filter that highlights attackable tiles.
     public GameObject effectFilterLocal; // keeps track of filter that highlights effectable tiles.
-    private bool powerTile = false; 
+    private bool powerTile = false;
 
-    public void addCreature(Creature creature)
+    private void Awake()
     {
-        this.creature = creature;
-        onCreatureAdded();
+        sr = GetComponent<SpriteRenderer>();
     }
 
-    private void onCreatureAdded()
-    {
-        if (structure != null)
-            structure.onCreatureAdded(creature);
-    }
-
-    private void onCreatureRemoved()
-    {
-        if (structure != null)
-            structure.onCreatureRemoved(creature);
-    }
-
-    internal void setAsPowerTile()
+    public void setAsPowerTile()
     {
         powerTile = true;
         defaultColor = powerTileColor;
-        GetComponent<SpriteRenderer>().color = powerTileColor;
+        setColor(powerTileColor);
     }
 
     public bool isPowerTile()
@@ -66,12 +51,11 @@ public class Tile : MonoBehaviour
 
     public List<Tile> getAdjacentTiles()
     {
-        return GameManager.Get().board.getAllTilesWithinRangeOfTile(this, 1);
+        return GameManager.Get().board.getAllTilesWithinExactRangeOfTile(this, 1);
     }
 
     public void removeCreature()
     {
-        onCreatureRemoved();
         creature = null;
     }
 
@@ -93,56 +77,12 @@ public class Tile : MonoBehaviour
         }
     }
 
-    public void setEffectable(bool effectable, Creature sourceCreature, Effect effect)
+    public void setEffectable(SingleTileTargetEffect singleTileTargetEffect)
     {
-        this.effectable = effectable;
-        if (effectable)
-        {
-            SpriteRenderer sr = GetComponent<SpriteRenderer>();
-            sr.color = effectColor;
-
-            effectFilterLocal = Instantiate(effectableFilter, new Vector3(x-4, y-3, -1f), Quaternion.identity);
-            EffectableFilter filter = effectFilterLocal.GetComponent<EffectableFilter>();
-            filter.tile = this;
-            filter.sourceCreature = sourceCreature;
-            filter.effect = effect;
-        }
-        else if (effectFilterLocal != null)
-        {
-            Destroy(effectFilterLocal);
-        }
-    }
-
-    public void setEffectable(Structure sourceStructure, Effect effect)
-    {
-        effectable = true;
-        SpriteRenderer sr = GetComponent<SpriteRenderer>();
-        sr.color = effectColor;
-
         effectFilterLocal = Instantiate(effectableFilter, new Vector3(x - 4, y - 3, -1), Quaternion.identity);
         EffectableFilter filter = effectFilterLocal.GetComponent<EffectableFilter>();
         filter.tile = this;
-        filter.sourceStructure = sourceStructure;
-        filter.effect = effect;
-    }
-
-    public void setEffectable(bool effectable, Player sourcePlayer, Effect effect)
-    {
-        if (effectable)
-        {
-            SpriteRenderer sr = GetComponent<SpriteRenderer>();
-            sr.color = effectColor;
-
-            effectFilterLocal = Instantiate(effectableFilter, new Vector3(x - 4, y - 3, -1), Quaternion.identity);
-            EffectableFilter filter = effectFilterLocal.GetComponent<EffectableFilter>();
-            filter.tile = this;
-            filter.effect = effect;
-            filter.sourcePlayer = sourcePlayer;
-        }
-        else if (effectFilterLocal != null)
-        {
-            Destroy(effectFilterLocal);
-        }
+        filter.effect = singleTileTargetEffect;
     }
 
     public void setEffectableFalse()
@@ -158,11 +98,10 @@ public class Tile : MonoBehaviour
         this.active = active;
         if (active)
         {
-            SpriteRenderer sr = GetComponent<SpriteRenderer>();
             sr.color = moveColor;
-        } else
+        }
+        else
         {
-            SpriteRenderer sr = GetComponent<SpriteRenderer>();
             sr.color = defaultColor;
         }
     }
@@ -172,10 +111,11 @@ public class Tile : MonoBehaviour
         if (active)
         {
             doCreatureMove();
-        } else if (attackable)
+        }
+        else if (attackable)
         {
             GameManager.Get().doAttackOn(creature);
-            GameManager.Get().setAllTilesToNotAttackable();
+            Board.instance.setAllTilesToDefault();
         }
         else
         {
@@ -190,7 +130,7 @@ public class Tile : MonoBehaviour
         if (activePlayer.heldCreature != null) // player was attacking or moving
         {
             activePlayer.heldCreature = null;
-            GameManager.Get().setAllTilesToDefault();
+            Board.instance.setAllTilesToDefault();
         }
     }
 
@@ -198,21 +138,19 @@ public class Tile : MonoBehaviour
     {
         Player playerWithCreature;
         if (GameManager.gameMode == GameManager.GameMode.online)
-        {
             playerWithCreature = NetInterface.Get().getLocalPlayer();
-        }
         else
-        {
             playerWithCreature = GameManager.Get().activePlayer;
-        }
         Creature creatureToMove = playerWithCreature.heldCreature;
-        GameManager.Get().moveCreatureToTile(creatureToMove, this);
-        GameManager.Get().setAllTilesToNotActive();
+        creatureToMove.move(this);
+        Board.instance.setAllTilesToDefault();
+        ActionBox.instance.show(creature);
         playerWithCreature.heldCreature = null;
     }
 
+    private SpriteRenderer sr;
     public void setColor(Color color)
     {
-        GetComponent<SpriteRenderer>().color = color;
+        sr.color = color;
     }
 }

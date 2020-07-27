@@ -4,12 +4,19 @@ using UnityEngine;
 
 public class FairyMotivator : Creature
 {
-    public override int getStartingRange()
+    public override int cardId => 48;
+    public override List<Card.Tag> getInitialTags() => new List<Card.Tag>() { Card.Tag.Fairy };
+
+    public override void onInitialization()
     {
-        return 1;
+        E_OnDeployed += FairyMotivator_E_OnDeployed;
+    }
+    private void OnDestroy()
+    {
+        E_OnDeployed -= FairyMotivator_E_OnDeployed;
     }
 
-    public override void onCreation()
+    private void FairyMotivator_E_OnDeployed(object sender, System.EventArgs e)
     {
         foreach (Card c in controller.hand.getAllCardsWithType(Card.CardType.Creature))
         {
@@ -17,25 +24,4 @@ public class FairyMotivator : Creature
             (c as CreatureCard).creature.addAttack(1);
         }
     }
-
-    public override List<Card.Tag> getTags()
-    {
-        List<Card.Tag> tags = new List<Card.Tag>();
-        tags.Add(Card.Tag.Fairy);
-        return tags;
-    }
-
-    public override int getCardId()
-    {
-        return 48;
-    }
-
-    public override List<Keyword> getInitialKeywords()
-    {
-        return new List<Keyword>()
-        {
-            Keyword.deploy
-        };
-    }
-
 }

@@ -43,6 +43,10 @@ public class NetInterface
     {
         return localPlayer;
     }
+    public void setLocalPlayer(Player p)
+    {
+        localPlayer = p;
+    }
 
     public void syncStartingDeck() // might neeed to move to a game setup object
     {
@@ -55,7 +59,7 @@ public class NetInterface
         }
         relayMessage(new Net_DoneSendingCards());
         foreach (Card c in deck)
-            c.moveToCardPile(pileIdMap.get(isPlayer1 ? PileId.p1Deck : PileId.p2Deck), false);
+            c.moveToCardPile(pileIdMap.get(isPlayer1 ? PileId.p1Deck : PileId.p2Deck), null);
         (pileIdMap.get(isPlayer1 ? PileId.p1Deck : PileId.p2Deck) as Deck).shuffle();
     }
 
@@ -64,12 +68,7 @@ public class NetInterface
         gameSetupComplete = true;
     }
 
-    public void setLocalPlayer(Player p)
-    {
-        localPlayer = p;
-    }
-
-    // syncing
+    #region Syncing
     public void importNewCardFromOpponent(Net_InstantiateCard msg)
     {
         SerializeableCard sc = msg.card;
@@ -87,30 +86,33 @@ public class NetInterface
         cardMap.add(c, lastUsedNetId);
         SerializeableCard sc = new SerializeableCard();
         sc.netId = lastUsedNetId;
-        sc.cardId = c.getCardId();
+        sc.cardId = c.cardId;
         Net_InstantiateCard msg = new Net_InstantiateCard();
         msg.card = sc;
         msg.ownerIsP1 = c.owner == getPlayer1();
         relayMessage(msg);
     }
-    public void syncMoveCardToPile(Card c, CardPile cp, bool byEffect)
+    public void syncMoveCardToPile(Card c, CardPile cp, object source)
     {
         int cardId = cardMap.get(c).netId;
         byte cpId = pileIdMap.get(cp);
-        //Debug.LogError("byEffect before netmsg: " + byEffect);
         Net_MoveCardToPile msg = new Net_MoveCardToPile();
         msg.cardId = cardId;
         msg.cpId = cpId;
-        msg.byEffect = byEffect;
-        //Debug.LogError("Syncing move card by effect: " + byEffect);
+        if (source is Card)
+            msg.sourceId = cardMap.get((Card)source).netId;
+        else
+            msg.sourceId = 0; // 0 is sentinal value for game mechanics/GameManager
         relayMessage(msg);
     }
-    public void recieveMoveCardToPile(int cardId, byte cardPileId, bool byEffect)
+    public void recieveMoveCardToPile(int cardId, byte cardPileId, int sourceId)
     {
         Card c = cardMap.get(cardId).cardObject;
         CardPile cp = pileIdMap.get(cardPileId);
-        Debug.Log("Recieved move to card pile byEffect:" + byEffect);
-        c.syncCardMovement(cp, byEffect);
+        Card sourceCard = null;
+        if (sourceId != 0)
+            sourceCard = cardMap.get(sourceId).cardObject;
+        c.syncCardMovement(cp, sourceCard);
     }
     public void syncDeckOrder(CardPile deck)
     {
@@ -136,28 +138,32 @@ public class NetInterface
         }
         deck.syncOrderFromNetwork(newCardList);
     }
-    public void syncCreatureCoordinates(Creature c, int x, int y, bool wasForceMove)
+    public void syncCreatureCoordinates(Creature c, int x, int y, Card source)
     {
         int creatureCardId = cardMap.get(c.sourceCard).netId;
         Net_SyncCreatureCoordinates msg = new Net_SyncCreatureCoordinates();
         msg.creatureCardId = creatureCardId;
         msg.x = (byte)x;
         msg.y = (byte)y;
-        msg.wasForceMove = wasForceMove;
+        if (source == null)
+            msg.sourceCardId = 0;
+        else
+            msg.sourceCardId = cardMap.get(source).netId;
         relayMessage(msg);
     }
-    public void recieveCreatureCoordinates(int creatureCardId, int x, int y, bool wasForceMove)
+    public void recieveCreatureCoordinates(int creatureCardId, int x, int y, object source)
     {
         Creature c = (cardMap.get(creatureCardId).cardObject as CreatureCard).creature;
-        if (wasForceMove)
-            c.forceMove(x, y);
+
+        if (source is Card)
+            c.forceMove(x, y, source as Card);
         else
             c.move(x, y);
     }
     public void syncAttack(Creature attacker, Damageable defender, int damageRoll)
     {
         int attackerId = cardMap.get(attacker.sourceCard).netId;
-        int defenderId = cardMap.get(defender.getSourceCard()).netId;
+        int defenderId = cardMap.get(defender.sourceCard).netId;
 
         Net_SyncAttack msg = new Net_SyncAttack();
         msg.attackerId = attackerId;
@@ -175,7 +181,7 @@ public class NetInterface
         else if (card is StructureCard)
             defender = (card as StructureCard).structure;
         else
-            throw new Exception("Invalid defender for attack " + card.getRootTransform());
+            throw new Exception("Invalid defender for attack " + card.transform);
         attacker.Attack(defender, damageRoll);
     }
     public void syncPlayerStats(Player p)
@@ -254,21 +260,9 @@ public class NetInterface
     }
     public void recieveCreatureStats(Net_SyncCreature msg)
     {
-        Debug.Log("Recieve creature stats atk:" + msg.attack);
         Creature c = (cardMap.get(msg.sourceCardId).cardObject as CreatureCard).creature;
         Player controller = msg.controllerIsP1 ? getPlayer1() : getPlayer2();
         c.recieveCreatureStatsFromNet(msg.attack, msg.baseAttack, msg.health, msg.baseHealth, msg.baseMovement, msg.baseRange, controller, msg.movement, msg.range);
-        /*
-        c.setAttack(msg.attack);
-        c.baseAttack = msg.baseAttack;
-        c.baseHealth = msg.baseHealth;
-        c.baseMovement = msg.movement;
-        c.baseRange = msg.baseRange;
-        c.controller = msg.controllerIsP1 ? getPlayer1() : getPlayer2();
-        c.setHealth(msg.health);
-        c.setMovement(msg.movement);
-        c.range = msg.range;
-        */
     }
     public void syncStructureStats(Structure s)
     {
@@ -348,7 +342,7 @@ public class NetInterface
             throw new Exception("Unexcpected end game code");
         }
     }
-
+    #endregion
 
     public void signalSetupComplete()
     {
@@ -438,7 +432,6 @@ public class NetInterface
             idToCard.Add(id, n);
         }
     }
-
 
     // enum for card pile Ids
     private static class PileId

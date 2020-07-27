@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a53d22fb8d4c2f46991850ee8d1c547, type: 3}
+  m_Name: Gem Giant
+  m_EditorClassIdentifier: 
+  id: 71
+  cardName: Gem Giant
+  art: {fileID: 21300000, guid: e4cee17eeb3d41045ac31ce39b8dfdbc, type: 3}
+  effectText: '<b>Deploy:</b> Gain 1 attack and 2 hp for each Gem in your hand.
+
+    <b>Ward, Armored, Defender 2</b>'
+  manaCost: 0
+  goldCost: 5
+  elementalIdentity: 3
+  tags: 
+  keywords: 06000000030000000400000002000000
+  visibleInDeckBuilder: 1
+  health: 7
+  attack: 1
+  movement: 3
+  range: 1
+  effects: {fileID: 5072811566766128889, guid: 8dbc95afe3ec07d419cc867f3af5307b, type: 3}

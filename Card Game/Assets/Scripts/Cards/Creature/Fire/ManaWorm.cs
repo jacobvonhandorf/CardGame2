@@ -4,28 +4,23 @@ using UnityEngine;
 
 public class ManaWorm : Creature
 {
-    public override int getStartingRange()
+    public override int cardId => 62;
+    public override List<Card.Tag> getInitialTags() => new List<Card.Tag>() { Card.Tag.Arcane };
+
+    private void OnEnable()
     {
-        return 1;
+        GameEvents.E_SpellCast += GameEvents_E_SpellCast;
+    }
+    private void OnDisable()
+    {
+        GameEvents.E_SpellCast -= GameEvents_E_SpellCast;
     }
 
-    public override void onAnySpellCast(SpellCard spell)
+    private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastArgs e)
     {
-        if (spell.owner == controller && sourceCard.isCreature)
+        if (e.spell.owner == controller)
         {
             addAttack(1);
         }
-    }
-
-    public override List<Card.Tag> getTags()
-    {
-        List<Card.Tag> tags = new List<Card.Tag>();
-        tags.Add(Card.Tag.Arcane);
-        return tags;
-    }
-
-    public override int getCardId()
-    {
-        return 62;
     }
 }

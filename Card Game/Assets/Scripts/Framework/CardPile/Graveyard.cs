@@ -28,7 +28,6 @@ public class Graveyard : ViewableCardPile
         else if (c is StructureCard)
             removeStructureFromTile((c as StructureCard).structure);
 
-        Debug.Log("Card added to grave");
         // remove the card from the scene
         c.removeGraphicsAndCollidersFromScene();
 
@@ -52,9 +51,6 @@ public class Graveyard : ViewableCardPile
 
         // change image being displayed
         topCardViewer.setCard(c);
-
-        // let the card know it's been sent to grave
-        c.onSentToGrave();
     }
 
     private void removeStructureFromTile(Structure structure)
@@ -77,7 +73,6 @@ public class Graveyard : ViewableCardPile
 
     protected override void onCardRemoved(Card c)
     {
-        Debug.Log("Removing card from graveyard");
         // if the card being removed is the being displayed on top of the grave then update the card
         if (c == topCard)
         {
@@ -91,12 +86,5 @@ public class Graveyard : ViewableCardPile
             }
         }
         cardCountText.text = cardList.Count + "";
-    }
-
-    protected override void onCardAddedByEffect(Card c)
-    {
-        // TODO
-        Debug.Log("Card added to deck by effect. No triggers implemented");
-        //throw new NotImplementedException();
     }
 }

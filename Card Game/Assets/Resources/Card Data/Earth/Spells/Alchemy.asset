@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1742a4a26bfaa1043b62d1ca946f22a4, type: 3}
+  m_Name: Alchemy
+  m_EditorClassIdentifier: 
+  id: 16
+  cardName: Alchemy
+  art: {fileID: 21300000, guid: a7652e4f188a12d419c19ac3012b8e6c, type: 3}
+  effectText: Gain 2 gold.
+  manaCost: 1
+  goldCost: 0
+  elementalIdentity: 3
+  tags: 
+  keywords: 
+  visibleInDeckBuilder: 1
+  effects: {fileID: 6653853616334381128, guid: a228497f66a770f45b8209c18f488e08, type: 3}

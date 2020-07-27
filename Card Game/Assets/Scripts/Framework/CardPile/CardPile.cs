@@ -27,17 +27,8 @@ public abstract class CardPile : MonoBehaviour
             return;
         cardList.Add(c);
 
-        c.getRootTransform().SetParent(transform);
+        c.transform.SetParent(transform);
         onCardAdded(c);
-    }
-
-    // this method is dangerous to call. If possible use Card.moveToCardPile()
-    public void addCardByEffect(Card c)
-    {
-        Debug.Log("card pile triggered by effect");
-        addCard(c);
-        //c.moveToCardPile(this, true);
-        onCardAddedByEffect(c);
     }
 
     // this method is dangerous to call. If possible use Card.moveToCardPile()
@@ -74,12 +65,12 @@ public abstract class CardPile : MonoBehaviour
     protected virtual void onCardAdded(Card c)
     {
         // throw new NotImplementedException();
-        Debug.Log("Should probably override onCardAdded");
+        // Debug.Log("Should probably override onCardAdded");
     }
 
     protected virtual void onCardRemoved(Card c)
     {
-        Debug.Log("OnCardRemoved called and not overriden");
+        // Debug.Log("OnCardRemoved called and not overriden");
     }
 
     /*
@@ -146,8 +137,7 @@ public abstract class CardPile : MonoBehaviour
     // only call this from NetInterface
     public void syncOrderFromNetwork(List<Card> newCardList)
     {
-        this.cardList = newCardList;
+        cardList = newCardList;
     }
 
-    protected abstract void onCardAddedByEffect(Card c);
 }

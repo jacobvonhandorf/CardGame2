@@ -4,16 +4,9 @@ using UnityEngine;
 
 public class HandBuffer : Creature
 {
-    public override int getCardId()
-    {
-        return 60;
-    }
+    public override int cardId => 60;
 
-    public override int getStartingRange()
-    {
-        return 1;
-    }
-
+    /*
     public override void onCreation()
     {
         if (controller.hand.getAllCardsWithType(Card.CardType.Creature).Count > 0)
@@ -33,4 +26,5 @@ public class HandBuffer : Creature
             }
         }
     }
+    */
 }

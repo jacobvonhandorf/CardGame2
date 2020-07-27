@@ -37,12 +37,17 @@ public class DeckBuilderDeck : MonoBehaviour
         load(PlayerPrefs.GetString(PlayerPrefEnum.mostRecentDeckName, null));
     }
 
-    public void addCard(Card newCard)
+    public void addCard(int id)
+    {
+        addCard(ResourceManager.Get().getCardDataById(id));
+    }
+
+    public void addCard(CardData newCard)
     {
         bool cardAlreadyInList = false;
         foreach (CardAmountPair pair in cardList)
         {
-            if (pair.card.getCardId() == newCard.getCardId())
+            if (pair.cardId == newCard.id)
             {
                 cardAlreadyInList = true;
                 if (pair.amount == maxCopiesOfCard) // can't put more than 3 cards in deck
@@ -58,20 +63,20 @@ public class DeckBuilderDeck : MonoBehaviour
         {
             CardInDeckBuilder newCardInDeckBuilder = Instantiate(cardInDeckBuilderPrefab, scollTransform);
             newCardInDeckBuilder.setToCard(newCard, this);
-            cardList.Add(new CardAmountPair(newCard, 1, newCardInDeckBuilder));
+            cardList.Add(new CardAmountPair(newCard.id, 1, newCardInDeckBuilder));
             resetCardBarPositions();
         }
         cardCount++;
         cardCountText.text = "Card Count: " + cardCount;
         unsavedChanges = true;
-        cardsView.notifyAddCard(newCard);
+        cardsView.notifyAddCard(newCard.id);
     }
 
-    public void removeCard(Card newCard)
+    public void removeCard(int cardId)
     {
         foreach (CardAmountPair pair in cardList)
         {
-            if (pair.card == newCard)
+            if (pair.cardId == cardId)
             {
                 pair.amount--;
                 pair.cardInDeckBuilder.decrementAmount();
@@ -86,14 +91,14 @@ public class DeckBuilderDeck : MonoBehaviour
             }
         }
         unsavedChanges = true;
-        cardsView.notifyRemoveCard(newCard);
+        cardsView.notifyRemoveCard(cardId);
     }
 
-    public int getCardAmount(Card cardToFind)
+    public int getCardAmount(int cardIdToFind)
     {
         foreach (CardAmountPair c in cardList)
         {
-            if (c.card == cardToFind)
+            if (c.cardId == cardIdToFind)
             {
                 return c.amount;
             }
@@ -130,7 +135,7 @@ public class DeckBuilderDeck : MonoBehaviour
         foreach (CardAmountPair pair in cardList)
         {
 
-            int id = pair.card.getCardId();
+            int id = pair.cardId;
             int amount = pair.amount;
             idToAmountMap.Add(id, amount);
         }
@@ -146,13 +151,6 @@ public class DeckBuilderDeck : MonoBehaviour
         int dropdownIndex = deckNameDropdown.value;
         loadDeckPopUp.setup();
         deckNameDropdown.SetValueWithoutNotify(dropdownIndex);
-        //deckNameDropdown.value = dropdownIndex;
-        /*
-        if (!deckNameDropdown.options.Contains(new TMP_Dropdown.OptionData(deckName)))
-        {
-            deckNameDropdown.AddOptions(new List<string>() { deckName });
-            deckNameDropdown.value = deckNameDropdown.options.Count - 1;
-        }*/
     }
 
     public void save()
@@ -248,20 +246,22 @@ public class DeckBuilderDeck : MonoBehaviour
 
     private class CardAmountPair : IComparable<CardAmountPair>
     {
-        public Card card;
+        public int cardId { get; private set; }
         public int amount;
         public CardInDeckBuilder cardInDeckBuilder;
 
-        public CardAmountPair(Card newCard, int v, CardInDeckBuilder newCardInDeckBuilder)
+        public CardAmountPair(int cardId, int v, CardInDeckBuilder newCardInDeckBuilder)
         {
-            card = newCard;
+            this.cardId = cardId;
             amount = v;
             cardInDeckBuilder = newCardInDeckBuilder;
         }
 
         public int CompareTo(CardAmountPair other)
         {
-            return new CardComparatorByCostFirst().Compare(card, other.card);
+            CardData first = ResourceManager.Get().getCardDataById(cardId);
+            CardData second = ResourceManager.Get().getCardDataById(other.cardId);
+            return first.CompareTo(second);
         }
     }
 
@@ -324,7 +324,7 @@ public class DeckBuilderDeck : MonoBehaviour
 
     public void load(string deckName)
     {
-        if (deckName == null)
+        if (string.IsNullOrEmpty(deckName))
             return;
         // clear current list before loading new one
         clear();
@@ -335,24 +335,38 @@ public class DeckBuilderDeck : MonoBehaviour
             FileStream file = File.OpenRead(Application.persistentDataPath + "/decks/" + deckName + ".dek");
             Dictionary<int, int> deckMap = (Dictionary<int, int>)bf.Deserialize(file);
             file.Close();
-            foreach (int id in deckMap.Keys)
+            try
             {
-                Card newCard = DeckBuilderCardsView.instance.getCardById(id);
-                for (int i = 0; i < deckMap[id]; i++)
+                foreach (int id in deckMap.Keys)
                 {
-                    addCard(newCard);
+                    //Card newCard = DeckBuilderCardsView.instance.getCardById(id);
+                    for (int i = 0; i < deckMap[id]; i++)
+                    {
+                        addCard(ResourceManager.Get().getCardDataById(id));
+                    }
                 }
+                // set deck name text
+                Debug.Log("Setting deck name text to: " + deckName);
+                deckNameField.text = deckName;
+                loadDeckPopUp.setToValue(deckName);
+                PlayerPrefs.SetString(PlayerPrefEnum.mostRecentDeckName, deckName);
+                unsavedChanges = false;
             }
-            // set deck name text
-            Debug.Log("Setting deck name text to: " + deckName);
-            deckNameField.text = deckName;
-            loadDeckPopUp.setToValue(deckName);
-            PlayerPrefs.SetString(PlayerPrefEnum.mostRecentDeckName, deckName);
-            unsavedChanges = false;
+            catch (Exception e)
+            {
+                Debug.LogError("Error loading deck: " + e.Message + " --- " + e.StackTrace);
+                File.Delete(Application.persistentDataPath + "/decks/" + deckName + ".dek");
+                unsavedChanges = false;
+
+                Toaster.Get().doToast("Deleted corrupted deck: " + deckName);
+                clear();
+                // rework deck builder to use cardData
+            }
         }
         else
         {
             Debug.LogError("Deck not found " + deckName);
+            PlayerPrefs.DeleteKey(PlayerPrefEnum.mostRecentDeckName);
         }
     }
 
@@ -367,7 +381,7 @@ public class DeckBuilderDeck : MonoBehaviour
         foreach (CardAmountPair cap in tempList)
         {
             while (cap.amount > 0)
-                removeCard(cap.card);
+                removeCard(cap.cardId);
         }
     }
 

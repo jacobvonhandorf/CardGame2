@@ -110,11 +110,11 @@ public class Client : MonoBehaviour
     #region OnData
     private void OnData(int cnnId, int channelId, int recHostId, NetMsg msg)
     {
-        Debug.Log("Receive event. OP: " + msg.OP);
+        //Debug.Log("Receive event. OP: " + msg.OP);
         switch (msg.OP)
         {
             case NetOP.None:
-                Debug.Log("Unexpected NETOP");
+                Debug.LogError("Unexpected NETOP");
                 break;
             case NetOP.LoginRequestResponse:
                 LoginRequestResponse((Net_LoginRequestResponse)msg);
@@ -131,7 +131,7 @@ public class Client : MonoBehaviour
                 break;
             case NetOP.MoveCardToPile:
                 Net_MoveCardToPile mctp = (Net_MoveCardToPile)msg;
-                NetInterface.Get().recieveMoveCardToPile(mctp.cardId, mctp.cpId, mctp.byEffect);
+                NetInterface.Get().recieveMoveCardToPile(mctp.cardId, mctp.cpId, mctp.sourceId);
                 break;
             case NetOP.SyncDeckOrder:
                 Net_SyncDeckOrder sdo = (Net_SyncDeckOrder)msg;
@@ -139,7 +139,7 @@ public class Client : MonoBehaviour
                 break;
             case NetOP.SyncCreatureCoordinates:
                 Net_SyncCreatureCoordinates scc = (Net_SyncCreatureCoordinates)msg;
-                NetInterface.Get().recieveCreatureCoordinates(scc.creatureCardId, scc.x, scc.y, scc.wasForceMove);
+                NetInterface.Get().recieveCreatureCoordinates(scc.creatureCardId, scc.x, scc.y, scc.sourceCardId);
                 break;
             case NetOP.SyncAttack:
                 Net_SyncAttack sa = (Net_SyncAttack)msg;

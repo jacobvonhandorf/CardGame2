@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a53d22fb8d4c2f46991850ee8d1c547, type: 3}
+  m_Name: Fairy Cavalier
+  m_EditorClassIdentifier: 
+  id: 51
+  cardName: Fairy Cavalier
+  art: {fileID: 21300000, guid: e4cee17eeb3d41045ac31ce39b8dfdbc, type: 3}
+  effectText: <b>Deploy:</b> Return a non Engineer creature you control to it's owner's
+    hand.
+  manaCost: 0
+  goldCost: 2
+  elementalIdentity: 2
+  tags: 01000000
+  keywords: 07000000
+  visibleInDeckBuilder: 1
+  health: 5
+  attack: 2
+  movement: 3
+  range: 1
+  effects: {fileID: 4794081045613440821, guid: 50ee4204d6f547044a76a09b32f847cc, type: 3}

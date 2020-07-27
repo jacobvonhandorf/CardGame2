@@ -4,14 +4,11 @@ using UnityEngine;
 
 public class ManaLeyline : Structure, Effect
 {
+    public override int cardId => 30;
+
     public override bool canDeployFrom()
     {
         return true;
-    }
-
-    public override bool canWalkOn()
-    {
-        return false;
     }
 
     public override void onPlaced()
@@ -24,21 +21,11 @@ public class ManaLeyline : Structure, Effect
         controller.increaseManaPerTurn(-2);
     }
 
-    public override List<Card.Tag> getTags()
-    {
-        List<Card.Tag> tags = new List<Card.Tag>();
-        tags.Add(Card.Tag.Income);
-        return tags;
-    }
+    public override List<Card.Tag> getTags() => new List<Card.Tag>() { Card.Tag.Income };
 
     public override Effect getEffect()
     {
         return this;
-    }
-
-    public override int getCardId()
-    {
-        return 30;
     }
 
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)

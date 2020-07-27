@@ -8,10 +8,7 @@ public class Headquarters : Structure
 
     private HeroPower heroPower;
 
-    public override bool canWalkOn()
-    {
-        return false;
-    }
+    public override int cardId => CARD_ID;
 
     public override bool canDeployFrom()
     {
@@ -32,11 +29,6 @@ public class Headquarters : Structure
     {
         this.heroPower = heroPower;
         statsScript.effectText.text = statsScript.effectText.text + "\n" + heroPower.getEffectText();
-    }
-
-    public override int getCardId()
-    {
-        return CARD_ID;
     }
 
     private class HQEffect : Effect

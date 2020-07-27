@@ -5,46 +5,21 @@ using static Card;
 
 public class FairyNeophyte : Creature
 {
-    public override int getStartingRange()
+    public const int CARD_ID = 46;
+    public override int cardId => CARD_ID;
+    public override List<Tag> getInitialTags() => new List<Tag>() { Tag.Fairy };
+
+    public override void onInitialization()
     {
-        return 1;
+        E_OnDeployed += FairyNeophyte_E_OnDeployed;
     }
 
-    public override void onCreation()
+    private void FairyNeophyte_E_OnDeployed(object sender, System.EventArgs e)
     {
-        GameManager.Get().queueCardPickerEffect(controller, controller.hand.getAllCardsWithType(Card.CardType.Creature), new EffReceiver(), 1, 1, false , "Select a card to give +1/+1");
-    }
-
-    private class EffReceiver : CanReceivePickedCards
-    {
-        public void receiveCardList(List<Card> cardList)
+        CardPicker.CreateAndQueue(controller.hand.getAllCardsWithType(CardType.Creature), 1, 1, "Select a card to give +1/+1", controller, delegate (List<Card> cardList)
         {
-            foreach(Card c in cardList)
-            {
-                (c as CreatureCard).creature.addAttack(1);
-                (c as CreatureCard).creature.addHealth(1);
-            }
-        }
+            (cardList[0] as CreatureCard).creature.addAttack(1);
+            (cardList[0] as CreatureCard).creature.addHealth(1);
+        });
     }
-
-    public override List<Card.Tag> getTags()
-    {
-        List<Tag> tags = new List<Tag>();
-        tags.Add(Tag.Fairy);
-        return tags;
-    }
-
-    public override int getCardId()
-    {
-        return 46;
-    }
-
-    public override List<Keyword> getInitialKeywords()
-    {
-        return new List<Keyword>()
-        {
-            Keyword.deploy
-        };
-    }
-
 }

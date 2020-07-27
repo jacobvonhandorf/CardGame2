@@ -10,8 +10,7 @@ using static Card;
 public abstract class Creature : MonoBehaviour, Damageable
 {
     [SerializeField] private CreatureStatsGetter statsScript;
-    //[SerializeField] private ParticleSystem onAttackParticles;
-    public CreatureCard sourceCard; // card associated with this creature
+    public Card sourceCard { get; private set; } // card associated with this creature
     public string cardName;
 
     // synced variables. Serialized for debugging purposes
@@ -24,24 +23,41 @@ public abstract class Creature : MonoBehaviour, Damageable
     [SerializeField] public int range;
     [SerializeField] private int movement;
 
-    public int effectActionCost = 1; // CURRENTLY DISABLED can be set to 0 in child class if effect shouldn't consume an action
-    // public Effect activeEffect;
     public Tile currentTile;
-    //public Player owner;
     public Player controller;
     public bool hasMovedThisTurn = false;
     public bool hasDoneActionThisTurn = false; // action is attack or effect
+    [SerializeField] public List<EmptyHandler> activatedEffects { get; } = new List<EmptyHandler>();
 
     internal bool canDeployFrom = false; // if new creatures can be deployed from this creature
     private bool initialized = false;
 
     private CounterController counterController;
 
+    #region Events
+    public event EventHandler E_Death;
+    public void TriggerOnDeathEvents(object sender) { E_Death?.Invoke(sender, EventArgs.Empty); }
+
+    public event EventHandler E_OnDeployed;
+    public void TriggerOnDeployed(object sender) { E_OnDeployed?.Invoke(sender, EventArgs.Empty); }
+
+    public event EventHandler<OnAttackArgs> E_OnAttack;
+    public class OnAttackArgs : EventArgs { public Damageable target { get; set; } }
+    public void TriggerOnAttackEvents(object sender, OnAttackArgs args) { if (E_OnAttack != null) E_OnAttack.Invoke(sender, args); }
+
+    public event EventHandler<OnDefendArgs> E_OnDefend;
+    public void TriggerOnDefendEvents(object sender, OnDefendArgs args) { if (E_OnDefend != null) E_OnDefend.Invoke(sender, args); }
+
+    public event EventHandler<OnDamagedArgs> E_OnDamaged;
+    public void TriggerOnDamagedEvents(object sender, OnDamagedArgs args) { if (E_OnDamaged != null) E_OnDamaged.Invoke(sender, args); }
+    #endregion
+
     protected void Awake()
     {
-        counterController = sourceCard.getCounterController();
-        if (!initialized)
-            initialize();
+        sourceCard = GetComponent<CreatureCard>();
+        statsScript = GetComponent<CreatureStatsGetter>();
+        counterController = GetComponentInChildren<CounterController>();
+        enabled = false;
     }
 
     public void initialize()
@@ -55,6 +71,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         canDeployFrom = getCanDeployFrom();
 
         initialized = true;
+        onInitialization();
     }
 
     public void resetToBaseStats()
@@ -67,7 +84,6 @@ public abstract class Creature : MonoBehaviour, Damageable
         {
             return;
         }
-
         setHealth(baseHealth);
         setAttack(baseAttack);
         //setArmor(baseDefense);
@@ -77,6 +93,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     }
 
     // usually used for when a creature is removed from the board
+    // both clients know how to do this so no need for syncing
     public void resetToBaseStatsWithoutSyncing()
     {
         if (GameManager.gameMode != GameManager.GameMode.online)
@@ -95,7 +112,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     }
 
     #region takeDamageAndAttacking
-    public void takeDamage(int damage)
+    public void takeDamage(int damage, Card source)
     {
         if (damage == 0) // dealing 0 damage is illegal :)
             return;
@@ -104,7 +121,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         List<Tile> adjacentTiles = currentTile.getAdjacentTiles();
         foreach(Tile t in adjacentTiles)
         {
-            if (t.creature != null && t.creature.hasKeyword(Keyword.ward))
+            if (t.creature != null && t.creature.hasKeyword(Keyword.Ward))
             {
                 t.creature.takeWardDamage(damage);
                 return;
@@ -112,21 +129,22 @@ public abstract class Creature : MonoBehaviour, Damageable
         }
 
         // subtract armored damage
-        if (hasKeyword(Keyword.armored1))
+        if (hasKeyword(Keyword.Armored1))
             damage--;
-        takeDamageActual(damage);
+        takeDamageActual(damage, source);
     }
     public void takeWardDamage(int damage)
     {
-        if (hasKeyword(Keyword.armored1))
+        if (hasKeyword(Keyword.Armored1))
             damage--;
-        takeDamageActual(damage);
+        takeDamageActual(damage, null);
     }
-    private void takeDamageActual(int damage)
+    private void takeDamageActual(int damage, Card source)
     {
-        GameManager.Get().showDamagedText(getRootTransform().position, damage);
+        GameManager.Get().showDamagedText(transform.position, damage);
         setHealthWithoutKilling(currentHealth - damage);
-        onDamaged();
+        TriggerOnDamagedEvents(this, new OnDamagedArgs() { source = source });
+        needToSync = true;
         if (currentHealth <= 0)
             GameManager.Get().destroyCreature(this);
     }
@@ -151,51 +169,48 @@ public abstract class Creature : MonoBehaviour, Damageable
     // stuff done after animation
     private void AttackPart2(Damageable defender, int attackRoll)
     {
-        // triggered effects methods
-
         // only trigger effects if the local player is the owner
         if (NetInterface.Get().getLocalPlayer() == controller)
-            onAttack();
+            TriggerOnAttackEvents(this, new OnAttackArgs() { target = defender });
         if (NetInterface.Get().getLocalPlayer() == defender.getController())
-            defender.onDefend();
+            defender.TriggerOnDefendEvents(this, new OnDefendArgs() { attacker = this });
 
         // perform damage calc
-        defender.takeDamage(attackRoll); // do damage text in takeDamage()
-        takeDamage(KeywordUtils.getDefenderValue(defender.getSourceCard()));
+        defender.takeDamage(attackRoll, sourceCard); // do damage text in takeDamage()
+        takeDamage(KeywordUtils.getDefenderValue(defender.sourceCard), sourceCard);
 
         // gray out creature to show it has already acted
         updateHasActedIndicators();
 
         // trigger after combat stuff
         // poison
-        if (hasKeyword(Keyword.poison) && defender.getSourceCard() is CreatureCard)
-            GameManager.Get().destroyCreature((defender.getSourceCard() as CreatureCard).creature);
+        if (hasKeyword(Keyword.Poison) && defender.sourceCard is CreatureCard)
+            GameManager.Get().destroyCreature((defender.sourceCard as CreatureCard).creature);
     }
     private IEnumerator attackAnimation(Damageable defender, int attackRoll)
     {
-        Vector3 direction = getRootTransform().position - defender.getRootTransform().position;
+        Vector3 direction = transform.position - defender.transform.position;
         Vector2 defenderCoords = defender.getCoordinates();
-        Vector3 defenderPosition = defender.getRootTransform().position;
-        Transform root = getRootTransform();
+        Vector3 defenderPosition = defender.transform.position;
         direction.Normalize();
         float attackAnimationSpeedAway = 10f;
         float attackAnimationSpeedTowards = 20f;
 
         // move away to wind up
-        Vector3 returnTarget = getRootTransform().position;
-        Vector3 awayTarget = root.position;
+        Vector3 returnTarget = transform.position;
+        Vector3 awayTarget = transform.position;
         awayTarget += direction * .5f;
-        while (Vector3.Distance(root.position, awayTarget) > 0.05f)
+        while (Vector3.Distance(transform.position, awayTarget) > 0.05f)
         {
-            root.position = Vector3.MoveTowards(root.position, awayTarget, attackAnimationSpeedAway * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, awayTarget, attackAnimationSpeedAway * Time.deltaTime);
             yield return null;
         }
 
 
         // move in to hit
-        while (Vector3.Distance(root.position, returnTarget) > 0.05f)
+        while (Vector3.Distance(transform.position, returnTarget) > 0.05f)
         {
-            root.position =  Vector3.MoveTowards(root.position, returnTarget, attackAnimationSpeedTowards * Time.deltaTime);
+            transform.position =  Vector3.MoveTowards(transform.position, returnTarget, attackAnimationSpeedTowards * Time.deltaTime);
             yield return null;
         }
 
@@ -230,16 +245,16 @@ public abstract class Creature : MonoBehaviour, Damageable
 
     #region moving
     // Use to move a creature to a tile by an effect
-    public void forceMove(Tile tile)
+    public void forceMove(Tile tile, Card source)
     {
         actualMove(tile);
-        NetInterface.Get().syncCreatureCoordinates(this, currentTile.x, currentTile.y, true);
-        onForceMoved();
+        NetInterface.Get().syncCreatureCoordinates(this, currentTile.x, currentTile.y, source);
+        GameEvents.TriggerMovedEvents(this, new GameEvents.CreatureMovedArgs() { creature = this, source = source });
     }
-    public void forceMove(int x, int y)
+    public void forceMove(int x, int y, Card source)
     {
         Tile t = GameManager.Get().board.getTileByCoordinate(x, y);
-        forceMove(t);
+        forceMove(t, source);
     }
     // Used to have a creature move itself
     public void move(Tile tile)
@@ -250,8 +265,8 @@ public abstract class Creature : MonoBehaviour, Damageable
         if (!hasDoneActionThisTurn)
             controller.subtractActions(1);
         actualMove(tile);
-        NetInterface.Get().syncCreatureCoordinates(this, currentTile.x, currentTile.y, false);
-        onMove();
+        NetInterface.Get().syncCreatureCoordinates(this, currentTile.x, currentTile.y, null);
+        GameEvents.TriggerMovedEvents(this, new GameEvents.CreatureMovedArgs() { source = null, creature = this });
         updateHasActedIndicators();
     }
     public void move(int x, int y)
@@ -263,14 +278,15 @@ public abstract class Creature : MonoBehaviour, Damageable
     private void actualMove(Tile tile)
     {
         currentTile.removeCreature();
-        tile.addCreature(this);
+        tile.creature = this;
         setCoordinates(tile);
         currentTile = tile;
     }
     private void setCoordinates(Tile tile)
     {
-        Vector2 tileCoordinates = tile.transform.position;
-        statsScript.cardRoot.position = tileCoordinates;
+        TransformStruct ts = new TransformStruct(sourceCard.transformManager.transform);
+        ts.position = tile.transform.position;
+        sourceCard.transformManager.moveToInformativeAnimation(ts);
     }
     #endregion
 
@@ -283,7 +299,6 @@ public abstract class Creature : MonoBehaviour, Damageable
         statsScript.updateHasActedIndicator(hasDoneActionThisTurn, hasMovedThisTurn);
     }
 
-    // if overriding this you must call the base class
     public void resetForNewTurn()
     {
         hasMovedThisTurn = false;
@@ -292,8 +307,6 @@ public abstract class Creature : MonoBehaviour, Damageable
         updateHasActedIndicators();
         // update border
         updateFriendOrFoeBorder();
-
-        onTurnStart();
     }
     public void addToCardViewer(CardViewer viewer)
     {
@@ -304,31 +317,33 @@ public abstract class Creature : MonoBehaviour, Damageable
         sourceCard.setSpriteColor(color);
     }
 
-    public void bounce()
+    public void bounce(Card source)
     {
         hasDoneActionThisTurn = false;
         hasMovedThisTurn = false;
         updateHasActedIndicators();
         GameManager.Get().allCreatures.Remove(this);
         currentTile.creature = null;
-        statsScript.swapToCard(sourceCard);
+        statsScript.swapToCard();
         setSpriteColor(Color.white); // reset sprite color in case card is greyed out
         resetToBaseStats();
-        sourceCard.moveToCardPile(sourceCard.owner.hand, true);
+        sourceCard.moveToCardPile(sourceCard.owner.hand, source);
         onLeavesTheField();
         sourceCard.owner.hand.resetCardPositions();
     }
 
     void OnMouseUpAsButton()
     {
+        if (!enabled)
+            return;
         if (GameManager.gameMode == GameManager.GameMode.online)
         {
-            if (controller != NetInterface.Get().getLocalPlayer() || NetInterface.Get().getLocalPlayer().locked)
+            if (controller != NetInterface.Get().getLocalPlayer() || NetInterface.Get().getLocalPlayer().isLocked())
                 return;
         }
         else
         {
-            if (controller != GameManager.Get().activePlayer || controller.locked)
+            if (controller != GameManager.Get().activePlayer || controller.isLocked())
                 return;
         }
         // what to do if controller is trying to do something with this creature while they have no actions
@@ -336,8 +351,8 @@ public abstract class Creature : MonoBehaviour, Damageable
         {
             if (hasMovedThisTurn && !hasDoneActionThisTurn)
             {
-                GameManager.Get().createActionBox(this);
-                GameManager.Get().setAllTilesToDefault();
+                ActionBox.instance.show(this);
+                Board.instance.setAllTilesToDefault();
                 controller.heldCreature = null;
                 return;
             }
@@ -351,13 +366,13 @@ public abstract class Creature : MonoBehaviour, Damageable
         // if this creature was already clicked once then simulate a move in place
         if (controller.heldCreature == this)
         {
-            GameManager.Get().createActionBox(this);
-            GameManager.Get().setAllTilesToDefault();
+            ActionBox.instance.show(this);
+            Board.instance.setAllTilesToDefault();
             controller.heldCreature = null;
             return;
         }
 
-        GameManager.Get().setAllTilesToDefault();
+        Board.instance.setAllTilesToDefault();
         // in hot seat mode don't let a player move their opponents creatures
         if (GameManager.gameMode == GameManager.GameMode.hotseat && GameManager.Get().activePlayer != controller)
             return;
@@ -372,7 +387,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         }
         else if (hasMovedThisTurn && !hasDoneActionThisTurn)
         {
-            GameManager.Get().createActionBox(this);
+            ActionBox.instance.show(this);
         }
         else
         {
@@ -383,13 +398,16 @@ public abstract class Creature : MonoBehaviour, Damageable
     private bool hovered = false;
     private void OnMouseEnter()
     {
+        if (!enabled)
+            return;
         sourceCard.addToCardViewer(GameManager.Get().getCardViewer());
-        //statsScript.setCardViewer(GameManager.Get().getCardViewer());
         hovered = true;
         StartCoroutine(checkHoverForTooltips());
     }
     private void OnMouseExit()
     {
+        if (!enabled)
+            return;
         hovered = false;
         foreach (CardViewer cv in sourceCard.viewersDisplayingThisCard)
             cv.clearToolTips();
@@ -398,13 +416,10 @@ public abstract class Creature : MonoBehaviour, Damageable
     // if you want to kill a creature do not call this. Call destroy creature in game manager
     public void sendToGrave()
     {
-        sourceCard.isCreature = false;
         resetToBaseStats();
-        sourceCard.moveToCardPile(sourceCard.owner.graveyard, false);
+        sourceCard.moveToCardPile(sourceCard.owner.graveyard, null);
         sourceCard.removeGraphicsAndCollidersFromScene();
     }
-
-    public Transform getRootTransform() => statsScript.cardRoot;
 
     #region basicStatsGettersAndSetters
     // health
@@ -442,7 +457,6 @@ public abstract class Creature : MonoBehaviour, Damageable
             return;
         attack = value;
         statsScript.setAttack(attack, baseAttack);
-        Debug.Log("Setting attack " + value);
         syncCreatureStats();
     }
     public void addAttack(int value)
@@ -464,17 +478,13 @@ public abstract class Creature : MonoBehaviour, Damageable
     }
     #endregion
 
-    /*
-     * Returns true if this card has the the tag passed to this method
-     */
+    // Returns true if this card has the the tag passed to this method
     public bool hasTag(Tag tag)
     {
         return sourceCard.hasTag(tag);
     }
 
-    /*
-     * returns true if this card is the type passed to it
-     */
+    // returns true if this card is the type passed to it
     public bool isType(CardType type)
     {
         return sourceCard.isType(type);
@@ -501,6 +511,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         return sourceCard;
     }
 
+    #region NetworkSyncing
     // need seperate method for this so net messages don't create an infinite loop
     public void recieveCreatureStatsFromNet(int atk, int batk, int hp, int bhp, int bmv, int brange, Player ctrl, int mv, int range)
     {
@@ -524,6 +535,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         needToSync = true;
     }
     private bool needToSync = false;
+    #endregion
     private void Update()
     {
         if (needToSync && NetInterface.Get().gameSetupComplete)
@@ -621,35 +633,17 @@ public abstract class Creature : MonoBehaviour, Damageable
             }
         }
     }
-    public virtual List<Keyword> getInitialKeywords() { return new List<Keyword>(); }
     #endregion
-
-
-    // ABSTRACT METHODS
-    public abstract int getStartingRange();
-    public abstract int getCardId();
 
     #region ExtendedMethods
+    public abstract int cardId { get; }
     protected virtual bool getCanDeployFrom() { return false; }
     public virtual Effect getEffect() { return null; }
-    public virtual List<Tag> getTags() { return new List<Tag>(); }
-    public virtual void onForceMoved() { } // When moved by others
-    public virtual void onMove() { } // When moved by self or others
-    public virtual void onCreation() { } //ETBs
-    public virtual void onDeath() { }
-    public virtual void onAttack() { }
-    public virtual void onDefend() { }
-    public virtual void onDamaged() { }
-    public virtual void onCardDrawn() { }
-    public virtual void onCardAddedToHandByEffect() { }
-    public virtual void onSentToGrave() { } // Whenever added to grave. death, mill or discard
-    public virtual void onAnyCreatureDeath(Creature c) { }
+    public virtual List<Tag> getInitialTags() { return new List<Tag>(); }
     public virtual void onKillingACreature(Creature c) { }
     public virtual void onLeavesTheField() { }
-    public virtual void onAnyCreaturePlayed(Creature c) { }
     public virtual bool additionalCanBePlayedChecks() { return true; } // if some conditions need to be met before playing this creature then do them in this method. Return true if can be played
-    public virtual void onAnySpellCast(SpellCard spell) { }
-    public virtual void onTurnStart() { }
+    public virtual void onInitialization() { }
+    public virtual int getStartingRange() { return 1; } // 1 by default
     #endregion
-
 }

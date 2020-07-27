@@ -29,9 +29,7 @@ public class Toaster : MonoBehaviour
 
     public void doToast(string message)
     {
-        Debug.Log("Do toast called");
         Color tmp = background.color;
-        Debug.Log(tmp);
         tmp.a = 0f;
         background.color = tmp;
         Color tmp2 = textMesh.color;

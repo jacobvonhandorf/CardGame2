@@ -8,20 +8,7 @@ public class GemMine : Structure, Effect
 
     private bool effectUsedThisTurn = false;
 
-    public override bool canDeployFrom()
-    {
-        return true;
-    }
-
-    public override bool canWalkOn()
-    {
-        return false;
-    }
-
-    public override int getCardId()
-    {
-        return CARD_ID;
-    }
+    public override int cardId => CARD_ID;
 
     public override void onPlaced()
     {
@@ -54,7 +41,7 @@ public class GemMine : Structure, Effect
         List<Card> gemCards = controller.deck.getAllCardsWithTag(Card.Tag.Gem);
         if (gemCards.Count > 0)
         {
-            gemCards[Random.Range(0, gemCards.Count)].moveToCardPile(controller.hand, true);
+            gemCards[Random.Range(0, gemCards.Count)].moveToCardPile(controller.hand, sourceCard);
             effectUsedThisTurn = true;
             removeCounters(Counters.mine, 1);
             controller.subtractActions(1);
@@ -69,13 +56,5 @@ public class GemMine : Structure, Effect
     public override void onTurnStart()
     {
         effectUsedThisTurn = false;
-    }
-
-    public override List<Keyword> getInitialKeywords()
-    {
-        return new List<Keyword>()
-        {
-            Keyword.deploy
-        };
     }
 }

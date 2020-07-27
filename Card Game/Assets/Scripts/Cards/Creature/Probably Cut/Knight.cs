@@ -4,13 +4,5 @@ using UnityEngine;
 
 public class Knight : Creature
 {
-    public override int getCardId()
-    {
-        return 57;
-    }
-
-    public override int getStartingRange()
-    {
-        return 1;
-    }
+    public override int cardId => 57;
 }

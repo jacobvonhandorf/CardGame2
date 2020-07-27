@@ -12,7 +12,7 @@ public abstract class Structure : MonoBehaviour, Damageable
     public Player owner;
     public Player controller;
     public Tile tile;
-    public StructureCard sourceCard;
+    public Card sourceCard { get; private set; }
     public int effectActionsCost = 0;
     public int effectGoldCost = 0;
     public int effectManaCost = 0;
@@ -23,13 +23,25 @@ public abstract class Structure : MonoBehaviour, Damageable
 
     protected string cardName;
     private bool initialized = false;
+    [SerializeField] public List<EmptyHandler> activatedEffects { get; } = new List<EmptyHandler>();
 
     [SerializeField] protected StructureStatsGetter statsScript;
     private CounterController counterController;
 
+    #region Events
+    public event EventHandler<OnDefendArgs> E_OnDefend;
+    public void TriggerOnDefendEvents(object sender, OnDefendArgs args) { E_OnDefend?.Invoke(sender, args); }
+    public event EventHandler E_OnDeployed;
+    public void TriggerOnDeployEvents(object sender) { E_OnDeployed?.Invoke(sender, EventArgs.Empty); }
+    public event EventHandler E_OnLeavesField;
+    public void TriggerOnLeavesField(object sender) { E_OnLeavesField?.Invoke(sender, EventArgs.Empty); }
+    #endregion
+
     private void Awake()
     {
-        counterController = sourceCard.getCounterController();
+        counterController = GetComponentInChildren<CounterController>();
+        statsScript = GetComponent<StructureStatsGetter>();
+        sourceCard = GetComponent<StructureCard>();
     }
 
     public void initialize()
@@ -41,32 +53,27 @@ public abstract class Structure : MonoBehaviour, Damageable
         }
 
         statsScript.setStructureStats(this);
-
         baseHealth = health;
-
         initialized = true;
     }
 
-    public Transform getRootTransform()
+    public void OnDisable()
     {
-        return statsScript.getRootTransform();
+        Debug.Log("Disable");
     }
 
-    public void takeDamage(int amount)
+    public void takeDamage(int amount, Card source)
     {
         addHealth(-amount);
     }
 
+    #region BasicStatGetterAndSetters
     public void addHealth(int amount)
     {
-        Debug.Log("adding health: " + amount);
-        Debug.Log("Health before damage " + health);
-        
         health += amount;
         statsScript.setHealth(health, baseHealth);
-        Debug.Log("Health after damage " + health);
         if (health <= 0)
-            GameManager.Get().destroyStructure(this);
+            GameManager.Get().destroyStructure(this, null);
     }
     public int getHealth()
     {
@@ -77,7 +84,7 @@ public abstract class Structure : MonoBehaviour, Damageable
         health = amount;
         statsScript.setHealth(health, baseHealth);
         if (health <= 0)
-            GameManager.Get().destroyStructure(this);
+            GameManager.Get().destroyStructure(this, null);
     }
     public void setBaseHealth(int amount)
     {
@@ -92,12 +99,13 @@ public abstract class Structure : MonoBehaviour, Damageable
     {
         return sourceCard.getCardName();
     }
+    #endregion
 
-    public void sendToGrave()
+    // if you want to kill a creature do not call this. Call destroy creature in game manager
+    public void sendToGrave(Card source)
     {
-        sourceCard.isStructure = false;
         resetToBaseStats();
-        sourceCard.moveToCardPile(owner.graveyard, false);
+        sourceCard.moveToCardPile(owner.graveyard, null);
         sourceCard.removeGraphicsAndCollidersFromScene();
     }
 
@@ -105,7 +113,6 @@ public abstract class Structure : MonoBehaviour, Damageable
     {
         setHealth(baseHealth);
     }
-
     public void resetToBaseStatsWithoutSyncing()
     {
         health = baseHealth;
@@ -114,7 +121,9 @@ public abstract class Structure : MonoBehaviour, Damageable
 
     private void OnMouseUpAsButton()
     {
-        if (GameManager.Get().activePlayer != controller || controller.locked)
+        if (!enabled)
+            return;
+        if (GameManager.Get().activePlayer != controller || controller.isLocked())
             return;
         if (getEffect() == null)
             return;
@@ -124,12 +133,16 @@ public abstract class Structure : MonoBehaviour, Damageable
     private bool hovered = false;
     private void OnMouseEnter()
     {
+        if (!enabled)
+            return;
         hovered = true;
         sourceCard.addToCardViewer(GameManager.Get().getCardViewer());
         StartCoroutine(checkHoverForTooltips());
     }
     private void OnMouseExit()
     {
+        if (!enabled)
+            return;
         hovered = false;
         foreach (CardViewer cv in sourceCard.viewersDisplayingThisCard)
             cv.clearToolTips();
@@ -149,13 +162,10 @@ public abstract class Structure : MonoBehaviour, Damageable
         }
         timePassed = 0;
         // if we get here then enough time has passed so tell cardviewers to display tooltips
-        //Debug.Log("Telling viewers to show tooltips: " + sourceCard.viewersDisplayingThisCard.Count);
         foreach (CardViewer viewer in sourceCard.viewersDisplayingThisCard)
         {
-            //Debug.Log("in foreach viewer");
             if (viewer != null)
             {
-                //Debug.Log("Viewer is not null");
                 viewer.showToolTips(sourceCard.toolTipInfos);
             }
         }
@@ -167,17 +177,13 @@ public abstract class Structure : MonoBehaviour, Damageable
         this.statsScript = statsScript;
     }
 
-    /*
-     * Returns true if this card has the the tag passed to this method
-     */
+    // Returns true if this card has the the tag passed to this method
     public bool hasTag(Tag tag)
     {
         return sourceCard.hasTag(tag);
     }
 
-    /*
-     * returns true if this card is the type passed to it
-     */
+    // returns true if this card is the type passed to it
     public bool isType(CardType type)
     {
         return sourceCard.isType(type);
@@ -205,12 +211,7 @@ public abstract class Structure : MonoBehaviour, Damageable
     {
         return new Vector2(tile.x, tile.y);
     }
-
-    public Player getController()
-    {
-        return controller;
-    }
-
+    public Player getController() => controller;
     public void updateFriendOrFoeBorder()
     {
         if (GameManager.gameMode != GameManager.GameMode.online)
@@ -222,17 +223,11 @@ public abstract class Structure : MonoBehaviour, Damageable
             statsScript.setAsAlly(NetInterface.Get().getLocalPlayer() == controller);
         }
     }
-
     public void resetForNewTurn()
     {
         updateFriendOrFoeBorder();
     }
-
-    public Card getSourceCard()
-    {
-        return sourceCard;
-    }
-
+    #region Counters
     public void addCounters(CounterClass counterType, int amount)
     {
         counterController.addCounters(counterType, amount);
@@ -262,15 +257,13 @@ public abstract class Structure : MonoBehaviour, Damageable
         else
             Debug.LogError("Trying to set counters to a value it's already set to. This shouldn't happen under normal circumstances");
     }
-
+    #endregion
+    #region Overideable
     // MAY BE OVERWRITTEN
-    public virtual void onCreatureAdded(Creature c){ }
-    public virtual void onCreatureRemoved(Creature c) { }
     public virtual void onAnyStructurePlayed(Structure s) { }
     public virtual void onAnyCreaturePlayed(Structure s) { }
     public virtual void onAnyCreatureDeath(Creature c) { }
     public virtual void onAnyStructureDeath(Structure s) { }
-    public virtual void onAnySpellCast(SpellCard spell) { }
     public virtual void onPlaced() { }
     public virtual void onRemoved() { }
     public virtual void onDefend() { }
@@ -279,12 +272,10 @@ public abstract class Structure : MonoBehaviour, Damageable
     public virtual Effect getEffect() { return null; }
     public virtual bool additionalCanBePlayedChecks() { return true; } // if some conditions need to be met before playing this structure then do them in this method. Return true if can be played
     public virtual List<Tag> getTags() { return new List<Tag>(); }
-    public virtual List<Keyword> getInitialKeywords() { return new List<Keyword>(); }
-
+    public virtual List<KeywordData> getInitialKeywords() { return new List<KeywordData>(); }
+    public virtual bool canDeployFrom() { return true; }
 
     // MUST BE OVERWRITTEN
-    public abstract bool canDeployFrom();
-    public abstract bool canWalkOn();
-    public abstract int getCardId();
-
+    public abstract int cardId { get; }
+    #endregion
 }

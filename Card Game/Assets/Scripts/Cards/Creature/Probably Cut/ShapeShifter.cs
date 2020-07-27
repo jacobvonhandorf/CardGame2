@@ -2,32 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShapeShifter : Creature, Effect, OptionBoxHandler
+public class ShapeShifter : Creature, Effect
 {
     private const string ATTACK = "+1 Attack";
     private const string HEALTH = "+2 Health";
 
-    public override int getCardId()
+    public override int cardId => 55;
+
+    public override List<Card.Tag> getInitialTags() => new List<Card.Tag>() { Card.Tag.Arcane };
+
+    private void OnEnable()
     {
-        return 55;
+        GameEvents.E_SpellCast += GameEvents_E_SpellCast;
+    }
+    private void OnDisable()
+    {
+        GameEvents.E_SpellCast -= GameEvents_E_SpellCast;
     }
 
-    public override int getStartingRange()
+    private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastArgs e)
     {
-        return 1;
-    }
-
-    public override List<Card.Tag> getTags()
-    {
-        return new List<Card.Tag>() { Card.Tag.Arcane };
-    }
-
-    public override void onAnySpellCast(SpellCard spell)
-    {
-        if (sourceCard.isCreature && spell.owner == controller)
-        {
+        if (e.spell.owner == controller)
             addCounters(Counters.arcane, 1);
-        }
     }
 
     public override Effect getEffect()
@@ -48,16 +44,14 @@ public class ShapeShifter : Creature, Effect, OptionBoxHandler
             HEALTH,
             ATTACK
         };
-        GameManager.Get().queueOptionSelectBoxEffect(options, this, "Would you like to increase attack or health?", true, controller);
-    }
-
-    public void receiveOptionBoxSelection(int selectedOptionIndex, string selectedOption)
-    {
-        if (selectedOption == ATTACK)
-            addAttack(1);
-        else
-            addHealth(2);
-        removeCounters(Counters.arcane, 2);
+        OptionSelectBox.CreateAndQueue(options, "Would you like to increase attack or health", controller, delegate (int selectedIndex, string selectedOption)
+        {
+            if (selectedOption == ATTACK)
+                addAttack(1);
+            else
+                addHealth(2);
+            removeCounters(Counters.arcane, 2);
+        });
     }
 
     /* old code

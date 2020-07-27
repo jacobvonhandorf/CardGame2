@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1742a4a26bfaa1043b62d1ca946f22a4, type: 3}
+  m_Name: Rainbow Burst
+  m_EditorClassIdentifier: 
+  id: 82
+  cardName: Rainbow Burst
+  art: {fileID: 21300000, guid: aaa956bd47b7f94499fb2a9f945c7f42, type: 3}
+  effectText: 'Shuffle 5 differently named gems from your hand into your deck: deal
+    5 damage to target creature, shuffle 5 obsidian into your deck, draw 3 cards.'
+  manaCost: 5
+  goldCost: 0
+  elementalIdentity: 3
+  tags: 
+  keywords: 
+  visibleInDeckBuilder: 1
+  effects: {fileID: 4040017115345395980, guid: d3be5ed196a2b37498396d72e99d97aa, type: 3}

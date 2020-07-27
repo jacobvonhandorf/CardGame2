@@ -21,7 +21,7 @@ public class Hand : CardPile
         foreach (Card c in cardList)
         {
             c.owner = handOwner;
-            c.moveToCardPile(this, false);
+            c.moveToCardPile(this, null);
         }
         resetCardPositions();
 
@@ -37,7 +37,7 @@ public class Hand : CardPile
         int index = 0;
         foreach(Card c in cardList)
         {
-            Transform t = c.getRootTransform(); // the transform that needs to be moved
+            Transform t = c.transform; // the transform that needs to be moved
 
             // calculate new position
             Vector3 newPosition = new Vector3();
@@ -102,7 +102,7 @@ public class Hand : CardPile
         Debug.Log("Printing cards in hand");
         foreach(Card c in cardList)
         {
-            Debug.Log(c.getRootTransform().name);
+            Debug.Log(c.transform.name);
         }
     }
 
@@ -129,11 +129,5 @@ public class Hand : CardPile
             c.removeGraphicsAndCollidersFromScene();
             //c.setSpriteMaskInteraction(SpriteMaskInteraction.VisibleInsideMask);
         }
-    }
-
-    protected override void onCardAddedByEffect(Card c)
-    {
-        Debug.Log("Card added by effect");
-        c.onCardAddedByEffect();
     }
 }

@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 using UnityEngine;
 
 public class ResourceManager : MonoBehaviour
 {
     private static ResourceManager instance;
-    private static Dictionary<int, string> idToPathPairs;
+    private static Dictionary<int, CardData> cardDataMap;
 
-    private void Start()
+    private void Awake()
     {
         if (instance == null)
             instance = this;
@@ -20,19 +21,21 @@ public class ResourceManager : MonoBehaviour
             return;
         }
         // Get path for all cards
-        if (idToPathPairs == null)
-            setupNameToPathPairs();
+        if (cardDataMap == null)
+            setupCardDataMap();
     }
 
-    private void setupNameToPathPairs()
+    private void setupCardDataMap()
     {
-        if (!File.Exists(Application.persistentDataPath + "/cardData.dat"))
-            CardIdChecker.runAsStatic();
-
-        BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.OpenRead(Application.persistentDataPath + "/cardData.dat");
-        idToPathPairs = (Dictionary<int, string>)bf.Deserialize(file);
-        file.Close();
+        Debug.Log("Generating card data map");
+        System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+        stopwatch.Start();
+        cardDataMap = new Dictionary<int, CardData>();
+        CardData[] dataArray = Resources.LoadAll<CardData>("Card Data");
+        foreach (CardData data in dataArray)
+            cardDataMap.Add(data.id, data);
+        stopwatch.Stop();
+        Debug.Log("Time to load card data " + stopwatch.ElapsedMilliseconds + "ms");
     }
 
     public static ResourceManager Get()
@@ -40,62 +43,27 @@ public class ResourceManager : MonoBehaviour
         if (instance == null)
         {
             // if an instance doesn't exist then instantiate one
-            // this method of instantiation is not desired because it is inefficient. Place a resource manager in scene instead.
             GameObject resourceManager = new GameObject();
             resourceManager.name = "Resource Manager";
-            ResourceManager newInstance = resourceManager.AddComponent<ResourceManager>();
-            return newInstance;
+            instance = resourceManager.AddComponent<ResourceManager>();
         }
-        else
-            return instance;
+        return instance;
     }
 
-    // if you call this then make sure you disable either the card or structure script
-    public Structure getStructureFromResources(Player owner, string structureName)
+    public Card instantiateCardById(int id) => CardBuilder.Instance.BuildFromCardData(cardDataMap[id]);
+
+    public List<CardData> getAllCardDataVisibleInDeckBuilder()
     {
-        GameObject structureGameObject = Resources.Load("TokenPrefabs/Structure/" + structureName + " Variant") as GameObject;
-        structureGameObject = Instantiate(structureGameObject);
-
-        Structure structure = structureGameObject.transform.Find("Graphics Root/Structure Script").GetComponent<Structure>();
-        StructureCard sourceCard = structureGameObject.GetComponentInChildren<StructureCard>();
-        StructureStatsGetter statsScript = structureGameObject.GetComponentInChildren<StructureStatsGetter>();
-
-        structure.sourceCard = sourceCard;
-        structure.owner = owner;
-        structure.controller = owner;
-        structure.setStatsScript(statsScript);
-        sourceCard.structure = structure;
-
-        return structure;
+        List<CardData> returnList = new List<CardData>();
+        foreach (CardData data in cardDataMap.Values)
+        {
+            if (data.visibleInDeckBuilder)
+                returnList.Add(data);
+        }
+        return returnList;
     }
 
-    public Card instantiateCardById(int id)
-    {
-        if (idToPathPairs == null)
-            setupNameToPathPairs();
-        string pathToCard;
-        try
-        {
-            pathToCard = idToPathPairs[id];
-        } catch (KeyNotFoundException e)
-        {
-            Debug.LogError("Id not found + " + id);
-            throw e;
-        }
-        GameObject gameObject = Resources.Load(pathToCard) as GameObject;
-        if (gameObject == null)
-        {
-            throw new System.Exception("Error loading card: id=" + id + ", path=" + pathToCard);
-        }
-        GameObject instantiatedGameObject = Instantiate(gameObject);
-        Card card = instantiatedGameObject.GetComponentInChildren<Card>();
-        if (card == null)
-            throw new System.Exception("Error loading card from resources");
+    public List<CardData> getAllCardData() => new List<CardData>(cardDataMap.Values);
 
-        // if online game is in progress then sync the new card
-        //if (GameManager.Get().gameInProgress && GameManager.gameMode == GameManager.GameMode.online && syncAcrossNetwork)
-        //    NetInterface.Get().syncNewCardToOpponent(card);
-        return card;
-    }
-
+    public CardData getCardDataById(int id) => cardDataMap[id];
 }

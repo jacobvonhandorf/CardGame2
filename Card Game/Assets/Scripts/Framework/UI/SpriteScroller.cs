@@ -91,8 +91,25 @@ public class SpriteScroller : MonoBehaviour
 
     }
 
+    public void setMinAndMax(float min, float max)
+    {
+        if (min > max)
+            max = min;
+        Debug.Log("set min " + min);
+        Debug.Log("set max " + max);
+        maxY = max;
+        minY = min;
+    }
+
     public void updateContentPosition(Vector3 position)
     {
+        /*
+        if (minY > maxY)
+        {
+            position.y = minY;
+            contentTransform.position = position;
+            return;
+        }*/
         position.x = Mathf.Clamp(position.x, minX, maxX);
         position.y = Mathf.Clamp(position.y, minY, maxY);
 

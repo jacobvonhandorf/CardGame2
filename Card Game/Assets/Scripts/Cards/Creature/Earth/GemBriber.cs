@@ -4,17 +4,14 @@ using UnityEngine;
 
 public class GemBriber : Creature
 {
-    public override int getCardId()
+    public override int cardId => 72;
+
+    public override void onInitialization()
     {
-        return 72;
+        E_OnDeployed += GemBriber_E_OnDeployed;
     }
 
-    public override int getStartingRange()
-    {
-        return 1;
-    }
-
-    public override void onCreation()
+    private void GemBriber_E_OnDeployed(object sender, System.EventArgs e)
     {
         int gemCount = controller.hand.getAllCardsWithTag(Card.Tag.Gem).Count;
         if (gemCount > 0)
@@ -23,14 +20,5 @@ public class GemBriber : Creature
             if (gemCount >= 3)
                 addAttack(1);
         }
-    }
-
-    public override List<Keyword> getInitialKeywords()
-    {
-        return new List<Keyword>()
-        {
-            Keyword.deploy,
-            Keyword.defender1
-        };
     }
 }

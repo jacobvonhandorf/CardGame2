@@ -4,29 +4,24 @@ using UnityEngine;
 
 public class FairyGeneral : Creature
 {
-    public override int getStartingRange()
+    public override int cardId => 49;
+    public override List<Card.Tag> getInitialTags() => new List<Card.Tag>() { Card.Tag.Fairy };
+
+    private void OnEnable()
     {
-        return 1;
+        GameEvents.E_CreaturePlayed += GameEvents_E_CreaturePlayed;
+    }
+    private void OnDisable()
+    {
+        GameEvents.E_CreaturePlayed -= GameEvents_E_CreaturePlayed;
     }
 
-    public override void onAnyCreaturePlayed(Creature c)
+    private void GameEvents_E_CreaturePlayed(object sender, GameEvents.CreaturePlayedArgs e)
     {
-        if (sourceCard.isCreature && c.controller == controller && c != this)
+        if (e.creature.controller == controller && e.creature != this)
         {
             addAttack(1);
             addHealth(1);
         }
-    }
-
-    public override List<Card.Tag> getTags()
-    {
-        List<Card.Tag> tags = new List<Card.Tag>();
-        tags.Add(Card.Tag.Fairy);
-        return tags;
-    }
-
-    public override int getCardId()
-    {
-        return 49;
     }
 }

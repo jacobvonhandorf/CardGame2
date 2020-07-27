@@ -9,30 +9,25 @@ public class StructureCard : Card
     public Structure structure;
     public bool isStructure;
     [SerializeField] private CounterController counterCountroller;
+    public override List<Tile> legalTargetTiles => GameManager.Get().getLegalStructurePlacementTiles(owner);
+    public override CardType getCardType() => CardType.Structure;
+    public override int cardId => structure.cardId;
 
-    protected override void Start()
+    protected override void Awake()
     {
-        base.Start();
+        base.Awake();
+        structure = GetComponent<Structure>();
     }
 
     public override void initialize()
     {
-        structure.initialize();
+        onInitilization?.Invoke();
+        onInitilization = null;
     }
 
-    public override CardType getCardType()
-    {
-        return CardType.Structure;
-    }
-
-    protected override List<Tag> getTags()
+    protected override List<Tag> getInitialTags()
     {
         return structure.getTags();
-    }
-
-    public override List<Tile> getLegalTargetTiles()
-    {
-        return GameManager.Get().getLegalStructurePlacementTiles(owner);
     }
 
     public override void play(Tile t)
@@ -41,24 +36,22 @@ public class StructureCard : Card
         owner.hand.resetCardPositions();
     }
 
-    public void swapToStructure()
+    public void swapToStructure(Tile onTile)
     {
         // change structure so that it is rendered beneath cards in hand
         setSpritesToSortingLayer(SpriteLayers.Creature);
 
         // disable card functionality
-        gameObject.SetActive(false);
+        enabled = false;
 
         // enable creature functionality
-        structure.gameObject.SetActive(true);
+        structure.enabled = true;
 
         // initialize the structure if it hasn't already been initialized
         structure.initialize();
 
         // resize
-        if (!isStructure)
-            (cardStatsScript as StructureStatsGetter).switchBetweenStructureOrCard(this);
-        //cardStatsScript.switchBetweenCreatureOrCard(this);
+        (cardStatsScript as StructureStatsGetter).swapToStructure(onTile);
 
         isStructure = true;
     }
@@ -66,14 +59,14 @@ public class StructureCard : Card
     internal void swapToCard()
     {
         // enable card functionality
-        gameObject.SetActive(true);
+        enabled = true;
 
         // disable structure functionality
-        structure.gameObject.SetActive(false);
+        structure.enabled = false;
 
         // resize
         if (isStructure)
-            (cardStatsScript as StructureStatsGetter).switchBetweenStructureOrCard(this);
+            (cardStatsScript as StructureStatsGetter).swapToCard();
 
         // set tile back to null because no longer on field
         structure.tile = null;
@@ -105,15 +98,5 @@ public class StructureCard : Card
             return true;
     }
 
-    public override int getCardId()
-    {
-        return structure.getCardId();
-    }
-
     public CounterController getCounterController() => counterCountroller;
-
-    public override List<Keyword> getInitialKeywords()
-    {
-        return structure.getInitialKeywords();
-    }
 }

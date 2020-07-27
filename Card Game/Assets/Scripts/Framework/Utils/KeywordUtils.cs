@@ -6,11 +6,11 @@ public static class KeywordUtils
 {
     private static int getDefenderDamage(Keyword keyword)
     {
-        if (keyword == Keyword.defender1)
+        if (keyword == Keyword.Defender1)
             return 1;
-        else if (keyword == Keyword.defender2)
+        else if (keyword == Keyword.Defender2)
             return 2;
-        else if (keyword == Keyword.defender3)
+        else if (keyword == Keyword.Defender3)
             return 3;
         else
             return 0;

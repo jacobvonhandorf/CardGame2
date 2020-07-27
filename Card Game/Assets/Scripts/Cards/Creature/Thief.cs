@@ -4,17 +4,14 @@ using UnityEngine;
 
 public class Thief : Creature
 {
-    public override int getCardId()
+    public override int cardId => 53;
+
+    public override void onInitialization()
     {
-        return 53;
+        E_OnAttack += Thief_E_OnAttack;
     }
 
-    public override int getStartingRange()
-    {
-        return 1;
-    }
-
-    public override void onAttack()
+    private void Thief_E_OnAttack(object sender, OnAttackArgs e)
     {
         controller.addGold(1);
     }

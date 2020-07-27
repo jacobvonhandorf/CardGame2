@@ -4,10 +4,10 @@ using UnityEngine;
 
 public interface Damageable
 {
-    void onDefend();
-    void takeDamage(int damage);
-    Transform getRootTransform();
+    Transform transform { get; }
+    Card sourceCard { get; }
+    void takeDamage(int damage, Card source);
     Vector2 getCoordinates();
-    Card getSourceCard();
     Player getController();
+    void TriggerOnDefendEvents(object sender, OnDefendArgs args);
 }

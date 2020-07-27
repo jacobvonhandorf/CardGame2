@@ -18,8 +18,6 @@ public class CreatureStatsGetter : CardStatsGetter
     [SerializeField] private TextMeshPro hasActedTextIndicator;
     [SerializeField] private SpriteRenderer friendOrFoeBorder;
 
-    //[SerializeField] private CounterController counterController;
-
     // called to set creature stats on creature cards when they are created
     public void setCreatureStats(Creature creature)
     {
@@ -33,23 +31,10 @@ public class CreatureStatsGetter : CardStatsGetter
         creature.resetToBaseStatsWithoutSyncing();
     }
 
-    public void switchBetweenCreatureOrCard(CreatureCard card)
-    {
-        if (card.isCreature)
-        {
-            swapToCard(card);
-        }
-        else
-        {
-            swapToCreature(card);
-        }
-    }
-
     // Called when a card is played to a creature.
     // if the topology of a card is changed this method may need to be changed
-    public void swapToCreature(CreatureCard card)
+    public void swapToCreature(CreatureCard card, Tile creatureTile)
     {
-
         List<Transform> iconsToResize = new List<Transform>();
         iconsToResize.Add(hpText.transform.parent);
         iconsToResize.Add(armorText.transform.parent);
@@ -58,45 +43,79 @@ public class CreatureStatsGetter : CardStatsGetter
         Vector3 newIconScale = new Vector3(scalingCoefficient, scalingCoefficient, 1);
         Vector3 newRootScale = new Vector3(entireCardScaleCoefficient, entireCardScaleCoefficient, 1);
 
-        StartCoroutine(resizeToCreature(cardRoot, newRootScale, iconsToResize, newIconScale));
+        Vector3 newPosition = creatureTile.transform.position;
+        newPosition.z = 0;
+        InformativeAnimationsQueue.instance.addAnimation(new SwapToCreatureAnimation(this, iconsToResize, newIconScale, newRootScale, newPosition));
+    }
+    private class SwapToCreatureAnimation : QueueableCommand
+    {
+        CreatureStatsGetter statsGetter;
+        List<Transform> iconsToResize;
+        Vector3 newIconScale;
+        Vector3 newRootScale;
+        Vector3 newPostion;
+
+        public SwapToCreatureAnimation(CreatureStatsGetter statsGetter, List<Transform> iconsToResize, Vector3 newIconScale, Vector3 newRootScale, Vector3 newPostion)
+        {
+            this.statsGetter = statsGetter;
+            this.iconsToResize = iconsToResize;
+            this.newIconScale = newIconScale;
+            this.newRootScale = newRootScale;
+            this.newPostion = newPostion;
+        }
+
+        public override bool isFinished => statsGetter.resizeToCreatureFinished;
+
+        public override void execute()
+        {
+            statsGetter.resizeToCreatureFinished = false;
+            statsGetter.StartCoroutine(statsGetter.resizeToCreature(statsGetter.transform, newRootScale, iconsToResize, newIconScale, newPostion));
+        }
     }
 
     [SerializeField] private float resizeSpeed = .1f;
-    [SerializeField] private float pauseBetweenResize = .5f;
+    [SerializeField] private float pauseBetweenResize = 0f;
     [SerializeField] private float iconResizeSpeed = 2f;
-    private float timePaused = 0f;
-    IEnumerator resizeToCreature(Transform cardRoot, Vector3 newRootScale, List<Transform> iconsToEnlarge, Vector3 newIconScale)
+    private bool resizeToCreatureFinished;
+    IEnumerator resizeToCreature(Transform cardRoot, Vector3 newRootScale, List<Transform> iconsToEnlarge, Vector3 newIconScale, Vector3 newPosition)
     {
+        resizeToCreatureFinished = false;
+
+        Vector3 positionStart = cardRoot.position;
+        Vector3 positionEnd = newPosition;
+        Vector3 scaleStart = cardRoot.localScale;
+        Vector3 scaleEnd = newRootScale;
         // resize root
-        while (Vector3.Distance(cardRoot.localScale, newRootScale) > 0.02f)
+        float currentPercentage = 0;
+        float timeForTotalAnimation = .3f;
+        float timePassed = 0;
+        while (currentPercentage < .98f)
         {
-            cardRoot.localScale = Vector3.MoveTowards(cardRoot.localScale, newRootScale, resizeSpeed * Time.deltaTime);
+            timePassed += Time.deltaTime;
+            currentPercentage = timePassed / timeForTotalAnimation;
+
+            cardRoot.position = Vector3.Lerp(positionStart, positionEnd, currentPercentage);
+            cardRoot.localScale = Vector3.Lerp(scaleStart, scaleEnd, currentPercentage);
             yield return null;
         }
 
         // pause
-        while (timePaused <  pauseBetweenResize)
-        {
-            timePaused += Time.deltaTime;
-        }
-        timePaused = 0f;
+        yield return new WaitForSeconds(pauseBetweenResize);
 
         // resize icons
         while (Vector3.Distance(iconsToEnlarge[0].localScale, newIconScale) > 0.02f)
         {
             foreach (Transform t in iconsToEnlarge)
-            {
                 t.localScale = Vector3.MoveTowards(t.localScale, newIconScale, iconResizeSpeed * Time.deltaTime);
-            }
-            //cardRoot.localScale = Vector3.MoveTowards(cardRoot.localScale, newRootScale, iconResizeSpeed * Time.deltaTime);
             yield return null;
         }
+        friendOrFoeBorder.gameObject.SetActive(true);
+        resizeToCreatureFinished = true;
     }
-
 
     // called when a creature leaves the field and needs to act like a card again
     // if the topology of a card is changed this method may need to be changed
-    public void swapToCard(CreatureCard card)
+    public void swapToCard()
     {
         friendOrFoeBorder.gameObject.SetActive(false);
 
@@ -112,7 +131,7 @@ public class CreatureStatsGetter : CardStatsGetter
         }
 
         Vector3 newRootScale = new Vector3(.5f, .5f, 1);
-        cardRoot.localScale = newRootScale;
+        transform.localScale = newRootScale;
     }
 
     // sets the card viewer to the card attached to this stats getter
@@ -124,7 +143,6 @@ public class CreatureStatsGetter : CardStatsGetter
         // flip everything to active that needs to be active
         // and flip everything to inactive that should be inactive
         cardViewer.hpGameObject.SetActive(hpText.gameObject.activeInHierarchy);
-        cardViewer.setArmorActive(armorText.gameObject.activeInHierarchy);
         cardViewer.setAttackActive(attackText.gameObject.activeInHierarchy);
         cardViewer.setGoldActive(goldText.gameObject.activeInHierarchy);
         cardViewer.setManaActive(manaText1.gameObject.activeInHierarchy);
@@ -135,14 +153,13 @@ public class CreatureStatsGetter : CardStatsGetter
 
         // set all values that need to be set
         cardViewer.hpText.text = hpText.text;
-        cardViewer.armorText.text = armorText.text;
         cardViewer.attackText.text = attackText.text;
         cardViewer.goldText.text = goldText.text;
         cardViewer.moveText.text = moveText.text;
         cardViewer.moveValueText.text = moveValueText.text;
         cardViewer.typeText.text = typeText.text;
         cardViewer.nameText.text = nameText.text;
-        cardViewer.halfBodyText.text = bodyText.text;
+        cardViewer.halfBodyText.text = effectText.text;
 
         // set all colors that need to be set. Will need to add more things here later probably
         cardViewer.hpText.color = hpText.color;
@@ -173,7 +190,7 @@ public class CreatureStatsGetter : CardStatsGetter
         armorText.sortingLayerID = layerId;
         moveValueText.sortingLayerID = layerId;
         moveText.sortingLayerID = layerId;
-        bodyText.sortingLayerID = layerId;
+        effectText.sortingLayerID = layerId;
         typeText.sortingLayerID = layerId;
         goldText.sortingLayerID = layerId;
         nameText.sortingLayerID = layerId;
@@ -185,10 +202,6 @@ public class CreatureStatsGetter : CardStatsGetter
 
     public void updateHasActedIndicator(bool hasDoneActionThisTurn, bool hasMovedThisTurn)
     {
-        //if (hasDoneActionThisTurn == hasMovedThisTurn)
-            //hasActedTextIndicator.text = "";
-        //else if (hasDoneActionThisTurn && !hasMovedThisTurn)
-        //    hasActedTextIndicator.text = "M";
         if (!hasDoneActionThisTurn && hasMovedThisTurn)
             hasActedTextIndicator.text = "A";
         else
@@ -241,7 +254,7 @@ public class CreatureStatsGetter : CardStatsGetter
     // used to update the friend or foe border
     public void setAsAlly(bool isAlly)
     {
-        friendOrFoeBorder.gameObject.SetActive(true);
+        // friendOrFoeBorder.gameObject.SetActive(true);
         if (isAlly)
             friendOrFoeBorder.color = Color.blue;
         else
@@ -263,8 +276,5 @@ public class CreatureStatsGetter : CardStatsGetter
         {
             throw new NotImplementedException();
         }
-
     }
-
-    //public CounterController getCounterController() => counterController;
 }

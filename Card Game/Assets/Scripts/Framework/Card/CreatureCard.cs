@@ -6,74 +6,67 @@ using UnityEngine.UI;
 
 public class CreatureCard : Card
 {
-    public Creature creature;
+    public Creature creature { get; private set; }
     [SerializeField] private CreatureStatsGetter creatureStatsScript;
-    [SerializeField] private CounterController counterCountroller;
-    public bool isCreature = false; // true when is being treated as a creature. False when treated as card
+    [SerializeField] private CounterController counterController;
+    //public bool isCreature = false; // true when is being treated as a creature. False when treated as card
 
-    protected override void Start()
+    public override int cardId => creature.cardId;
+    public override CardType getCardType() => CardType.Creature;
+    public override List<Tile> legalTargetTiles => GameManager.Get().getAllDeployableTiles(owner);
+    public CounterController getCounterController() => counterController;
+
+    protected override void Awake()
     {
-        base.Start();
-        //creature.initialize();
+        base.Awake();
+        creature = GetComponent<Creature>();
+        creatureStatsScript = GetComponent<CreatureStatsGetter>();
     }
 
     public override void initialize()
     {
+        creature.enabled = false;
         creature.initialize();
-        foreach (Keyword k in getInitialKeywords())
-            addKeyword(k);
+        onInitilization?.Invoke(); // keep this on last line
     }
 
     public override void play(Tile t)
     {
         GameManager gameManager = GameManager.Get();
 
-        gameManager.createCreatureOnTile(creature, t, owner, this); // this makes the assumption that a card will always be played by it's owner
+        gameManager.createCreatureOnTile(creature, t, owner); // this makes the assumption that a card will always be played by it's owner
         setSpritesToSortingLayer(SpriteLayers.Creature);
         creatureStatsScript.setTextSortingLayer(SpriteLayers.CreatureAbove);
         phaseOut();
         owner.hand.resetCardPositions();
+        GameEvents.TriggerCreaturePlayedEvents(null, new GameEvents.CreaturePlayedArgs() { creature = creature });
     }
 
-    public override List<Tile> getLegalTargetTiles()
+    internal void swapToCreature(Tile onTile)
     {
-        return GameManager.Get().getAllDeployableTiles(owner);
-    }
-
-    public override CardType getCardType()
-    {
-        return CardType.Creature;
-    }
-
-    internal void swapToCreature()
-    {
-        //creature.initialize();
-
         // disable card functionality
-        gameObject.SetActive(false);
+        enabled = false;
 
         // enable creature functionality
-        creature.gameObject.SetActive(true);
+        creature.enabled = true;
 
         // resize
-        creatureStatsScript.swapToCreature(this);
+        creatureStatsScript.swapToCreature(this, onTile);
 
-        // set card pile to null so it is no longer in hand
-        currentCardPile = null;
-
-        isCreature = true;
+        // set card pile to board
+        moveToCardPile(Board.instance, null); // null to signal by game mechanics
     }
 
     internal void swapToCard()
     {
         // enable card functinality
-        gameObject.SetActive(true);
+        enabled = true;
 
         // disable creature functionality
-        creature.gameObject.SetActive(false);
+        creature.enabled = false;
 
         // resize
-        creatureStatsScript.swapToCard(this);
+        creatureStatsScript.swapToCard();
 
         // no longer a creature so forget the tile it's on
         creature.currentTile = null;
@@ -81,9 +74,7 @@ public class CreatureCard : Card
         GameManager.Get().allCreatures.Remove(creature);
 
         // counters don't say on cards when they aren't creatures so clear them
-        counterCountroller.clearAll();
-
-        isCreature = false;
+        counterController.clearAll();
     }
 
     public override void resetToBaseStats()
@@ -91,42 +82,13 @@ public class CreatureCard : Card
         base.resetToBaseStats();
         creature.resetToBaseStats();
     }
-
     public override void resetToBaseStatsWithoutSyncing()
     {
         base.resetToBaseStatsWithoutSyncing();
         creature.resetToBaseStatsWithoutSyncing();
     }
 
-    public override void onCardDrawn()
-    {
-        creature.onCardDrawn();
-    }
-
-    public override void onSentToGrave()
-    {
-        creature.onSentToGrave();
-    }
-
-    protected override List<Tag> getTags()
-    {
-        return creature.getTags();
-    }
-
-    public override void onCardAddedByEffect()
-    {
-        creature.onCardAddedToHandByEffect();
-    }
-    public override void onAnyCreaturePlayed(Creature c)
-    {
-        creature.onAnyCreaturePlayed(c);
-    }
-
-    public override void onAnySpellCast(SpellCard s)
-    {
-        Debug.Log("On any spell cast in creature");
-        creature.onAnySpellCast(s);
-    }
+    protected override List<Tag> getInitialTags() => creature.getInitialTags();
 
     // returns true if the card can be played right now
     public override bool canBePlayed()
@@ -144,20 +106,5 @@ public class CreatureCard : Card
         }
         else
             return true;
-    }
-
-    public CounterController getCounterController()
-    {
-        return counterCountroller;
-    }
-
-    public override int getCardId()
-    {
-        return creature.getCardId();
-    }
-
-    public override List<Keyword> getInitialKeywords()
-    {
-        return creature.getInitialKeywords();
     }
 }

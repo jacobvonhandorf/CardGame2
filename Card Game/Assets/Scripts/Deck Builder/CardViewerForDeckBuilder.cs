@@ -12,7 +12,7 @@ public class CardViewerForDeckBuilder : CardViewer
 
     private void OnMouseUpAsButton()
     {
-        deckBeingBuilt.addCard(sourceCard);
+        deckBeingBuilt.addCard(sourceCardId);
     }
 
     public void incrementCountText()
@@ -31,12 +31,12 @@ public class CardViewerForDeckBuilder : CardViewer
             countText.text = "x" + count;
     }
 
-    public override void setCard(Card c)
+    public override void setCard(int cardId)
     {
-        base.setCard(c);
+        base.setCard(cardId);
         if (deckBeingBuilt == null)
             return;
-        count = deckBeingBuilt.getCardAmount(c);
+        count = deckBeingBuilt.getCardAmount(cardId);
         if (count > 0)
         {
             countGameObject.SetActive(true);

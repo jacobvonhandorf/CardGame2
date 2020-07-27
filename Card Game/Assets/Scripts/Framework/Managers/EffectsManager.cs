@@ -54,6 +54,7 @@ public class EffectsManager : MonoBehaviour
     }
 
     private int effectCount = 0;
+    private object effectsManagerLock = new object();
     void Update()
     {
         // do not allow effects until game setup is complete
@@ -64,14 +65,14 @@ public class EffectsManager : MonoBehaviour
             // unlock each player
             if (GameManager.gameMode == GameManager.GameMode.hotseat)
             {
-                GameManager.Get().activePlayer.locked = false;
-                GameManager.Get().nonActivePlayer.locked = false;
+                throw new Exception("Unimplemented");
+                //GameManager.Get().activePlayer.locked = false;
+                //GameManager.Get().nonActivePlayer.locked = false;
             }
             else
             {
                 // TODO fix this for netplay
-                GameManager.Get().activePlayer.locked = false;
-
+                GameManager.Get().activePlayer.removeLock(effectsManagerLock);
             }
             // reset bool
             effectJustFinished = false;
@@ -86,8 +87,8 @@ public class EffectsManager : MonoBehaviour
         effectsQueue.Remove(effectToActivate);
         effectInProcess = true;
         effectToActivate.activate();
-        //effectToActivate.sourcePlayer.locked = true;
-        GameManager.Get().activePlayer.locked = true;
+        GameManager.Get().activePlayer.addLock(effectsManagerLock);
+        //GameManager.Get().activePlayer.locked = true;
         if (effectToActivate.informationText != null)
             flipEffectTextOn(effectToActivate.informationText);
     }

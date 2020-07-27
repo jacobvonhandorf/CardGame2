@@ -43,6 +43,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 438a211e4c196e74b82fa13d074a4179, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player1: {fileID: 0}
+  player2: {fileID: 0}
   activePlayer: {fileID: 0}
   nonActivePlayer: {fileID: 0}
   board: {fileID: 0}
+  allCreatures: []
+  allStructures: []
+  cardPreview: {fileID: 0}
+  toaster: {fileID: 0}
+  glassBackground: {fileID: 0}
+  activePlayerText: {fileID: 0}
+  cancelEffectButton: {fileID: 0}
+  endTurnButton: {fileID: 0}
+  damageText: {fileID: 0}
+  endGamePopUp: {fileID: 0}
+  cardPickerPrefab: {fileID: 0}
+  optionButton: {fileID: 0}
+  optionSelectBoxPrefab: {fileID: 0}
+  xPickerPrefab: {fileID: 3986563060002899856, guid: 3b1c60563bcbd0149be115b4ee7272bc,
+    type: 3}
+  headquartersPrefab: {fileID: 0}
+  onAttackParticles: {fileID: 0}
+  gameInProgress: 1
