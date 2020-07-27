@@ -21,8 +21,8 @@ public class StructureCard : Card
 
     public override void initialize()
     {
-        structure.initialize();
-        onInitialization();
+        onInitilization?.Invoke();
+        onInitilization = null;
     }
 
     protected override List<Tag> getInitialTags()

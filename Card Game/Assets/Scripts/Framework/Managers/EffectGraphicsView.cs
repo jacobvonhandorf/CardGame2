@@ -21,7 +21,6 @@ public class EffectGraphicsView : MonoBehaviour
     {
         instance = this;
         remainingTimeDefaultWidth = remainingTimeGraphic.size.x;
-        Debug.Log("Effect graphics queue awake");
     }
     public static EffectGraphicsView Get()
     {
@@ -31,8 +30,6 @@ public class EffectGraphicsView : MonoBehaviour
 
     public void addToQueue(EffectGraphic newGraphic)
     {
-        //effectGraphics.Enqueue(newGraphic);
-        Debug.Log("Added graphic to queue");
         InformativeAnimationsQueue.instance.addAnimation(new AnimationCommand(newGraphic, this));
     }
     private class AnimationCommand : QueueableCommand
@@ -108,46 +105,6 @@ public class EffectGraphicsView : MonoBehaviour
     {
         timePassedCoeff = 1;
     }
-
-    /*
-    private void Update()
-    {
-        //doUpdate();
-    }
-
-    // broken out into seperate method so if there is a general animation manager later it can call this method
-    private void doUpdate()
-    {
-        timePassed += Time.deltaTime * timePassedCoeff;
-        if (timePassed > DISPLAY_TIME)
-            showNextGraphic();
-
-        float newX = remainingTimeDefaultWidth - remainingTimeDefaultWidth * timePassed / DISPLAY_TIME;
-        cachedV2.Set(newX, remainingTimeGraphic.size.y);
-        remainingTimeGraphic.size = cachedV2;
-    }
-    private void showNextGraphic()
-    {
-        cardViewer.gameObject.SetActive(false);
-        cvGameObject.SetActive(false);
-        if (effectGraphics.Count > 0)
-        {
-            if (effectGraphics.Peek() is CardEffectGraphic)
-            {
-                showCardEffectGraphic((CardEffectGraphic)effectGraphics.Dequeue());
-            }
-            else if (effectGraphics.Peek() is TextEffectGraphic)
-            {
-                showTextEffectGraphic((TextEffectGraphic)effectGraphics.Dequeue());
-            }
-            else
-            {
-                throw new Exception("Unexpected effect graphic type");
-            }
-            timePassed = 0f;
-        }
-    }
-    */
 }
 
 #region EffectGraphics

@@ -74,7 +74,7 @@ public class CreatureStatsGetter : CardStatsGetter
     }
 
     [SerializeField] private float resizeSpeed = .1f;
-    [SerializeField] private float pauseBetweenResize = .2f;
+    [SerializeField] private float pauseBetweenResize = 0f;
     [SerializeField] private float iconResizeSpeed = 2f;
     private bool resizeToCreatureFinished;
     IEnumerator resizeToCreature(Transform cardRoot, Vector3 newRootScale, List<Transform> iconsToEnlarge, Vector3 newIconScale, Vector3 newPosition)

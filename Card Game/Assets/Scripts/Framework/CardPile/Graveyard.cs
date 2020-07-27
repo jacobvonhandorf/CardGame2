@@ -28,7 +28,6 @@ public class Graveyard : ViewableCardPile
         else if (c is StructureCard)
             removeStructureFromTile((c as StructureCard).structure);
 
-        Debug.Log("Card added to grave");
         // remove the card from the scene
         c.removeGraphicsAndCollidersFromScene();
 

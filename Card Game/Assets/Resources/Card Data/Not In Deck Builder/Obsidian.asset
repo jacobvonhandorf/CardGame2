@@ -22,5 +22,5 @@ MonoBehaviour:
   elementalIdentity: 3
   tags: 04000000
   keywords: 
-  visibleInDeckBuilder: 1
+  visibleInDeckBuilder: 0
   effects: {fileID: 8692324281786007631, guid: 19f8f4bdb82c9c04f873a8f6f094129b, type: 3}

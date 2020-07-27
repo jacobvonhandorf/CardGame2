@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEditor;
 using System;
+using static Card;
 
 public class CardBuilder : MonoBehaviour
 {
@@ -54,6 +55,8 @@ public class CardBuilder : MonoBehaviour
         card.cardStatsScript.setElementIdentity(cardData.elementalIdentity);
         foreach (Keyword k in cardData.keywords)
             card.addKeyword(k);
+        foreach (Tag t in cardData.tags)
+            card.addTag(t);
 
         return card;
     }
@@ -80,7 +83,7 @@ public class CardBuilder : MonoBehaviour
         effs.card = card;
         effs.creature = creature;
 
-        effs.onInitilization?.Invoke();
+        card.onInitilization = effs.onInitilization;
         // register activated Effect
         if (effs.activatedEffect != null)
             creature.activatedEffects.Add(effs.activatedEffect);
@@ -112,7 +115,7 @@ public class CardBuilder : MonoBehaviour
         effs.card = card;
         if (effs == null)
             return card;
-        effs.onInitilization?.Invoke();
+        card.onInitilization = effs.onInitilization;
         // register effects
         if (effs.activatedEffect != null)
             structure.activatedEffects.Add(effs.activatedEffect);
@@ -133,12 +136,13 @@ public class CardBuilder : MonoBehaviour
         SpellCard card = Instantiate(spellCardPrefab, instantiationLocation, Quaternion.identity).GetComponent<SpellCard>();
         BlankSpell spell = card as BlankSpell;
         spell.spellId = data.id;
+        spell.effects = data.effects;
 
         SpellEffects effs = card.gameObject.AddComponent(data.effects.GetType()) as SpellEffects;
         effs.card = card;
         if (effs == null)
             return card;
-        effs.onInitilization?.Invoke();
+        card.onInitilization = effs.onInitilization;
         // regist effects
         if (effs.onMoveToCardPile != null)
             card.E_AddedToCardPile += effs.onMoveToCardPile;

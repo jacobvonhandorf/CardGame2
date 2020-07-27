@@ -133,12 +133,19 @@ public class CardViewer : MonoBehaviour
         halfBodyText.text = data.effectText + "";
         moveValueText.text = data.movement + "";
 
-        string tagsText = "";
-        foreach (Card.Tag tag in data.tags)
+        if (data.tags.Count == 0)
         {
-            tagsText += tag.ToString() + " ";
+            typeText.text = "Creature";
         }
-        typeText.text = "Creature - " + tagsText;
+        else
+        {
+            string tagsText = "";
+            foreach (Card.Tag tag in data.tags)
+            {
+                tagsText += tag.ToString() + " ";
+            }
+            typeText.text = "Creature - " + tagsText;
+        }
     }
     private void setToCard(StructureCardData data)
     {
@@ -154,12 +161,19 @@ public class CardViewer : MonoBehaviour
         hpText.text = data.health + "";
         fullBodyText.text = data.effectText;
 
-        string tagsText = "";
-        foreach (Card.Tag tag in data.tags)
+        if (data.tags.Count == 0)
         {
-            tagsText += tag.ToString() + " ";
+            typeText.text = "Structure";
         }
-        typeText.text = "Structure - " + tagsText;
+        else
+        {
+            string tagsText = "";
+            foreach (Card.Tag tag in data.tags)
+            {
+                tagsText += tag.ToString() + " ";
+            }
+            typeText.text = "Structure - " + tagsText;
+        }
     }
     private void setToCard(SpellCardData data)
     {
@@ -173,12 +187,21 @@ public class CardViewer : MonoBehaviour
 
         manaText1.text = data.manaCost + "";
         fullBodyText.text = data.effectText;
-        string tagsText = "";
-        foreach (Card.Tag tag in data.tags)
+
+        if (data.tags.Count == 0)
         {
-            tagsText += tag.ToString() + " ";
+            typeText.text = "Spell";
         }
-        typeText.text = "Spell - " + tagsText;
+        else
+        {
+            string tagsText = "";
+            foreach (Card.Tag tag in data.tags)
+            {
+                tagsText += tag.ToString() + " ";
+            }
+            typeText.text = "Spell - " + tagsText;
+        }
+
     }
     private Sprite getSpriteFromEId(Card.ElementIdentity element)
     {

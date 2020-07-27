@@ -31,15 +31,13 @@ public abstract class Card : MonoBehaviour
     }
     #endregion
 
+    // basic fields
     private List<Tag> tags = new List<Tag>();
     public string cardName;
     [HideInInspector] private bool hidden = true; // if true then all players can see the card
     [SerializeField] protected CardPile currentCardPile; // card pile the card is currently in. Use moveToCardPile to change
     public Player owner; // set this to readonly after done using TestCard
-
-    [HideInInspector] public bool isBeingDragged = false;
-    [HideInInspector] public bool positionLocked = false;
-    [HideInInspector] public Vector3 positionInHand;
+    public EmptyHandler onInitilization;
 
     // synced
     private int goldCost;
@@ -48,12 +46,15 @@ public abstract class Card : MonoBehaviour
     private int baseManaCost;
     private ElementIdentity elementIdentity { get { return cardStatsScript.getElementIdentity(); }}
 
+    // graphics
     [SerializeField] public CardStatsGetter cardStatsScript;
-
     protected SpriteRenderer[] sprites; // all sprites so card alpha can be changed all at once
     protected TextMeshPro[] tmps; // all text objects for this card
-
+    [HideInInspector] public bool isBeingDragged = false;
+    [HideInInspector] public bool positionLocked = false;
+    [HideInInspector] public Vector3 positionInHand;
     public HashSet<CardViewer> viewersDisplayingThisCard;
+
     public List<ToolTipInfo> toolTipInfos = new List<ToolTipInfo>();
     public TransformManager transformManager;
 
@@ -143,6 +144,8 @@ public abstract class Card : MonoBehaviour
     {
         enabled = true;
     }
+
+    public abstract void initialize();
 
     // move card to a pile and remove it from the old one
     public void moveToCardPile(CardPile newPile, Card source)
@@ -288,7 +291,7 @@ public abstract class Card : MonoBehaviour
         {
             if (legalTargetTiles.Contains(tile))
             {
-                Debug.Log("Attempting to play card");
+                //Debug.Log("Attempting to play card");
                 if (canBePlayed())
                 {
                     payCosts(owner);
@@ -602,9 +605,6 @@ public abstract class Card : MonoBehaviour
     public abstract List<Tile> legalTargetTiles { get; }
 
     // VIRTUAL METHODS
-    public virtual void initialize() { onInitialization(); }
-    public virtual void onInitialization() { } // last thing to be called at the end of init
-                                                // use to register effects
     protected virtual List<Tag> getInitialTags() // TODO needs to be changed to getInitialTags
     {
         return tags;

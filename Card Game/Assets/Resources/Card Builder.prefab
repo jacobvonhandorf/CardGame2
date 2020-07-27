@@ -43,7 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: baab2ffd186725e42b4499dec9568908, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spellCardPrefab: {fileID: 7420118472789478337, guid: f30ba095c2be8fa4bbb42c9caddb391c,
+  spellCardPrefab: {fileID: 8536693060836854512, guid: d4912e3ffb13b4547903399a1d16438a,
     type: 3}
   structureCardPrefab: {fileID: 7975894839807247856, guid: 8be107c339050a34182b3d2fb1cad601,
     type: 3}

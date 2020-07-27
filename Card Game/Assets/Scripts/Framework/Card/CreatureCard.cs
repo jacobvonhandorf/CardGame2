@@ -27,7 +27,7 @@ public class CreatureCard : Card
     {
         creature.enabled = false;
         creature.initialize();
-        onInitialization(); // keep this on last line
+        onInitilization?.Invoke(); // keep this on last line
     }
 
     public override void play(Tile t)

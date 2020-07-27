@@ -21,7 +21,7 @@ MonoBehaviour:
   elementalIdentity: 3
   tags: 
   keywords: 
-  visibleInDeckBuilder: 1
+  visibleInDeckBuilder: 0
   health: 2
   attack: 2
   movement: 3

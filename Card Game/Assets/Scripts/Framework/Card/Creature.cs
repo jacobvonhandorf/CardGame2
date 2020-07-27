@@ -74,11 +74,6 @@ public abstract class Creature : MonoBehaviour, Damageable
         onInitialization();
     }
 
-    private void OnEnable()
-    {
-        Debug.Log("Creature emabled");
-    }
-
     public void resetToBaseStats()
     {
         // only owner is resposible for resetting to base stats
@@ -149,6 +144,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         GameManager.Get().showDamagedText(transform.position, damage);
         setHealthWithoutKilling(currentHealth - damage);
         TriggerOnDamagedEvents(this, new OnDamagedArgs() { source = source });
+        needToSync = true;
         if (currentHealth <= 0)
             GameManager.Get().destroyCreature(this);
     }
@@ -504,7 +500,6 @@ public abstract class Creature : MonoBehaviour, Damageable
     }
     public void updateFriendOrFoeBorder()
     {
-        Debug.Log("Update FoF called");
         if (GameManager.gameMode != GameManager.GameMode.online)
             statsScript.setAsAlly(GameManager.Get().activePlayer == controller);
         else

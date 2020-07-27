@@ -3,4 +3,6 @@
 public enum CardIds
 {
     RingOfEternity = 85,
+    Obsidian = 81,
+
 }

@@ -65,12 +65,12 @@ public abstract class CardPile : MonoBehaviour
     protected virtual void onCardAdded(Card c)
     {
         // throw new NotImplementedException();
-        Debug.Log("Should probably override onCardAdded");
+        // Debug.Log("Should probably override onCardAdded");
     }
 
     protected virtual void onCardRemoved(Card c)
     {
-        Debug.Log("OnCardRemoved called and not overriden");
+        // Debug.Log("OnCardRemoved called and not overriden");
     }
 
     /*

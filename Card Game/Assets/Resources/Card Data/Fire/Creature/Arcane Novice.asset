@@ -15,7 +15,10 @@ MonoBehaviour:
   id: 64
   cardName: Arcane Novice
   art: {fileID: 21300000, guid: e4cee17eeb3d41045ac31ce39b8dfdbc, type: 3}
-  effectText: 
+  effectText: '<b>Deploy:</b> Place an arcane counter on this card.
+
+    Whenever you cast a spell if this card has an arcane counter remove that counter
+    and draw a card.'
   manaCost: 0
   goldCost: 1
   elementalIdentity: 0

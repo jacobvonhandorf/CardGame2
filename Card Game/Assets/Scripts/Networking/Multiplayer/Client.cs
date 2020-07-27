@@ -110,7 +110,7 @@ public class Client : MonoBehaviour
     #region OnData
     private void OnData(int cnnId, int channelId, int recHostId, NetMsg msg)
     {
-        Debug.Log("Receive event. OP: " + msg.OP);
+        //Debug.Log("Receive event. OP: " + msg.OP);
         switch (msg.OP)
         {
             case NetOP.None:

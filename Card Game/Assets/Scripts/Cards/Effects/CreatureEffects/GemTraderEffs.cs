@@ -27,7 +27,7 @@ public class GemTraderEffs : CreatureEffects
 
     public override EventHandler onDeath => delegate (object s, EventArgs e)
     {
-        Card obsidian = GameManager.Get().createCardById(Obsidian.CARD_ID, creature.controller);
+        Card obsidian = GameManager.Get().createCardById((int)CardIds.Obsidian, creature.controller);
         obsidian.moveToCardPile(creature.controller.deck, card);
         creature.controller.deck.shuffle();
     };
