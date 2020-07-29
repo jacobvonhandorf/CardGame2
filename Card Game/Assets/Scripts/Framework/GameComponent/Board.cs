@@ -49,7 +49,7 @@ public class Board : CardPile
     }
 
     #region GetMovableTiles
-    public List<Tile> getAllMovableTiles(Creature creature) => _getAllMovableTiles(creature.getMovement(), creature.getCoordinates(), new List<Tile>(), creature.controller, new List<TileMovePair>());
+    public List<Tile> getAllMovableTiles(Creature creature) => _getAllMovableTiles(creature.Movement, creature.getCoordinates(), new List<Tile>(), creature.controller, new List<TileMovePair>());
     private List<Tile> _getAllMovableTiles(int remainingMove, Vector2 coord, List<Tile> returnList, Player controller, List<TileMovePair> tileMovePairs)
     {
         // base cases

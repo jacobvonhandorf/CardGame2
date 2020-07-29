@@ -18,8 +18,8 @@ public class FairyNeophyte : Creature
     {
         CardPicker.CreateAndQueue(controller.hand.getAllCardsWithType(CardType.Creature), 1, 1, "Select a card to give +1/+1", controller, delegate (List<Card> cardList)
         {
-            (cardList[0] as CreatureCard).creature.addAttack(1);
-            (cardList[0] as CreatureCard).creature.addHealth(1);
+            (cardList[0] as CreatureCard).creature.AttackStat += 1;
+            (cardList[0] as CreatureCard).creature.Health += 1;
         });
     }
 }

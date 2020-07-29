@@ -20,8 +20,8 @@ public class FairyMotivator : Creature
     {
         foreach (Card c in controller.hand.getAllCardsWithType(Card.CardType.Creature))
         {
-            (c as CreatureCard).creature.addHealth(1);
-            (c as CreatureCard).creature.addAttack(1);
+            (c as CreatureCard).creature.Health += 1;
+            (c as CreatureCard).creature.AttackStat += 1;
         }
     }
 }

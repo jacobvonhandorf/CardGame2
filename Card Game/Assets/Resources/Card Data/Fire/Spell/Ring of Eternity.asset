@@ -25,6 +25,6 @@ MonoBehaviour:
   goldCost: 0
   elementalIdentity: 0
   tags: 02000000
-  keywords: 
+  keywords: 09000000
   visibleInDeckBuilder: 1
   effects: {fileID: 3718891967773905479, guid: ece0938cd23a3b94a81da85225576394, type: 3}

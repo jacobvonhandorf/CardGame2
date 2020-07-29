@@ -15,7 +15,7 @@ public class Miner : Creature
     {
         CardPicker.CreateAndQueue(controller.deck.getAllCardsWithTag(Card.Tag.Gem), 1, 1, "Select a card to add to your hand", controller, delegate (List<Card> cardList)
         {
-            cardList[0].moveToCardPile(controller.hand, sourceCard);
+            cardList[0].moveToCardPile(controller.hand, SourceCard);
         });
     }
 }

@@ -24,7 +24,7 @@ public class ActionBox : MonoBehaviour
     }
     public void show(Creature c)
     {
-        show(c.currentTile.x - 2.4f, c.currentTile.y - 2, c);
+        show(c.tile.x - 2.4f, c.tile.y - 2, c);
     }
 
     public void Attack()

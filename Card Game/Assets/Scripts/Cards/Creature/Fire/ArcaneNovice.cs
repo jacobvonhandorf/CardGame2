@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
 public class ArcaneNovice : Creature
 {
     public override int cardId => 64;
@@ -26,7 +27,7 @@ public class ArcaneNovice : Creature
 
     private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastArgs e)
     {
-        if (enabled && hasCounter(Counters.arcane) > 0 && e.spell.owner == controller)
+        if (enabled && Counters.hasCounter(Counters.arcane) > 0 && e.spell.owner == controller)
         {
             controller.drawCard();
             removeCounters(Counters.arcane, 1);
@@ -38,3 +39,4 @@ public class ArcaneNovice : Creature
     }
 
 }
+*/

@@ -31,7 +31,7 @@ public class SlaveToMana : Creature
     }
     private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastArgs e)
     {
-        if (e.spell.owner == sourceCard.owner && sourceCard.getCardPile() is Deck && sourceCard.owner.numSpellsCastThisTurn == 3 && !effectTriggeredThisTurn)
+        if (e.spell.owner == SourceCard.owner && SourceCard.getCardPile() is Deck && SourceCard.owner.numSpellsCastThisTurn == 3 && !effectTriggeredThisTurn)
         {
             effectTriggeredThisTurn = true;
             List<string> options = new List<string>()
@@ -40,18 +40,18 @@ public class SlaveToMana : Creature
                 NO
             };
             bool deploy = false;
-            QueueableCommand optionCmd = OptionSelectBox.CreateCommand(options, "Deploy " + cardName + " from your deck?", sourceCard.owner, delegate (int selectedIndex, string selectedOption)
+            QueueableCommand optionCmd = OptionSelectBox.CreateCommand(options, "Deploy " + cardName + " from your deck?", SourceCard.owner, delegate (int selectedIndex, string selectedOption)
             {
                 if (selectedIndex == 0)
                     deploy = true;
             });
-            QueueableCommand deployCmd = SingleTileTargetEffect.CreateCommand(GameManager.Get().getAllDeployableTiles(sourceCard.owner), delegate (Tile t)
+            QueueableCommand deployCmd = SingleTileTargetEffect.CreateCommand(GameManager.Get().getAllDeployableTiles(SourceCard.owner), delegate (Tile t)
             {
                 if (deploy)
                 {
                     //sourceCard.moveToCardPile(sourceCard.owner.hand, sourceCard); // this is jank. Could cause errors in the future
                                                                                   // for now it's to stop bugs because "play" bugs out if the card is in deck
-                    sourceCard.play(t);
+                    SourceCard.play(t);
                 }
             });
             new CompoundQueueableCommand.Builder().addCommand(optionCmd).addCommand(deployCmd).BuildAndQueue();

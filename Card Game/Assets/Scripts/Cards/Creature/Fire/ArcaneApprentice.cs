@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
 public class ArcaneApprentice : Creature, Effect
 {
     public const int EFFECT_RANGE = 2;
@@ -36,7 +37,13 @@ public class ArcaneApprentice : Creature, Effect
     private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastArgs e)
     {
         if (e.spell.owner == controller)
-            addCounters(Counters.arcane, 1);
+        {
+            Counters.addCounters(Counters.arcane, 1);
+            if (hasCounter(Counters.arcane) == 3)
+            {
+                
+            }
+        }
     }
 
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
@@ -61,3 +68,4 @@ public class ArcaneApprentice : Creature, Effect
         new CompoundQueueableCommand.Builder().addCommand(xPickCmd).addCommand(targetSelect).BuildAndQueue();
     }
 }
+*/

@@ -43,10 +43,10 @@ public class CardBuilder : MonoBehaviour
         }
 
         // do all generic setting of variables
-        card.setBaseManaCost(cardData.manaCost);
-        card.setManaCost(cardData.manaCost);
-        card.setBaseGoldCost(cardData.goldCost);
-        card.setGoldCost(cardData.goldCost);
+        card.baseManaCost = cardData.manaCost;
+        card.manaCost = cardData.manaCost;
+        card.goldCost = cardData.goldCost;
+        card.baseGoldCost = cardData.goldCost;
         card.cardName = cardData.cardName;
         card.gameObject.name = cardData.cardName;
         card.cardStatsScript.nameText.text = cardData.cardName;
@@ -56,7 +56,7 @@ public class CardBuilder : MonoBehaviour
         foreach (Keyword k in cardData.keywords)
             card.addKeyword(k);
         foreach (Tag t in cardData.tags)
-            card.addTag(t);
+            card.Tags.Add(t);
 
         return card;
     }
@@ -65,14 +65,14 @@ public class CardBuilder : MonoBehaviour
     {
         CreatureCard card = Instantiate(creatureCardPrefab, instantiationLocation, Quaternion.identity).GetComponent<CreatureCard>();
         BlankCreature creature = card.creature as BlankCreature;
-        creature.baseHealth = data.health;
-        creature.setHealth(data.health);
-        creature.baseAttack = data.attack;
-        creature.setAttack(data.attack);
-        creature.baseMovement = data.movement;
-        creature.setMovement(data.movement);
-        creature.range = data.range;
-        creature.baseRange = data.range;
+        creature.BaseHealth = data.health;
+        creature.Health = data.health;
+        creature.BaseAttack = data.attack;
+        creature.AttackStat = data.attack;
+        creature.BaseMovement = data.movement;
+        creature.Movement = data.movement;
+        creature.Range = data.range;
+        creature.BaseRange = data.range;
         creature.creatureCardId = data.id;
 
         // Effects
@@ -106,8 +106,8 @@ public class CardBuilder : MonoBehaviour
     {
         StructureCard card = Instantiate(structureCardPrefab, instantiationLocation, Quaternion.identity).GetComponent<StructureCard>();
         BlankStructure structure = card.structure as BlankStructure;
-        structure.setBaseHealth(data.health);
-        structure.setHealth(data.health);
+        structure.BaseHealth = data.health;
+        structure.Health = data.health;
         structure.structureCardId = data.id;
 
         StructureEffects effs = card.gameObject.AddComponent(data.effects.GetType()) as StructureEffects;

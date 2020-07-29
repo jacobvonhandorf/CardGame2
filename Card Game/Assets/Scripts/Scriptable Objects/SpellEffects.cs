@@ -5,7 +5,7 @@ using UnityEngine;
 
 public abstract class SpellEffects : MonoBehaviour
 {
-     public Card card;
+    [HideInInspector] public Card card;
 
     public abstract void doEffect(Tile t);
     public abstract List<Tile> validTiles { get; }

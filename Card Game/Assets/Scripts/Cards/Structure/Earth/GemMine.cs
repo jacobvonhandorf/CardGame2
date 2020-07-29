@@ -12,7 +12,7 @@ public class GemMine : Structure, Effect
 
     public override void onPlaced()
     {
-        addCounters(Counters.mine, 3);
+        Counters.add(CounterType.Mine, 3);
     }
 
     public override Effect getEffect()
@@ -22,7 +22,7 @@ public class GemMine : Structure, Effect
 
     public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
     {
-        if (hasCounter(Counters.mine) == 0)
+        if (Counters.amountOf(CounterType.Mine) == 0)
         {
             GameManager.Get().showToast("You must have a mine counter on Gem Mine to activate its effect");
             return;
@@ -41,9 +41,9 @@ public class GemMine : Structure, Effect
         List<Card> gemCards = controller.deck.getAllCardsWithTag(Card.Tag.Gem);
         if (gemCards.Count > 0)
         {
-            gemCards[Random.Range(0, gemCards.Count)].moveToCardPile(controller.hand, sourceCard);
+            gemCards[Random.Range(0, gemCards.Count)].moveToCardPile(controller.hand, SourceCard);
             effectUsedThisTurn = true;
-            removeCounters(Counters.mine, 1);
+            Counters.remove(CounterType.Mine, 1);
             controller.subtractActions(1);
         }
         else

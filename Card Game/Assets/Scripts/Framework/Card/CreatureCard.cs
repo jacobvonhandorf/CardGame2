@@ -26,7 +26,7 @@ public class CreatureCard : Card
     public override void initialize()
     {
         creature.enabled = false;
-        creature.initialize();
+        //creature.initialize();
         onInitilization?.Invoke(); // keep this on last line
     }
 
@@ -37,7 +37,6 @@ public class CreatureCard : Card
         gameManager.createCreatureOnTile(creature, t, owner); // this makes the assumption that a card will always be played by it's owner
         setSpritesToSortingLayer(SpriteLayers.Creature);
         creatureStatsScript.setTextSortingLayer(SpriteLayers.CreatureAbove);
-        phaseOut();
         owner.hand.resetCardPositions();
         GameEvents.TriggerCreaturePlayedEvents(null, new GameEvents.CreaturePlayedArgs() { creature = creature });
     }
@@ -69,12 +68,12 @@ public class CreatureCard : Card
         creatureStatsScript.swapToCard();
 
         // no longer a creature so forget the tile it's on
-        creature.currentTile = null;
+        creature.tile = null;
         // and remove it from allCreatures
         GameManager.Get().allCreatures.Remove(creature);
 
         // counters don't say on cards when they aren't creatures so clear them
-        counterController.clearAll();
+        counterController.clear();
     }
 
     public override void resetToBaseStats()
@@ -88,7 +87,7 @@ public class CreatureCard : Card
         creature.resetToBaseStatsWithoutSyncing();
     }
 
-    protected override List<Tag> getInitialTags() => creature.getInitialTags();
+    //protected override List<Tag> getInitialTags() => creature.getInitialTags();
 
     // returns true if the card can be played right now
     public override bool canBePlayed()

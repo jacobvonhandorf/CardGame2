@@ -20,7 +20,7 @@ public class FairyCavalier : Creature
     {
         SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(controller, true), delegate (Tile t)
         {
-            t.creature.bounce(sourceCard);
+            t.creature.bounce(SourceCard);
         });
     }
 }

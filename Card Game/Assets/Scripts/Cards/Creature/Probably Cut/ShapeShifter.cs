@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/*
 public class ShapeShifter : Creature, Effect
 {
     private const string ATTACK = "+1 Attack";
@@ -83,5 +83,6 @@ public class ShapeShifter : Creature, Effect
                 creature.addHealth(2);
             }
         }
-    }*/
+    }
 }
+*/

@@ -64,10 +64,10 @@ public class Graveyard : ViewableCardPile
 
     private void removeCreatureFromTile(Creature creature)
     {
-        if (creature.currentTile != null)
+        if (creature.tile != null)
         {
-            creature.currentTile.creature = null;
-            creature.currentTile = null;
+            creature.tile.creature = null;
+            creature.tile = null;
         }
     }
 

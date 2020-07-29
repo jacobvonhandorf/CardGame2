@@ -25,11 +25,11 @@ public class EngineerEffects : CreatureEffects
         });
         Debug.Log(creature.controller);
         List<Tile> validTargets = GameManager.Get().getLegalStructurePlacementTiles(creature.controller);
-        validTargets.RemoveAll(t => t.getDistanceTo(creature.currentTile) > 1);
+        validTargets.RemoveAll(t => t.getDistanceTo(creature.tile) > 1);
         validTargets.RemoveAll(t => t.creature != null);
         QueueableCommand selectTileCmd = SingleTileTargetEffect.CreateCommand(validTargets, delegate (Tile t)
         {
-            creature.removeCounters(Counters.build, 1);
+            creature.Counters.remove(CounterType.Build, 1);
             StructureCard structureToPlace = GameManager.Get().createCardById(selectedCardId, creature.controller) as StructureCard;
             GameManager.Get().createStructureOnTile(structureToPlace.structure, t, creature.controller, structureToPlace);
             creature.hasDoneActionThisTurn = true;

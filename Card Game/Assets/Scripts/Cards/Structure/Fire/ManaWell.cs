@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
 public class ManaWell : Structure, Effect
 {
     public const int CARD_ID = 73;
@@ -53,3 +54,4 @@ public class ManaWell : Structure, Effect
         removeCounters(Counters.well, 3);
     }
 }
+*/

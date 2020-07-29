@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/*
 public class ArcaneGrandmaster : Creature
 {
     private const int FIRST_THRESHOLD = 3;
@@ -104,5 +104,6 @@ public class ArcaneGrandmaster : Creature
         List<Card.Tag> tags = new List<Card.Tag>();
         tags.Add(Card.Tag.Arcane);
         return tags;
-    }*/
+    }
 }
+*/

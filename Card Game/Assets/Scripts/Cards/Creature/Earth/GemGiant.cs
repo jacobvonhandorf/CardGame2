@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
 public class GemGiant : Creature
 {
     public override int cardId => 71;
@@ -19,3 +20,4 @@ public class GemGiant : Creature
         addHealth(numGemsInHand * 2);
     }
 }
+*/

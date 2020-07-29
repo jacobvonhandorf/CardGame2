@@ -16,7 +16,7 @@ public class GemTraderEffs : CreatureEffects
             }
             foreach (Card c in creature.controller.deck.getCardList())
             {
-                if (c.hasTag(Card.Tag.Gem))
+                if (c.Tags.Contains(Card.Tag.Gem))
                 {
                     c.moveToCardPile(creature.controller.hand, card);
                     break;

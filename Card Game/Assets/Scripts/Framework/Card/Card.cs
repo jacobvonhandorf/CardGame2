@@ -32,18 +32,19 @@ public abstract class Card : MonoBehaviour
     #endregion
 
     // basic fields
-    private List<Tag> tags = new List<Tag>();
+    public List<Tag> Tags { get; } = new List<Tag>();
     public string cardName;
     [HideInInspector] private bool hidden = true; // if true then all players can see the card
     [SerializeField] protected CardPile currentCardPile; // card pile the card is currently in. Use moveToCardPile to change
     public Player owner; // set this to readonly after done using TestCard
     public EmptyHandler onInitilization;
 
-    // synced
-    private int goldCost;
-    private int baseGoldCost;
-    private int manaCost;
-    private int baseManaCost;
+    // stats
+    public StatsContainer Stats { get; private set; }
+    public int goldCost { get { return Stats.Stats[StatType.GoldCost]; } set { Stats.setValue(StatType.GoldCost, value); } }
+    public int baseGoldCost { get { return Stats.Stats[StatType.BaseGoldCost]; } set { Stats.setValue(StatType.BaseGoldCost, value); } }
+    public int manaCost { get { return Stats.Stats[StatType.ManaCost]; } set { Stats.setValue(StatType.ManaCost, value); } }
+    public int baseManaCost { get { return Stats.Stats[StatType.BaseManaCost]; } set { Stats.setValue(StatType.BaseManaCost, value); } }
     private ElementIdentity elementIdentity { get { return cardStatsScript.getElementIdentity(); }}
 
     // graphics
@@ -56,7 +57,7 @@ public abstract class Card : MonoBehaviour
     public HashSet<CardViewer> viewersDisplayingThisCard;
 
     public List<ToolTipInfo> toolTipInfos = new List<ToolTipInfo>();
-    public TransformManager transformManager;
+    public TransformManager TransformManager { get; private set; }
 
     #region Events
     public event EventHandler<AddedToCardPileArgs> E_AddedToCardPile;
@@ -84,7 +85,6 @@ public abstract class Card : MonoBehaviour
     protected virtual void Start()
     {
         positionInHand = transform.position;
-        tags = getInitialTags();
     }
     protected virtual void Awake()
     {
@@ -94,22 +94,15 @@ public abstract class Card : MonoBehaviour
         tmps = GetComponentsInChildren<TextMeshPro>();
         setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
         effectGraphic = EffectGraphic.NewEffectGraphic(this);
-        transformManager = GetComponent<TransformManager>();
+        TransformManager = GetComponent<TransformManager>();
         cardStatsScript = GetComponent<CardStatsGetter>();
-        cardStatsScript.setCardCosts(this);
+        //cardStatsScript.setCardCosts(this);
+        Stats = GetComponent<StatsContainer>();
+        Stats.addType(StatType.BaseGoldCost);
+        Stats.addType(StatType.GoldCost);
+        Stats.addType(StatType.BaseManaCost);
+        Stats.addType(StatType.ManaCost);
     }
-
-    #region Tags
-    public bool hasTag(Tag tag) => tags.Contains(tag);
-    public void addTag(Tag tag)
-    {
-        tags.Add(tag);
-    }
-    public void removeTag(Tag tag)
-    {
-        tags.Remove(tag);
-    }
-    #endregion
 
     // returns true if this card is the type passed to it
     public bool isType(CardType type)
@@ -130,19 +123,6 @@ public abstract class Card : MonoBehaviour
     public void show()
     {
         hidden = false;
-    }
-
-    /*
-     * Used when a creature card is played so the 'card' doesn't exist anywhere
-     * but will need to be put in grave if creature dies so it can't be destroyed
-     */
-    public void phaseOut()
-    {
-        enabled = false;
-    }
-    public void phaseIn()
-    {
-        enabled = true;
     }
 
     public abstract void initialize();
@@ -240,8 +220,8 @@ public abstract class Card : MonoBehaviour
         {
             cv.clearToolTips();
         }
-        transformManager.clearQueue();
-        transformManager.Lock();
+        TransformManager.clearQueue();
+        TransformManager.Lock();
     }
     void OnMouseDrag()
     {
@@ -267,7 +247,7 @@ public abstract class Card : MonoBehaviour
         {
             setSpriteAlpha(1f);
         }
-        transformManager.Lock();
+        TransformManager.Lock();
     }
     private void OnMouseUp()
     {
@@ -284,7 +264,7 @@ public abstract class Card : MonoBehaviour
         setSpriteAlpha(1f);
         setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
 
-        transformManager.UnLock();
+        TransformManager.UnLock();
         // if card is above a Tile then play it
         Tile tile = getTileMouseIsOver();
         if (tile != null)
@@ -333,7 +313,7 @@ public abstract class Card : MonoBehaviour
         moveTo(positionInHand);
         
         Board.instance.setAllTilesToDefault();
-        transformManager.UnLock();
+        TransformManager.UnLock();
     }
     // change the alpha for all sprites related to this card
     private void setSpriteAlpha(float value)
@@ -379,8 +359,8 @@ public abstract class Card : MonoBehaviour
 
         positionOnScene = transform.position;
         transform.position = new Vector3(99999f, 99999f, 99999f);
-        transformManager.Lock();
-        transformManager.enabled = false;
+        TransformManager.Lock();
+        TransformManager.enabled = false;
         //interuptMove = true;
         onScene = false;
     }
@@ -395,8 +375,8 @@ public abstract class Card : MonoBehaviour
             }
         }
 
-        transformManager.enabled = true;
-        transformManager.UnLock();
+        TransformManager.enabled = true;
+        TransformManager.UnLock();
         transform.position = positionOnScene;
         onScene = true;
     }
@@ -408,9 +388,9 @@ public abstract class Card : MonoBehaviour
     // these methods and coroutines change the cards position smoothly
     public void moveTo(Vector3 position)
     {
-        TransformStruct ts = new TransformStruct(transformManager.transform);
+        TransformStruct ts = new TransformStruct(TransformManager.transform);
         ts.position = position;
-        transformManager.moveToImmediate(ts);
+        TransformManager.moveToImmediate(ts);
 
         //StopAllCoroutines();
         //StartCoroutine(moveToPositionCoroutine(position, smoothing));
@@ -502,36 +482,10 @@ public abstract class Card : MonoBehaviour
     {
         return cardStatsScript.getEffectText();
     }
-    public int getGoldCost() { return goldCost; }
-    public int getManaCost() { return manaCost; }
-    public int getBaseGoldCost() { return baseGoldCost; }
-    public int getBaseManaCost() { return baseManaCost; }
-    public void setGoldCost(int newCost)
-    {
-        if (newCost < 0)
-            newCost = 0;
-        goldCost = newCost;
-        cardStatsScript.setGoldCost(newCost, baseGoldCost);
-    }
-    public void setManaCost(int newCost)
-    {
-        manaCost = newCost;
-        cardStatsScript.setManaCost(newCost, baseManaCost);
-    }
-    public void setBaseGoldCost(int newCost)
-    {
-        baseGoldCost = newCost;
-        cardStatsScript.setGoldCost(goldCost, baseGoldCost);
-    }
-    public void setBaseManaCost(int newCost)
-    {
-        baseManaCost = newCost;
-        cardStatsScript.setManaCost(manaCost, baseManaCost);
-    }
     public virtual void resetToBaseStats()
     {
-        setGoldCost(baseGoldCost);
-        setManaCost(baseManaCost);
+        goldCost = baseGoldCost;
+        manaCost = baseManaCost;
     }
     public virtual void resetToBaseStatsWithoutSyncing()
     {
@@ -603,12 +557,6 @@ public abstract class Card : MonoBehaviour
     public abstract bool canBePlayed();
     public abstract int cardId { get; }
     public abstract List<Tile> legalTargetTiles { get; }
-
-    // VIRTUAL METHODS
-    protected virtual List<Tag> getInitialTags() // TODO needs to be changed to getInitialTags
-    {
-        return tags;
-    }
     #endregion
 }
 
@@ -640,4 +588,3 @@ public class CardComparatorByCostFirst : IComparer<Card>
         return x.getCardName().CompareTo(y.getCardName());
     }
 }
-

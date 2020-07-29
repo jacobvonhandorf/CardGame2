@@ -12,15 +12,15 @@ public class ArcaneNoviceEffs : CreatureEffects
 
     private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastArgs e)
     {
-        if (creature.enabled && creature.hasCounter(Counters.arcane) > 0 && e.spell.owner == creature.controller)
+        if (creature.enabled && creature.Counters.amountOf(CounterType.Arcane) > 0 && e.spell.owner == creature.controller)
         {
             creature.controller.drawCard();
-            creature.removeCounters(Counters.arcane, 1);
+            creature.Counters.remove(CounterType.Arcane, 1);
         }
     }
 
     public override EventHandler onDeploy => delegate (object s, EventArgs e)
     {
-        creature.addCounters(Counters.arcane, 1);
+        creature.Counters.add(CounterType.Arcane, 1);
     };
 }

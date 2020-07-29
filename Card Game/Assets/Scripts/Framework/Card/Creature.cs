@@ -7,32 +7,24 @@ using UnityEngine;
 using UnityEngine.UI;
 using static Card;
 
-public abstract class Creature : MonoBehaviour, Damageable
+public abstract class Creature : Permanent, Damageable, ICanReceiveCounters
 {
     [SerializeField] private CreatureStatsGetter statsScript;
-    public Card sourceCard { get; private set; } // card associated with this creature
     public string cardName;
 
     // synced variables. Serialized for debugging purposes
-    [SerializeField] public int baseHealth;
-    [SerializeField] public int baseAttack;
-    [SerializeField] public int baseRange;
-    [SerializeField] public int baseMovement;
-    [SerializeField] private int currentHealth;
-    [SerializeField] private int attack;
-    [SerializeField] public int range;
-    [SerializeField] private int movement;
+    public int BaseAttack { get { return Stats.Stats[StatType.BaseAttack]; } set { Stats.setValue(StatType.BaseAttack, value); needToSync = true; } }
+    public int BaseRange { get { return Stats.Stats[StatType.BaseRange]; } set { Stats.setValue(StatType.BaseRange, value); needToSync = true; } }
+    public int BaseMovement { get { return Stats.Stats[StatType.BaseMovement]; } set { Stats.setValue(StatType.BaseMovement, value); needToSync = true; } }
+    public int AttackStat { get { return Stats.Stats[StatType.Attack]; } set { Stats.setValue(StatType.Attack, value); needToSync = true; } }
+    public int Range { get { return Stats.Stats[StatType.Range]; } set { Stats.setValue(StatType.Range, value); needToSync = true; } }
+    public int Movement { get { return Stats.Stats[StatType.Movement]; } set { Stats.setValue(StatType.Movement, value); needToSync = true; } }
 
-    public Tile currentTile;
-    public Player controller;
     public bool hasMovedThisTurn = false;
     public bool hasDoneActionThisTurn = false; // action is attack or effect
     [SerializeField] public List<EmptyHandler> activatedEffects { get; } = new List<EmptyHandler>();
 
-    internal bool canDeployFrom = false; // if new creatures can be deployed from this creature
-    private bool initialized = false;
-
-    private CounterController counterController;
+    public bool canDeployFrom = false; // if new creatures can be deployed from this creature
 
     #region Events
     public event EventHandler E_Death;
@@ -45,33 +37,24 @@ public abstract class Creature : MonoBehaviour, Damageable
     public class OnAttackArgs : EventArgs { public Damageable target { get; set; } }
     public void TriggerOnAttackEvents(object sender, OnAttackArgs args) { if (E_OnAttack != null) E_OnAttack.Invoke(sender, args); }
 
-    public event EventHandler<OnDefendArgs> E_OnDefend;
-    public void TriggerOnDefendEvents(object sender, OnDefendArgs args) { if (E_OnDefend != null) E_OnDefend.Invoke(sender, args); }
-
     public event EventHandler<OnDamagedArgs> E_OnDamaged;
     public void TriggerOnDamagedEvents(object sender, OnDamagedArgs args) { if (E_OnDamaged != null) E_OnDamaged.Invoke(sender, args); }
     #endregion
 
-    protected void Awake()
+
+    public new void Awake()
     {
-        sourceCard = GetComponent<CreatureCard>();
+        base.Awake();
         statsScript = GetComponent<CreatureStatsGetter>();
-        counterController = GetComponentInChildren<CounterController>();
-        enabled = false;
-    }
-
-    public void initialize()
-    {
-        if (initialized)
-            return;
-
-        statsScript.setCreatureStats(this);
-        range = getStartingRange();
-        baseRange = range;
-        canDeployFrom = getCanDeployFrom();
-
-        initialized = true;
-        onInitialization();
+        Stats.addType(StatType.Attack);
+        Stats.addType(StatType.BaseAttack);
+        Stats.addType(StatType.BaseHealth);
+        Stats.addType(StatType.BaseMovement);
+        Stats.addType(StatType.BaseRange);
+        Stats.addType(StatType.BaseRange);
+        Stats.addType(StatType.Health);
+        Stats.addType(StatType.Movement);
+        Stats.addType(StatType.Range);
     }
 
     public void resetToBaseStats()
@@ -80,16 +63,14 @@ public abstract class Creature : MonoBehaviour, Damageable
         // might need to write a thing to request a base stat change depending on effects added in future
         // but for now this should not be called by card scripts
             // ex: reset a creature to their base stats. The owner would need to know they need to reset because the other player isn't allowed
-        if (GameManager.gameMode == GameManager.GameMode.online && NetInterface.Get().gameSetupComplete && NetInterface.Get().getLocalPlayer() != sourceCard.owner)
+        if (GameManager.gameMode == GameManager.GameMode.online && NetInterface.Get().gameSetupComplete && NetInterface.Get().getLocalPlayer() != SourceCard.owner)
         {
             return;
         }
-        setHealth(baseHealth);
-        setAttack(baseAttack);
-        //setArmor(baseDefense);
-        range = baseRange;
-        //defense = baseDefense;
-        movement = baseMovement;
+        Health = BaseHealth;
+        AttackStat = BaseAttack;
+        Range = BaseRange;
+        Movement = BaseMovement;
     }
 
     // usually used for when a creature is removed from the board
@@ -102,13 +83,13 @@ public abstract class Creature : MonoBehaviour, Damageable
             resetToBaseStats(); // go ahead and call normal reset to base just to stop things from breaking
         }
         
-        currentHealth = baseHealth;
-        attack = baseAttack;
-        range = baseRange;
-        movement = baseMovement;
+        Health = BaseHealth;
+        AttackStat = BaseAttack;
+        Range = BaseRange;
+        Movement = BaseMovement;
         statsScript.updateAllStats(this);
-        if (counterController != null) // counter controller will be null before awake is called (when card is created)
-            counterController.clearAll();
+        if (Counters != null) // counter controller will be null before awake is called (when card is created)
+            Counters.clear();
     }
 
     #region takeDamageAndAttacking
@@ -118,7 +99,7 @@ public abstract class Creature : MonoBehaviour, Damageable
             return;
 
         // check for ward on adjacent allies
-        List<Tile> adjacentTiles = currentTile.getAdjacentTiles();
+        List<Tile> adjacentTiles = tile.getAdjacentTiles();
         foreach(Tile t in adjacentTiles)
         {
             if (t.creature != null && t.creature.hasKeyword(Keyword.Ward))
@@ -142,11 +123,10 @@ public abstract class Creature : MonoBehaviour, Damageable
     private void takeDamageActual(int damage, Card source)
     {
         GameManager.Get().showDamagedText(transform.position, damage);
-        setHealthWithoutKilling(currentHealth - damage);
+        Health -= damage;
         TriggerOnDamagedEvents(this, new OnDamagedArgs() { source = source });
-        needToSync = true;
-        if (currentHealth <= 0)
-            GameManager.Get().destroyCreature(this);
+        if (Health <= 0)
+            GameManager.Get().kill(this);
     }
     private Vector3 right = new Vector3(-180, -90, -90);
     private Vector3 left = new Vector3(-180, 90, -90);
@@ -176,16 +156,16 @@ public abstract class Creature : MonoBehaviour, Damageable
             defender.TriggerOnDefendEvents(this, new OnDefendArgs() { attacker = this });
 
         // perform damage calc
-        defender.takeDamage(attackRoll, sourceCard); // do damage text in takeDamage()
-        takeDamage(KeywordUtils.getDefenderValue(defender.sourceCard), sourceCard);
+        defender.takeDamage(attackRoll, SourceCard); // do damage text in takeDamage()
+        takeDamage(KeywordUtils.getDefenderValue(defender.SourceCard), SourceCard);
 
         // gray out creature to show it has already acted
         updateHasActedIndicators();
 
         // trigger after combat stuff
         // poison
-        if (hasKeyword(Keyword.Poison) && defender.sourceCard is CreatureCard)
-            GameManager.Get().destroyCreature((defender.sourceCard as CreatureCard).creature);
+        if (hasKeyword(Keyword.Poison) && defender.SourceCard is CreatureCard)
+            GameManager.Get().kill((defender.SourceCard as CreatureCard).creature);
     }
     private IEnumerator attackAnimation(Damageable defender, int attackRoll)
     {
@@ -206,7 +186,6 @@ public abstract class Creature : MonoBehaviour, Damageable
             yield return null;
         }
 
-
         // move in to hit
         while (Vector3.Distance(transform.position, returnTarget) > 0.05f)
         {
@@ -216,11 +195,11 @@ public abstract class Creature : MonoBehaviour, Damageable
 
         // kick off particle effect
         Vector3 rotation;
-        if (currentTile.x > defenderCoords.x)
+        if (tile.x > defenderCoords.x)
             rotation = left;
-        else if (currentTile.x < defenderCoords.x)
+        else if (tile.x < defenderCoords.x)
             rotation = right;
-        else if (currentTile.y > defenderCoords.y)
+        else if (tile.y > defenderCoords.y)
             rotation = down;
         else
             rotation = up;
@@ -231,15 +210,18 @@ public abstract class Creature : MonoBehaviour, Damageable
     }
     public int getAttackRoll()
     {
+        return AttackStat;
+        /*
         int dieRoll = UnityEngine.Random.Range(0, 6);
         if (dieRoll == 0)
-            if (attack == 0) // if your attack is 0 always hit for 0
+            if (Attack == 0) // if your attack is 0 always hit for 0
                 return 0;
             else
-                return Math.Max(1, attack - 1); // if attack is greater than 0 never return 0
+                return Math.Max(1, Attack - 1); // if attack is greater than 0 never return 0
         else if (dieRoll == 5)
-            return attack + 1;
-        else return attack;
+            return Attack + 1;
+        else return Attack;
+        */
     }
     #endregion
 
@@ -248,7 +230,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     public void forceMove(Tile tile, Card source)
     {
         actualMove(tile);
-        NetInterface.Get().syncCreatureCoordinates(this, currentTile.x, currentTile.y, source);
+        NetInterface.Get().syncCreatureCoordinates(this, this.tile.x, this.tile.y, source);
         GameEvents.TriggerMovedEvents(this, new GameEvents.CreatureMovedArgs() { creature = this, source = source });
     }
     public void forceMove(int x, int y, Card source)
@@ -259,13 +241,13 @@ public abstract class Creature : MonoBehaviour, Damageable
     // Used to have a creature move itself
     public void move(Tile tile)
     {
-        if (tile == currentTile) // if the new tile is the same as the tile we're on, no moving is done
+        if (tile == this.tile) // if the new tile is the same as the tile we're on, no moving is done
             return;
         hasMovedThisTurn = true;
         if (!hasDoneActionThisTurn)
             controller.subtractActions(1);
         actualMove(tile);
-        NetInterface.Get().syncCreatureCoordinates(this, currentTile.x, currentTile.y, null);
+        NetInterface.Get().syncCreatureCoordinates(this, this.tile.x, this.tile.y, null);
         GameEvents.TriggerMovedEvents(this, new GameEvents.CreatureMovedArgs() { source = null, creature = this });
         updateHasActedIndicators();
     }
@@ -277,16 +259,16 @@ public abstract class Creature : MonoBehaviour, Damageable
     // will move a creature to a tile and nothing else
     private void actualMove(Tile tile)
     {
-        currentTile.removeCreature();
+        this.tile.removeCreature();
         tile.creature = this;
         setCoordinates(tile);
-        currentTile = tile;
+        this.tile = tile;
     }
     private void setCoordinates(Tile tile)
     {
-        TransformStruct ts = new TransformStruct(sourceCard.transformManager.transform);
+        TransformStruct ts = new TransformStruct(SourceCard.TransformManager.transform);
         ts.position = tile.transform.position;
-        sourceCard.transformManager.moveToInformativeAnimation(ts);
+        SourceCard.TransformManager.moveToInformativeAnimation(ts);
     }
     #endregion
 
@@ -314,7 +296,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     }
     public void setSpriteColor(Color color)
     {
-        sourceCard.setSpriteColor(color);
+        SourceCard.setSpriteColor(color);
     }
 
     public void bounce(Card source)
@@ -323,13 +305,13 @@ public abstract class Creature : MonoBehaviour, Damageable
         hasMovedThisTurn = false;
         updateHasActedIndicators();
         GameManager.Get().allCreatures.Remove(this);
-        currentTile.creature = null;
+        tile.creature = null;
         statsScript.swapToCard();
         setSpriteColor(Color.white); // reset sprite color in case card is greyed out
         resetToBaseStats();
-        sourceCard.moveToCardPile(sourceCard.owner.hand, source);
+        SourceCard.moveToCardPile(SourceCard.owner.hand, source);
         onLeavesTheField();
-        sourceCard.owner.hand.resetCardPositions();
+        SourceCard.owner.hand.resetCardPositions();
     }
 
     void OnMouseUpAsButton()
@@ -400,7 +382,7 @@ public abstract class Creature : MonoBehaviour, Damageable
     {
         if (!enabled)
             return;
-        sourceCard.addToCardViewer(GameManager.Get().getCardViewer());
+        SourceCard.addToCardViewer(GameManager.Get().getCardViewer());
         hovered = true;
         StartCoroutine(checkHoverForTooltips());
     }
@@ -409,7 +391,7 @@ public abstract class Creature : MonoBehaviour, Damageable
         if (!enabled)
             return;
         hovered = false;
-        foreach (CardViewer cv in sourceCard.viewersDisplayingThisCard)
+        foreach (CardViewer cv in SourceCard.viewersDisplayingThisCard)
             cv.clearToolTips();
     }
 
@@ -417,82 +399,26 @@ public abstract class Creature : MonoBehaviour, Damageable
     public void sendToGrave()
     {
         resetToBaseStats();
-        sourceCard.moveToCardPile(sourceCard.owner.graveyard, null);
-        sourceCard.removeGraphicsAndCollidersFromScene();
+        SourceCard.moveToCardPile(SourceCard.owner.graveyard, null);
+        SourceCard.removeGraphicsAndCollidersFromScene();
     }
 
-    #region basicStatsGettersAndSetters
-    // health
-    public int getHealth()
-    {
-        return currentHealth;
-    }
-    public void setHealth(int value)
-    {
-        if (value == currentHealth)
-            return;
-        currentHealth = value;
-        statsScript.setHealth(value, baseHealth);
-        syncCreatureStats();
-        if (currentHealth <= 0)
-            GameManager.Get().destroyCreature(this);
-    }
-    private void setHealthWithoutKilling(int value)
-    {
-        currentHealth = value;
-        statsScript.setHealth(value, baseHealth);
-    }
-    public void addHealth(int value)
-    {
-        setHealth(currentHealth + value);
-    }
-    // attack
-    public int getAttack()
-    {
-        return attack;
-    }
-    public void setAttack(int value)
-    {
-        if (attack == value)
-            return;
-        attack = value;
-        statsScript.setAttack(attack, baseAttack);
-        syncCreatureStats();
-    }
-    public void addAttack(int value)
-    {
-        setAttack(attack + value);
-    }
-    // movement
-    public void setMovement(int value)
-    {
-        if (movement == value)
-            return;
-        movement = value;
-        statsScript.setMovement(value, baseMovement);
-        syncCreatureStats();
-    }
-    public int getMovement()
-    {
-        return movement;
-    }
-    #endregion
 
     // Returns true if this card has the the tag passed to this method
     public bool hasTag(Tag tag)
     {
-        return sourceCard.hasTag(tag);
+        return SourceCard.Tags.Contains(tag);
     }
 
     // returns true if this card is the type passed to it
     public bool isType(CardType type)
     {
-        return sourceCard.isType(type);
+        return SourceCard.isType(type);
     }
 
     public Vector2 getCoordinates()
     {
-        return new Vector2(currentTile.x, currentTile.y);
+        return new Vector2(tile.x, tile.y);
     }
     public Player getController()
     {
@@ -506,26 +432,20 @@ public abstract class Creature : MonoBehaviour, Damageable
             statsScript.setAsAlly(NetInterface.Get().getLocalPlayer() == controller);
     }
 
-    public Card getSourceCard()
-    {
-        return sourceCard;
-    }
-
     #region NetworkSyncing
     // need seperate method for this so net messages don't create an infinite loop
     public void recieveCreatureStatsFromNet(int atk, int batk, int hp, int bhp, int bmv, int brange, Player ctrl, int mv, int range)
     {
-        attack = atk;
-        baseAttack = batk;
-        currentHealth = hp;
-        baseHealth = bhp;
-        baseMovement = bmv;
-        baseRange = brange;
+        setStatWithoutSyncing(StatType.Attack, atk);
+        setStatWithoutSyncing(StatType.BaseAttack, batk);
+        setStatWithoutSyncing(StatType.Health, hp);
+        setStatWithoutSyncing(StatType.BaseHealth, bhp);
+        setStatWithoutSyncing(StatType.BaseMovement, bmv);
+        setStatWithoutSyncing(StatType.BaseRange, brange);
+        setStatWithoutSyncing(StatType.Movement, mv);
+        setStatWithoutSyncing(StatType.Range, range);
         controller = ctrl;
-        movement = mv;
-        this.range = range;
 
-        statsScript.updateAllStats(this);
         updateCardViewers();
     }
     private void syncCreatureStats()
@@ -534,7 +454,6 @@ public abstract class Creature : MonoBehaviour, Damageable
         updateCardViewers();
         needToSync = true;
     }
-    private bool needToSync = false;
     #endregion
     private void Update()
     {
@@ -548,65 +467,55 @@ public abstract class Creature : MonoBehaviour, Damageable
 
     public void updateCardViewers()
     {
-        List<CardViewer> tempLlist = new List<CardViewer>(); // need a temp list because we might end up removing from the original list
-        foreach (CardViewer cv in sourceCard.viewersDisplayingThisCard) { tempLlist.Add(cv); }
-        foreach (CardViewer cv in tempLlist)
+        List<CardViewer> tempList = new List<CardViewer>(); // need a temp list because we might end up removing from the original list
+        foreach (CardViewer cv in SourceCard.viewersDisplayingThisCard) { tempList.Add(cv); }
+        foreach (CardViewer cv in tempList)
         {
             if (cv != null) // make sure the card viewer hasn't been destroyed
-                cv.setCard(sourceCard);
+                cv.setCard(SourceCard);
             else // if viewer has been destroyed remove it from the view for future use
-                sourceCard.viewersDisplayingThisCard.Remove(cv);
+                SourceCard.viewersDisplayingThisCard.Remove(cv);
         }
     }
 
     #region Counters
-    public void addCounters(CounterClass counterType, int amount)
+    public void OnCountersAdded(CounterType counterType, int amount)
     {
-        counterController.addCounters(counterType, amount);
         syncCounters(counterType);
+        TriggerOnCounterAddedEvents(this, new CounterAddedArgs() { counterKind = counterType});
     }
-    public void removeCounters(CounterClass counterType, int amount)
+    public void syncCounters(CounterType counterType)
     {
-        counterController.removeCounters(counterType, amount);
-        syncCounters(counterType);
-    }
-    public int hasCounter(CounterClass counterType)
-    {
-        return counterController.hasCounter(counterType);
-    }
-    public void syncCounters(CounterClass counterType)
-    {
-        NetInterface.Get().syncCounterPlaced(sourceCard, counterType, counterController.hasCounter(counterType));
+        NetInterface.Get().syncCounterPlaced(SourceCard, counterType, Counters.amountOf(counterType));
     }
     // used by net interface for syncing
-    public void recieveCountersPlaced(CounterClass counterType, int newCounters)
+    public void recieveCountersPlaced(CounterType counterType, int newCounters)
     {
-        int currentCounters = counterController.hasCounter(counterType);
+        int currentCounters = Counters.amountOf(counterType);
         if (currentCounters > newCounters)
-            counterController.removeCounters(counterType, currentCounters - newCounters);
+            Counters.remove(counterType, currentCounters - newCounters);
         else if (currentCounters < newCounters)
-            counterController.addCounters(counterType, newCounters - currentCounters);
+            Counters.add(counterType, newCounters - currentCounters);
         else
-            Debug.LogError("Trying to set counters to a value it's already set to. This shouldn't happen under normal circumstances");
+            Debug.Log("Trying to set counters to a value it's already set to. This shouldn't happen under normal circumstances");
     }
     #endregion
-
     #region KeywordAndToolTips
     public void addKeyword(Keyword k)
     {
-        sourceCard.addKeyword(k);
+        SourceCard.addKeyword(k);
     }
     public void removeKeyword(Keyword k)
     {
-        sourceCard.removeKeyword(k);
+        SourceCard.removeKeyword(k);
     }
     public bool hasKeyword(Keyword k)
     {
-        return sourceCard.hasKeyword(k);
+        return SourceCard.hasKeyword(k);
     }
     public ReadOnlyCollection<Keyword> getKeywordList()
     {
-        return sourceCard.getKeywordList();
+        return SourceCard.getKeywordList();
     }
     [SerializeField] private float hoverTimeForToolTips = .5f;
     private float timePassed = 0;
@@ -622,14 +531,11 @@ public abstract class Creature : MonoBehaviour, Damageable
         }
         timePassed = 0;
         // if we get here then enough time has passed so tell cardviewers to display tooltips
-        //Debug.Log("Telling viewers to show tooltips: " + sourceCard.viewersDisplayingThisCard.Count);
-        foreach (CardViewer viewer in sourceCard.viewersDisplayingThisCard)
+        foreach (CardViewer viewer in SourceCard.viewersDisplayingThisCard)
         {
-            //Debug.Log("in foreach viewer");
             if (viewer != null)
             {
-                //Debug.Log("Viewer is not null");
-                viewer.showToolTips(sourceCard.toolTipInfos);
+                viewer.showToolTips(SourceCard.toolTipInfos);
             }
         }
     }

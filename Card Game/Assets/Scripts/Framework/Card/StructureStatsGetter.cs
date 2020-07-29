@@ -47,23 +47,6 @@ public class StructureStatsGetter : CardStatsGetter
         viewer.setCardArt(cardArt.sprite);
     }
 
-    internal void setStructureStats(Structure structure)
-    {
-        structure.setBaseHealth(int.Parse(hpText.text));
-        structure.setHealth(structure.getBaseHealth());
-    }
-
-    internal void setHealth(int health, int baseHealth)
-    {
-        hpText.text = "" + health;
-        if (health > baseHealth)
-            hpText.color = aboveBaseColor;
-        else if (health < baseHealth)
-            hpText.color = belowBaseColor;
-        else
-            hpText.color = Color.white;
-    }
-
     public void swapToStructure(Tile structureTile)
     {
         List<Transform> iconsToResize = new List<Transform>();
@@ -150,7 +133,6 @@ public class StructureStatsGetter : CardStatsGetter
         resizeToCreatureFinished = true;
     }
 
-
     // called when a structure leaves the field and needs to act like a card again
     // if the topology of a card is changed this method may need to be changed
     public void swapToCard()
@@ -177,11 +159,5 @@ public class StructureStatsGetter : CardStatsGetter
             friendOrFoeBorder.color = Color.blue;
         else
             friendOrFoeBorder.color = Color.red;
-    }
-
-    public void updateAllStats(Structure s)
-    {
-        updateCosts(s.sourceCard);
-        setHealth(s.getHealth(), s.getBaseHealth());
     }
 }

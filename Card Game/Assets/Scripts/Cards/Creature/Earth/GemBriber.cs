@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/*
 public class GemBriber : Creature
 {
     public override int cardId => 72;
@@ -22,3 +22,4 @@ public class GemBriber : Creature
         }
     }
 }
+*/

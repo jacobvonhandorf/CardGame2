@@ -811,11 +811,6 @@ PrefabInstance:
       propertyPath: m_sharedMaterial
       value: 
       objectReference: {fileID: 2100000, guid: 2db443ab187c79441bbd7085e03e6bfe, type: 2}
-    - target: {fileID: 8219353265420789744, guid: 172056cdebc6fb646911badf058da3a5,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 8219353265420789709, guid: 172056cdebc6fb646911badf058da3a5,
         type: 3}
       propertyPath: m_SizeDelta.x
@@ -876,6 +871,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 2db443ab187c79441bbd7085e03e6bfe, type: 2}
+    - target: {fileID: 8219353265420789744, guid: 172056cdebc6fb646911badf058da3a5,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 172056cdebc6fb646911badf058da3a5, type: 3}
 --- !u!4 &523166285 stripped
@@ -1398,11 +1398,6 @@ PrefabInstance:
       propertyPath: m_sharedMaterial
       value: 
       objectReference: {fileID: 2100000, guid: 2db443ab187c79441bbd7085e03e6bfe, type: 2}
-    - target: {fileID: 8219353265420789744, guid: 172056cdebc6fb646911badf058da3a5,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 8219353265420789709, guid: 172056cdebc6fb646911badf058da3a5,
         type: 3}
       propertyPath: m_SizeDelta.x
@@ -1463,6 +1458,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 2db443ab187c79441bbd7085e03e6bfe, type: 2}
+    - target: {fileID: 8219353265420789744, guid: 172056cdebc6fb646911badf058da3a5,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 172056cdebc6fb646911badf058da3a5, type: 3}
 --- !u!4 &666222416 stripped
@@ -3603,11 +3603,6 @@ PrefabInstance:
       propertyPath: m_sharedMaterial
       value: 
       objectReference: {fileID: 2100000, guid: 2db443ab187c79441bbd7085e03e6bfe, type: 2}
-    - target: {fileID: 8219353265420789744, guid: 172056cdebc6fb646911badf058da3a5,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 8219353265420789709, guid: 172056cdebc6fb646911badf058da3a5,
         type: 3}
       propertyPath: m_SizeDelta.x
@@ -3668,6 +3663,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 2db443ab187c79441bbd7085e03e6bfe, type: 2}
+    - target: {fileID: 8219353265420789744, guid: 172056cdebc6fb646911badf058da3a5,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 172056cdebc6fb646911badf058da3a5, type: 3}
 --- !u!4 &1967032520 stripped
@@ -3689,16 +3689,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1230050167}
     m_Modifications:
-    - target: {fileID: 2970352802023253469, guid: a29c93a3eb2472047bbba00efa5b948d,
-        type: 3}
-      propertyPath: m_Name
-      value: Online
-      objectReference: {fileID: 0}
-    - target: {fileID: 2970352802023253469, guid: a29c93a3eb2472047bbba00efa5b948d,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 2970352802023253457, guid: a29c93a3eb2472047bbba00efa5b948d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3752,6 +3742,16 @@ PrefabInstance:
     - target: {fileID: 2970352802023253457, guid: a29c93a3eb2472047bbba00efa5b948d,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2970352802023253469, guid: a29c93a3eb2472047bbba00efa5b948d,
+        type: 3}
+      propertyPath: m_Name
+      value: Online
+      objectReference: {fileID: 0}
+    - target: {fileID: 2970352802023253469, guid: a29c93a3eb2472047bbba00efa5b948d,
+        type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2970352802023253458, guid: a29c93a3eb2472047bbba00efa5b948d,

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6295877123349067267}
   - component: {fileID: 7936250594097188855}
   - component: {fileID: 6171379241733598415}
+  - component: {fileID: 6216540694563055184}
   m_Layer: 0
   m_Name: Health Text
   m_TagString: Untagged
@@ -204,6 +205,19 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   m_maskType: 0
+--- !u!114 &6216540694563055184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 203419764324816100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdc118bfe3273ea41a55928c67cb8f6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncWith: 4
 --- !u!1 &235032311211450802
 GameObject:
   m_ObjectHideFlags: 0
@@ -851,6 +865,7 @@ GameObject:
   - component: {fileID: 7652874882990697373}
   - component: {fileID: 6934040791457347156}
   - component: {fileID: 8170151987122280898}
+  - component: {fileID: 1598633671801413913}
   m_Layer: 0
   m_Name: '!New Structure Card Template'
   m_TagString: Untagged
@@ -908,11 +923,10 @@ MonoBehaviour:
   cardName: 
   currentCardPile: {fileID: 0}
   owner: {fileID: 0}
+  cardStatsScript: {fileID: 0}
   isBeingDragged: 0
   positionLocked: 0
   positionInHand: {x: 0, y: 0, z: 0}
-  cardStatsScript: {fileID: 0}
-  transformManager: {fileID: 0}
   positionOnScene: {x: 0, y: 0, z: 0}
   hoverTimeForToolTips: 0.5
   structure: {fileID: 0}
@@ -976,6 +990,18 @@ MonoBehaviour:
   resizeSpeed: 1.3
   pauseBetweenResize: 0.5
   iconResizeSpeed: 10
+--- !u!114 &1598633671801413913
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1024539257926108640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32a4d846f3d7c9247af31acb357ffb32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1024539258222895124
 GameObject:
   m_ObjectHideFlags: 0
@@ -2222,6 +2248,7 @@ GameObject:
   - component: {fileID: 7025039981317298199}
   - component: {fileID: 205823856819731774}
   - component: {fileID: 7077602755901041962}
+  - component: {fileID: 3195467899249150407}
   m_Layer: 0
   m_Name: Gold Text
   m_TagString: Untagged
@@ -2413,3 +2440,16 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   m_maskType: 0
+--- !u!114 &3195467899249150407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7085201024558208675}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdc118bfe3273ea41a55928c67cb8f6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncWith: 1

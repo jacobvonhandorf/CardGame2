@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
 public class AtlacTheImmortal : Creature
 {
     public override int cardId => 28;
@@ -22,12 +23,13 @@ public class AtlacTheImmortal : Creature
 
     public void onSentToGrave()
     {
-        baseAttack += 3;
-        baseHealth += 3;
-        setHealth(baseHealth);
-        setAttack(baseAttack);
+        BaseAttack += 3;
+        BaseHealth += 3;
+        setHealth(BaseHealth);
+        setAttack(BaseAttack);
 
         sourceCard.moveToCardPile(sourceCard.owner.deck, sourceCard);
         sourceCard.owner.deck.shuffle();
     }
 }
+*/

@@ -945,6 +945,7 @@ GameObject:
   - component: {fileID: 778445695893815173}
   - component: {fileID: 1416192635196085074}
   - component: {fileID: 9035081783321408059}
+  - component: {fileID: 1000666574580376185}
   m_Layer: 0
   m_Name: Mana Text
   m_TagString: Untagged
@@ -1136,6 +1137,19 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   m_maskType: 0
+--- !u!114 &1000666574580376185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6773895392339861608}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cdc118bfe3273ea41a55928c67cb8f6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncWith: 3
 --- !u!1 &6937285791317252337
 GameObject:
   m_ObjectHideFlags: 0
@@ -1431,6 +1445,7 @@ GameObject:
   - component: {fileID: 7264119733135001273}
   - component: {fileID: 7474925806487122491}
   - component: {fileID: 3608117769199019507}
+  - component: {fileID: 3271954036825075023}
   m_Layer: 0
   m_Name: '!New Spell Card Template'
   m_TagString: Untagged
@@ -1523,6 +1538,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 4.1014404, y: 5.8698425}
   m_EdgeRadius: 0
+--- !u!114 &3271954036825075023
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7420118472789478337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32a4d846f3d7c9247af31acb357ffb32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7420118473026751562
 GameObject:
   m_ObjectHideFlags: 0

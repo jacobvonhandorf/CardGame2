@@ -25,11 +25,6 @@ public class StructureCard : Card
         onInitilization = null;
     }
 
-    protected override List<Tag> getInitialTags()
-    {
-        return structure.getTags();
-    }
-
     public override void play(Tile t)
     {
         GameManager.Get().createStructureOnTile(structure, t, owner, this);
@@ -48,7 +43,7 @@ public class StructureCard : Card
         structure.enabled = true;
 
         // initialize the structure if it hasn't already been initialized
-        structure.initialize();
+        //structure.initialize();
 
         // resize
         (cardStatsScript as StructureStatsGetter).swapToStructure(onTile);

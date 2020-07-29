@@ -6,44 +6,30 @@ using UnityEngine;
 using static Card;
 
 // abstract class for structures as they exist on the field
-
-public abstract class Structure : MonoBehaviour, Damageable
+public abstract class Structure : Permanent, Damageable, ICanReceiveCounters
 {
-    public Player owner;
-    public Player controller;
-    public Tile tile;
-    public Card sourceCard { get; private set; }
-    public int effectActionsCost = 0;
-    public int effectGoldCost = 0;
-    public int effectManaCost = 0;
-
-    // synced
-    [SerializeField] private int health;
-    [SerializeField] private int baseHealth;
-
     protected string cardName;
     private bool initialized = false;
     [SerializeField] public List<EmptyHandler> activatedEffects { get; } = new List<EmptyHandler>();
 
     [SerializeField] protected StructureStatsGetter statsScript;
-    private CounterController counterController;
 
     #region Events
-    public event EventHandler<OnDefendArgs> E_OnDefend;
-    public void TriggerOnDefendEvents(object sender, OnDefendArgs args) { E_OnDefend?.Invoke(sender, args); }
     public event EventHandler E_OnDeployed;
     public void TriggerOnDeployEvents(object sender) { E_OnDeployed?.Invoke(sender, EventArgs.Empty); }
     public event EventHandler E_OnLeavesField;
     public void TriggerOnLeavesField(object sender) { E_OnLeavesField?.Invoke(sender, EventArgs.Empty); }
     #endregion
 
-    private void Awake()
-    {
-        counterController = GetComponentInChildren<CounterController>();
-        statsScript = GetComponent<StructureStatsGetter>();
-        sourceCard = GetComponent<StructureCard>();
-    }
 
+    public new void Awake()
+    {
+        base.Awake();
+        statsScript = GetComponent<StructureStatsGetter>();
+        Stats.addType(StatType.Health);
+        Stats.addType(StatType.BaseHealth);
+    }
+    /*
     public void initialize()
     {
         if (initialized)
@@ -56,48 +42,17 @@ public abstract class Structure : MonoBehaviour, Damageable
         baseHealth = health;
         initialized = true;
     }
-
-    public void OnDisable()
-    {
-        Debug.Log("Disable");
-    }
+    */
 
     public void takeDamage(int amount, Card source)
     {
-        addHealth(-amount);
+        Health -= amount;
     }
 
     #region BasicStatGetterAndSetters
-    public void addHealth(int amount)
-    {
-        health += amount;
-        statsScript.setHealth(health, baseHealth);
-        if (health <= 0)
-            GameManager.Get().destroyStructure(this, null);
-    }
-    public int getHealth()
-    {
-        return health;
-    }
-    public void setHealth(int amount)
-    {
-        health = amount;
-        statsScript.setHealth(health, baseHealth);
-        if (health <= 0)
-            GameManager.Get().destroyStructure(this, null);
-    }
-    public void setBaseHealth(int amount)
-    {
-        baseHealth = amount;
-        statsScript.setHealth(health, baseHealth);
-    }
-    public int getBaseHealth()
-    {
-        return baseHealth;
-    }
     public string getCardName()
     {
-        return sourceCard.getCardName();
+        return SourceCard.getCardName();
     }
     #endregion
 
@@ -105,18 +60,24 @@ public abstract class Structure : MonoBehaviour, Damageable
     public void sendToGrave(Card source)
     {
         resetToBaseStats();
-        sourceCard.moveToCardPile(owner.graveyard, null);
-        sourceCard.removeGraphicsAndCollidersFromScene();
+        SourceCard.moveToCardPile(SourceCard.owner.graveyard, null);
+        SourceCard.removeGraphicsAndCollidersFromScene();
     }
 
     public void resetToBaseStats()
     {
-        setHealth(baseHealth);
+        Health = BaseHealth;
     }
     public void resetToBaseStatsWithoutSyncing()
     {
-        health = baseHealth;
-        statsScript.updateAllStats(this);
+        setStatWithoutSyncing(StatType.Health, BaseHealth);
+    }
+    public void recieveStatsFromNet(int hp, int bhp, Player ctrl)
+    {
+        setStatWithoutSyncing(StatType.Health, hp);
+        setStatWithoutSyncing(StatType.BaseHealth, bhp);
+
+        controller = ctrl;
     }
 
     private void OnMouseUpAsButton()
@@ -136,7 +97,7 @@ public abstract class Structure : MonoBehaviour, Damageable
         if (!enabled)
             return;
         hovered = true;
-        sourceCard.addToCardViewer(GameManager.Get().getCardViewer());
+        SourceCard.addToCardViewer(GameManager.Get().getCardViewer());
         StartCoroutine(checkHoverForTooltips());
     }
     private void OnMouseExit()
@@ -144,7 +105,7 @@ public abstract class Structure : MonoBehaviour, Damageable
         if (!enabled)
             return;
         hovered = false;
-        foreach (CardViewer cv in sourceCard.viewersDisplayingThisCard)
+        foreach (CardViewer cv in SourceCard.viewersDisplayingThisCard)
             cv.clearToolTips();
 
     }
@@ -162,48 +123,37 @@ public abstract class Structure : MonoBehaviour, Damageable
         }
         timePassed = 0;
         // if we get here then enough time has passed so tell cardviewers to display tooltips
-        foreach (CardViewer viewer in sourceCard.viewersDisplayingThisCard)
+        foreach (CardViewer viewer in SourceCard.viewersDisplayingThisCard)
         {
             if (viewer != null)
             {
-                viewer.showToolTips(sourceCard.toolTipInfos);
+                viewer.showToolTips(SourceCard.toolTipInfos);
             }
         }
-    }
-
-    // used when instantiating from resources. Do not touch otherwise
-    public void setStatsScript(StructureStatsGetter statsScript)
-    {
-        this.statsScript = statsScript;
     }
 
     // Returns true if this card has the the tag passed to this method
     public bool hasTag(Tag tag)
     {
-        return sourceCard.hasTag(tag);
+        return SourceCard.Tags.Contains(tag);
     }
 
-    // returns true if this card is the type passed to it
-    public bool isType(CardType type)
-    {
-        return sourceCard.isType(type);
-    }
     #region Keyword
     public bool hasKeyword(Keyword keyword)
     {
-        return sourceCard.hasKeyword(keyword);
+        return SourceCard.hasKeyword(keyword);
     }
     public void addKeyword(Keyword keyword)
     {
-        sourceCard.addKeyword(keyword);
+        SourceCard.addKeyword(keyword);
     }
     public ReadOnlyCollection<Keyword> getKeywordList()
     {
-        return sourceCard.getKeywordList();
+        return SourceCard.getKeywordList();
     }
     public void removeKeyword(Keyword keyword)
     {
-        sourceCard.removeKeyword(keyword);
+        SourceCard.removeKeyword(keyword);
     }
     #endregion
 
@@ -228,32 +178,23 @@ public abstract class Structure : MonoBehaviour, Damageable
         updateFriendOrFoeBorder();
     }
     #region Counters
-    public void addCounters(CounterClass counterType, int amount)
+    public void OnCountersAdded(CounterType counterType, int amount)
     {
-        counterController.addCounters(counterType, amount);
         syncCounters(counterType);
+        Debug.LogError("unimplemented");
     }
-    public void removeCounters(CounterClass counterType, int amount)
+    public void syncCounters(CounterType counterType)
     {
-        counterController.removeCounters(counterType, amount);
-        syncCounters(counterType);
-    }
-    public int hasCounter(CounterClass counterType)
-    {
-        return counterController.hasCounter(counterType);
-    }
-    public void syncCounters(CounterClass counterType)
-    {
-        NetInterface.Get().syncCounterPlaced(sourceCard, counterType, counterController.hasCounter(counterType));
+        NetInterface.Get().syncCounterPlaced(SourceCard, counterType, Counters.amountOf(counterType));
     }
     // used by net interface for syncing
-    public void recieveCountersPlaced(CounterClass counterType, int newCounters)
+    public void recieveCountersPlaced(CounterType counterType, int newCounters)
     {
-        int currentCounters = counterController.hasCounter(counterType);
+        int currentCounters = Counters.amountOf(counterType);
         if (currentCounters > newCounters)
-            counterController.removeCounters(counterType, currentCounters - newCounters);
+            Counters.remove(counterType, currentCounters - newCounters);
         else if (currentCounters < newCounters)
-            counterController.addCounters(counterType, newCounters - currentCounters);
+            Counters.add(counterType, newCounters - currentCounters);
         else
             Debug.LogError("Trying to set counters to a value it's already set to. This shouldn't happen under normal circumstances");
     }
@@ -274,6 +215,7 @@ public abstract class Structure : MonoBehaviour, Damageable
     public virtual List<Tag> getTags() { return new List<Tag>(); }
     public virtual List<KeywordData> getInitialKeywords() { return new List<KeywordData>(); }
     public virtual bool canDeployFrom() { return true; }
+
 
     // MUST BE OVERWRITTEN
     public abstract int cardId { get; }

@@ -80,7 +80,7 @@ public abstract class CardPile : MonoBehaviour
     {
         List<Card> returnList = new List<Card>();
         foreach (Card c in cardList)
-            if (c.hasTag(tag))
+            if (c.Tags.Contains(tag))
                 returnList.Add(c);
         return returnList;
     }
@@ -99,7 +99,7 @@ public abstract class CardPile : MonoBehaviour
         List<Card> returnList = new List<Card>();
         foreach (Card c in cardList)
         {
-            if (c.hasTag(tag) && c.isType(type))
+            if (c.Tags.Contains(tag) && c.isType(type))
                 returnList.Add(c);
         }
         return returnList;

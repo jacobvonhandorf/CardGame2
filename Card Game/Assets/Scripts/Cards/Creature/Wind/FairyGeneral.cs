@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
 public class FairyGeneral : Creature
 {
     public override int cardId => 49;
@@ -25,3 +26,4 @@ public class FairyGeneral : Creature
         }
     }
 }
+*/

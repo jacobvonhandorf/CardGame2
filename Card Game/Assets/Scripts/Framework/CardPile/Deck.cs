@@ -32,7 +32,7 @@ public class Deck : CardPile
         foreach (Card card in GetComponentsInChildren<StructureCard>())
         {
             card.owner = deckOwner;
-            (card as StructureCard).structure.owner = deckOwner;
+            (card as StructureCard).structure.SourceCard.owner = deckOwner;
             (card as StructureCard).structure.controller = deckOwner;
             addCard(card);
             card.moveToCardPile(this, null);

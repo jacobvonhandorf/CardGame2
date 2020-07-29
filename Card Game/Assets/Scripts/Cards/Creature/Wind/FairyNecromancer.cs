@@ -12,7 +12,7 @@ public class FairyNecromancer : Creature
     {
         foreach (Card c in cardList)
         {
-            c.moveToCardPile(controller.hand, sourceCard);
+            c.moveToCardPile(controller.hand, SourceCard);
         }
     }
 }

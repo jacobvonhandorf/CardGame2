@@ -10,20 +10,20 @@ public class VivianTheUntouchable : Creature
     public override void onInitialization()
     {
         Debug.LogError("vivan init");
-        sourceCard.E_AddedToCardPile += SourceCard_E_AddedToCardPile;
+        SourceCard.E_AddedToCardPile += SourceCard_E_AddedToCardPile;
     }
     private void OnDestroy()
     {
-        sourceCard.E_AddedToCardPile -= SourceCard_E_AddedToCardPile;
+        SourceCard.E_AddedToCardPile -= SourceCard_E_AddedToCardPile;
     }
 
     private void SourceCard_E_AddedToCardPile(object sender, Card.AddedToCardPileArgs e)
     {
         Debug.Log("Vivian added to hand");
         if (e.newCardPile is Hand && e.source != null)
-            SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllDeployableTiles(sourceCard.owner), delegate (Tile t)
+            SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllDeployableTiles(SourceCard.owner), delegate (Tile t)
             {
-                GameManager.Get().createCreatureOnTile(this, t, sourceCard.owner);
+                GameManager.Get().createCreatureOnTile(this, t, SourceCard.owner);
             });
     }
 }

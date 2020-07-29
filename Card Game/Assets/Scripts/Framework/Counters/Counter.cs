@@ -3,12 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// what card script should be able to use
-// creature.addCounter(Counters.counterName);
-// creature needs to add, remove and check for counters
-
 public static class Counters
 {
+    private static Dictionary<CounterType, CounterData> counterData;
+
+    public static CounterData GetData(CounterType type)
+    {
+        if (counterData == null)
+            setupMap();
+        return counterData[type];
+    }
+    private static void setupMap()
+    {
+        counterData = new Dictionary<CounterType, CounterData>();
+        CounterData[] data = Resources.LoadAll<CounterData>("");
+        foreach (CounterData d in data)
+            counterData.Add(d.CType, d);
+        Debug.Log("Set up counter data");
+    }
+
+    /*
     public static CounterClass build { get; } = new CounterClass.BuildCounter();
     public static CounterClass well { get; } = new CounterClass.WellCounter();
     public static CounterClass mine { get; } = new CounterClass.MineCounter();
@@ -22,8 +36,9 @@ public static class Counters
         { mine.id(), mine },
         { arcane.id(), arcane },
     };
+    */
 }
-
+/*
 public abstract class CounterClass
 {
     public abstract Color borderColor();
@@ -60,42 +75,21 @@ public abstract class CounterClass
         public override string tooltip() => "Arcane creatures use these for their effects";
     }
 }
-
+*/
 public class CounterList
 {
-    protected Dictionary<CounterClass, int> counterAmounts = new Dictionary<CounterClass, int>();
+    
+    protected Dictionary<CounterType, int> counterAmounts = new Dictionary<CounterType, int>();
+    public IReadOnlyDictionary<CounterType, int> CounterMap { get { return counterAmounts; } }
 
-    public virtual void addCounter(CounterClass counterType)
-    {
-        addCounters(counterType, 1);
-    }
-    public virtual void addCounters(CounterClass counterType, int amount)
+    public void addCounters(CounterType counterType, int amount)
     {
         if (counterAmounts.ContainsKey(counterType))
-        {
             counterAmounts[counterType] += amount;
-        }
         else
-        {
             counterAmounts.Add(counterType, amount);
-        }
     }
-    public virtual void removeCounter(CounterClass counterType)
-    {
-        if (counterAmounts.ContainsKey(counterType))
-        {
-            counterAmounts[counterType]--;
-            if (counterAmounts[counterType] == 0)
-                counterAmounts.Remove(counterType);
-            else if (counterAmounts[counterType] < 0)
-                throw new Exception("Trying to remove counter that doesn't exist");
-        }
-        else
-        {
-            throw new Exception("Trying to remove counters that don't exist");
-        }
-    }
-    public virtual void removeCounters(CounterClass counterType, int amount)
+    public virtual void removeCounters(CounterType counterType, int amount)
     {
         if (counterAmounts.ContainsKey(counterType))
         {
@@ -110,18 +104,14 @@ public class CounterList
             throw new Exception("Trying to remove counters that don't exist");
         }
     }
-    public int hasCounter(CounterClass counterType)
+    public int hasCounter(CounterType counterType)
     {
         if (counterAmounts.TryGetValue(counterType, out int value))
-        {
             return value;
-        }
         else
-        {
             return 0;
-        }
     }
-    protected void clear()
+    public void clear()
     {
         counterAmounts.Clear();
     }

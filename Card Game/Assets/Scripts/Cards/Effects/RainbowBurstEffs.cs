@@ -50,7 +50,7 @@ public class RainbowBurstEffs : SpellEffects
         List<int> usedIds = new List<int>();
         foreach (Card c in card.owner.hand.getCardList())
         {
-            if (c.hasTag(Tag.Gem) && !usedIds.Contains(c.cardId))
+            if (c.Tags.Contains(Tag.Gem) && !usedIds.Contains(c.cardId))
             {
                 usedIds.Add(c.cardId);
                 numUniqueGemsInHand++;

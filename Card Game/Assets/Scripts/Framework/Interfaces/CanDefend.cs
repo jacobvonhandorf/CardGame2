@@ -5,7 +5,7 @@ using UnityEngine;
 public interface Damageable
 {
     Transform transform { get; }
-    Card sourceCard { get; }
+    Card SourceCard { get; }
     void takeDamage(int damage, Card source);
     Vector2 getCoordinates();
     Player getController();

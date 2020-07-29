@@ -7,111 +7,88 @@ public class CounterController : MonoBehaviour
 {
     private const float DISPLAY_Y_OFFSET = -1.82f;
 
-    private CardCounterList counterList;
+    private CounterList counterList = new CounterList();
     [SerializeField] private CounterDisplay counterDisplayPrefab;
+    private Dictionary<CounterType, CounterDisplay> displays = new Dictionary<CounterType, CounterDisplay>();
+    private ICanReceiveCounters attachedObject;
 
     private void Awake()
     {
-        counterList = new CardCounterList(counterDisplayPrefab, transform);
+        attachedObject = GetComponentInParent<ICanReceiveCounters>();
+        Debug.Log("Attached object " + attachedObject);
     }
 
-    public void addCounters(CounterClass counterType, int amount)
+    public void add(CounterType counterType, int amount)
     {
         counterList.addCounters(counterType, amount);
+        attachedObject.OnCountersAdded(counterType, amount);
+        updateDisplay(counterType);
     }
-    public void removeCounters(CounterClass counterType, int amount)
+    public void remove(CounterType counterType, int amount)
     {
         counterList.removeCounters(counterType, amount);
+        attachedObject.OnCountersAdded(counterType, amount);
+        updateDisplay(counterType);
     }
-    public int hasCounter(CounterClass counterType)
+    public int amountOf(CounterType counterType)
     {
         return counterList.hasCounter(counterType);
     }
-    public void clearAll()
+    public void clear()
     {
-        counterList.clearAll();
+        counterList.clear();
+        updateDisplays();
     }
 
-    private class CardCounterList : CounterList
+    private void updateDisplays()
     {
-        private CounterDisplay counterDisplayPrefab;
-        private Dictionary<CounterClass, CounterDisplay> counterDisplayMap = new Dictionary<CounterClass, CounterDisplay>();
-        private Transform parentTransform;
+        foreach (CounterType type in counterList.CounterMap.Keys)
+            updateDisplay(type);
+    }
 
-        public CardCounterList(CounterDisplay counterDisplayPrefab, Transform parentTransform)
+    private void updateDisplay(CounterType counterType)
+    {
+        // get the display if it exists
+        if (displays.TryGetValue(counterType, out CounterDisplay display))
         {
-            this.counterDisplayPrefab = counterDisplayPrefab;
-            this.parentTransform = parentTransform;
-        }
-
-        public override void addCounters(CounterClass counterType, int amount)
-        {
-            base.addCounters(counterType, amount);
-            updateDisplay(counterType);
-        }
-
-        public override void removeCounters(CounterClass counterType, int amount)
-        {
-            base.removeCounters(counterType, amount);
-            updateDisplay(counterType);
-        }
-
-        public void clearAll()
-        {
-            List<CounterClass> tempList = new List<CounterClass>();
-            foreach (CounterClass cc in counterAmounts.Keys) tempList.Add(cc);
-            foreach (CounterClass cc in tempList)
+            if (counterList.CounterMap.TryGetValue(counterType, out int amount))
             {
-                counterAmounts.Remove(cc);
-                updateDisplay(cc);
-            }
-        }
-
-        private void updateDisplay(CounterClass counterType)
-        {
-            // get the display if it exists
-            if (counterDisplayMap.TryGetValue(counterType, out CounterDisplay display))
-            {
-                if (counterAmounts.TryGetValue(counterType, out int amount))
-                {
-                    display.gameObject.SetActive(true);
-                    display.setText(amount); // if a display exists and there is an amount for it then set the display to the amount
-                }
-                else
-                {
-                    // A display exists but no amount so set the display to inactive
-                    display.setText(0);
-                    display.gameObject.SetActive(false);
-                    updateDisplayLocations();
-                }
+                display.gameObject.SetActive(true);
+                display.setText(amount); // if a display exists and there is an amount for it then set the display to the amount
             }
             else
             {
-                // no display exists so create a new one
-                CounterDisplay newDisplay = Instantiate(counterDisplayPrefab);
-                newDisplay.gameObject.transform.SetParent(parentTransform);
-                counterDisplayMap.Add(counterType, newDisplay);
-                newDisplay.setBackgroundColor(counterType.fillColor());
-                newDisplay.setBorderColor(counterType.borderColor());
-                newDisplay.setText(counterAmounts[counterType]);
-                newDisplay.setTextColor(counterType.borderColor());
-                newDisplay.transform.localScale = new Vector3(1, 1, 1);
+                // A display exists but no amount so set the display to inactive
+                display.setText(0);
+                display.gameObject.SetActive(false);
                 updateDisplayLocations();
             }
         }
-
-        private void updateDisplayLocations()
+        else
         {
-            int index = 0;
-            foreach (CounterDisplay display in counterDisplayMap.Values)
-            {
-                if (!display.gameObject.activeInHierarchy)
-                    continue;
-                Vector3 position = new Vector3(0, index * DISPLAY_Y_OFFSET, 0);
-                display.transform.localPosition = position;
-                index++;
-            }
+            // no display exists so create a new one
+            CounterDisplay newDisplay = Instantiate(counterDisplayPrefab);
+            newDisplay.gameObject.transform.SetParent(transform);
+            displays.Add(counterType, newDisplay);
+            newDisplay.setBackgroundColor(Counters.GetData(counterType).FillColor);
+            newDisplay.setBorderColor(Counters.GetData(counterType).BorderColor);
+            newDisplay.setTextColor(Counters.GetData(counterType).BorderColor);
+            newDisplay.setText(counterList.hasCounter(counterType));
+            newDisplay.transform.localScale = new Vector3(1, 1, 1);
+            updateDisplayLocations();
         }
     }
 
+    private void updateDisplayLocations()
+    {
+        int index = 0;
+        foreach (CounterDisplay display in displays.Values)
+        {
+            if (!display.gameObject.activeInHierarchy)
+                continue;
+            Vector3 position = new Vector3(0, index * DISPLAY_Y_OFFSET, 0);
+            display.transform.localPosition = position;
+            index++;
+        }
+    }
 }

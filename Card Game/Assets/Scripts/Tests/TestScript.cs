@@ -10,25 +10,27 @@ using UnityEngine.SceneManagement;
 public class TestScript : MonoBehaviour
 {
     public CardData creatureData;
+    public Card testCard;
 
     private void Start()
     {
         // setup test
-        //Card testCard = ResourceManager.Get().instantiateCardById(GemMercenary.CARD_ID);
-        //Creature testCreature = (testCard as CreatureCard).creature;
-        CardBuilder.Instance.BuildFromCardData(creatureData);
-
+        testCard = getTestCard();
     }
 
     private void doTestOnKeyPress()
     {
         // test code here
+        testCard.manaCost += 1;
     }
 
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.A))
+        {
+            Debug.Log("performing test");
             doTestOnKeyPress();
+        }
     }
 
     private List<Card> getTestCardList()
@@ -41,9 +43,7 @@ public class TestScript : MonoBehaviour
         return cardList;
     }
 
-    private Card getTestCard()
-    {
-        return ResourceManager.Get().instantiateCardById(ManaWell.CARD_ID);
-    }
+    private Card getTestCard() => ResourceManager.Get().instantiateCardById((int)CardIds.RingOfEternity);
+    //private Card getTestCard() => ResourceManager.Get().instantiateCardById(68);
 }
 

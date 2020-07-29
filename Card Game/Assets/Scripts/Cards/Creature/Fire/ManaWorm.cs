@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
 public class ManaWorm : Creature
 {
     public override int cardId => 62;
@@ -24,3 +25,4 @@ public class ManaWorm : Creature
         }
     }
 }
+*/

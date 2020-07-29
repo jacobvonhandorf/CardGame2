@@ -43,8 +43,8 @@ public class FairyFortress : Structure, Effect
         SingleTileTargetEffect secondSelection = new SingleTileTargetEffect(GameManager.Get().getAllTilesWithCreatures(controller.getOppositePlayer(), true), delegate (Tile t)
         {
             opponentsCreature = t.creature;
-            ownersCreature.bounce(sourceCard);
-            opponentsCreature.bounce(sourceCard);
+            ownersCreature.bounce(SourceCard);
+            opponentsCreature.bounce(SourceCard);
             sourcePlayer.subtractActions(1);
         });
         CompoundQueueableCommand cqc = new CompoundQueueableCommand.Builder().addCommand(firstSelection).addCommand(secondSelection).Build();

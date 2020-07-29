@@ -16,8 +16,8 @@ public class Monk : Creature
     {
         public void activate(Player sourcePlayer, Player targetPlayer, Tile sourceTile, Tile targetTile, Creature sourceCreature, Creature targetCreature)
         {
-            sourceCreature.setHealth(sourceCreature.getHealth() + 1);
-            sourceCreature.setAttack(sourceCreature.getAttack() + 1);
+            sourceCreature.Health += 1;
+            sourceCreature.AttackStat += 1;
             sourcePlayer.addActions(-1);
         }
     }

@@ -16,13 +16,13 @@ public class MightMakesRightEffs : SpellEffects
             if (cardToAdd == null)
                 cardToAdd = c;
             else
-                if (cardToAdd.creature.getAttack() < c.creature.getAttack())
+                if (cardToAdd.creature.AttackStat < c.creature.AttackStat)
                 cardToAdd = c;
         }
         if (cardToAdd != null)
         {
-            cardToAdd.creature.addAttack(1);
-            cardToAdd.creature.addHealth(1);
+            cardToAdd.creature.AttackStat += 1;
+            cardToAdd.creature.Health += 1;
             cardToAdd.moveToCardPile(card.owner.hand, card);
         }
     }

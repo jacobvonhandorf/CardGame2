@@ -10,9 +10,9 @@ public class GemBriberEffs : CreatureEffects
         int gemCount = creature.controller.hand.getAllCardsWithTag(Card.Tag.Gem).Count;
         if (gemCount > 0)
         {
-            creature.addAttack(1);
+            creature.AttackStat += 1;
             if (gemCount >= 3)
-                creature.addAttack(1);
+                creature.AttackStat += 1;
         }
     };
 }

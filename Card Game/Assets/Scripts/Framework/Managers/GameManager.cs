@@ -132,6 +132,8 @@ public class GameManager : MonoBehaviour
     private object activePlayerLock = new object();
     IEnumerator onlineGameSetupCoroutine()
     {
+        System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+        stopwatch.Start();
         Player localPlayer = NetInterface.Get().localPlayerIsP1() ? player1 : player2;
         NetInterface.Get().setLocalPlayer(localPlayer);
         // disable end turn button if going second
@@ -142,7 +144,8 @@ public class GameManager : MonoBehaviour
 
         // send opponent starting deck
         NetInterface.Get().syncStartingDeck();
-
+        stopwatch.Stop();
+        Debug.Log("Finished instantiating cards " + stopwatch.ElapsedMilliseconds + "ms");
         // wait for opponent to finish sending their deck
         while (!NetInterface.Get().opponentFinishedSendingCards)
         {
@@ -154,7 +157,7 @@ public class GameManager : MonoBehaviour
         Tile engiTile = board.getTileByCoordinate(engiCoord, engiCoord);
         Card engineer = createCardById(Engineer.CARD_ID, localPlayer);
         engineer.play(engiTile);
-        (engineer as CreatureCard).creature.addCounters(Counters.build, 3);
+        (engineer as CreatureCard).creature.Counters.add(CounterType.Build, 3);
 
         // place HQ
         int hqCoord = NetInterface.Get().localPlayerIsP1() ? 0 : board.boardWidth - 1;
@@ -445,10 +448,10 @@ public class GameManager : MonoBehaviour
     // places teh creature passed to it on the tile passed
     public void createCreatureOnTile(Creature creature, Tile tile, Player owner)
     {
-        creature.initialize();
+        //creature.initialize();
         createCreatureActual(tile, owner, creature);
         // sync creature creation
-        NetInterface.Get().syncPermanentPlaced(creature.sourceCard, tile);
+        NetInterface.Get().syncPermanentPlaced(creature.SourceCard, tile);
 
         // trigger effects that need to be triggered
         creature.TriggerOnDeployed(this);
@@ -458,13 +461,13 @@ public class GameManager : MonoBehaviour
     private void createCreatureActual(Tile tile, Player owner, Creature creature)
     {
         // resize creature, stop treating it as a card and start treating it as a creature
-        (creature.sourceCard as CreatureCard).swapToCreature(tile);
+        (creature.SourceCard as CreatureCard).swapToCreature(tile);
 
         // place creature in correct location
         Vector3 newPostion = creature.transform.position;
         newPostion.z = 1; // change z so that the card is always above tile and can be clicked
         creature.transform.position = newPostion;
-        creature.sourceCard.transformManager.enabled = true;
+        creature.SourceCard.TransformManager.enabled = true;
 
         // set owner if it hasn't been set already
         creature.controller = owner;
@@ -478,7 +481,7 @@ public class GameManager : MonoBehaviour
         }
 
         tile.creature = creature;
-        creature.currentTile = tile;
+        creature.tile = tile;
         // add creature to all creatures
         allCreatures.Add(creature);
 
@@ -516,7 +519,7 @@ public class GameManager : MonoBehaviour
     IEnumerator showCardCrt(Card card, bool fromTop)
     {
         showCardFinished = false;
-        TransformManager tm = card.transformManager;
+        TransformManager tm = card.TransformManager;
         tm.clearQueue();
         tm.Lock();
         // set starting location
@@ -526,7 +529,7 @@ public class GameManager : MonoBehaviour
             card.transform.position = new Vector3(0, -10);
 
         // move to center of screen
-        Transform cardTransform = card.transformManager.transform;
+        Transform cardTransform = card.TransformManager.transform;
         Vector3 target = new Vector3(0, 0);
         while (Vector3.Distance(target, cardTransform.position) > 0.02f)
         {
@@ -553,7 +556,7 @@ public class GameManager : MonoBehaviour
 
     private void createStructureOnTileActual(Structure structure, Tile tile, Player controller)
     {
-        Card sourceCard = structure.sourceCard;
+        Card sourceCard = structure.SourceCard;
 
         // resize structure and stop treating it as a card and start treating is as a structure
         (sourceCard as StructureCard).swapToStructure(tile);
@@ -573,10 +576,10 @@ public class GameManager : MonoBehaviour
         structure.tile = tile;
         structure.controller = controller;
         if (sourceCard.owner != null) // normal cards will already have an owner
-            structure.owner = sourceCard.owner;
+            structure.SourceCard.owner = sourceCard.owner;
         else // "token" cards will not have an owner at this point so just use the controller
         {
-            structure.owner = controller;
+            structure.SourceCard.owner = controller;
             sourceCard.owner = controller;
         }
 
@@ -596,17 +599,28 @@ public class GameManager : MonoBehaviour
     /*
      * When a creatures health drops below 1 this method sends it to grave and is responsible for triggering all effects
      */
-    public void destroyCreature(Creature creature)
+    public void kill(Permanent permanent)
+    {
+        switch (permanent)
+        {
+            case Creature creature:
+                kill(creature);
+                break;
+            case Structure structure:
+                kill(structure);
+                break;
+            default:
+                throw new Exception("Unexcepted permanent type");
+        }
+    }
+
+    public void kill(Creature creature)
     {
         Debug.Log("Destroying creature");
-        if (creature.currentTile != null) // this check is needed to make some online stuff work
+        if (creature.tile != null) // this check is needed to make some online stuff work
         {
-            creature.currentTile.creature = null;
-            creature.currentTile = null;
-        }
-        foreach(Structure structure in board.getAllStructures())
-        {
-            structure.onAnyCreatureDeath(creature);
+            creature.tile.creature = null;
+            creature.tile = null;
         }
         TriggerCreatureDeathEvents(this, new CreatureDeathArgs() { creature = creature });
 
@@ -616,18 +630,13 @@ public class GameManager : MonoBehaviour
         creature.sendToGrave();
     }
 
-    public void destroyStructure(Structure structure, Card source)
+    public void kill(Structure structure)
     {
         Debug.Log("Destroying structure");
         structure.tile.structure = null;
         structure.tile = null;
-        foreach (Structure loopStructure in board.getAllStructures())
-        {
-            loopStructure.onAnyStructureDeath(structure);
-        }
-
         allStructures.Remove(structure);
-        structure.sendToGrave(source);
+        structure.sendToGrave(null);
         structure.onRemoved();
     }
 
@@ -724,13 +733,13 @@ public class GameManager : MonoBehaviour
     private List<Tile> getAttackableTilesFor(Creature creature)
     {
         List<Tile> returnList = new List<Tile>();
-        Tile creaturesTile = creature.currentTile;
+        Tile creaturesTile = creature.tile;
         foreach (Tile tile in board.allTiles)
         {
             int xDiff = Math.Abs(creaturesTile.x - tile.x); // 0
             int yDiff = Math.Abs(creaturesTile.y - tile.y); // 1
             int distance = xDiff + yDiff; // 1
-            if (distance != 0 && distance <= creature.range) // true
+            if (distance != 0 && distance <= creature.Range) // true
                 if (tile.creature != null && tile.creature.controller != creature.controller)
                     returnList.Add(tile);
                 else if (tile.structure != null && tile.structure.controller != creature.controller)

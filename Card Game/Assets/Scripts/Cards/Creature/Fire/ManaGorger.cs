@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
 public class ManaGorger : Creature
 {
     public override int cardId => 63;
@@ -23,3 +24,4 @@ public class ManaGorger : Creature
             controller.drawCard();
     }
 }
+*/
