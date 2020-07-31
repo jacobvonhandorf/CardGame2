@@ -6,11 +6,11 @@ using System;
 public abstract class Permanent : MonoBehaviour
 {
     public Tile tile { get; set; }
-    public Player controller { get; set; }
+    public Player Controller { get; set; }
     public CounterController Counters { get; private set; }
     public Card SourceCard { get; private set; }
-    public int BaseHealth { get { return Stats.Stats[StatType.BaseHealth]; } set { Stats.setValue(StatType.BaseHealth, value); needToSync = true; } }
-    public int Health { get { return Stats.Stats[StatType.Health]; } set { Stats.setValue(StatType.Health, value); needToSync = true; } }
+    public int BaseHealth { get { return (int)Stats.Stats[StatType.BaseHealth]; } set { Stats.setValue(StatType.BaseHealth, value); needToSync = true; } }
+    public int Health { get { return (int)Stats.Stats[StatType.Health]; } set { Stats.setValue(StatType.Health, value); needToSync = true; } }
 
     public StatsContainer Stats { get; private set; }
 

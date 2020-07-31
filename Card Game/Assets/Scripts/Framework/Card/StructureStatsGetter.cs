@@ -55,7 +55,7 @@ public class StructureStatsGetter : CardStatsGetter
         Vector3 newIconScale = new Vector3(scalingCoefficient, scalingCoefficient, 1);
         Vector3 newRootScale = new Vector3(entireCardScaleCoefficient, entireCardScaleCoefficient, 1);
 
-        InformativeAnimationsQueue.instance.addAnimation(new SwapToCreatureAnimation(this, iconsToResize, newIconScale, newRootScale, structureTile.transform.position));
+        InformativeAnimationsQueue.Instance.addAnimation(new SwapToCreatureAnimation(this, iconsToResize, newIconScale, newRootScale, structureTile.transform.position));
     }
     private class SwapToCreatureAnimation : QueueableCommand
     {

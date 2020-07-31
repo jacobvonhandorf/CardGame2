@@ -15,4 +15,9 @@ public enum StatType
     BaseMovement,
     Range,
     BaseRange,
+    Name,
+    TypeText,
+    EffectText,
+    Art,
+    ElementalId,
 }

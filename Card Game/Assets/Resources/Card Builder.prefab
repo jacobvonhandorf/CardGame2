@@ -43,9 +43,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: baab2ffd186725e42b4499dec9568908, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spellCardPrefab: {fileID: 8536693060836854512, guid: d4912e3ffb13b4547903399a1d16438a,
+  spellCardPrefab: {fileID: 7059521183239709292, guid: 3edaf64af6574184fb14c84c16f624dd,
     type: 3}
-  structureCardPrefab: {fileID: 7975894839807247856, guid: 8be107c339050a34182b3d2fb1cad601,
+  structureCardPrefab: {fileID: 2400804745554050200, guid: 05d880a0c4628d14981d0cc2c751d3ff,
     type: 3}
-  creatureCardPrefab: {fileID: 7294523776317941941, guid: 633b21a4d7f2384419d85fb002181202,
+  creatureCardPrefab: {fileID: 8974139625713654983, guid: 42c47f2d4472bf645bbd3128605f1e12,
     type: 3}

@@ -30,7 +30,7 @@ public class CreatureStatsGetter : CardStatsGetter
 
         Vector3 newPosition = creatureTile.transform.position;
         newPosition.z = 0;
-        InformativeAnimationsQueue.instance.addAnimation(new SwapToCreatureAnimation(this, iconsToResize, newIconScale, newRootScale, newPosition));
+        InformativeAnimationsQueue.Instance.addAnimation(new SwapToCreatureAnimation(this, iconsToResize, newIconScale, newRootScale, newPosition));
     }
     private class SwapToCreatureAnimation : QueueableCommand
     {
@@ -205,7 +205,7 @@ public class CreatureStatsGetter : CardStatsGetter
     {
         if (GameManager.gameMode == GameManager.GameMode.online)
         {
-            setAsAlly(c.controller == NetInterface.Get().getLocalPlayer());
+            setAsAlly(c.Controller == NetInterface.Get().getLocalPlayer());
         }
         else
         {

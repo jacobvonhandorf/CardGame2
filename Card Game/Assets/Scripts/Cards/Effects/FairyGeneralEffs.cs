@@ -11,7 +11,7 @@ public class FairyGeneralEffs : CreatureEffects
 
     private void GameEvents_E_CreaturePlayed(object sender, GameEvents.CreaturePlayedArgs e)
     {
-        if (enabled && e.creature.controller == creature.controller)
+        if (enabled && e.creature.Controller == creature.Controller)
         {
             creature.AttackStat += 1;
             creature.Health += 1;

@@ -6,7 +6,7 @@ using UnityEngine;
 using static Card;
 
 // abstract class for structures as they exist on the field
-public abstract class Structure : Permanent, Damageable, ICanReceiveCounters
+public class Structure : Permanent, Damageable, ICanReceiveCounters
 {
     protected string cardName;
     private bool initialized = false;
@@ -21,7 +21,6 @@ public abstract class Structure : Permanent, Damageable, ICanReceiveCounters
     public void TriggerOnLeavesField(object sender) { E_OnLeavesField?.Invoke(sender, EventArgs.Empty); }
     #endregion
 
-
     public new void Awake()
     {
         base.Awake();
@@ -29,32 +28,11 @@ public abstract class Structure : Permanent, Damageable, ICanReceiveCounters
         Stats.addType(StatType.Health);
         Stats.addType(StatType.BaseHealth);
     }
-    /*
-    public void initialize()
-    {
-        if (initialized)
-        {
-            Debug.Log("Structures only need to be initialize once");
-            return;
-        }
-
-        statsScript.setStructureStats(this);
-        baseHealth = health;
-        initialized = true;
-    }
-    */
 
     public void takeDamage(int amount, Card source)
     {
         Health -= amount;
     }
-
-    #region BasicStatGetterAndSetters
-    public string getCardName()
-    {
-        return SourceCard.getCardName();
-    }
-    #endregion
 
     // if you want to kill a creature do not call this. Call destroy creature in game manager
     public void sendToGrave(Card source)
@@ -77,14 +55,14 @@ public abstract class Structure : Permanent, Damageable, ICanReceiveCounters
         setStatWithoutSyncing(StatType.Health, hp);
         setStatWithoutSyncing(StatType.BaseHealth, bhp);
 
-        controller = ctrl;
+        Controller = ctrl;
     }
 
     private void OnMouseUpAsButton()
     {
         if (!enabled)
             return;
-        if (GameManager.Get().activePlayer != controller || controller.isLocked())
+        if (GameManager.Get().activePlayer != Controller || Controller.isLocked())
             return;
         if (getEffect() == null)
             return;
@@ -161,16 +139,16 @@ public abstract class Structure : Permanent, Damageable, ICanReceiveCounters
     {
         return new Vector2(tile.x, tile.y);
     }
-    public Player getController() => controller;
+    public Player getController() => Controller;
     public void updateFriendOrFoeBorder()
     {
         if (GameManager.gameMode != GameManager.GameMode.online)
         {
-            statsScript.setAsAlly(GameManager.Get().activePlayer == controller);
+            statsScript.setAsAlly(GameManager.Get().activePlayer == Controller);
         }
         else
         {
-            statsScript.setAsAlly(NetInterface.Get().getLocalPlayer() == controller);
+            statsScript.setAsAlly(NetInterface.Get().getLocalPlayer() == Controller);
         }
     }
     public void resetForNewTurn()
@@ -215,9 +193,5 @@ public abstract class Structure : Permanent, Damageable, ICanReceiveCounters
     public virtual List<Tag> getTags() { return new List<Tag>(); }
     public virtual List<KeywordData> getInitialKeywords() { return new List<KeywordData>(); }
     public virtual bool canDeployFrom() { return true; }
-
-
-    // MUST BE OVERWRITTEN
-    public abstract int cardId { get; }
     #endregion
 }

@@ -43,7 +43,7 @@ public class ActionBox : MonoBehaviour
             GameManager.Get().setUpCreatureEffect(creature);
         else
             GameManager.Get().showToast("This creature's action is unavailable");
-        creature.controller.heldCreature = null;
+        creature.Controller.heldCreature = null;
         gameObject.SetActive(false);
     }
     public void Cancel()

@@ -6,8 +6,8 @@ public interface Damageable
 {
     Transform transform { get; }
     Card SourceCard { get; }
+    Player Controller { get; }
     void takeDamage(int damage, Card source);
     Vector2 getCoordinates();
-    Player getController();
     void TriggerOnDefendEvents(object sender, OnDefendArgs args);
 }

@@ -24,7 +24,7 @@ public class GemMercnaryCampEffs : StructureEffects
         });
         QueueableCommand singleTileCmd = SingleTileTargetEffect.CreateCommand(structure.tile.getAdjacentTiles(), delegate (Tile t)
         {
-            CreatureCard newCreature = GameManager.Get().createCardById(GemMercenary.CARD_ID, controller) as CreatureCard;
+            CreatureCard newCreature = GameManager.Get().createCardById((int) CardIds.Mercenary, controller) as CreatureCard;
             GameManager.Get().createCreatureOnTile(newCreature.creature, t, controller);
             controller.subtractActions(1);
         });

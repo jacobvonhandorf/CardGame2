@@ -11,7 +11,7 @@ public class StructureCard : Card
     [SerializeField] private CounterController counterCountroller;
     public override List<Tile> legalTargetTiles => GameManager.Get().getLegalStructurePlacementTiles(owner);
     public override CardType getCardType() => CardType.Structure;
-    public override int cardId => structure.cardId;
+    //public override int cardId => structure.cardId;
 
     protected override void Awake()
     {

@@ -23,19 +23,19 @@ public class ArcaneGrandmasterEffs : CreatureEffects
     {
         if (creature.AttackStat >= FIRST_THRESHOLD)
         {
-            List<Card> arcaneCards = creature.controller.deck.getAllCardsWithTag(Card.Tag.Arcane);
+            List<Card> arcaneCards = creature.Controller.deck.getAllCardsWithTag(Card.Tag.Arcane);
             int index = UnityEngine.Random.Range(0, arcaneCards.Count);
-            arcaneCards[index].moveToCardPile(creature.controller.hand, creature.SourceCard);
+            arcaneCards[index].moveToCardPile(creature.Controller.hand, creature.SourceCard);
         }
         if (creature.AttackStat >= SECOND_THRESHOLD)
         {
-            List<Card> arcaneCards = creature.controller.deck.getAllCardsWithTag(Card.Tag.Arcane);
+            List<Card> arcaneCards = creature.Controller.deck.getAllCardsWithTag(Card.Tag.Arcane);
             int index = UnityEngine.Random.Range(0, arcaneCards.Count);
-            arcaneCards[index].moveToCardPile(creature.controller.hand, card);
+            arcaneCards[index].moveToCardPile(creature.Controller.hand, card);
         }
         if (creature.AttackStat >= THIRD_THRESHOLD)
         {
-            SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(creature.controller.getOppositePlayer(), false), delegate (Tile t)
+            SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(creature.Controller.getOppositePlayer(), false), delegate (Tile t)
             {
                 GameManager.Get().kill(t.creature);
             });

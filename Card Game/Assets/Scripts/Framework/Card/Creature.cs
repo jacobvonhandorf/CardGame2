@@ -7,18 +7,19 @@ using UnityEngine;
 using UnityEngine.UI;
 using static Card;
 
-public abstract class Creature : Permanent, Damageable, ICanReceiveCounters
+public class Creature : Permanent, Damageable, ICanReceiveCounters
 {
     [SerializeField] private CreatureStatsGetter statsScript;
     public string cardName;
+    public int cardId { get; set; }
 
-    // synced variables. Serialized for debugging purposes
-    public int BaseAttack { get { return Stats.Stats[StatType.BaseAttack]; } set { Stats.setValue(StatType.BaseAttack, value); needToSync = true; } }
-    public int BaseRange { get { return Stats.Stats[StatType.BaseRange]; } set { Stats.setValue(StatType.BaseRange, value); needToSync = true; } }
-    public int BaseMovement { get { return Stats.Stats[StatType.BaseMovement]; } set { Stats.setValue(StatType.BaseMovement, value); needToSync = true; } }
-    public int AttackStat { get { return Stats.Stats[StatType.Attack]; } set { Stats.setValue(StatType.Attack, value); needToSync = true; } }
-    public int Range { get { return Stats.Stats[StatType.Range]; } set { Stats.setValue(StatType.Range, value); needToSync = true; } }
-    public int Movement { get { return Stats.Stats[StatType.Movement]; } set { Stats.setValue(StatType.Movement, value); needToSync = true; } }
+    // synced variables.
+    public int BaseAttack { get { return (int)Stats.Stats[StatType.BaseAttack]; } set { Stats.setValue(StatType.BaseAttack, value); needToSync = true; } }
+    public int BaseRange { get { return (int)Stats.Stats[StatType.BaseRange]; } set { Stats.setValue(StatType.BaseRange, value); needToSync = true; } }
+    public int BaseMovement { get { return (int)Stats.Stats[StatType.BaseMovement]; } set { Stats.setValue(StatType.BaseMovement, value); needToSync = true; } }
+    public int AttackStat { get { return (int)Stats.Stats[StatType.Attack]; } set { Stats.setValue(StatType.Attack, value); needToSync = true; } }
+    public int Range { get { return (int)Stats.Stats[StatType.Range]; } set { Stats.setValue(StatType.Range, value); needToSync = true; } }
+    public int Movement { get { return (int)Stats.Stats[StatType.Movement]; } set { Stats.setValue(StatType.Movement, value); needToSync = true; } }
 
     public bool hasMovedThisTurn = false;
     public bool hasDoneActionThisTurn = false; // action is attack or effect
@@ -87,7 +88,7 @@ public abstract class Creature : Permanent, Damageable, ICanReceiveCounters
         AttackStat = BaseAttack;
         Range = BaseRange;
         Movement = BaseMovement;
-        statsScript.updateAllStats(this);
+        //statsScript.updateAllStats(this);
         if (Counters != null) // counter controller will be null before awake is called (when card is created)
             Counters.clear();
     }
@@ -143,16 +144,16 @@ public abstract class Creature : Permanent, Damageable, ICanReceiveCounters
     {
         hasDoneActionThisTurn = true;
         if (!hasMovedThisTurn)
-            controller.subtractActions(1);
+            Controller.subtractActions(1);
         StartCoroutine(attackAnimation(defender, damageRoll));
     }
     // stuff done after animation
     private void AttackPart2(Damageable defender, int attackRoll)
     {
         // only trigger effects if the local player is the owner
-        if (NetInterface.Get().getLocalPlayer() == controller)
+        if (NetInterface.Get().getLocalPlayer() == Controller)
             TriggerOnAttackEvents(this, new OnAttackArgs() { target = defender });
-        if (NetInterface.Get().getLocalPlayer() == defender.getController())
+        if (NetInterface.Get().getLocalPlayer() == defender.Controller)
             defender.TriggerOnDefendEvents(this, new OnDefendArgs() { attacker = this });
 
         // perform damage calc
@@ -211,17 +212,6 @@ public abstract class Creature : Permanent, Damageable, ICanReceiveCounters
     public int getAttackRoll()
     {
         return AttackStat;
-        /*
-        int dieRoll = UnityEngine.Random.Range(0, 6);
-        if (dieRoll == 0)
-            if (Attack == 0) // if your attack is 0 always hit for 0
-                return 0;
-            else
-                return Math.Max(1, Attack - 1); // if attack is greater than 0 never return 0
-        else if (dieRoll == 5)
-            return Attack + 1;
-        else return Attack;
-        */
     }
     #endregion
 
@@ -245,7 +235,7 @@ public abstract class Creature : Permanent, Damageable, ICanReceiveCounters
             return;
         hasMovedThisTurn = true;
         if (!hasDoneActionThisTurn)
-            controller.subtractActions(1);
+            Controller.subtractActions(1);
         actualMove(tile);
         NetInterface.Get().syncCreatureCoordinates(this, this.tile.x, this.tile.y, null);
         GameEvents.TriggerMovedEvents(this, new GameEvents.CreatureMovedArgs() { source = null, creature = this });
@@ -320,22 +310,22 @@ public abstract class Creature : Permanent, Damageable, ICanReceiveCounters
             return;
         if (GameManager.gameMode == GameManager.GameMode.online)
         {
-            if (controller != NetInterface.Get().getLocalPlayer() || NetInterface.Get().getLocalPlayer().isLocked())
+            if (Controller != NetInterface.Get().getLocalPlayer() || NetInterface.Get().getLocalPlayer().isLocked())
                 return;
         }
         else
         {
-            if (controller != GameManager.Get().activePlayer || controller.isLocked())
+            if (Controller != GameManager.Get().activePlayer || Controller.isLocked())
                 return;
         }
         // what to do if controller is trying to do something with this creature while they have no actions
-        if (controller.GetActions() <= 0)
+        if (Controller.GetActions() <= 0)
         {
             if (hasMovedThisTurn && !hasDoneActionThisTurn)
             {
                 ActionBox.instance.show(this);
                 Board.instance.setAllTilesToDefault();
-                controller.heldCreature = null;
+                Controller.heldCreature = null;
                 return;
             }
             else if (!hasMovedThisTurn && !hasDoneActionThisTurn)
@@ -346,19 +336,19 @@ public abstract class Creature : Permanent, Damageable, ICanReceiveCounters
         }
 
         // if this creature was already clicked once then simulate a move in place
-        if (controller.heldCreature == this)
+        if (Controller.heldCreature == this)
         {
             ActionBox.instance.show(this);
             Board.instance.setAllTilesToDefault();
-            controller.heldCreature = null;
+            Controller.heldCreature = null;
             return;
         }
 
         Board.instance.setAllTilesToDefault();
         // in hot seat mode don't let a player move their opponents creatures
-        if (GameManager.gameMode == GameManager.GameMode.hotseat && GameManager.Get().activePlayer != controller)
+        if (GameManager.gameMode == GameManager.GameMode.hotseat && GameManager.Get().activePlayer != Controller)
             return;
-        controller.heldCreature = this;
+        Controller.heldCreature = this;
         if (!hasMovedThisTurn && !hasDoneActionThisTurn)
         {
             List<Tile> validTiles = GameManager.Get().getMovableTilesForCreature(this);
@@ -420,16 +410,12 @@ public abstract class Creature : Permanent, Damageable, ICanReceiveCounters
     {
         return new Vector2(tile.x, tile.y);
     }
-    public Player getController()
-    {
-        return controller;
-    }
     public void updateFriendOrFoeBorder()
     {
         if (GameManager.gameMode != GameManager.GameMode.online)
-            statsScript.setAsAlly(GameManager.Get().activePlayer == controller);
+            statsScript.setAsAlly(GameManager.Get().activePlayer == Controller);
         else
-            statsScript.setAsAlly(NetInterface.Get().getLocalPlayer() == controller);
+            statsScript.setAsAlly(NetInterface.Get().getLocalPlayer() == Controller);
     }
 
     #region NetworkSyncing
@@ -444,7 +430,7 @@ public abstract class Creature : Permanent, Damageable, ICanReceiveCounters
         setStatWithoutSyncing(StatType.BaseRange, brange);
         setStatWithoutSyncing(StatType.Movement, mv);
         setStatWithoutSyncing(StatType.Range, range);
-        controller = ctrl;
+        Controller = ctrl;
 
         updateCardViewers();
     }
@@ -542,7 +528,6 @@ public abstract class Creature : Permanent, Damageable, ICanReceiveCounters
     #endregion
 
     #region ExtendedMethods
-    public abstract int cardId { get; }
     protected virtual bool getCanDeployFrom() { return false; }
     public virtual Effect getEffect() { return null; }
     public virtual List<Tag> getInitialTags() { return new List<Tag>(); }

@@ -21,7 +21,7 @@ public class XPickerBox : MonoBehaviour
     }
     public static void CreateAndQueue(int minValue, int maxValue, string headerText, Player owner, XValueHandler handler)
     {
-        InformativeAnimationsQueue.instance.addAnimation(CreateAsCommand(minValue, maxValue, headerText, owner, handler));
+        InformativeAnimationsQueue.Instance.addAnimation(CreateAsCommand(minValue, maxValue, headerText, owner, handler));
     }
     private class XPickerCmd : QueueableCommand
     {

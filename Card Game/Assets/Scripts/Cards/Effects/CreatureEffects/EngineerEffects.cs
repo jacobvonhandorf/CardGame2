@@ -14,24 +14,24 @@ public class EngineerEffects : CreatureEffects
         };
 
         int selectedCardId = -1;
-        QueueableCommand selectCommand = OptionSelectBox.CreateCommand(options, "Select which structure you would like to place", creature.controller, delegate (int selectedIndex, string selectedOption)
+        QueueableCommand selectCommand = OptionSelectBox.CreateCommand(options, "Select which structure you would like to place", creature.Controller, delegate (int selectedIndex, string selectedOption)
         {
             if (selectedIndex == 0)
-                selectedCardId = Market.CARD_ID;
+                selectedCardId = (int)CardIds.Market;
             else if (selectedIndex == 1)
-                selectedCardId = Altar.CARD_ID;
+                selectedCardId = (int)CardIds.Altar;
             else
-                selectedCardId = CommandTower.CARD_ID;
+                selectedCardId = (int)CardIds.Tower;
         });
-        Debug.Log(creature.controller);
-        List<Tile> validTargets = GameManager.Get().getLegalStructurePlacementTiles(creature.controller);
+        Debug.Log(creature.Controller);
+        List<Tile> validTargets = GameManager.Get().getLegalStructurePlacementTiles(creature.Controller);
         validTargets.RemoveAll(t => t.getDistanceTo(creature.tile) > 1);
         validTargets.RemoveAll(t => t.creature != null);
         QueueableCommand selectTileCmd = SingleTileTargetEffect.CreateCommand(validTargets, delegate (Tile t)
         {
             creature.Counters.remove(CounterType.Build, 1);
-            StructureCard structureToPlace = GameManager.Get().createCardById(selectedCardId, creature.controller) as StructureCard;
-            GameManager.Get().createStructureOnTile(structureToPlace.structure, t, creature.controller, structureToPlace);
+            StructureCard structureToPlace = GameManager.Get().createCardById(selectedCardId, creature.Controller) as StructureCard;
+            GameManager.Get().createStructureOnTile(structureToPlace.structure, t, creature.Controller, structureToPlace);
             creature.hasDoneActionThisTurn = true;
             creature.updateHasActedIndicators();
         });

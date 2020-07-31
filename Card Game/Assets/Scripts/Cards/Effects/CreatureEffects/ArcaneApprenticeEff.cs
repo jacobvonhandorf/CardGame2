@@ -28,11 +28,11 @@ public class ArcaneApprenticeEff : CreatureEffects
         }
 
         int selectedValue = -1;
-        QueueableCommand xPickCmd = XPickerBox.CreateAsCommand(1, creature.Counters.amountOf(CounterType.Arcane), "How many counters to remove?", creature.controller, delegate (int x)
+        QueueableCommand xPickCmd = XPickerBox.CreateAsCommand(1, creature.Counters.amountOf(CounterType.Arcane), "How many counters to remove?", creature.Controller, delegate (int x)
         {
             selectedValue = x;
         });
-        QueueableCommand targetSelect = SingleTileTargetEffect.CreateCommand(GameManager.Get().getAllTilesWithCreatures(creature.controller.getOppositePlayer(), false), delegate (Tile t)
+        QueueableCommand targetSelect = SingleTileTargetEffect.CreateCommand(GameManager.Get().getAllTilesWithCreatures(creature.Controller.getOppositePlayer(), false), delegate (Tile t)
         {
             creature.Counters.remove(CounterType.Arcane, selectedValue);
             t.creature.takeDamage(selectedValue, creature.SourceCard);

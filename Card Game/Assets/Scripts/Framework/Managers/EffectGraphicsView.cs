@@ -30,7 +30,7 @@ public class EffectGraphicsView : MonoBehaviour
 
     public void addToQueue(EffectGraphic newGraphic)
     {
-        InformativeAnimationsQueue.instance.addAnimation(new AnimationCommand(newGraphic, this));
+        InformativeAnimationsQueue.Instance.addAnimation(new AnimationCommand(newGraphic, this));
     }
     private class AnimationCommand : QueueableCommand
     {

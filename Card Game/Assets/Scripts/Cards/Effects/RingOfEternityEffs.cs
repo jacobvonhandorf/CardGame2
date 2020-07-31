@@ -52,7 +52,7 @@ public class RingOfEternityEffs : SpellEffects
         {
             // last breath effect
             Creature effectCreature = (sender as CreatureCard).creature;
-            Player effectOwner = effectCreature.controller;
+            Player effectOwner = effectCreature.Controller;
             foreach (Card c in effectOwner.graveyard.getCardList())
             {
                 if (c.cardId == (int)CardIds.RingOfEternity)

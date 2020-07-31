@@ -49,7 +49,7 @@ public class Board : CardPile
     }
 
     #region GetMovableTiles
-    public List<Tile> getAllMovableTiles(Creature creature) => _getAllMovableTiles(creature.Movement, creature.getCoordinates(), new List<Tile>(), creature.controller, new List<TileMovePair>());
+    public List<Tile> getAllMovableTiles(Creature creature) => _getAllMovableTiles(creature.Movement, creature.getCoordinates(), new List<Tile>(), creature.Controller, new List<TileMovePair>());
     private List<Tile> _getAllMovableTiles(int remainingMove, Vector2 coord, List<Tile> returnList, Player controller, List<TileMovePair> tileMovePairs)
     {
         // base cases
@@ -60,9 +60,9 @@ public class Board : CardPile
             return returnList;
         if (tileMoveAlreadyChecked(tileMovePairs, new TileMovePair(tile, remainingMove)))
             return returnList;
-        if (tile.creature != null && tile.creature.controller != controller)
+        if (tile.creature != null && tile.creature.Controller != controller)
             return returnList;
-        if (tile.structure != null && tile.structure.controller != controller)
+        if (tile.structure != null && tile.structure.Controller != controller)
             return returnList;
 
         // add to list
@@ -108,7 +108,7 @@ public class Board : CardPile
         foreach (Vector2 coordinate in powerTileCoordinates)
         {
             Tile powerTile = getTileByCoordinate((int)coordinate.x, (int)coordinate.y);
-            if (powerTile.creature != null && powerTile.creature.controller == player)
+            if (powerTile.creature != null && powerTile.creature.Controller == player)
                 count++;
         }
         return count;
@@ -137,7 +137,7 @@ public class Board : CardPile
         List<Structure> returnList = new List<Structure>();
         foreach (Tile tile in allTiles)
         {
-            if (tile.structure != null && tile.structure.controller == controller)
+            if (tile.structure != null && tile.structure.Controller == controller)
                 returnList.Add(tile.structure);
         }
         return returnList;
@@ -154,7 +154,7 @@ public class Board : CardPile
 
         foreach (Tile t in allTiles)
         {
-            if (t.creature != null && t.creature.controller == controller)
+            if (t.creature != null && t.creature.Controller == controller)
                 returnList.Add(t);
         }
 
@@ -200,7 +200,7 @@ public class Board : CardPile
         List<Tile> returnList = new List<Tile>();
         foreach (Structure s in allStructures)
         {
-            if (!returnList.Contains(s.tile) && s.controller == controller)
+            if (!returnList.Contains(s.tile) && s.Controller == controller)
                 returnList.Add(s.tile);
         }
         return returnList;

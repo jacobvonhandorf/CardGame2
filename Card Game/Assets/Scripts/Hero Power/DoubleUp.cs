@@ -27,8 +27,8 @@ public class DoubleUp : HeroPower
             Creature creature = (c as CreatureCard).creature;
             creature.AttackStat *= 2;
             creature.Health *= 2;
-            c.goldCost *= 2;
-            c.manaCost *= 2;
+            c.GoldCost *= 2;
+            c.ManaCost *= 2;
         }
     }
 }

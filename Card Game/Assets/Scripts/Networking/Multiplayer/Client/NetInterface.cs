@@ -222,11 +222,11 @@ public class NetInterface
     public void syncCardStats(Card c)
     {
         Net_SyncCard msg = new Net_SyncCard();
-        msg.baseGoldCost = c.baseGoldCost;
-        msg.baseManaCost = c.baseManaCost;
-        msg.goldCost = c.goldCost;
-        msg.manaCost = c.manaCost;
-        msg.elementalIdentity = c.getElementIdentity();
+        msg.baseGoldCost = c.BaseGoldCost;
+        msg.baseManaCost = c.BaseManaCost;
+        msg.goldCost = c.GoldCost;
+        msg.manaCost = c.ManaCost;
+        msg.elementalIdentity = c.ElementalId;
         msg.sourceCardId = cardMap.get(c).netId;
         msg.ownerIsP1 = playerIsP1(c.owner);
         relayMessage(msg);
@@ -235,10 +235,10 @@ public class NetInterface
     {
         Debug.Log("Recieving creature stats");
         Card c = cardMap.get(msg.sourceCardId).cardObject;
-        c.baseGoldCost = msg.baseGoldCost;
-        c.baseManaCost = msg.baseManaCost;
-        c.goldCost = msg.goldCost;
-        c.manaCost = msg.manaCost;
+        c.BaseGoldCost = msg.baseGoldCost;
+        c.BaseManaCost = msg.baseManaCost;
+        c.GoldCost = msg.goldCost;
+        c.ManaCost = msg.manaCost;
         c.setElementIdentity(msg.elementalIdentity);
         c.owner = msg.ownerIsP1 ? getPlayer1() : getPlayer2();
     }
@@ -250,7 +250,7 @@ public class NetInterface
         msg.baseHealth = c.BaseHealth;
         msg.baseMovement = c.BaseMovement;
         msg.baseRange = c.BaseRange;
-        msg.controllerIsP1 = playerIsP1(c.controller);
+        msg.controllerIsP1 = playerIsP1(c.Controller);
         msg.health = c.Health;
         msg.movement = c.Movement;
         msg.range = c.Range;
@@ -267,7 +267,7 @@ public class NetInterface
     {
         Net_SyncStructure msg = new Net_SyncStructure();
         msg.baseHealth = s.BaseHealth;
-        msg.controllerIsP1 = playerIsP1(s.controller);
+        msg.controllerIsP1 = playerIsP1(s.Controller);
         msg.health = s.Health;
         msg.sourceCardId = cardMap.get(s.SourceCard).netId;
         relayMessage(msg);

@@ -9,19 +9,20 @@ using UnityEngine.SceneManagement;
 
 public class TestScript : MonoBehaviour
 {
-    public CardData creatureData;
-    public Card testCard;
+    public CardData testCardData;
+    //public Card testCard;
 
     private void Start()
     {
         // setup test
-        testCard = getTestCard();
+        //testCard = getTestCard();
+        CardBuilder.Instance.BuildFromCardData(testCardData);
     }
 
     private void doTestOnKeyPress()
     {
         // test code here
-        testCard.manaCost += 1;
+        //testCard.GetComponent<CardToPermanentConverter>().doConversion(new Vector3(0, 0));
     }
 
     private void Update()

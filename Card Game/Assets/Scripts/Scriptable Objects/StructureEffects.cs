@@ -7,7 +7,7 @@ public class StructureEffects : MonoBehaviour
 {
     public Structure structure { get; set; }
     public Card card { get; set; }
-    public Player controller { get { return structure.controller; } }
+    public Player controller { get { return structure.Controller; } }
 
     public virtual EmptyHandler onInitilization { get; }
     public virtual EventHandler onDeploy { get; }

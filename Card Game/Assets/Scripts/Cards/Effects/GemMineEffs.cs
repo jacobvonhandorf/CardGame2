@@ -19,7 +19,7 @@ public class GemMineEffs : StructureEffects
             GameManager.Get().showToast("You must have a mine counter on Gem Mine to activate its effect");
             return;
         }
-        if (structure.controller.GetActions() <= 0)
+        if (structure.Controller.GetActions() <= 0)
         {
             GameManager.Get().showToast("You do not have enough actions to use this effect");
             return;
@@ -30,13 +30,13 @@ public class GemMineEffs : StructureEffects
             return;
         }
 
-        List<Card> gemCards = structure.controller.deck.getAllCardsWithTag(Card.Tag.Gem);
+        List<Card> gemCards = structure.Controller.deck.getAllCardsWithTag(Card.Tag.Gem);
         if (gemCards.Count > 0)
         {
-            gemCards[UnityEngine.Random.Range(0, gemCards.Count)].moveToCardPile(structure.controller.hand, card);
+            gemCards[UnityEngine.Random.Range(0, gemCards.Count)].moveToCardPile(structure.Controller.hand, card);
             effectUsedThisTurn = true;
             structure.Counters.remove(CounterType.Mine, 1);
-            structure.controller.subtractActions(1);
+            structure.Controller.subtractActions(1);
             GameEvents.E_TurnEnd += GameEvents_E_TurnEnd;
         }
         else

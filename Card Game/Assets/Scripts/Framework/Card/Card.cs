@@ -33,19 +33,25 @@ public abstract class Card : MonoBehaviour
 
     // basic fields
     public List<Tag> Tags { get; } = new List<Tag>();
-    public string cardName;
-    [HideInInspector] private bool hidden = true; // if true then all players can see the card
+    [HideInInspector] public string cardName;
+    private bool hidden = true; // if true then all players can see the card
     [SerializeField] protected CardPile currentCardPile; // card pile the card is currently in. Use moveToCardPile to change
     public Player owner; // set this to readonly after done using TestCard
     public EmptyHandler onInitilization;
+    [HideInInspector] public int cardId;
 
     // stats
     public StatsContainer Stats { get; private set; }
-    public int goldCost { get { return Stats.Stats[StatType.GoldCost]; } set { Stats.setValue(StatType.GoldCost, value); } }
-    public int baseGoldCost { get { return Stats.Stats[StatType.BaseGoldCost]; } set { Stats.setValue(StatType.BaseGoldCost, value); } }
-    public int manaCost { get { return Stats.Stats[StatType.ManaCost]; } set { Stats.setValue(StatType.ManaCost, value); } }
-    public int baseManaCost { get { return Stats.Stats[StatType.BaseManaCost]; } set { Stats.setValue(StatType.BaseManaCost, value); } }
-    private ElementIdentity elementIdentity { get { return cardStatsScript.getElementIdentity(); }}
+    public int GoldCost { get { return (int)Stats.Stats[StatType.GoldCost]; } set { Stats.setValue(StatType.GoldCost, value); } }
+    public int BaseGoldCost { get { return (int)Stats.Stats[StatType.BaseGoldCost]; } set { Stats.setValue(StatType.BaseGoldCost, value); } }
+    public int ManaCost { get { return (int)Stats.Stats[StatType.ManaCost]; } set { Stats.setValue(StatType.ManaCost, value); } }
+    public int BaseManaCost { get { return (int)Stats.Stats[StatType.BaseManaCost]; } set { Stats.setValue(StatType.BaseManaCost, value); } }
+    public string CardName { get { return (string)Stats.Stats[StatType.Name]; } set { Stats.setValue(StatType.Name, value); } }
+    public string TypeText { set { Stats.setValue(StatType.TypeText, value); } }
+    public string EffectText { set { Stats.setValue(StatType.EffectText, value); } }
+    public Sprite Art { set { Stats.setValue(StatType.Art, value); } }
+    public int TotalCost { get { return GoldCost + ManaCost; } }
+    public ElementIdentity ElementalId { get { return Stats.getValue<ElementIdentity>(StatType.ElementalId); } set { Stats.setValue(StatType.ElementalId, value); } }
 
     // graphics
     [SerializeField] public CardStatsGetter cardStatsScript;
@@ -58,6 +64,7 @@ public abstract class Card : MonoBehaviour
 
     public List<ToolTipInfo> toolTipInfos = new List<ToolTipInfo>();
     public TransformManager TransformManager { get; private set; }
+    [SerializeField] private StatChangePropogator statChangePropogator;
 
     #region Events
     public event EventHandler<AddedToCardPileArgs> E_AddedToCardPile;
@@ -97,7 +104,8 @@ public abstract class Card : MonoBehaviour
         TransformManager = GetComponent<TransformManager>();
         cardStatsScript = GetComponent<CardStatsGetter>();
         //cardStatsScript.setCardCosts(this);
-        Stats = GetComponent<StatsContainer>();
+        Stats = GetComponentInChildren<StatsContainer>();
+        statChangePropogator.StatsContainer = Stats;
         Stats.addType(StatType.BaseGoldCost);
         Stats.addType(StatType.GoldCost);
         Stats.addType(StatType.BaseManaCost);
@@ -105,10 +113,7 @@ public abstract class Card : MonoBehaviour
     }
 
     // returns true if this card is the type passed to it
-    public bool isType(CardType type)
-    {
-        return getCardType().Equals(type);
-    }
+    public bool isType(CardType type) => getCardType().Equals(type);
 
     /*
      * makes it so this card is only visible if it normally is
@@ -391,9 +396,6 @@ public abstract class Card : MonoBehaviour
         TransformStruct ts = new TransformStruct(TransformManager.transform);
         ts.position = position;
         TransformManager.moveToImmediate(ts);
-
-        //StopAllCoroutines();
-        //StartCoroutine(moveToPositionCoroutine(position, smoothing));
     }
     #endregion
     #region Sprites
@@ -457,16 +459,16 @@ public abstract class Card : MonoBehaviour
 
     public bool ownerCanPayCosts()
     {
-        if (goldCost > owner.getGold())
+        if (GoldCost > owner.getGold())
             return false;
-        if (manaCost > owner.getMana())
+        if (ManaCost > owner.getMana())
             return false;
         return true;
     }
     private void payCosts(Player player)
     {
-        player.addGold(-goldCost);
-        player.addMana(-manaCost);
+        player.addGold(-GoldCost);
+        player.addMana(-ManaCost);
     }
 
     #region GettersAndSetters
@@ -474,25 +476,20 @@ public abstract class Card : MonoBehaviour
     {
         return cardStatsScript.getCardName();
     }
-    public int getTotalCost()
-    {
-        return manaCost + goldCost;
-    }
     public string getEffectText()
     {
         return cardStatsScript.getEffectText();
     }
     public virtual void resetToBaseStats()
     {
-        goldCost = baseGoldCost;
-        manaCost = baseManaCost;
+        GoldCost = BaseGoldCost;
+        ManaCost = BaseManaCost;
     }
     public virtual void resetToBaseStatsWithoutSyncing()
     {
-        goldCost = baseGoldCost;
-        manaCost = baseManaCost;
+        GoldCost = BaseGoldCost;
+        ManaCost = BaseManaCost;
     }
-    public ElementIdentity getElementIdentity() { return elementIdentity; }
     public void setElementIdentity(ElementIdentity eId) { cardStatsScript.setElementIdentity(eId); }
     #endregion
     #region Keyword
@@ -507,14 +504,8 @@ public abstract class Card : MonoBehaviour
         keywordList.Remove(keyword);
         toolTipInfos.Remove(KeywordData.getData(keyword).info);
     }
-    public bool hasKeyword(Keyword keyword)
-    {
-        return keywordList.Contains(keyword);
-    }
-    public ReadOnlyCollection<Keyword> getKeywordList()
-    {
-        return keywordList.AsReadOnly();
-    }
+    public bool hasKeyword(Keyword keyword) => keywordList.Contains(keyword);
+    public ReadOnlyCollection<Keyword> getKeywordList() => keywordList.AsReadOnly();
     [SerializeField] private float hoverTimeForToolTips = .5f;
     private float timePassed = 0;
     IEnumerator checkHoverForTooltips()
@@ -541,50 +532,11 @@ public abstract class Card : MonoBehaviour
     }
     #endregion
 
-    private void Update()
-    {
-        if (isBeingDragged) // check here first to save CPU
-        {
-            if (Input.GetMouseButtonDown(1))
-                cancelDrag();
-        }
-    }
-
     #region OverrideMethods
     // ABSTRACT METHODS
     public abstract CardType getCardType();
     public abstract void play(Tile t);
     public abstract bool canBePlayed();
-    public abstract int cardId { get; }
     public abstract List<Tile> legalTargetTiles { get; }
     #endregion
-}
-
-public class CardComparator : IComparer<Card>
-{
-    public int Compare(Card x, Card y)
-    {
-        int elementCompareResult = x.getElementIdentity().CompareTo(y.getElementIdentity());
-        if (elementCompareResult != 0)
-            return elementCompareResult;
-        int costCompareResult = x.getTotalCost().CompareTo(y.getTotalCost());
-        if (costCompareResult != 0)
-            return costCompareResult;
-        // if cost and type are equal then go off names
-        return x.getCardName().CompareTo(y.getCardName());
-    }
-}
-public class CardComparatorByCostFirst : IComparer<Card>
-{
-    public int Compare(Card x, Card y)
-    {
-        int costCompareResult = x.getTotalCost().CompareTo(y.getTotalCost());
-        if (costCompareResult != 0)
-            return costCompareResult;
-        int elementCompareResult = x.getElementIdentity().CompareTo(y.getElementIdentity());
-        if (elementCompareResult != 0)
-            return elementCompareResult;
-        // if cost and type are equal then go off names
-        return x.getCardName().CompareTo(y.getCardName());
-    }
 }

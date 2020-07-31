@@ -5,7 +5,15 @@ using UnityEngine;
 public class InformativeAnimationsQueue : MonoBehaviour
 {
     // singleton
-    public static InformativeAnimationsQueue instance;
+    public static InformativeAnimationsQueue Instance {
+        get
+        {
+            if (Instance == null)
+                instance = new GameObject().AddComponent<InformativeAnimationsQueue>();
+            return instance;
+        }
+    }
+    private static InformativeAnimationsQueue instance;
     private void Awake()
     {
         instance = this;

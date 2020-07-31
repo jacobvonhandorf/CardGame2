@@ -43,16 +43,17 @@ public class CardBuilder : MonoBehaviour
         }
 
         // do all generic setting of variables
-        card.baseManaCost = cardData.manaCost;
-        card.manaCost = cardData.manaCost;
-        card.goldCost = cardData.goldCost;
-        card.baseGoldCost = cardData.goldCost;
+        card.BaseManaCost = cardData.manaCost;
+        card.ManaCost = cardData.manaCost;
+        card.GoldCost = cardData.goldCost;
+        card.BaseGoldCost = cardData.goldCost;
         card.cardName = cardData.cardName;
         card.gameObject.name = cardData.cardName;
-        card.cardStatsScript.nameText.text = cardData.cardName;
-        card.cardStatsScript.setSprite(cardData.art);
-        card.cardStatsScript.effectText.text = cardData.effectText;
-        card.cardStatsScript.setElementIdentity(cardData.elementalIdentity);
+        card.CardName = cardData.cardName;
+        card.Art = cardData.art;
+        card.EffectText = cardData.effectText;
+        card.ElementalId = cardData.elementalIdentity;
+
         foreach (Keyword k in cardData.keywords)
             card.addKeyword(k);
         foreach (Tag t in cardData.tags)
@@ -64,7 +65,7 @@ public class CardBuilder : MonoBehaviour
     private Card creatureSetup(CreatureCardData data)
     {
         CreatureCard card = Instantiate(creatureCardPrefab, instantiationLocation, Quaternion.identity).GetComponent<CreatureCard>();
-        BlankCreature creature = card.creature as BlankCreature;
+        Creature creature = card.creature;
         creature.BaseHealth = data.health;
         creature.Health = data.health;
         creature.BaseAttack = data.attack;
@@ -73,7 +74,7 @@ public class CardBuilder : MonoBehaviour
         creature.Movement = data.movement;
         creature.Range = data.range;
         creature.BaseRange = data.range;
-        creature.creatureCardId = data.id;
+        //creature.creatureCardId = data.id;
 
         // Effects
         if (data.effects == null)
@@ -105,10 +106,10 @@ public class CardBuilder : MonoBehaviour
     private Card structureSetup(StructureCardData data)
     {
         StructureCard card = Instantiate(structureCardPrefab, instantiationLocation, Quaternion.identity).GetComponent<StructureCard>();
-        BlankStructure structure = card.structure as BlankStructure;
+        Structure structure = card.structure;
         structure.BaseHealth = data.health;
         structure.Health = data.health;
-        structure.structureCardId = data.id;
+        //structure.structureCardId = data.id;
 
         StructureEffects effs = card.gameObject.AddComponent(data.effects.GetType()) as StructureEffects;
         effs.structure = structure;
@@ -134,9 +135,8 @@ public class CardBuilder : MonoBehaviour
     private Card spellSetup(SpellCardData data)
     {
         SpellCard card = Instantiate(spellCardPrefab, instantiationLocation, Quaternion.identity).GetComponent<SpellCard>();
-        BlankSpell spell = card as BlankSpell;
-        spell.spellId = data.id;
-        spell.effects = data.effects;
+        card.spellId = data.id;
+        card.effects = data.effects;
 
         SpellEffects effs = card.gameObject.AddComponent(data.effects.GetType()) as SpellEffects;
         effs.card = card;

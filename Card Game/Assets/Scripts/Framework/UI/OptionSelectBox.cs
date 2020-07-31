@@ -34,7 +34,7 @@ public class OptionSelectBox : MonoBehaviour
     #region Command
     public static void CreateAndQueue(List<string> options, string headerText, Player owner, OptionBoxHandler handler)
     {
-        InformativeAnimationsQueue.instance.addAnimation(new OptionSelectCmd(options, headerText, owner, handler));
+        InformativeAnimationsQueue.Instance.addAnimation(new OptionSelectCmd(options, headerText, owner, handler));
     }
     public static OptionSelectCmd CreateCommand(List<string> options, string headerText, Player owner, OptionBoxHandler handler)
     {
