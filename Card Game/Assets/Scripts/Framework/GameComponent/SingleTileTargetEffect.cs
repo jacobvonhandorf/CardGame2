@@ -31,7 +31,7 @@ public class SingleTileTargetEffect : QueueableCommand
     #region UtilityBuilders
     public static void CreateAndQueue(List<Tile> validTargets, TileHandler handler)
     {
-        InformativeAnimationsQueue.instance.addAnimation(new SingleTileTargetEffect(validTargets, handler));
+        InformativeAnimationsQueue.Instance.addAnimation(new SingleTileTargetEffect(validTargets, handler));
     }
     public static QueueableCommand CreateCommand(List<Tile> validTargets, TileHandler handler)
     {

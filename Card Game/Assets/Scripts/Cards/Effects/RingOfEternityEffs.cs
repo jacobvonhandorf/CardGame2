@@ -28,13 +28,13 @@ public class RingOfEternityEffs : SpellEffects
     {
         Creature targetCreature = t.creature;
         // add last breath effect
-        targetCreature.sourceCard.E_AddedToCardPile += SourceCard_E_AddedToCardPile;
+        targetCreature.SourceCard.E_AddedToCardPile += SourceCard_E_AddedToCardPile;
         targetCreature.addKeyword(Keyword.LastBreath);
 
         if (card.owner.extraStats[ExtraStatsKey.NumRingOfEternityPlayed] >= FIRST_THRESHOLD)
         {
-            targetCreature.addAttack(FIRST_ATK_BONUS);
-            targetCreature.addHealth(FIRST_HP_BONUS);
+            targetCreature.AttackStat += FIRST_ATK_BONUS;
+            targetCreature.Health += FIRST_HP_BONUS;
         }
         if (card.owner.extraStats[ExtraStatsKey.NumRingOfEternityPlayed] >= SECOND_THRESHOLD)
         {
@@ -52,19 +52,19 @@ public class RingOfEternityEffs : SpellEffects
         {
             // last breath effect
             Creature effectCreature = (sender as CreatureCard).creature;
-            Player effectOwner = effectCreature.controller;
+            Player effectOwner = effectCreature.Controller;
             foreach (Card c in effectOwner.graveyard.getCardList())
             {
                 if (c.cardId == (int)CardIds.RingOfEternity)
                 {
-                    c.moveToCardPile(effectOwner.hand, effectCreature.sourceCard);
+                    c.moveToCardPile(effectOwner.hand, effectCreature.SourceCard);
                     break;
                 }
             }
 
             // make sure to remove effect and keyword
             effectCreature.removeKeyword(Keyword.LastBreath);
-            effectCreature.sourceCard.E_AddedToCardPile -= SourceCard_E_AddedToCardPile;
+            effectCreature.SourceCard.E_AddedToCardPile -= SourceCard_E_AddedToCardPile;
         }
     }
 

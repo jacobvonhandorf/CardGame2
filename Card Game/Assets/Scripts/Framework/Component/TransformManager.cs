@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,19 +8,21 @@ public class TransformManager : MonoBehaviour
 {
     private bool locked = false;
     public bool removedFromScene = false;
+    public float closeEnough = 1f;
     public float speed = 9f;
     private Queue<TransformStruct> transformQueue = new Queue<TransformStruct>();
     private Vector3 currentPosition;
     private Vector3 currentScale;
     private TransformStruct currentTransform;
+
     private void Update()
     {
         // first check if there is anything to do
-        if (currentTransform == null && transformQueue.Count == 0 || removedFromScene)
+        if (currentTransform == null && transformQueue.Count == 0 || removedFromScene || locked)
             return;
 
         // if close to transform or currentTransform is null then move to next transform
-        if (currentTransform == null || Vector3.Distance(transform.position, currentTransform.position) < 0.02f && Vector3.Distance(transform.position, currentTransform.position) < 0.02f)
+        if (currentTransform == null || Vector3.Distance(transform.position, currentTransform.position) < closeEnough && Vector3.Distance(transform.position, currentTransform.position) < closeEnough)
         {
             if (transformQueue.Count > 0)
                 currentTransform = transformQueue.Dequeue();
@@ -56,7 +59,15 @@ public class TransformManager : MonoBehaviour
     }
     public void moveToInformativeAnimation(TransformStruct t)
     {
-        InformativeAnimationsQueue.instance.addAnimation(new TransformCommand(this, t));
+        InformativeAnimationsQueue.Instance.addAnimation(new TransformCommand(this, t));
+    }
+
+    public void setTransform(TransformStruct tStruct)
+    {
+        clearQueue();
+        transform.localPosition = tStruct.position;
+        transform.localScale = tStruct.localScale;
+
     }
     // lock (clear and don't accept new commands)
     // mostly used when graphics aren't on scene
@@ -96,6 +107,7 @@ public class TransformManager : MonoBehaviour
     }
 }
 
+[Serializable]
 public class TransformStruct
 {
     public TransformStruct() { }

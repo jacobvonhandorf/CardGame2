@@ -12,7 +12,6 @@ public class NetInterface
     private int lastUsedNetId = 0; // for assigning netIds to cards
     public bool gameSetupComplete = false;
     private BiDirectioncalCardMap cardMap = new BiDirectioncalCardMap();
-    //private Dictionary<CardPile, byte> pileIdMap = new Dictionary<CardPile, byte>();
     private BidirectionalMap<CardPile, byte> pileIdMap = new BidirectionalMap<CardPile, byte>();
     public string selectedDeckName; // gets set before game start and is used during game setup. Might move to a game setup object
     public bool opponentFinishedSendingCards = false;
@@ -140,7 +139,7 @@ public class NetInterface
     }
     public void syncCreatureCoordinates(Creature c, int x, int y, Card source)
     {
-        int creatureCardId = cardMap.get(c.sourceCard).netId;
+        int creatureCardId = cardMap.get(c.SourceCard).netId;
         Net_SyncCreatureCoordinates msg = new Net_SyncCreatureCoordinates();
         msg.creatureCardId = creatureCardId;
         msg.x = (byte)x;
@@ -162,8 +161,8 @@ public class NetInterface
     }
     public void syncAttack(Creature attacker, Damageable defender, int damageRoll)
     {
-        int attackerId = cardMap.get(attacker.sourceCard).netId;
-        int defenderId = cardMap.get(defender.sourceCard).netId;
+        int attackerId = cardMap.get(attacker.SourceCard).netId;
+        int defenderId = cardMap.get(defender.SourceCard).netId;
 
         Net_SyncAttack msg = new Net_SyncAttack();
         msg.attackerId = attackerId;
@@ -223,11 +222,11 @@ public class NetInterface
     public void syncCardStats(Card c)
     {
         Net_SyncCard msg = new Net_SyncCard();
-        msg.baseGoldCost = c.getBaseGoldCost();
-        msg.baseManaCost = c.getBaseManaCost();
-        msg.goldCost = c.getGoldCost();
-        msg.manaCost = c.getManaCost();
-        msg.elementalIdentity = c.getElementIdentity();
+        msg.baseGoldCost = c.BaseGoldCost;
+        msg.baseManaCost = c.BaseManaCost;
+        msg.goldCost = c.GoldCost;
+        msg.manaCost = c.ManaCost;
+        msg.elementalIdentity = c.ElementalId;
         msg.sourceCardId = cardMap.get(c).netId;
         msg.ownerIsP1 = playerIsP1(c.owner);
         relayMessage(msg);
@@ -236,26 +235,26 @@ public class NetInterface
     {
         Debug.Log("Recieving creature stats");
         Card c = cardMap.get(msg.sourceCardId).cardObject;
-        c.setBaseGoldCost(msg.baseGoldCost);
-        c.setBaseManaCost(msg.baseManaCost);
-        c.setGoldCost(msg.goldCost);
-        c.setManaCost(msg.manaCost);
+        c.BaseGoldCost = msg.baseGoldCost;
+        c.BaseManaCost = msg.baseManaCost;
+        c.GoldCost = msg.goldCost;
+        c.ManaCost = msg.manaCost;
         c.setElementIdentity(msg.elementalIdentity);
         c.owner = msg.ownerIsP1 ? getPlayer1() : getPlayer2();
     }
     public void syncCreatureStats(Creature c)
     {
         Net_SyncCreature msg = new Net_SyncCreature();
-        msg.attack = c.getAttack();
-        msg.baseAttack = c.baseAttack;
-        msg.baseHealth = c.baseHealth;
-        msg.baseMovement = c.baseMovement;
-        msg.baseRange = c.baseRange;
-        msg.controllerIsP1 = playerIsP1(c.controller);
-        msg.health = c.getHealth();
-        msg.movement = c.getMovement();
-        msg.range = c.range;
-        msg.sourceCardId = cardMap.get(c.sourceCard).netId;
+        msg.attack = c.AttackStat;
+        msg.baseAttack = c.BaseAttack;
+        msg.baseHealth = c.BaseHealth;
+        msg.baseMovement = c.BaseMovement;
+        msg.baseRange = c.BaseRange;
+        msg.controllerIsP1 = playerIsP1(c.Controller);
+        msg.health = c.Health;
+        msg.movement = c.Movement;
+        msg.range = c.Range;
+        msg.sourceCardId = cardMap.get(c.SourceCard).netId;
         relayMessage(msg);
     }
     public void recieveCreatureStats(Net_SyncCreature msg)
@@ -267,18 +266,16 @@ public class NetInterface
     public void syncStructureStats(Structure s)
     {
         Net_SyncStructure msg = new Net_SyncStructure();
-        msg.baseHealth = s.getBaseHealth();
-        msg.controllerIsP1 = playerIsP1(s.controller);
-        msg.health = s.getHealth();
-        msg.sourceCardId = cardMap.get(s.sourceCard).netId;
+        msg.baseHealth = s.BaseHealth;
+        msg.controllerIsP1 = playerIsP1(s.Controller);
+        msg.health = s.Health;
+        msg.sourceCardId = cardMap.get(s.SourceCard).netId;
         relayMessage(msg);
     }
     public void recieveStructureStats(Net_SyncStructure msg)
     {
         Structure s = (cardMap.get(msg.sourceCardId).cardObject as StructureCard).structure;
-        s.setBaseHealth(msg.baseHealth);
-        s.controller = msg.controllerIsP1 ? getPlayer1() : getPlayer2();
-        s.setHealth(msg.health);
+        s.recieveStatsFromNet(msg.health, msg.baseHealth, msg.controllerIsP1 ? getPlayer1() : getPlayer2());
     }
     // card can be creature or structure
     public void syncPermanentPlaced(Card c, Tile t)
@@ -299,18 +296,18 @@ public class NetInterface
         else
             GameManager.Get().syncStructureOnTile(card as StructureCard, targetTile, card.owner);
     }
-    public void syncCounterPlaced(Card sourceCard, CounterClass counterType, int amount)
+    public void syncCounterPlaced(Card sourceCard, CounterType counterType, int amount)
     {
         Net_SyncCountersPlaced msg = new Net_SyncCountersPlaced();
         msg.amount = amount;
-        msg.counterId = counterType.id();
+        msg.counterId = (int)counterType;
         msg.targetCardId = cardMap.get(sourceCard).netId;
         relayMessage(msg);
     }
     public void recieveCounterPlaced(int amount, int counterId, int targetCardId)
     {
         Card card = cardMap.get(targetCardId).cardObject;
-        CounterClass counterType = Counters.counterMap[counterId];
+        CounterType counterType = (CounterType)counterId;
         if (card is StructureCard)
             (card as StructureCard).structure.recieveCountersPlaced(counterType, amount);
         else if (card is CreatureCard)

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
@@ -9,7 +8,7 @@ public class Server : MonoBehaviour
 {
     public static Server Instance { private set; get; }
 
-    private const string VERSION = "0.1";
+    private const string VERSION = "0.3";
     private const int MAX_USER = 100;
     private const int PORT = 26000;
     private const int WEB_PORT = 26001;
@@ -37,11 +36,10 @@ public class Server : MonoBehaviour
         UpdateMessagePump();
     }
 
-
     public void Init()
     {
-        // lower frame rate so server doesn't get overloaded doing nothing
-        Application.targetFrameRate = 20;
+        // lower poll rate to save CPU
+        Application.targetFrameRate = 10;
 
         NetworkTransport.Init();
 
@@ -49,7 +47,6 @@ public class Server : MonoBehaviour
         reliableChannel = connectionConfig.AddChannel(QosType.Reliable);
         HostTopology topo = new HostTopology(connectionConfig, MAX_USER);
 
-        // Server only code
         hostId = NetworkTransport.AddHost(topo, PORT, null);
         webHostId = NetworkTransport.AddWebsocketHost(topo, WEB_PORT);
 
@@ -57,27 +54,24 @@ public class Server : MonoBehaviour
         Debug.Log(string.Format("Opening connection on port {0} and webport {1}", PORT, WEB_PORT));
         isStarted = true;
 
-
-        //db = new Datastore();
-        //db.init();
+        db = new Datastore();
+        db.Init();
     }
-    /*
+    
     private void OnApplicationQuit()
     {
         Shutdown();
-    }*/
+    }
     public void Shutdown()
     {
         isStarted = false;
-        //NetworkTransport.Shutdown();
+        NetworkTransport.Shutdown();
     }
     public void UpdateMessagePump()
     {
         if (!isStarted)
             return;
 
-        //while (NetworkTransport.GetCurrentIncomingMessageAmount() > 0)
-        //{
         bool loop = true;
         while (loop)
         {
@@ -86,17 +80,15 @@ public class Server : MonoBehaviour
             switch (type)
             {
                 case NetworkEventType.DataEvent:
-                    Debug.Log("Recieve data event");
                     BinaryFormatter formatter = new BinaryFormatter();
                     MemoryStream ms = new MemoryStream(recBuffer);
                     NetMsg msg = (NetMsg)formatter.Deserialize(ms);
                     OnData(connectionId, channelId, recHostId, msg);
                     break;
                 case NetworkEventType.ConnectEvent:
-                    Debug.Log("User " + connectionId + " has connected!");
                     break;
                 case NetworkEventType.DisconnectEvent:
-                    onDisconnect(recHostId, connectionId, channelId);
+                    OnDisconnect(recHostId, connectionId, channelId);
                     break;
                 case NetworkEventType.Nothing:
                     loop = false;
@@ -106,9 +98,7 @@ public class Server : MonoBehaviour
                     Debug.Log("Unexpected network event type");
                     break;
             }
-
         }
-        //}
     }
 
     #region OnData
@@ -120,7 +110,6 @@ public class Server : MonoBehaviour
                 Debug.Log("Unexpected NETOP");
                 break;
             case NetOP.CreateAccount:
-                Debug.Log("Recieved create account");
                 CreateAccount(cnnId, channelId, recHostId, (Net_CreateAccount)msg);
                 break;
             case NetOP.LoginRequest:
@@ -143,22 +132,18 @@ public class Server : MonoBehaviour
     private void CreateAccount(int cnnId, int channelId, int recHostId, Net_CreateAccount ca)
     {
         Net_CreateAccountResponse resp = new Net_CreateAccountResponse();
-        Debug.Log("Before create account");
-        resp.success = db.createAccount(ca.Username, ca.Password, ca.Email);
-        Debug.Log("After create account");
+        resp.success = db.CreateAccount(ca.Username, ca.Password, ca.Email);
         SendClient(recHostId, cnnId, channelId, resp);
-        Debug.Log("After send client");
     }
     private void EnterMMPool(int cnnId, int channelId, int recHostId, Net_EnterMMPool msg)
     {
-        Debug.Log("Adding " + cnnId + " to matchmaking pool");
         if (msg.inPool)
         {
             MatchMakerObject mmo = new MatchMakerObject();
             mmo.channelId = channelId;
             mmo.connectionId = cnnId;
             mmo.hostId = recHostId;
-            MatchMaker.getInstance().queueMatchMakerObject(mmo);
+            MatchMaker.GetInstance().QueueMatchMakerObject(mmo);
         }
         else
         {
@@ -166,13 +151,13 @@ public class Server : MonoBehaviour
             mmo.channelId = channelId;
             mmo.connectionId = cnnId;
             mmo.hostId = recHostId;
-            MatchMaker.getInstance().removeMatchMakerObject(mmo);
+            MatchMaker.GetInstance().RemoveMatchMakerObject(mmo);
         }
     }
     private void LoginRequest(int cnnId, int channelId, int recHostId, Net_LoginRequest msg)
     {
-        string randomToken = AccountUtils.GenerateRandom(256);
-        Model_Account account = db.loginAccount(msg.UsernameOrEmail, msg.Password, cnnId, randomToken);
+        string randomToken = AccountUtils.GenerateRandomString(256);
+        Model_Account account = db.LoginAccount(msg.UsernameOrEmail, msg.Password, cnnId, randomToken);
 
         Net_LoginRequestResponse response = new Net_LoginRequestResponse();
         if (account != null)
@@ -182,16 +167,14 @@ public class Server : MonoBehaviour
             response.information = "Login was successful!";
             response.connectionId = cnnId;
             response.token = randomToken;
-            response.username = account.username;
-            response.discriminator = account.discriminator;
-            Debug.Log("login attempt successful");
+            response.username = account.Username;
+            response.discriminator = account.Discriminator;
         }
         else
         {
             // login was not successful
             response.success = 1;
             response.information = "Login attempt failed";
-            Debug.Log("login attempt failed");
         }
 
         SendClient(recHostId, cnnId, channelId, response); // let the client know if their login attempt was successful or not
@@ -201,9 +184,8 @@ public class Server : MonoBehaviour
         int targetCnId = pairedConnectionIds[cnnId];
         int targetHostId = connectionIdToHostId[targetCnId];
 
-        Debug.LogError("Relaying message " + msg.msg.OP);
         // get the user we need to message from the map and then relay the message to them
-        SendClient(targetHostId, targetCnId, channelId, msg.msg); // Might need to change HostId. If so then it needs to be stored along with connection id in map
+        SendClient(targetHostId, targetCnId, channelId, msg.msg);
     }
     private void EndGame(int cnnId, int channelId, int recHostId, Net_EndGame msg)
     {
@@ -216,7 +198,6 @@ public class Server : MonoBehaviour
             pairedConnectionIds.Remove(cnnId);
             // send message to opponent
             SendClient(oppHostId, oppCnnId, channelId, msg);
-            // TODO record match result
         }
     }
     private void CheckClientVersion(int cnnId, int channelId, int recHostId, Net_CheckVersion msg)
@@ -232,8 +213,6 @@ public class Server : MonoBehaviour
     public void SendClient(int recHost, int cnnId, int channelId, NetMsg msg)
     {
         byte[] buffer = new byte[BYTE_SIZE];
-        Debug.Log("host: " + recHost + " cnnId" + cnnId + "channel Id" + channelId);
-        // This is where you crush your data into a byte[]
         BinaryFormatter formatter = new BinaryFormatter();
         MemoryStream ms = new MemoryStream(buffer);
         formatter.Serialize(ms, msg); // if something isn't serializable this line will error
@@ -246,7 +225,7 @@ public class Server : MonoBehaviour
     #endregion
 
     #region OtherServerOperations
-    public void pairUsers(MatchMakerObject mmo1, MatchMakerObject mmo2)
+    public void PairUsers(MatchMakerObject mmo1, MatchMakerObject mmo2)
     {
         // add users to map and let them know they've been paired up
         pairedConnectionIds.Add(mmo1.connectionId, mmo2.connectionId);
@@ -255,20 +234,19 @@ public class Server : MonoBehaviour
             connectionIdToHostId.Add(mmo1.connectionId, mmo1.hostId);
         if (!connectionIdToHostId.ContainsKey(mmo2.connectionId))
             connectionIdToHostId.Add(mmo2.connectionId, mmo2.hostId);
+
         Net_NotifyClientOfMMPairing mmNotification = new Net_NotifyClientOfMMPairing();
-        // designate a palyer as player 1
+        // designate a player as player 1
         mmNotification.isPlayer1 = true;
         SendClient(mmo1.hostId, mmo1.connectionId, mmo1.channelId, mmNotification);
         mmNotification.isPlayer1 = false;
         SendClient(mmo2.hostId, mmo2.connectionId, mmo2.channelId, mmNotification);
-        //printConnectionMap();
     }
-    private void onDisconnect(int recHostId, int cnnId, int channelId)
+    private void OnDisconnect(int recHostId, int cnnId, int channelId)
     {
-        // TODO issue game loss
         MatchMakerObject mmo = new MatchMakerObject();
         mmo.connectionId = cnnId;
-        MatchMaker.getInstance().removeMatchMakerObject(mmo);
+        MatchMaker.GetInstance().RemoveMatchMakerObject(mmo);
         if (pairedConnectionIds.TryGetValue(cnnId, out int oppCnnId)) // will be true if they were in game during disconnect
         {
             // notify opponent's client that opponent disconnected
@@ -278,23 +256,21 @@ public class Server : MonoBehaviour
             SendClient(oppHostId, oppCnnId, channelId, msg);
 
             // remove paired connection
-            //connectionIdToHostId.Remove(oppCnnId);
             pairedConnectionIds.Remove(oppCnnId);
-
         }
 
         if (pairedConnectionIds.ContainsKey(cnnId))
             pairedConnectionIds.Remove(cnnId);
 
         connectionIdToHostId.Remove(cnnId);
-
-        //printConnectionMap();
     }
-    public void printConnectionMap()
+
+    // for debugging
+    public void PrintConnectionMap()
     {
         foreach (int key in pairedConnectionIds.Keys)
         {
-            Debug.LogError("Key " + key + ", Value: " + pairedConnectionIds[key]);
+            Debug.Log("Key " + key + ", Value: " + pairedConnectionIds[key]);
         }
     }
     #endregion

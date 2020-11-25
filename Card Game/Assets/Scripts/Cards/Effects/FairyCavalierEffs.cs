@@ -7,7 +7,7 @@ public class FairyCavalierEffs : CreatureEffects
 {
     public override EventHandler onDeploy => delegate (object s, EventArgs e)
     {
-        SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(creature.controller, true), delegate (Tile t)
+        SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(creature.Controller, true), delegate (Tile t)
         {
             t.creature.bounce(card);
         });

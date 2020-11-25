@@ -11,25 +11,11 @@ public class CreatureStatsGetter : CardStatsGetter
 
     [SerializeField] private TextMeshPro hpText;
     [SerializeField] private TextMeshPro attackText;
-    [SerializeField] private TextMeshPro armorText;
     [SerializeField] private TextMeshPro moveValueText;
     [SerializeField] private TextMeshPro moveText;
 
     [SerializeField] private TextMeshPro hasActedTextIndicator;
     [SerializeField] private SpriteRenderer friendOrFoeBorder;
-
-    // called to set creature stats on creature cards when they are created
-    public void setCreatureStats(Creature creature)
-    {
-        creature.baseHealth = int.Parse(hpText.text);
-        creature.baseAttack = int.Parse(attackText.text);
-        //creature.baseDefense = int.Parse(armorText.text);
-        creature.baseMovement = int.Parse(moveValueText.text);
-        creature.cardName = nameText.text;
-
-        // reset to base stats manually
-        creature.resetToBaseStatsWithoutSyncing();
-    }
 
     // Called when a card is played to a creature.
     // if the topology of a card is changed this method may need to be changed
@@ -37,7 +23,6 @@ public class CreatureStatsGetter : CardStatsGetter
     {
         List<Transform> iconsToResize = new List<Transform>();
         iconsToResize.Add(hpText.transform.parent);
-        iconsToResize.Add(armorText.transform.parent);
         iconsToResize.Add(attackText.transform.parent);
 
         Vector3 newIconScale = new Vector3(scalingCoefficient, scalingCoefficient, 1);
@@ -45,7 +30,7 @@ public class CreatureStatsGetter : CardStatsGetter
 
         Vector3 newPosition = creatureTile.transform.position;
         newPosition.z = 0;
-        InformativeAnimationsQueue.instance.addAnimation(new SwapToCreatureAnimation(this, iconsToResize, newIconScale, newRootScale, newPosition));
+        InformativeAnimationsQueue.Instance.addAnimation(new SwapToCreatureAnimation(this, iconsToResize, newIconScale, newRootScale, newPosition));
     }
     private class SwapToCreatureAnimation : QueueableCommand
     {
@@ -121,7 +106,6 @@ public class CreatureStatsGetter : CardStatsGetter
 
         List<Transform> iconsToResize = new List<Transform>();
         iconsToResize.Add(hpText.transform.parent);
-        iconsToResize.Add(armorText.transform.parent);
         iconsToResize.Add(attackText.transform.parent);
 
         Vector3 newIconScale = new Vector3(1, 1, 1);
@@ -187,7 +171,6 @@ public class CreatureStatsGetter : CardStatsGetter
         int layerId = SortingLayer.NameToID(layer.Value);
         hpText.sortingLayerID = layerId;
         attackText.sortingLayerID = layerId;
-        armorText.sortingLayerID = layerId;
         moveValueText.sortingLayerID = layerId;
         moveText.sortingLayerID = layerId;
         effectText.sortingLayerID = layerId;
@@ -208,49 +191,6 @@ public class CreatureStatsGetter : CardStatsGetter
             hasActedTextIndicator.text = "";
     }
 
-    internal void setHealth(int value, int baseValue)
-    {
-        hpText.text = "" + value;
-        if (value > baseValue)
-            hpText.color = aboveBaseColor;
-        else if (value < baseValue)
-            hpText.color = belowBaseColor;
-        else
-            hpText.color = Color.white;
-    }
-    internal void setArmor(int value, int baseValue)
-    {
-        armorText.text = "" + value;
-        if (value > baseValue)
-            armorText.color = aboveBaseColor;
-        else if (value < baseValue)
-            armorText.color = belowBaseColor;
-        else
-            armorText.color = Color.white;
-    }
-    internal void setAttack(int value, int baseValue)
-    {
-        attackText.text = "" + value;
-        if (value > baseValue)
-            attackText.color = aboveBaseColor;
-        else if (value < baseValue)
-            attackText.color = belowBaseColor;
-        else
-            attackText.color = Color.white;
-    }
-    internal void setMovement(int value, int baseValue)
-    {
-        moveValueText.text = "" + value;
-        /*
-        if (value > baseValue)
-            moveValueText.color = aboveBaseColor;
-        else if (value < baseValue)
-            moveValueText.color = belowBaseColor;
-        else
-            moveValueText.color = Color.white;
-            */
-    }
-
     // used to update the friend or foe border
     public void setAsAlly(bool isAlly)
     {
@@ -263,14 +203,9 @@ public class CreatureStatsGetter : CardStatsGetter
 
     public void updateAllStats(Creature c)
     {
-        updateCosts(c.sourceCard);
-        setAttack(c.getAttack(), c.baseAttack);
-        setHealth(c.getHealth(), c.baseHealth);
-        setMovement(c.getMovement(), c.baseMovement);
-
         if (GameManager.gameMode == GameManager.GameMode.online)
         {
-            setAsAlly(c.controller == NetInterface.Get().getLocalPlayer());
+            setAsAlly(c.Controller == NetInterface.Get().getLocalPlayer());
         }
         else
         {

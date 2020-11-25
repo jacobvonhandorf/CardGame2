@@ -11,7 +11,7 @@ public class StructureCard : Card
     [SerializeField] private CounterController counterCountroller;
     public override List<Tile> legalTargetTiles => GameManager.Get().getLegalStructurePlacementTiles(owner);
     public override CardType getCardType() => CardType.Structure;
-    public override int cardId => structure.cardId;
+    //public override int cardId => structure.cardId;
 
     protected override void Awake()
     {
@@ -23,11 +23,6 @@ public class StructureCard : Card
     {
         onInitilization?.Invoke();
         onInitilization = null;
-    }
-
-    protected override List<Tag> getInitialTags()
-    {
-        return structure.getTags();
     }
 
     public override void play(Tile t)
@@ -48,7 +43,7 @@ public class StructureCard : Card
         structure.enabled = true;
 
         // initialize the structure if it hasn't already been initialized
-        structure.initialize();
+        //structure.initialize();
 
         // resize
         (cardStatsScript as StructureStatsGetter).swapToStructure(onTile);

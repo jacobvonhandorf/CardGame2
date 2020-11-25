@@ -65,7 +65,7 @@ public class CompoundQueueableCommand : QueueableCommand
         }
         public void BuildAndQueue()
         {
-            InformativeAnimationsQueue.instance.addAnimation(new CompoundQueueableCommand(commands));
+            InformativeAnimationsQueue.Instance.addAnimation(new CompoundQueueableCommand(commands));
         }
     }
     #endregion

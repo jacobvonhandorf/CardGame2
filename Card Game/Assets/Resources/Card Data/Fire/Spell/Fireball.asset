@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1742a4a26bfaa1043b62d1ca946f22a4, type: 3}
+  m_Name: Fireball
+  m_EditorClassIdentifier: 
+  id: 14
+  cardName: Fireball
+  art: {fileID: 21300000, guid: aaa956bd47b7f94499fb2a9f945c7f42, type: 3}
+  effectText: Deal 5 damage to target creature
+  manaCost: 2
+  goldCost: 0
+  elementalIdentity: 0
+  tags: 02000000
+  keywords: 
+  visibleInDeckBuilder: 1
+  effects: {fileID: 3231239751780640934, guid: 82fc6f654c45a914dbf7e7460bd2c092, type: 3}

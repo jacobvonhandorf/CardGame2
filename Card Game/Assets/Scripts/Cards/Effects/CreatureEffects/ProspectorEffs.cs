@@ -20,8 +20,8 @@ public class ProspectorEffs : CreatureEffects
 
     private void shuffleObsidianIntoDeck()
     {
-        Card obsidian = GameManager.Get().createCardById((int)CardIds.Obsidian, creature.controller);
-        obsidian.moveToCardPile(creature.controller.deck, card);
-        creature.controller.deck.shuffle();
+        Card obsidian = GameManager.Get().createCardById((int)CardIds.Obsidian, creature.Controller);
+        obsidian.moveToCardPile(creature.Controller.deck, card);
+        creature.Controller.deck.shuffle();
     }
 }

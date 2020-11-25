@@ -13,7 +13,7 @@ public class PityTheWeakEffs : SpellEffects
         {
             if (cardToAdd == null)
                 cardToAdd = c;
-            else if ((c as CreatureCard).creature.getAttack() < (cardToAdd as CreatureCard).creature.getAttack())
+            else if ((c as CreatureCard).creature.AttackStat < (cardToAdd as CreatureCard).creature.AttackStat)
                 cardToAdd = c;
         }
         if (cardToAdd == null)

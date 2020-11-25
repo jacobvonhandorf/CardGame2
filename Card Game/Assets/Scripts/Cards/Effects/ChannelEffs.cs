@@ -15,9 +15,9 @@ public class ChannelEffs : SpellEffects
         {
             if (c.isType(CardType.Spell))
             {
-                c.setManaCost(c.getManaCost() - 1);
-                if (c.getManaCost() < 0)
-                    c.setManaCost(0);
+                c.ManaCost -= 1;
+                if (c.ManaCost < 0)
+                    c.ManaCost = 0;
                 numCardsToReduce--;
                 if (numCardsToReduce == 0)
                     break;

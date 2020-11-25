@@ -17,7 +17,7 @@ public class CardPicker : MonoBehaviour, CanReceiveCardPick
     #region Command
     public static void CreateAndQueue(List<Card> pickableCards, int minCards, int maxCards, string headerText, Player owner, CardListHandler handler)
     {
-        InformativeAnimationsQueue.instance.addAnimation(CreateCommand(pickableCards, minCards, maxCards, headerText, owner, handler));
+        InformativeAnimationsQueue.Instance.addAnimation(CreateCommand(pickableCards, minCards, maxCards, headerText, owner, handler));
     }
     // used for creating compound commands
     public static QueueableCommand CreateCommand(List<Card> pickableCards, int minCards, int maxCards, string headerText, Player owner, CardListHandler handler)

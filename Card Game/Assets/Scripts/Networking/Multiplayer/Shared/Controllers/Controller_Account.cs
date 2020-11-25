@@ -20,47 +20,48 @@ public class Controller_Account
 
     private Controller_Account() { }
 
-    public static Controller_Account Build(Entity e)
+    public static Controller_Account BuildController(Entity e)
     {
         Controller_Account controller = new Controller_Account();
         Model_Account model = new Model_Account();
         Value v;
 
-        model.username = e.Properties[Enum.username].StringValue;
-        model.hashedPassword = e.Properties[Enum.hashedPassword].StringValue;
-        model.discriminator = e.Properties[Enum.discriminator].StringValue;
+        model.Username = e.Properties[Enum.username].StringValue;
+        model.HashedPassword = e.Properties[Enum.hashedPassword].StringValue;
+        model.Discriminator = e.Properties[Enum.discriminator].StringValue;
+
         if (e.Properties.TryGetValue(Enum.activeConnection, out v))
-            model.activeConnection = (int)v.IntegerValue;
+            model.ActiveConnection = (int)v.IntegerValue;
         if (e.Properties.TryGetValue(Enum.status, out v))
-            model.status = (byte)v.IntegerValue;
+            model.Status = (byte)v.IntegerValue;
         if (e.Properties.TryGetValue(Enum.token, out v))
-            model.token = v.StringValue;
+            model.Token = v.StringValue;
         if (e.Properties.TryGetValue(Enum.lastLogin, out v))
-            model.lastLogin = new DateTime(v.IntegerValue);
+            model.LastLogin = new DateTime(v.IntegerValue);
         if (e.Properties.TryGetValue(Enum.salt, out v))
-            model.salt = v.StringValue;
+            model.Salt = v.StringValue;
 
 
         controller.model = model;
         return controller;
     }
 
-    public static Entity Build(Model_Account model)
+    public static Entity BuildEntity(Model_Account model)
     {
-        Key key = Datastore.ds.keyBuilder(Enum.account).setId(model.email).build();
+        Key key = Datastore.ds.keyBuilder(Enum.account).SetId(model.Email).Build();
 
         var e = new Entity
         {
             Key = key,
-            [Enum.username] = model.username,
-            [Enum.email] = model.email,
-            [Enum.discriminator] = model.discriminator,
-            [Enum.activeConnection] = model.activeConnection,
-            [Enum.status] = model.status,
-            [Enum.token] = model.token,
-            [Enum.lastLogin] = model.lastLogin.Ticks,
-            [Enum.hashedPassword] = model.hashedPassword,
-            [Enum.salt] = model.salt
+            [Enum.username] = model.Username,
+            [Enum.email] = model.Email,
+            [Enum.discriminator] = model.Discriminator,
+            [Enum.activeConnection] = model.ActiveConnection,
+            [Enum.status] = model.Status,
+            [Enum.token] = model.Token,
+            [Enum.lastLogin] = model.LastLogin.Ticks,
+            [Enum.hashedPassword] = model.HashedPassword,
+            [Enum.salt] = model.Salt
         };
 
         return e;

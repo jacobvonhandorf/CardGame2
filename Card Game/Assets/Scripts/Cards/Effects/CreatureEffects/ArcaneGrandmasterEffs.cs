@@ -16,28 +16,28 @@ public class ArcaneGrandmasterEffs : CreatureEffects
     private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastArgs e)
     {
         if (card.getCardPile() is Hand && e.spell.owner == card.owner)
-            creature.addAttack(1);
+            creature.AttackStat += 1;
     }
 
     public override EventHandler onDeploy => delegate (object s, EventArgs e)
     {
-        if (creature.getAttack() >= FIRST_THRESHOLD)
+        if (creature.AttackStat >= FIRST_THRESHOLD)
         {
-            List<Card> arcaneCards = creature.controller.deck.getAllCardsWithTag(Card.Tag.Arcane);
+            List<Card> arcaneCards = creature.Controller.deck.getAllCardsWithTag(Card.Tag.Arcane);
             int index = UnityEngine.Random.Range(0, arcaneCards.Count);
-            arcaneCards[index].moveToCardPile(creature.controller.hand, creature.sourceCard);
+            arcaneCards[index].moveToCardPile(creature.Controller.hand, creature.SourceCard);
         }
-        if (creature.getAttack() >= SECOND_THRESHOLD)
+        if (creature.AttackStat >= SECOND_THRESHOLD)
         {
-            List<Card> arcaneCards = creature.controller.deck.getAllCardsWithTag(Card.Tag.Arcane);
+            List<Card> arcaneCards = creature.Controller.deck.getAllCardsWithTag(Card.Tag.Arcane);
             int index = UnityEngine.Random.Range(0, arcaneCards.Count);
-            arcaneCards[index].moveToCardPile(creature.controller.hand, card);
+            arcaneCards[index].moveToCardPile(creature.Controller.hand, card);
         }
-        if (creature.getAttack() >= THIRD_THRESHOLD)
+        if (creature.AttackStat >= THIRD_THRESHOLD)
         {
-            SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(creature.controller.getOppositePlayer(), false), delegate (Tile t)
+            SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(creature.Controller.getOppositePlayer(), false), delegate (Tile t)
             {
-                GameManager.Get().destroyCreature(t.creature);
+                GameManager.Get().kill(t.creature);
             });
         }
 

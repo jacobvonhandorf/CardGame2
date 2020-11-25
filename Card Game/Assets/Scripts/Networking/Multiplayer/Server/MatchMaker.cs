@@ -21,12 +21,11 @@ public class MatchMaker : MonoBehaviour
             // perform mm cycle
             for (int i = 0; i + 1 < matchMakerPool.Count; i += 2)
             {
-                // for now just pair them against each other
                 MatchMakerObject mmo1 = matchMakerPool.First.Value;
                 MatchMakerObject mmo2 =  matchMakerPool.First.Next.Value;
                 matchMakerPool.Remove(mmo1);
                 matchMakerPool.Remove(mmo2);
-                pairUsers(mmo1, mmo2);
+                PairUsers(mmo1, mmo2);
             }
             // for all users left increment their cycles waited
             foreach (MatchMakerObject mmo in matchMakerPool)
@@ -37,19 +36,17 @@ public class MatchMaker : MonoBehaviour
         }
     }
 
-    private void pairUsers(MatchMakerObject mmo1, MatchMakerObject mmo2)
+    private void PairUsers(MatchMakerObject mmo1, MatchMakerObject mmo2)
     {
-        Debug.LogError("Making match");
-        Server.Instance.pairUsers(mmo1, mmo2);
+        Server.Instance.PairUsers(mmo1, mmo2);
     }
 
-    public void queueMatchMakerObject(MatchMakerObject mmo)
+    public void QueueMatchMakerObject(MatchMakerObject mmo)
     {
         matchMakerPool.AddLast(mmo);
-        Debug.LogError("User added to mm queue");
     }
 
-    public void removeMatchMakerObject(MatchMakerObject mmo)
+    public void RemoveMatchMakerObject(MatchMakerObject mmo)
     {
         foreach (MatchMakerObject current in matchMakerPool)
         {
@@ -61,7 +58,7 @@ public class MatchMaker : MonoBehaviour
         }
     }
 
-    public static MatchMaker getInstance()
+    public static MatchMaker GetInstance()
     {
         if (instance != null)
             return instance;
@@ -72,8 +69,6 @@ public class MatchMaker : MonoBehaviour
 }
 
 // a way to uniquely identify users in mm pool
-// rating of person
-// amount of time waited
 public class MatchMakerObject : IComparable<MatchMakerObject>
 {
     public int connectionId;
@@ -84,7 +79,6 @@ public class MatchMakerObject : IComparable<MatchMakerObject>
 
     public int CompareTo(MatchMakerObject other)
     {
-        Debug.Log("Connection id 1 = " + connectionId + "\nConnection id 2 = " + other.connectionId);
         if (connectionId == other.connectionId)
             return 0;
         else

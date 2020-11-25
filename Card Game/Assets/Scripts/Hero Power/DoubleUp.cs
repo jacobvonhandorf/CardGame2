@@ -25,10 +25,10 @@ public class DoubleUp : HeroPower
         foreach (Card c in cardList)
         {
             Creature creature = (c as CreatureCard).creature;
-            creature.addAttack(creature.getAttack());
-            creature.addHealth(creature.getHealth());
-            c.setGoldCost(c.getGoldCost() * 2);
-            c.setManaCost(c.getManaCost() * 2);
+            creature.AttackStat *= 2;
+            creature.Health *= 2;
+            c.GoldCost *= 2;
+            c.ManaCost *= 2;
         }
     }
 }

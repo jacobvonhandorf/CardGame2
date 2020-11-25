@@ -9,10 +9,10 @@ public class AtlacEffects : CreatureEffects
     {
         if (e.newCardPile is Graveyard)
         {
-            creature.baseAttack += 3;
-            creature.baseHealth += 3;
-            creature.setHealth(creature.baseHealth);
-            creature.setAttack(creature.baseAttack);
+            creature.BaseAttack += 3;
+            creature.BaseHealth += 3;
+            creature.Health = creature.BaseHealth;
+            creature.AttackStat = creature.BaseAttack;
 
             card.moveToCardPile(card.owner.deck, card);
             card.owner.deck.shuffle();

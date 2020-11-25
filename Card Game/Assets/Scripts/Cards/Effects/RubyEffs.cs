@@ -19,8 +19,8 @@ public class RubyEffs : SpellEffects
     {
         SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(owner), delegate (Tile t)
         {
-            t.creature.addAttack(1);
-            t.creature.addHealth(1);
+            t.creature.AttackStat += 1;
+            t.creature.Health += 1;
         });
     }
 }

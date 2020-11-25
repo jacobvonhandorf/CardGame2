@@ -26,14 +26,14 @@ public class Deck : CardPile
         {
             card.owner = deckOwner;
             //(card as CreatureCard).creature.owner = deckOwner; Creatures don't know owner anymore
-            (card as CreatureCard).creature.controller = deckOwner;
+            (card as CreatureCard).creature.Controller = deckOwner;
             card.moveToCardPile(this, null);
         }
         foreach (Card card in GetComponentsInChildren<StructureCard>())
         {
             card.owner = deckOwner;
-            (card as StructureCard).structure.owner = deckOwner;
-            (card as StructureCard).structure.controller = deckOwner;
+            (card as StructureCard).structure.SourceCard.owner = deckOwner;
+            (card as StructureCard).structure.Controller = deckOwner;
             addCard(card);
             card.moveToCardPile(this, null);
         }

@@ -15,9 +15,12 @@ MonoBehaviour:
   id: 61
   cardName: Engineer
   art: {fileID: 21300000, guid: e4cee17eeb3d41045ac31ce39b8dfdbc, type: 3}
-  effectText: 'This creature starts with 3 build counters.\nAction, Remove one build
-    counter: Place your choice of a Market, Altar, or Tower on an adjacent tile.\n<b>Quick,
-    Untargetable'
+  effectText: 'This creature starts with 3 build counters.
+
+    Action, Remove one build counter: Place your choice of a Market, Altar, or Tower
+    on an adjacent tile.
+
+    <b>Quick, Untargetable'
   manaCost: 0
   goldCost: 2
   elementalIdentity: 4
