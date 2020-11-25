@@ -31,24 +31,10 @@ public static class AccountUtils
             return Regex.IsMatch(username, USERNAME_AND_DISCRIMINATOR_PATTERN);
         else
             return false;
-
     }
-    public static string GenerateRandom(int length)
+    public static string GenerateRandomString(int length)
     {
         Random r = new Random();
         return new string(Enumerable.Repeat(RANDOM_CHARS, length).Select(s => s[r.Next(s.Length)]).ToArray());
     }
-    /*
-    public static string Sha256FromString(string toEncrypt)
-    {
-        var message = Encoding.UTF8.GetBytes(toEncrypt);
-        SHA256Managed hashString = new SHA256Managed();
-
-        string hex = "";
-        var hashValue = hashString.ComputeHash(message);
-        foreach (byte x in hashValue)
-            hex += string.Format("{0:x2}", x);
-
-        return hex;
-    }*/
 }
