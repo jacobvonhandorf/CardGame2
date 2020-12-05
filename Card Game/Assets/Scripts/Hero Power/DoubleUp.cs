@@ -24,7 +24,7 @@ public class DoubleUp : HeroPower
     {
         foreach (Card c in cardList)
         {
-            Creature creature = (c as CreatureCard).creature;
+            Creature creature = (c as CreatureCard).Creature;
             creature.AttackStat *= 2;
             creature.Health *= 2;
             c.GoldCost *= 2;

@@ -21,7 +21,7 @@ public class Hand : CardPile
         foreach (Card c in cardList)
         {
             c.owner = handOwner;
-            c.moveToCardPile(this, null);
+            c.MoveToCardPile(this, null);
         }
         resetCardPositions();
 
@@ -54,7 +54,7 @@ public class Hand : CardPile
             c.positionInHand = newPosition;
 
             // change sorting layer
-            c.setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle, index * 10);
+            //c.setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle, index * 10);
 
             index++;
         }
@@ -71,7 +71,7 @@ public class Hand : CardPile
         }
         else if (GameManager.gameMode == GameManager.GameMode.online)
         {
-            if (c.owner != NetInterface.Get().getLocalPlayer())
+            if (c.owner != NetInterface.Get().localPlayer)
             {
                 c.removeGraphicsAndCollidersFromScene();
             }
@@ -82,10 +82,10 @@ public class Hand : CardPile
         }
         c.returnGraphicsAndCollidersToScene(); // Cards know when to show themselves
         if (c is CreatureCard)
-            (c as CreatureCard).swapToCard();
+            (c as CreatureCard).SwapToCard();
         else if (c is StructureCard)
             (c as StructureCard).swapToCard();
-        c.setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
+        //c.setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
         resetCardPositions();
         if (cardCountText != null)
             cardCountText.text = cardList.Count + "";

@@ -8,12 +8,12 @@ public class GemMercenaryCampEffs : StructureEffects
     {
         if (structure.Controller.GetActions() < 1)
         {
-            GameManager.Get().showToast("Not enough actions to activate this effect");
+            GameManager.Get().ShowToast("Not enough actions to activate this effect");
             return;
         }
         if (structure.Controller.hand.getAllCardsWithTag(Card.Tag.Gem).Count < 1)
         {
-            GameManager.Get().showToast("You must have a Gem in your hand to activate this effect");
+            GameManager.Get().ShowToast("You must have a Gem in your hand to activate this effect");
             return;
         }
 
@@ -22,10 +22,10 @@ public class GemMercenaryCampEffs : StructureEffects
         {
             selectedCard = cardList[0];
         });
-        QueueableCommand singleTileCmd = SingleTileTargetEffect.CreateCommand(structure.tile.getAdjacentTiles(), delegate (Tile t)
+        QueueableCommand singleTileCmd = SingleTileTargetEffect.CreateCommand(structure.Tile.getAdjacentTiles(), delegate (Tile t)
         {
             CreatureCard newCreature = GameManager.Get().createCardById((int)CardIds.Mercenary, structure.Controller) as CreatureCard;
-            GameManager.Get().createCreatureOnTile(newCreature.creature, t, structure.Controller);
+            GameManager.Get().createCreatureOnTile(newCreature.Creature, t, structure.Controller);
             structure.Controller.subtractActions(1);
         });
 

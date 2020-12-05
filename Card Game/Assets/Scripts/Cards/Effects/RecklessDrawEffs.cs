@@ -10,8 +10,8 @@ public class RecklessDrawEffs : SpellEffects
     {
         CardPicker.CreateAndQueue(card.owner.hand.getCardList(), 1, 1, "Select a card to discard", card.owner, delegate (List<Card> cards)
         {
-            cards[0].moveToCardPile(card.owner.graveyard, card);
-            card.owner.drawCards(2);
+            cards[0].MoveToCardPile(card.owner.graveyard, card);
+            card.owner.DrawCards(2);
         });
     }
 }

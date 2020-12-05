@@ -13,14 +13,14 @@ public class PityTheWeakEffs : SpellEffects
         {
             if (cardToAdd == null)
                 cardToAdd = c;
-            else if ((c as CreatureCard).creature.AttackStat < (cardToAdd as CreatureCard).creature.AttackStat)
+            else if ((c as CreatureCard).Creature.AttackStat < (cardToAdd as CreatureCard).Creature.AttackStat)
                 cardToAdd = c;
         }
         if (cardToAdd == null)
         {
-            Toaster.instance.doToast("No targets for " + card.cardName);
+            Toaster.instance.doToast("No targets for " + card.CardName);
             return;
         }
-        cardToAdd.moveToCardPile(owner.hand, card);
+        cardToAdd.MoveToCardPile(owner.hand, card);
     }
 }

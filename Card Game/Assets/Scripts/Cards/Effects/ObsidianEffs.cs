@@ -18,10 +18,10 @@ public class ObsidianEffs : SpellEffects
 
     private void doEffect()
     {
-        card.owner.drawCard();
-        SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(card.owner.oppositePlayer, false), delegate (Tile t)
+        card.owner.DrawCard();
+        SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(card.owner.OppositePlayer, false), delegate (Tile t)
         {
-            t.creature.takeDamage(damageAmount, card);
+            t.creature.TakeDamage(damageAmount, card);
         });
     }
 }

@@ -12,6 +12,6 @@ public class DiamondEffs : SpellEffects
     public override EventHandler<Card.AddedToCardPileArgs> onMoveToCardPile => delegate (object s, Card.AddedToCardPileArgs e)
     {
         if (e.newCardPile is Hand && e.source != null)
-            card.owner.drawCard();
+            card.owner.DrawCard();
     };
 }

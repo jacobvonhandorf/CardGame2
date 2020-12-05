@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public abstract class Card : MonoBehaviour
+public abstract class Card : MonoBehaviour, IHasCardTags, ICanBeCardViewed
 {
     #region Enums
     public enum Tag
@@ -33,29 +33,28 @@ public abstract class Card : MonoBehaviour
 
     // basic fields
     public List<Tag> Tags { get; } = new List<Tag>();
-    [HideInInspector] public string cardName;
     private bool hidden = true; // if true then all players can see the card
-    [SerializeField] protected CardPile currentCardPile; // card pile the card is currently in. Use moveToCardPile to change
-    public Player owner; // set this to readonly after done using TestCard
+    public CardPile CardPile { get; private set; }
+    [HideInInspector] public Player owner; // set this to readonly after done using TestCard
     public EmptyHandler onInitilization;
     [HideInInspector] public int cardId;
 
     // stats
-    public StatsContainer Stats { get; private set; }
-    public int GoldCost { get { return (int)Stats.Stats[StatType.GoldCost]; } set { Stats.setValue(StatType.GoldCost, value); } }
-    public int BaseGoldCost { get { return (int)Stats.Stats[StatType.BaseGoldCost]; } set { Stats.setValue(StatType.BaseGoldCost, value); } }
-    public int ManaCost { get { return (int)Stats.Stats[StatType.ManaCost]; } set { Stats.setValue(StatType.ManaCost, value); } }
-    public int BaseManaCost { get { return (int)Stats.Stats[StatType.BaseManaCost]; } set { Stats.setValue(StatType.BaseManaCost, value); } }
-    public string CardName { get { return (string)Stats.Stats[StatType.Name]; } set { Stats.setValue(StatType.Name, value); } }
-    public string TypeText { set { Stats.setValue(StatType.TypeText, value); } }
-    public string EffectText { set { Stats.setValue(StatType.EffectText, value); } }
-    public Sprite Art { set { Stats.setValue(StatType.Art, value); } }
+    public StatsContainer Stats { get; } = new StatsContainer();
+    public int GoldCost { get { return (int)Stats.StatList[StatType.GoldCost]; } set { Stats.SetValue(StatType.GoldCost, value); } }
+    public int BaseGoldCost { get { return (int)Stats.StatList[StatType.BaseGoldCost]; } set { Stats.SetValue(StatType.BaseGoldCost, value); } }
+    public int ManaCost { get { return (int)Stats.StatList[StatType.ManaCost]; } set { Stats.SetValue(StatType.ManaCost, value); } }
+    public int BaseManaCost { get { return (int)Stats.StatList[StatType.BaseManaCost]; } set { Stats.SetValue(StatType.BaseManaCost, value); } }
+    public string CardName { get { return (string)Stats.StatList[StatType.Name]; } set { Stats.SetValue(StatType.Name, value); } }
+    public string TypeText { set { Stats.SetValue(StatType.TypeText, value); } }
+    public string EffectText { get { return (string)Stats.StatList[StatType.EffectText]; } set { Stats.SetValue(StatType.EffectText, value); } }
+    public Sprite Art { get { return (Sprite)Stats.StatList[StatType.Art]; } set { Stats.SetValue(StatType.Art, value); } }
+    public ElementIdentity ElementalId { get { return Stats.GetValue<ElementIdentity>(StatType.ElementalId); } set { Stats.SetValue(StatType.ElementalId, value); } }
     public int TotalCost { get { return GoldCost + ManaCost; } }
-    public ElementIdentity ElementalId { get { return Stats.getValue<ElementIdentity>(StatType.ElementalId); } set { Stats.setValue(StatType.ElementalId, value); } }
 
     // graphics
-    [SerializeField] public CardStatsGetter cardStatsScript;
-    protected SpriteRenderer[] sprites; // all sprites so card alpha can be changed all at once
+    public CardVisual CardVisuals { get { return cardVisuals; } }
+    [SerializeField] protected CardVisual cardVisuals;
     protected TextMeshPro[] tmps; // all text objects for this card
     [HideInInspector] public bool isBeingDragged = false;
     [HideInInspector] public bool positionLocked = false;
@@ -88,7 +87,6 @@ public abstract class Card : MonoBehaviour
     }
     #endregion
 
-    // Start is called before the first frame update
     protected virtual void Start()
     {
         positionInHand = transform.position;
@@ -97,23 +95,19 @@ public abstract class Card : MonoBehaviour
     {
         viewersDisplayingThisCard = new HashSet<CardViewer>();
 
-        sprites = GetComponentsInChildren<SpriteRenderer>();
         tmps = GetComponentsInChildren<TextMeshPro>();
-        setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
+        //setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
         effectGraphic = EffectGraphic.NewEffectGraphic(this);
-        TransformManager = GetComponent<TransformManager>();
-        cardStatsScript = GetComponent<CardStatsGetter>();
-        //cardStatsScript.setCardCosts(this);
-        Stats = GetComponentInChildren<StatsContainer>();
-        statChangePropogator.StatsContainer = Stats;
-        Stats.addType(StatType.BaseGoldCost);
-        Stats.addType(StatType.GoldCost);
-        Stats.addType(StatType.BaseManaCost);
-        Stats.addType(StatType.ManaCost);
+        TransformManager = GetComponentInChildren<TransformManager>();
+        statChangePropogator.Source = Stats;
+        Stats.AddType(StatType.BaseGoldCost);
+        Stats.AddType(StatType.GoldCost);
+        Stats.AddType(StatType.BaseManaCost);
+        Stats.AddType(StatType.ManaCost);
     }
 
     // returns true if this card is the type passed to it
-    public bool isType(CardType type) => getCardType().Equals(type);
+    public bool IsType(CardType type) => getCardType().Equals(type);
 
     /*
      * makes it so this card is only visible if it normally is
@@ -130,36 +124,35 @@ public abstract class Card : MonoBehaviour
         hidden = false;
     }
 
-    public abstract void initialize();
+    public abstract void Initialize();
 
     // move card to a pile and remove it from the old one
-    public void moveToCardPile(CardPile newPile, Card source)
+    public void MoveToCardPile(CardPile newPile, Card source)
     {
-        actualMove(newPile, source);
-        NetInterface.Get().syncMoveCardToPile(this, newPile, source);
+        ActualMove(newPile, source);
+        NetInterface.Get().SyncMoveCardToPile(this, newPile, source);
     }
 
-    public void syncCardMovement(CardPile newPile, Card source)
+    public void SyncCardMovement(CardPile newPile, Card source)
     {
-        actualMove(newPile, source);
+        ActualMove(newPile, source);
     }
 
-    private void actualMove(CardPile newPile, Card source)
+    private void ActualMove(CardPile newPile, Card source)
     {
-        if (currentCardPile != null)
+        if (CardPile != null)
         {
-            if (newPile == currentCardPile) // if we're already in the new pile then do nothing
+            if (newPile == CardPile) // if we're already in the new pile then do nothing
                 return;
-            currentCardPile.removeCard(this);
+            CardPile.removeCard(this);
         }
-        CardPile previousPile = currentCardPile;
-        currentCardPile = newPile;
+        CardPile previousPile = CardPile;
+        CardPile = newPile;
 
         newPile.addCard(this);
         TriggerAddedToCardPileEffects(this, new AddedToCardPileArgs(previousPile, newPile, source));
     }
 
-    public CardPile getCardPile() => currentCardPile;
 
     #region HoveringEffects
     private bool hovered = false;
@@ -168,7 +161,7 @@ public abstract class Card : MonoBehaviour
     {
         if (!enabled)
             return;
-        GameManager.Get().getCardViewer().setCard(this);
+        GameManager.Get().getCardViewer().SetCard(this);
 
         // also move card up a bit
         Vector3 oldPosition = positionInHand;
@@ -176,7 +169,7 @@ public abstract class Card : MonoBehaviour
         moveTo(newPosition);
 
         hovered = true;
-        StartCoroutine(checkHoverForTooltips());
+        StartCoroutine(CheckHoverForTooltips());
     }
     private const float hoverOffset = .7f;
     // move card back down when it is no longer being hovered
@@ -187,12 +180,12 @@ public abstract class Card : MonoBehaviour
         moveTo(positionInHand);
         hovered = false;
         foreach (CardViewer cv in viewersDisplayingThisCard)
-            cv.clearToolTips();
+            cv.ClearToolTips();
     }
     private void OnDisable()
     {
         foreach (CardViewer cv in viewersDisplayingThisCard)
-            cv.clearToolTips();
+            cv.ClearToolTips();
     }
     #endregion
     #region ClickAndDrag
@@ -212,18 +205,18 @@ public abstract class Card : MonoBehaviour
         offset = transform.position -
             Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.0f));
         Board.instance.setAllTilesToDefault();
-        NetInterface.Get().getLocalPlayer().heldCreature = null;
+        NetInterface.Get().localPlayer.heldCreature = null;
 
-        foreach (Tile tile in legalTargetTiles)
+        foreach (Tile tile in LegalTargetTiles)
         {
             tile.setActive(true);
         }
 
-        setSpritesToSortingLayer(SpriteLayers.CardBeingDragged);
+        //setSpritesToSortingLayer(SpriteLayers.CardBeingDragged);
         // clear tooltips
         foreach (CardViewer cv in viewersDisplayingThisCard)
         {
-            cv.clearToolTips();
+            cv.ClearToolTips();
         }
         TransformManager.clearQueue();
         TransformManager.Lock();
@@ -246,11 +239,11 @@ public abstract class Card : MonoBehaviour
         Tile aboveTile = getTileMouseIsOver();
         if (aboveTile != null)
         {
-            setSpriteAlpha(.5f);
+            //setSpriteAlpha(.5f);
         }
         else
         {
-            setSpriteAlpha(1f);
+            //setSpriteAlpha(1f);
         }
         TransformManager.Lock();
     }
@@ -266,20 +259,20 @@ public abstract class Card : MonoBehaviour
         if (!isBeingDragged) // if drag was cancelled
             return;
         isBeingDragged = false;
-        setSpriteAlpha(1f);
-        setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
+        //setSpriteAlpha(1f);
+        //setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
 
         TransformManager.UnLock();
         // if card is above a Tile then play it
         Tile tile = getTileMouseIsOver();
         if (tile != null)
         {
-            if (legalTargetTiles.Contains(tile))
+            if (LegalTargetTiles.Contains(tile))
             {
                 //Debug.Log("Attempting to play card");
-                if (canBePlayed())
+                if (CanBePlayed())
                 {
-                    payCosts(owner);
+                    PayCosts(owner);
                     switch (getCardType())
                     {
                         case CardType.Spell:
@@ -292,11 +285,11 @@ public abstract class Card : MonoBehaviour
                             owner.numStructuresThisTurn++;
                             break;
                     }
-                    play(tile);
+                    Play(tile);
                 }
                 else
                 {
-                    GameManager.Get().showToast("You can't play this card right now");
+                    GameManager.Get().ShowToast("You can't play this card right now");
                     moveTo(positionInHand);
                 }
             }
@@ -313,23 +306,14 @@ public abstract class Card : MonoBehaviour
         if (owner.isLocked() || !isBeingDragged)
             return;
         isBeingDragged = false;
-        setSpriteAlpha(1f);
-        setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
+        //setSpriteAlpha(1f);
+        //setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
         moveTo(positionInHand);
         
         Board.instance.setAllTilesToDefault();
         TransformManager.UnLock();
     }
     // change the alpha for all sprites related to this card
-    private void setSpriteAlpha(float value)
-    {
-        Color tmp = sprites[0].color;
-        tmp.a = value;
-        foreach (SpriteRenderer image in sprites)
-        {
-            image.color = tmp;
-        }
-    }
     private Tile getTileMouseIsOver()
     {
         Vector2 origin = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x,
@@ -374,7 +358,7 @@ public abstract class Card : MonoBehaviour
         if (GameManager.gameMode == GameManager.GameMode.online)
         {
             // if card is in hand and the owner is not the local player then don't do anything
-            if (currentCardPile is Hand && owner != NetInterface.Get().getLocalPlayer())
+            if (CardPile is Hand && owner != NetInterface.Get().localPlayer)
             {
                 return;
             }
@@ -398,66 +382,21 @@ public abstract class Card : MonoBehaviour
         TransformManager.moveToImmediate(ts);
     }
     #endregion
-    #region Sprites
-    public void setSpritesToSortingLayer(SpriteLayers layer)
-    {
-        foreach (SpriteRenderer spriteRenderer in sprites)
-        {
-            spriteRenderer.sortingLayerName = layer.Value;
-        }
-
-        foreach (TextMeshPro t in tmps)
-        {
-            t.sortingLayerID = SortingLayer.NameToID(layer.Value);
-        }
-    }
-    public void setSpritesToSortingLayer(SpriteLayers layer, int orderInLayer)
-    {
-        setSpritesToSortingLayer(layer);
-        foreach (SpriteRenderer spriteRenderer in sprites)
-        {
-            spriteRenderer.sortingOrder = orderInLayer;
-        }
-
-        foreach (TextMeshPro t in tmps)
-        {
-            t.sortingOrder = orderInLayer;
-        }
-
-        // move card art below icons
-        cardStatsScript.getArtSprite().sortingOrder = orderInLayer - 1;
-        // move background below all other sprites
-        cardStatsScript.getBackgroundSprite().sortingOrder = orderInLayer - 2;
-    }
-    public void setSpriteMaskInteraction(SpriteMaskInteraction value)
-    {
-        foreach(SpriteRenderer sprite in sprites)
-        {
-            sprite.maskInteraction = value;
-        }
-    }
-    public void setSpriteColor(Color color)
-    {
-        foreach (SpriteRenderer sprite in sprites)
-        {
-            sprite.color = color;
-        }
-    }
-    #endregion
     #region CardViewer
-    public void addToCardViewer(CardViewer viewer)
+    public void OnAddedToViewer(CardViewer cardViewer)
     {
-        viewersDisplayingThisCard.Add(viewer);
-        cardStatsScript.setCardViewer(viewer);
     }
-    public void removeFromCardViewer(CardViewer viewer)
+
+    public void OnRemovedFromViewer(CardViewer cardViewer)
     {
-        if (!viewersDisplayingThisCard.Remove(viewer))
-            Debug.Log("Attempting to remove card from viewer it hasn't been registered on");
     }
+
+    public abstract List<Tile> LegalTargetTiles { get; }
+
+    public IHaveReadableStats ReadableStats => Stats;
     #endregion
 
-    public bool ownerCanPayCosts()
+    public bool OwnerCanPayCosts()
     {
         if (GoldCost > owner.getGold())
             return false;
@@ -465,21 +404,13 @@ public abstract class Card : MonoBehaviour
             return false;
         return true;
     }
-    private void payCosts(Player player)
+    private void PayCosts(Player player)
     {
-        player.addGold(-GoldCost);
-        player.addMana(-ManaCost);
+        player.addGold(-Mathf.Clamp(GoldCost, 0, 999999));
+        player.addMana(-Mathf.Clamp(ManaCost, 0, 999999));
     }
 
     #region GettersAndSetters
-    public string getCardName()
-    {
-        return cardStatsScript.getCardName();
-    }
-    public string getEffectText()
-    {
-        return cardStatsScript.getEffectText();
-    }
     public virtual void resetToBaseStats()
     {
         GoldCost = BaseGoldCost;
@@ -490,25 +421,24 @@ public abstract class Card : MonoBehaviour
         GoldCost = BaseGoldCost;
         ManaCost = BaseManaCost;
     }
-    public void setElementIdentity(ElementIdentity eId) { cardStatsScript.setElementIdentity(eId); }
     #endregion
     #region Keyword
     private List<Keyword> keywordList = new List<Keyword>();
-    public void addKeyword(Keyword keyword)
+    public void AddKeyword(Keyword keyword)
     {
         keywordList.Add(keyword);
         toolTipInfos.Add(KeywordData.getData(keyword).info);
     }
-    public void removeKeyword(Keyword keyword)
+    public void RemoveKeyword(Keyword keyword)
     {
         keywordList.Remove(keyword);
         toolTipInfos.Remove(KeywordData.getData(keyword).info);
     }
-    public bool hasKeyword(Keyword keyword) => keywordList.Contains(keyword);
+    public bool HasKeyword(Keyword keyword) => keywordList.Contains(keyword);
     public ReadOnlyCollection<Keyword> getKeywordList() => keywordList.AsReadOnly();
     [SerializeField] private float hoverTimeForToolTips = .5f;
     private float timePassed = 0;
-    IEnumerator checkHoverForTooltips()
+    IEnumerator CheckHoverForTooltips()
     {
         while (timePassed < hoverTimeForToolTips)
         {
@@ -526,7 +456,7 @@ public abstract class Card : MonoBehaviour
         // if we get here then enough time has passed so tell cardviewers to display tooltips
         foreach (CardViewer viewer in viewersDisplayingThisCard)
         {
-            viewer.showToolTips(toolTipInfos);
+            viewer.ShowToolTips(toolTipInfos);
         }
         yield return null;
     }
@@ -535,8 +465,8 @@ public abstract class Card : MonoBehaviour
     #region OverrideMethods
     // ABSTRACT METHODS
     public abstract CardType getCardType();
-    public abstract void play(Tile t);
-    public abstract bool canBePlayed();
-    public abstract List<Tile> legalTargetTiles { get; }
+    public abstract void Play(Tile t);
+    public abstract bool CanBePlayed();
+
     #endregion
 }

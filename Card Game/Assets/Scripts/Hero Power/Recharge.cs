@@ -47,7 +47,7 @@ public class Recharge : HeroPower
     {
         foreach (Card c in cardList)
         {
-            c.moveToCardPile(controller.deck, null);
+            c.MoveToCardPile(controller.deck, null);
         }
         controller.deck.shuffle();
 
@@ -57,7 +57,7 @@ public class Recharge : HeroPower
         controller.addMana(manaGain);
         controller.addGold(goldGain);
 
-        controller.drawCards(cardToDraw);
+        controller.DrawCards(cardToDraw);
     }
 
     public void receiveXPick(int value)

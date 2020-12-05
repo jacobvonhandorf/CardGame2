@@ -42,11 +42,11 @@ public class XPickerBox : MonoBehaviour
             this.handler = handler;
         }
 
-        public override bool isFinished => forceFinished || xPicker.finished;
+        public override bool IsFinished => forceFinished || xPicker.finished;
 
-        public override void execute()
+        public override void Execute()
         {
-            if (owner != null && NetInterface.Get().getLocalPlayer() != owner)
+            if (owner != null && NetInterface.Get().localPlayer != owner)
             {
                 forceFinished = true;
                 return;

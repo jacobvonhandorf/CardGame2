@@ -26,8 +26,8 @@ public class Deck : CardPile
         {
             card.owner = deckOwner;
             //(card as CreatureCard).creature.owner = deckOwner; Creatures don't know owner anymore
-            (card as CreatureCard).creature.Controller = deckOwner;
-            card.moveToCardPile(this, null);
+            (card as CreatureCard).Creature.Controller = deckOwner;
+            card.MoveToCardPile(this, null);
         }
         foreach (Card card in GetComponentsInChildren<StructureCard>())
         {
@@ -35,13 +35,13 @@ public class Deck : CardPile
             (card as StructureCard).structure.SourceCard.owner = deckOwner;
             (card as StructureCard).structure.Controller = deckOwner;
             addCard(card);
-            card.moveToCardPile(this, null);
+            card.MoveToCardPile(this, null);
         }
         foreach (Card card in GetComponentsInChildren<SpellCard>())
         {
             card.owner = deckOwner;
             addCard(card);
-            card.moveToCardPile(this, null);
+            card.MoveToCardPile(this, null);
         }
         shuffle();
     }
@@ -67,7 +67,7 @@ public class Deck : CardPile
         {
             c.hide();
         }
-        NetInterface.Get().syncDeckOrder(this);
+        NetInterface.Get().SyncDeckOrder(this);
     }
     /*
     public Card draw()

@@ -22,7 +22,7 @@ public class DeckUtilities : MonoBehaviour
 
             for (int i = 0; i < amount; i++)
             {
-                rs.instantiateCardById(id).moveToCardPile(deck, null);
+                rs.InstantiateCardById(id).MoveToCardPile(deck, null);
             }
         }
         return deck;
@@ -62,7 +62,7 @@ public class DeckUtilities : MonoBehaviour
 
             for (int i = 0; i < amount; i++)
             {
-                returnList.Add(rs.instantiateCardById(id));
+                returnList.Add(rs.InstantiateCardById(id));
             }
         }
 

@@ -6,12 +6,14 @@ using UnityEngine;
 
 public class StructureCard : Card
 {
-    public Structure structure;
+    [HideInInspector] public Structure structure;
     public bool isStructure;
     [SerializeField] private CounterController counterCountroller;
-    public override List<Tile> legalTargetTiles => GameManager.Get().getLegalStructurePlacementTiles(owner);
+    [SerializeField] private PermanentCardVisual cardVisual;
+
+    public new PermanentCardVisual CardVisuals { get { return (PermanentCardVisual)cardVisuals; } }
+    public override List<Tile> LegalTargetTiles => GameManager.Get().getLegalStructurePlacementTiles(owner);
     public override CardType getCardType() => CardType.Structure;
-    //public override int cardId => structure.cardId;
 
     protected override void Awake()
     {
@@ -19,13 +21,13 @@ public class StructureCard : Card
         structure = GetComponent<Structure>();
     }
 
-    public override void initialize()
+    public override void Initialize()
     {
         onInitilization?.Invoke();
         onInitilization = null;
     }
 
-    public override void play(Tile t)
+    public override void Play(Tile t)
     {
         GameManager.Get().createStructureOnTile(structure, t, owner, this);
         owner.hand.resetCardPositions();
@@ -34,7 +36,7 @@ public class StructureCard : Card
     public void swapToStructure(Tile onTile)
     {
         // change structure so that it is rendered beneath cards in hand
-        setSpritesToSortingLayer(SpriteLayers.Creature);
+        //setSpritesToSortingLayer(SpriteLayers.Creature);
 
         // disable card functionality
         enabled = false;
@@ -46,7 +48,7 @@ public class StructureCard : Card
         //structure.initialize();
 
         // resize
-        (cardStatsScript as StructureStatsGetter).swapToStructure(onTile);
+        cardVisual.ResizeToPermanent(onTile.transform.position);
 
         isStructure = true;
     }
@@ -60,11 +62,10 @@ public class StructureCard : Card
         structure.enabled = false;
 
         // resize
-        if (isStructure)
-            (cardStatsScript as StructureStatsGetter).swapToCard();
+        cardVisual.ResizeToCard();
 
         // set tile back to null because no longer on field
-        structure.tile = null;
+        structure.Tile = null;
 
         isStructure = false;
     }
@@ -82,12 +83,12 @@ public class StructureCard : Card
     }
 
     // returns true if the card can be played right now
-    public override bool canBePlayed()
+    public override bool CanBePlayed()
     {
         if (!structure.additionalCanBePlayedChecks())
             return false;
         // check if the player can pay the costs
-        if (!ownerCanPayCosts())
+        if (!OwnerCanPayCosts())
             return false;
         else
             return true;

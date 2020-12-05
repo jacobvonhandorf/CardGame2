@@ -12,14 +12,15 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters
     [SerializeField] private CreatureStatsGetter statsScript;
     public string cardName;
     public int cardId { get; set; }
+    public PermanentCardVisual CardVisual { get { return (PermanentCardVisual)SourceCard.CardVisuals; } }
 
     // synced variables.
-    public int BaseAttack { get { return (int)Stats.Stats[StatType.BaseAttack]; } set { Stats.setValue(StatType.BaseAttack, value); needToSync = true; } }
-    public int BaseRange { get { return (int)Stats.Stats[StatType.BaseRange]; } set { Stats.setValue(StatType.BaseRange, value); needToSync = true; } }
-    public int BaseMovement { get { return (int)Stats.Stats[StatType.BaseMovement]; } set { Stats.setValue(StatType.BaseMovement, value); needToSync = true; } }
-    public int AttackStat { get { return (int)Stats.Stats[StatType.Attack]; } set { Stats.setValue(StatType.Attack, value); needToSync = true; } }
-    public int Range { get { return (int)Stats.Stats[StatType.Range]; } set { Stats.setValue(StatType.Range, value); needToSync = true; } }
-    public int Movement { get { return (int)Stats.Stats[StatType.Movement]; } set { Stats.setValue(StatType.Movement, value); needToSync = true; } }
+    public int BaseAttack { get { return (int)Stats.StatList[StatType.BaseAttack]; } set { Stats.SetValue(StatType.BaseAttack, value); needToSync = true; } }
+    public int BaseRange { get { return (int)Stats.StatList[StatType.BaseRange]; } set { Stats.SetValue(StatType.BaseRange, value); needToSync = true; } }
+    public int BaseMovement { get { return (int)Stats.StatList[StatType.BaseMovement]; } set { Stats.SetValue(StatType.BaseMovement, value); needToSync = true; } }
+    public int AttackStat { get { return (int)Stats.StatList[StatType.Attack]; } set { Stats.SetValue(StatType.Attack, value); needToSync = true; } }
+    public int Range { get { return (int)Stats.StatList[StatType.Range]; } set { Stats.SetValue(StatType.Range, value); needToSync = true; } }
+    public int Movement { get { return (int)Stats.StatList[StatType.Movement]; } set { Stats.SetValue(StatType.Movement, value); needToSync = true; } }
 
     public bool hasMovedThisTurn = false;
     public bool hasDoneActionThisTurn = false; // action is attack or effect
@@ -47,24 +48,24 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters
     {
         base.Awake();
         statsScript = GetComponent<CreatureStatsGetter>();
-        Stats.addType(StatType.Attack);
-        Stats.addType(StatType.BaseAttack);
-        Stats.addType(StatType.BaseHealth);
-        Stats.addType(StatType.BaseMovement);
-        Stats.addType(StatType.BaseRange);
-        Stats.addType(StatType.BaseRange);
-        Stats.addType(StatType.Health);
-        Stats.addType(StatType.Movement);
-        Stats.addType(StatType.Range);
+        Stats.AddType(StatType.Attack);
+        Stats.AddType(StatType.BaseAttack);
+        Stats.AddType(StatType.BaseHealth);
+        Stats.AddType(StatType.BaseMovement);
+        Stats.AddType(StatType.BaseRange);
+        Stats.AddType(StatType.BaseRange);
+        Stats.AddType(StatType.Health);
+        Stats.AddType(StatType.Movement);
+        Stats.AddType(StatType.Range);
     }
 
-    public void resetToBaseStats()
+    public void ResetToBaseStats()
     {
         // only owner is resposible for resetting to base stats
         // might need to write a thing to request a base stat change depending on effects added in future
         // but for now this should not be called by card scripts
             // ex: reset a creature to their base stats. The owner would need to know they need to reset because the other player isn't allowed
-        if (GameManager.gameMode == GameManager.GameMode.online && NetInterface.Get().gameSetupComplete && NetInterface.Get().getLocalPlayer() != SourceCard.owner)
+        if (GameManager.gameMode == GameManager.GameMode.online && NetInterface.Get().gameSetupComplete && NetInterface.Get().localPlayer != SourceCard.owner)
         {
             return;
         }
@@ -76,12 +77,12 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters
 
     // usually used for when a creature is removed from the board
     // both clients know how to do this so no need for syncing
-    public void resetToBaseStatsWithoutSyncing()
+    public void ResetToBaseStatsWithoutSyncing()
     {
         if (GameManager.gameMode != GameManager.GameMode.online)
         {
             Debug.LogError("Do not call this unless gameMode is online");
-            resetToBaseStats(); // go ahead and call normal reset to base just to stop things from breaking
+            ResetToBaseStats(); // go ahead and call normal reset to base just to stop things from breaking
         }
         
         Health = BaseHealth;
@@ -90,20 +91,20 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters
         Movement = BaseMovement;
         //statsScript.updateAllStats(this);
         if (Counters != null) // counter controller will be null before awake is called (when card is created)
-            Counters.clear();
+            Counters.Clear();
     }
 
     #region takeDamageAndAttacking
-    public void takeDamage(int damage, Card source)
+    public void TakeDamage(int damage, Card source)
     {
         if (damage == 0) // dealing 0 damage is illegal :)
             return;
 
         // check for ward on adjacent allies
-        List<Tile> adjacentTiles = tile.getAdjacentTiles();
+        List<Tile> adjacentTiles = Tile.getAdjacentTiles();
         foreach(Tile t in adjacentTiles)
         {
-            if (t.creature != null && t.creature.hasKeyword(Keyword.Ward))
+            if (t.creature != null && t.creature.HasKeyword(Keyword.Ward))
             {
                 t.creature.takeWardDamage(damage);
                 return;
@@ -111,13 +112,13 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters
         }
 
         // subtract armored damage
-        if (hasKeyword(Keyword.Armored1))
+        if (HasKeyword(Keyword.Armored1))
             damage--;
         takeDamageActual(damage, source);
     }
     public void takeWardDamage(int damage)
     {
-        if (hasKeyword(Keyword.Armored1))
+        if (HasKeyword(Keyword.Armored1))
             damage--;
         takeDamageActual(damage, null);
     }
@@ -151,27 +152,27 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters
     private void AttackPart2(Damageable defender, int attackRoll)
     {
         // only trigger effects if the local player is the owner
-        if (NetInterface.Get().getLocalPlayer() == Controller)
+        if (NetInterface.Get().localPlayer == Controller)
             TriggerOnAttackEvents(this, new OnAttackArgs() { target = defender });
-        if (NetInterface.Get().getLocalPlayer() == defender.Controller)
+        if (NetInterface.Get().localPlayer == defender.Controller)
             defender.TriggerOnDefendEvents(this, new OnDefendArgs() { attacker = this });
 
         // perform damage calc
-        defender.takeDamage(attackRoll, SourceCard); // do damage text in takeDamage()
-        takeDamage(KeywordUtils.getDefenderValue(defender.SourceCard), SourceCard);
+        defender.TakeDamage(attackRoll, SourceCard); // do damage text in takeDamage()
+        TakeDamage(KeywordUtils.getDefenderValue(defender.SourceCard), SourceCard);
 
         // gray out creature to show it has already acted
-        updateHasActedIndicators();
+        UpdateHasActedIndicators();
 
         // trigger after combat stuff
         // poison
-        if (hasKeyword(Keyword.Poison) && defender.SourceCard is CreatureCard)
-            GameManager.Get().kill((defender.SourceCard as CreatureCard).creature);
+        if (HasKeyword(Keyword.Poison) && defender.SourceCard is CreatureCard)
+            GameManager.Get().kill((defender.SourceCard as CreatureCard).Creature);
     }
     private IEnumerator attackAnimation(Damageable defender, int attackRoll)
     {
         Vector3 direction = transform.position - defender.transform.position;
-        Vector2 defenderCoords = defender.getCoordinates();
+        Vector2 defenderCoords = defender.Coordinates;
         Vector3 defenderPosition = defender.transform.position;
         direction.Normalize();
         float attackAnimationSpeedAway = 10f;
@@ -196,11 +197,11 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters
 
         // kick off particle effect
         Vector3 rotation;
-        if (tile.x > defenderCoords.x)
+        if (Tile.x > defenderCoords.x)
             rotation = left;
-        else if (tile.x < defenderCoords.x)
+        else if (Tile.x < defenderCoords.x)
             rotation = right;
-        else if (tile.y > defenderCoords.y)
+        else if (Tile.y > defenderCoords.y)
             rotation = down;
         else
             rotation = up;
@@ -220,7 +221,7 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters
     public void forceMove(Tile tile, Card source)
     {
         actualMove(tile);
-        NetInterface.Get().syncCreatureCoordinates(this, this.tile.x, this.tile.y, source);
+        NetInterface.Get().SyncCreatureCoordinates(this, this.Tile.x, this.Tile.y, source);
         GameEvents.TriggerMovedEvents(this, new GameEvents.CreatureMovedArgs() { creature = this, source = source });
     }
     public void forceMove(int x, int y, Card source)
@@ -231,15 +232,15 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters
     // Used to have a creature move itself
     public void move(Tile tile)
     {
-        if (tile == this.tile) // if the new tile is the same as the tile we're on, no moving is done
+        if (tile == this.Tile) // if the new tile is the same as the tile we're on, no moving is done
             return;
         hasMovedThisTurn = true;
         if (!hasDoneActionThisTurn)
             Controller.subtractActions(1);
         actualMove(tile);
-        NetInterface.Get().syncCreatureCoordinates(this, this.tile.x, this.tile.y, null);
+        NetInterface.Get().SyncCreatureCoordinates(this, this.Tile.x, this.Tile.y, null);
         GameEvents.TriggerMovedEvents(this, new GameEvents.CreatureMovedArgs() { source = null, creature = this });
-        updateHasActedIndicators();
+        UpdateHasActedIndicators();
     }
     public void move(int x, int y)
     {
@@ -249,10 +250,10 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters
     // will move a creature to a tile and nothing else
     private void actualMove(Tile tile)
     {
-        this.tile.removeCreature();
+        this.Tile.removeCreature();
         tile.creature = this;
         setCoordinates(tile);
-        this.tile = tile;
+        this.Tile = tile;
     }
     private void setCoordinates(Tile tile)
     {
@@ -262,7 +263,7 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters
     }
     #endregion
 
-    public void updateHasActedIndicators()
+    public void UpdateHasActedIndicators()
     {
         if (hasDoneActionThisTurn || hasMovedThisTurn)
             setSpriteColor(new Color(.5f, .5f, .5f));
@@ -271,14 +272,14 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters
         statsScript.updateHasActedIndicator(hasDoneActionThisTurn, hasMovedThisTurn);
     }
 
-    public void resetForNewTurn()
+    public void ResetForNewTurn()
     {
         hasMovedThisTurn = false;
         hasDoneActionThisTurn = false;
         // change sprite color back to normal
-        updateHasActedIndicators();
+        UpdateHasActedIndicators();
         // update border
-        updateFriendOrFoeBorder();
+        UpdateFriendOrFoeBorder();
     }
     public void addToCardViewer(CardViewer viewer)
     {
@@ -286,20 +287,22 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters
     }
     public void setSpriteColor(Color color)
     {
-        SourceCard.setSpriteColor(color);
+        Debug.LogError("Implement set sprite color");
+        //SourceCard.setSpriteColor(color);
     }
 
-    public void bounce(Card source)
+    public void Bounce(Card source)
     {
         hasDoneActionThisTurn = false;
         hasMovedThisTurn = false;
-        updateHasActedIndicators();
+        UpdateHasActedIndicators();
         GameManager.Get().allCreatures.Remove(this);
-        tile.creature = null;
-        statsScript.swapToCard();
+        Tile.creature = null;
+        Debug.Log("Need to add swapping to card here");
+        //statsScript.swapToCard();
         setSpriteColor(Color.white); // reset sprite color in case card is greyed out
-        resetToBaseStats();
-        SourceCard.moveToCardPile(SourceCard.owner.hand, source);
+        ResetToBaseStats();
+        SourceCard.MoveToCardPile(SourceCard.owner.hand, source);
         onLeavesTheField();
         SourceCard.owner.hand.resetCardPositions();
     }
@@ -310,7 +313,7 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters
             return;
         if (GameManager.gameMode == GameManager.GameMode.online)
         {
-            if (Controller != NetInterface.Get().getLocalPlayer() || NetInterface.Get().getLocalPlayer().isLocked())
+            if (Controller != NetInterface.Get().localPlayer || NetInterface.Get().localPlayer.isLocked())
                 return;
         }
         else
@@ -330,7 +333,7 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters
             }
             else if (!hasMovedThisTurn && !hasDoneActionThisTurn)
             {
-                GameManager.Get().showToast("You do not have enough actions to use this unit");
+                GameManager.Get().ShowToast("You do not have enough actions to use this unit");
                 return;
             }
         }
@@ -363,7 +366,7 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters
         }
         else
         {
-            GameManager.Get().showToast("You can only use a creature once per turn");
+            GameManager.Get().ShowToast("You can only use a creature once per turn");
         }
     }
 
@@ -372,9 +375,9 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters
     {
         if (!enabled)
             return;
-        SourceCard.addToCardViewer(GameManager.Get().getCardViewer());
+        //SourceCard.RegisterToCardViewer(GameManager.Get().getCardViewer());
         hovered = true;
-        StartCoroutine(checkHoverForTooltips());
+        StartCoroutine(CheckHoverForTooltips());
     }
     private void OnMouseExit()
     {
@@ -382,62 +385,46 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters
             return;
         hovered = false;
         foreach (CardViewer cv in SourceCard.viewersDisplayingThisCard)
-            cv.clearToolTips();
+            cv.ClearToolTips();
     }
 
     // if you want to kill a creature do not call this. Call destroy creature in game manager
-    public void sendToGrave()
+    public void SendToGrave()
     {
-        resetToBaseStats();
-        SourceCard.moveToCardPile(SourceCard.owner.graveyard, null);
+        ResetToBaseStats();
+        SourceCard.MoveToCardPile(SourceCard.owner.graveyard, null);
         SourceCard.removeGraphicsAndCollidersFromScene();
     }
 
 
-    // Returns true if this card has the the tag passed to this method
-    public bool hasTag(Tag tag)
-    {
-        return SourceCard.Tags.Contains(tag);
-    }
-
-    // returns true if this card is the type passed to it
-    public bool isType(CardType type)
-    {
-        return SourceCard.isType(type);
-    }
-
-    public Vector2 getCoordinates()
-    {
-        return new Vector2(tile.x, tile.y);
-    }
-    public void updateFriendOrFoeBorder()
+    public void UpdateFriendOrFoeBorder()
     {
         if (GameManager.gameMode != GameManager.GameMode.online)
-            statsScript.setAsAlly(GameManager.Get().activePlayer == Controller);
+            CardVisual.SetIsAlly(GameManager.Get().activePlayer == Controller);
         else
-            statsScript.setAsAlly(NetInterface.Get().getLocalPlayer() == Controller);
+            CardVisual.SetIsAlly(NetInterface.Get().localPlayer == Controller);
     }
 
     #region NetworkSyncing
     // need seperate method for this so net messages don't create an infinite loop
-    public void recieveCreatureStatsFromNet(int atk, int batk, int hp, int bhp, int bmv, int brange, Player ctrl, int mv, int range)
+    public void RecieveCreatureStatsFromNet(int atk, int batk, int hp, int bhp, int bmv, int brange, Player ctrl, int mv, int range)
     {
-        setStatWithoutSyncing(StatType.Attack, atk);
-        setStatWithoutSyncing(StatType.BaseAttack, batk);
-        setStatWithoutSyncing(StatType.Health, hp);
-        setStatWithoutSyncing(StatType.BaseHealth, bhp);
-        setStatWithoutSyncing(StatType.BaseMovement, bmv);
-        setStatWithoutSyncing(StatType.BaseRange, brange);
-        setStatWithoutSyncing(StatType.Movement, mv);
-        setStatWithoutSyncing(StatType.Range, range);
+        SetStatWithoutSyncing(StatType.Attack, atk);
+        SetStatWithoutSyncing(StatType.BaseAttack, batk);
+        SetStatWithoutSyncing(StatType.Health, hp);
+        SetStatWithoutSyncing(StatType.BaseHealth, bhp);
+        SetStatWithoutSyncing(StatType.BaseMovement, bmv);
+        SetStatWithoutSyncing(StatType.BaseRange, brange);
+        SetStatWithoutSyncing(StatType.Movement, mv);
+        SetStatWithoutSyncing(StatType.Range, range);
         Controller = ctrl;
 
-        updateCardViewers();
+        //updateCardViewers();
     }
-    private void syncCreatureStats()
+    private void SyncCreatureStats()
     {
         // also sync stats in all related card viewers
-        updateCardViewers();
+        //updateCardViewers();
         needToSync = true;
     }
     #endregion
@@ -445,67 +432,45 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters
     {
         if (needToSync && NetInterface.Get().gameSetupComplete)
         {
-            NetInterface.Get().syncCreatureStats(this);
-            updateCardViewers();
+            NetInterface.Get().SyncCreatureStats(this);
+            //updateCardViewers();
             needToSync = false;
-        }
-    }
-
-    public void updateCardViewers()
-    {
-        List<CardViewer> tempList = new List<CardViewer>(); // need a temp list because we might end up removing from the original list
-        foreach (CardViewer cv in SourceCard.viewersDisplayingThisCard) { tempList.Add(cv); }
-        foreach (CardViewer cv in tempList)
-        {
-            if (cv != null) // make sure the card viewer hasn't been destroyed
-                cv.setCard(SourceCard);
-            else // if viewer has been destroyed remove it from the view for future use
-                SourceCard.viewersDisplayingThisCard.Remove(cv);
         }
     }
 
     #region Counters
     public void OnCountersAdded(CounterType counterType, int amount)
     {
-        syncCounters(counterType);
+        SyncCounters(counterType);
         TriggerOnCounterAddedEvents(this, new CounterAddedArgs() { counterKind = counterType});
     }
-    public void syncCounters(CounterType counterType)
+    public void SyncCounters(CounterType counterType)
     {
-        NetInterface.Get().syncCounterPlaced(SourceCard, counterType, Counters.amountOf(counterType));
+        NetInterface.Get().SyncCounterPlaced(SourceCard, counterType, Counters.AmountOf(counterType));
     }
     // used by net interface for syncing
-    public void recieveCountersPlaced(CounterType counterType, int newCounters)
+    public void RecieveCountersPlaced(CounterType counterType, int newCounters)
     {
-        int currentCounters = Counters.amountOf(counterType);
+        int currentCounters = Counters.AmountOf(counterType);
         if (currentCounters > newCounters)
-            Counters.remove(counterType, currentCounters - newCounters);
+            Counters.Remove(counterType, currentCounters - newCounters);
         else if (currentCounters < newCounters)
-            Counters.add(counterType, newCounters - currentCounters);
+            Counters.Add(counterType, newCounters - currentCounters);
         else
             Debug.Log("Trying to set counters to a value it's already set to. This shouldn't happen under normal circumstances");
     }
     #endregion
     #region KeywordAndToolTips
-    public void addKeyword(Keyword k)
-    {
-        SourceCard.addKeyword(k);
-    }
-    public void removeKeyword(Keyword k)
-    {
-        SourceCard.removeKeyword(k);
-    }
-    public bool hasKeyword(Keyword k)
-    {
-        return SourceCard.hasKeyword(k);
-    }
+    public void AddKeyword(Keyword k) => SourceCard.AddKeyword(k);
+    public void RemoveKeyword(Keyword k) => SourceCard.RemoveKeyword(k);
+    public bool HasKeyword(Keyword k) => SourceCard.HasKeyword(k);
     public ReadOnlyCollection<Keyword> getKeywordList()
     {
         return SourceCard.getKeywordList();
     }
     [SerializeField] private float hoverTimeForToolTips = .5f;
     private float timePassed = 0;
-    IEnumerator checkHoverForTooltips()
+    IEnumerator CheckHoverForTooltips()
     {
         while (timePassed < hoverTimeForToolTips)
         {
@@ -521,7 +486,7 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters
         {
             if (viewer != null)
             {
-                viewer.showToolTips(SourceCard.toolTipInfos);
+                viewer.ShowToolTips(SourceCard.toolTipInfos);
             }
         }
     }

@@ -12,7 +12,7 @@ public class DeckBuilderCardName : MonoBehaviour
     private void OnMouseOver()
     {
         CardViewer viewer = DeckBuilderDeck.instance.hoveredCardViewer;
-        viewer.setCard(cardId);
+        viewer.SetCard(cardId);
         Vector3 newPosition = transform.position;
         newPosition.x = X_OFFSET;
         if (newPosition.y < MIN_Y)
@@ -22,8 +22,8 @@ public class DeckBuilderCardName : MonoBehaviour
 
     private void OnMouseExit()
     {
-        if (DeckBuilderDeck.instance.hoveredCardViewer.sourceCardId == cardId)
-            DeckBuilderDeck.instance.hoveredCardViewer.gameObject.SetActive(false);
+        //if (DeckBuilderDeck.instance.hoveredCardViewer.SourceCardId == cardId)
+            //DeckBuilderDeck.instance.hoveredCardViewer.gameObject.SetActive(false);
     }
 
     private void OnMouseUpAsButton()
@@ -33,8 +33,8 @@ public class DeckBuilderCardName : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (DeckBuilderDeck.instance != null && DeckBuilderDeck.instance.hoveredCardViewer != null)
-            if (DeckBuilderDeck.instance.hoveredCardViewer.sourceCardId == cardId)
-                DeckBuilderDeck.instance.hoveredCardViewer.gameObject.SetActive(false);
+        //if (DeckBuilderDeck.instance != null && DeckBuilderDeck.instance.hoveredCardViewer != null)
+            //if (DeckBuilderDeck.instance.hoveredCardViewer.SourceCardId == cardId)
+                //DeckBuilderDeck.instance.hoveredCardViewer.gameObject.SetActive(false);
     }
 }

@@ -138,7 +138,7 @@ public class Tile : MonoBehaviour
     {
         Player playerWithCreature;
         if (GameManager.gameMode == GameManager.GameMode.online)
-            playerWithCreature = NetInterface.Get().getLocalPlayer();
+            playerWithCreature = NetInterface.Get().localPlayer;
         else
             playerWithCreature = GameManager.Get().activePlayer;
         Creature creatureToMove = playerWithCreature.heldCreature;

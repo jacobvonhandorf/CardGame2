@@ -26,7 +26,7 @@ public class CardPicker : MonoBehaviour, CanReceiveCardPick
     }
     private class CardPickerCmd : QueueableCommand
     {
-        public override bool isFinished => picker.isFinished() || forceFinished;
+        public override bool IsFinished => picker.isFinished() || forceFinished;
         private CardPicker picker;
         private bool forceFinished = false;
 
@@ -47,9 +47,9 @@ public class CardPicker : MonoBehaviour, CanReceiveCardPick
             this.owner = owner;
         }
 
-        public override void execute()
+        public override void Execute()
         {
-            if (owner != NetInterface.Get().getLocalPlayer())
+            if (owner != NetInterface.Get().localPlayer)
             {
                 forceFinished = true;
                 return;
@@ -57,7 +57,7 @@ public class CardPicker : MonoBehaviour, CanReceiveCardPick
             CardPicker cardPicker = Instantiate(GameManager.Get().cardPickerPrefab, new Vector3(0, 0, -1), Quaternion.identity);
             picker = cardPicker;
             cardPicker.setUp(pickableCards, handler, minCards, maxCards, headerText);
-            GameManager.Get().setPopUpGlassActive(true);
+            GameManager.Get().SetPopUpGlassActive(true);
         }
     }
     #endregion
@@ -135,7 +135,7 @@ public class CardPicker : MonoBehaviour, CanReceiveCardPick
         //cardListReceiver.receiveCardList(selectedCards);
         finished = true;
         //EffectsManager.Get().signalEffectFinished();
-        GameManager.Get().setPopUpGlassActive(false);
+        GameManager.Get().SetPopUpGlassActive(false);
         Destroy(gameObject);
     }
 

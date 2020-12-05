@@ -13,7 +13,7 @@ public class Player : MonoBehaviour
     public bool isActivePlayer = false;
     public bool canDraw = true;
     public Creature heldCreature; // If the player clicks a creature a reference to that creature is held here (so it can be moved or attacked with)
-    public Player oppositePlayer { get { return GameManager.Get().getOppositePlayer(this); } }
+    public Player OppositePlayer { get { return GameManager.Get().getOppositePlayer(this); } }
 
     public List<Creature> controlledCreatures = new List<Creature>();
     public List<Structure> controlledStructures = new List<Structure>();
@@ -54,39 +54,39 @@ public class Player : MonoBehaviour
         manaPerTurnText.text = "+" + manaPerTurn;
     }
 
-    public void drawCard()
+    public void DrawCard()
     {
         if (canDraw)
         {
             if (deck.getCardList().Count > 0)
             {
                 Card cardToAdd = deck.getTopCard();
-                cardToAdd.moveToCardPile(hand, null);
+                cardToAdd.MoveToCardPile(hand, null);
             }
             else
                 GameManager.Get().playerHasDrawnOutDeck(this);
         }
     }
 
-    public void drawCards(int amount)
+    public void DrawCards(int amount)
     {
         if (canDraw)
         {
             for (int i = 0; i < amount; i++)
-                drawCard();
+                DrawCard();
         }
         hand.resetCardPositions();
     }
 
-    public void makeLose()
+    public void MakeLose()
     {
         GameManager.Get().makePlayerLose(this);
     }
 
-    public bool hasCreatureWithTag(Card.Tag tag)
+    public bool HasCreatureWithTag(Card.Tag tag)
     {
         foreach (Creature c in GameManager.Get().getAllCreaturesControlledBy(this))
-            if (c.hasTag(tag))
+            if (c.HasTag(tag))
                 return true;
 
         return false;
@@ -181,7 +181,7 @@ public class Player : MonoBehaviour
         return GameManager.Get().getAllCreaturesControlledBy(this);
     }
 
-    public void syncStats(int gold, int gpTurn, int mana, int mpTurn, int actions, int apTurn)
+    public void SyncStats(int gold, int gpTurn, int mana, int mpTurn, int actions, int apTurn)
     {
         this.gold = gold;
         this.goldPerTurn = gpTurn;
@@ -272,7 +272,7 @@ public class Player : MonoBehaviour
         if (needToSyncStats && NetInterface.Get().gameSetupComplete)
         {
             needToSyncStats = false;
-            NetInterface.Get().syncPlayerStats(this);
+            NetInterface.Get().SyncPlayerStats(this);
         }
     }
 }

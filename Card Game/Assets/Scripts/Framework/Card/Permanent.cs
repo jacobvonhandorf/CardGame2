@@ -1,27 +1,26 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using static Card;
 
 // structures and creatures
 public abstract class Permanent : MonoBehaviour
 {
-    public Tile tile { get; set; }
+    public Tile Tile { get; set; }
+    public Vector2 Coordinates { get { return new Vector2(Tile.x, Tile.y); } }
     public Player Controller { get; set; }
     public CounterController Counters { get; private set; }
     public Card SourceCard { get; private set; }
-    public int BaseHealth { get { return (int)Stats.Stats[StatType.BaseHealth]; } set { Stats.setValue(StatType.BaseHealth, value); needToSync = true; } }
-    public int Health { get { return (int)Stats.Stats[StatType.Health]; } set { Stats.setValue(StatType.Health, value); needToSync = true; } }
-
-    public StatsContainer Stats { get; private set; }
+    public int BaseHealth { get { return (int)Stats.StatList[StatType.BaseHealth]; } set { Stats.SetValue(StatType.BaseHealth, value); needToSync = true; } }
+    public int Health { get { return (int)Stats.StatList[StatType.Health]; } set { Stats.SetValue(StatType.Health, value); needToSync = true; } }
+    public StatsContainer Stats { get { return SourceCard.Stats; } }
 
     protected bool needToSync = false;
 
     protected void Awake()
     {
         Counters = GetComponentInChildren<CounterController>();
-        //statsScript = GetComponent<StructureStatsGetter>();
         SourceCard = GetComponent<Card>();
-        Stats = GetComponent<StatsContainer>();
         enabled = false;
     }
 
@@ -34,15 +33,18 @@ public abstract class Permanent : MonoBehaviour
     public void TriggerOnCounterAddedEvents(object sender, CounterAddedArgs args) { E_CounterAdded?.Invoke(sender, args); }
     #endregion
 
-    public void checkDeath()
+    public void CheckDeath()
     {
         if (Health <= 0)
             GameManager.Get().kill(this);
     }
 
-    public void setStatWithoutSyncing(StatType type, int value)
+    public bool HasTag(Tag tag) => SourceCard.Tags.Contains(tag);
+    public bool IsType(CardType type) => SourceCard.IsType(type);
+
+    public void SetStatWithoutSyncing(StatType type, int value)
     {
-        Stats.Stats[type] = value;
-        Stats.raiseEvent();
+        Stats.StatList[type] = value;
+        Stats.RaiseEvent();
     }
 }

@@ -123,34 +123,34 @@ public class Client : MonoBehaviour
                 LoginScene.Instance.receiveCreateAccountResponse((Net_CreateAccountResponse)msg);
                 break;
             case NetOP.NotifyClientOfMMPairing:
-                NetInterface.Get().setIsPlayer1(((Net_NotifyClientOfMMPairing)msg).isPlayer1);
+                NetInterface.Get().LocalPlayerIsP1 = ((Net_NotifyClientOfMMPairing)msg).isPlayer1;
                 MMDeckSelectScene.Instance.startGame();
                 break;
             case NetOP.InstantiateCard:
-                NetInterface.Get().importNewCardFromOpponent((Net_InstantiateCard)msg);
+                NetInterface.Get().ImportNewCardFromOpponent((Net_InstantiateCard)msg);
                 break;
             case NetOP.MoveCardToPile:
                 Net_MoveCardToPile mctp = (Net_MoveCardToPile)msg;
-                NetInterface.Get().recieveMoveCardToPile(mctp.cardId, mctp.cpId, mctp.sourceId);
+                NetInterface.Get().RecieveMoveCardToPile(mctp.cardId, mctp.cpId, mctp.sourceId);
                 break;
             case NetOP.SyncDeckOrder:
                 Net_SyncDeckOrder sdo = (Net_SyncDeckOrder)msg;
-                NetInterface.Get().recieveDeckOrder(sdo.cardIds, sdo.deckCpId);
+                NetInterface.Get().RecieveDeckOrder(sdo.cardIds, sdo.deckCpId);
                 break;
             case NetOP.SyncCreatureCoordinates:
                 Net_SyncCreatureCoordinates scc = (Net_SyncCreatureCoordinates)msg;
-                NetInterface.Get().recieveCreatureCoordinates(scc.creatureCardId, scc.x, scc.y, scc.sourceCardId);
+                NetInterface.Get().RecieveCreatureCoordinates(scc.creatureCardId, scc.x, scc.y, scc.sourceCardId);
                 break;
             case NetOP.SyncAttack:
                 Net_SyncAttack sa = (Net_SyncAttack)msg;
-                NetInterface.Get().receiveAttack(sa.attackerId, sa.defenderId, sa.damageRoll);
+                NetInterface.Get().ReceiveAttack(sa.attackerId, sa.defenderId, sa.damageRoll);
                 break;
             case NetOP.SyncPlayerStats:
                 Net_SyncPlayerResources spr = (Net_SyncPlayerResources)msg;
-                NetInterface.Get().recievePlayerStats(spr.isPlayerOne, spr.gold, spr.goldPTurn, spr.mana, spr.manaPTurn, spr.actions, spr.actionsPTurn);
+                NetInterface.Get().RecievePlayerStats(spr.isPlayerOne, spr.gold, spr.goldPTurn, spr.mana, spr.manaPTurn, spr.actions, spr.actionsPTurn);
                 break;
             case NetOP.EndTurn:
-                NetInterface.Get().recieveEndTurn();
+                NetInterface.Get().RecieveEndTurn();
                 break;
             case NetOP.DoneSendingCards:
                 NetInterface.Get().opponentFinishedSendingCards = true;
@@ -159,17 +159,17 @@ public class Client : MonoBehaviour
                 NetInterface.Get().finishedWithSetup = true;
                 break;
             case NetOP.SyncPermanentPlaced:
-                NetInterface.Get().recievePermanentPlaced((Net_SyncPermanentPlaced)msg);
+                NetInterface.Get().RecievePermanentPlaced((Net_SyncPermanentPlaced)msg);
                 break;
             case NetOP.SyncCreature:
-                NetInterface.Get().recieveCreatureStats((Net_SyncCreature)msg);
+                NetInterface.Get().RecieveCreatureStats((Net_SyncCreature)msg);
                 break;
             case NetOP.SyncCountersPlaced:
                 Net_SyncCountersPlaced scp = (Net_SyncCountersPlaced)msg;
-                NetInterface.Get().recieveCounterPlaced(scp.amount, scp.counterId, scp.targetCardId);
+                NetInterface.Get().RecieveCounterPlaced(scp.amount, scp.counterId, scp.targetCardId);
                 break;
             case NetOP.EndGame:
-                NetInterface.Get().recieveEndGameMessage((Net_EndGame)msg);
+                NetInterface.Get().RecieveEndGameMessage((Net_EndGame)msg);
                 break;
             case NetOP.CheckVersion:
                 VersionChecker.instance.recieveMessage((Net_CheckVersion)msg);

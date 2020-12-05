@@ -4,8 +4,8 @@ using UnityEngine;
 
 public abstract class QueueableCommand
 {
-    public abstract void execute();
-    public abstract bool isFinished { get; }
+    public abstract void Execute();
+    public abstract bool IsFinished { get; }
 }
 
 public class CompoundQueueableCommand : QueueableCommand
@@ -13,7 +13,7 @@ public class CompoundQueueableCommand : QueueableCommand
     private Queue<QueueableCommand> commandList;
     private QueueableCommand currentCommand;
 
-    public override bool isFinished => checkFinished();
+    public override bool IsFinished => checkFinished();
 
     public CompoundQueueableCommand(Queue<QueueableCommand> commandList)
     {
@@ -22,7 +22,7 @@ public class CompoundQueueableCommand : QueueableCommand
 
     private bool checkFinished()
     {
-        if (currentCommand.isFinished)
+        if (currentCommand.IsFinished)
         {
             if (commandList.Count > 0)
             {
@@ -41,10 +41,10 @@ public class CompoundQueueableCommand : QueueableCommand
     private void moveToNextCommand()
     {
         currentCommand = commandList.Dequeue();
-        currentCommand.execute();
+        currentCommand.Execute();
     }
 
-    public override void execute()
+    public override void Execute()
     {
         moveToNextCommand();
     }

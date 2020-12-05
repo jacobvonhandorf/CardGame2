@@ -35,10 +35,10 @@ public class RainbowBurstEffs : SpellEffects
         cmdBuilder.addCommand(SingleTileTargetEffect.CreateCommand(GameManager.Get().getAllTilesWithCreatures(card.owner.getOppositePlayer(), false), delegate (Tile targetTile)
         {
             foreach (Card c in cardsToShuffleBack)
-                c.moveToCardPile(card.owner.deck, card);
+                c.MoveToCardPile(card.owner.deck, card);
             card.owner.deck.shuffle();
-            targetTile.creature.takeDamage(DAMAGE, card);
-            card.owner.drawCards(CARDS_DRAWN);
+            targetTile.creature.TakeDamage(DAMAGE, card);
+            card.owner.DrawCards(CARDS_DRAWN);
         }));
         cmdBuilder.BuildAndQueue();
     }

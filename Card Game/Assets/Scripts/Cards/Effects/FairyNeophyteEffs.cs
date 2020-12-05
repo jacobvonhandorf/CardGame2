@@ -11,8 +11,8 @@ public class FairyNeophyteEffs : CreatureEffects
     {
         CardPicker.CreateAndQueue(creature.Controller.hand.getAllCardsWithType(Card.CardType.Creature), 1, 1, "Select a card to give +1/+1", creature.Controller, delegate (List<Card> cardList)
         {
-            (cardList[0] as CreatureCard).creature.Health += 1;
-            (cardList[0] as CreatureCard).creature.BaseAttack += 1;
+            (cardList[0] as CreatureCard).Creature.Health += 1;
+            (cardList[0] as CreatureCard).Creature.BaseAttack += 1;
         });
     }
 }

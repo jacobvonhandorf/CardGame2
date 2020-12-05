@@ -8,6 +8,6 @@ public class InspirationEffs : SpellEffects
 
     public override void doEffect(Tile t)
     {
-        card.owner.drawCards(2);
+        card.owner.DrawCards(2);
     }
 }

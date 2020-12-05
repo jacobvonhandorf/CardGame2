@@ -43,9 +43,6 @@ public class CardPileViewer : MonoBehaviour
         newScale.y = yScale;
 
         Vector3 newPosition = new Vector3();
-        // Debug.Log("Index: " + index);
-        //newPosition.x = ((index % 5) * 65) - 149;
-        //newPosition.y = ((-index / 5) * 86) - 107;
         newPosition.x = xPosOffset + (index % cardsPerRow) * xPosCoeff;
         newPosition.y = yPosOffset + (index / cardsPerRow) * yPosCoeff;
         newPosition.z = -1.1f; // -1.1 allows for them to be hovered/clicked
@@ -74,14 +71,12 @@ public class CardPileViewer : MonoBehaviour
         int index = 0;
         foreach (Card c in cardList)
         {
-            cardPreviews[index].setCard(c);
+            cardPreviews[index].SetCard(c);
             index++;
         }
 
         headerText.text = windowName;
-        Debug.Log(scroller.minY);
         scroller.maxY = -(index / cardsPerRow) * yPosCoeff + scrollerOffset;
-        Debug.Log(scroller.maxY);
         scroller.setMinAndMax(scroller.minY, scroller.maxY);
         scroller.updateContentPosition(new Vector3(-999, -999, 0)); // move scroller to the top
         gameObject.SetActive(true);
@@ -97,7 +92,7 @@ public class CardPileViewer : MonoBehaviour
         foreach (CardViewerForPiles c in cardPreviews)
         {
             PickableCard pickableCard = c.GetComponent<PickableCard>();
-            pickableCard.setUp(receiver, c.sourceCard);
+            pickableCard.setUp(receiver, c.SourceCard);
         }
     }
 
@@ -109,7 +104,7 @@ public class CardPileViewer : MonoBehaviour
         ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(ray, out hit, LayerMask.NameToLayer("Card Viewer")))
         {
-            GameManager.Get().getCardViewer().setCard((hit.transform.gameObject.GetComponent<CardViewer>()).sourceCard);
+            GameManager.Get().getCardViewer().SetCard((hit.transform.gameObject.GetComponent<CardViewer>()).SourceCard);
         }
     }
 

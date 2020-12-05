@@ -15,7 +15,7 @@ public class MinerEffs : CreatureEffects
         }
         CardPicker.CreateAndQueue(legalPicks, 1, 1, "Select a card to add to your hand", creature.Controller, delegate (List<Card> cardList)
         {
-            cardList[0].moveToCardPile(creature.Controller.hand, card);
+            cardList[0].MoveToCardPile(creature.Controller.hand, card);
         });
     };
 }

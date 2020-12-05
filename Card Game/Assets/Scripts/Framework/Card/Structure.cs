@@ -10,9 +10,10 @@ public class Structure : Permanent, Damageable, ICanReceiveCounters
 {
     protected string cardName;
     private bool initialized = false;
+    public PermanentCardVisual CardVisual { get { return (PermanentCardVisual)SourceCard.CardVisuals; } }
     [SerializeField] public List<EmptyHandler> activatedEffects { get; } = new List<EmptyHandler>();
 
-    [SerializeField] protected StructureStatsGetter statsScript;
+    public Vector2 Coordinates => new Vector2(Tile.x, Tile.y);
 
     #region Events
     public event EventHandler E_OnDeployed;
@@ -24,12 +25,11 @@ public class Structure : Permanent, Damageable, ICanReceiveCounters
     public new void Awake()
     {
         base.Awake();
-        statsScript = GetComponent<StructureStatsGetter>();
-        Stats.addType(StatType.Health);
-        Stats.addType(StatType.BaseHealth);
+        Stats.AddType(StatType.Health);
+        Stats.AddType(StatType.BaseHealth);
     }
 
-    public void takeDamage(int amount, Card source)
+    public void TakeDamage(int amount, Card source)
     {
         Health -= amount;
     }
@@ -38,7 +38,7 @@ public class Structure : Permanent, Damageable, ICanReceiveCounters
     public void sendToGrave(Card source)
     {
         resetToBaseStats();
-        SourceCard.moveToCardPile(SourceCard.owner.graveyard, null);
+        SourceCard.MoveToCardPile(SourceCard.owner.graveyard, null);
         SourceCard.removeGraphicsAndCollidersFromScene();
     }
 
@@ -48,12 +48,12 @@ public class Structure : Permanent, Damageable, ICanReceiveCounters
     }
     public void resetToBaseStatsWithoutSyncing()
     {
-        setStatWithoutSyncing(StatType.Health, BaseHealth);
+        SetStatWithoutSyncing(StatType.Health, BaseHealth);
     }
     public void recieveStatsFromNet(int hp, int bhp, Player ctrl)
     {
-        setStatWithoutSyncing(StatType.Health, hp);
-        setStatWithoutSyncing(StatType.BaseHealth, bhp);
+        SetStatWithoutSyncing(StatType.Health, hp);
+        SetStatWithoutSyncing(StatType.BaseHealth, bhp);
 
         Controller = ctrl;
     }
@@ -75,7 +75,7 @@ public class Structure : Permanent, Damageable, ICanReceiveCounters
         if (!enabled)
             return;
         hovered = true;
-        SourceCard.addToCardViewer(GameManager.Get().getCardViewer());
+        //SourceCard.RegisterToCardViewer(GameManager.Get().getCardViewer());
         StartCoroutine(checkHoverForTooltips());
     }
     private void OnMouseExit()
@@ -84,7 +84,7 @@ public class Structure : Permanent, Damageable, ICanReceiveCounters
             return;
         hovered = false;
         foreach (CardViewer cv in SourceCard.viewersDisplayingThisCard)
-            cv.clearToolTips();
+            cv.ClearToolTips();
 
     }
     [SerializeField] private float hoverTimeForToolTips = .5f;
@@ -105,25 +105,20 @@ public class Structure : Permanent, Damageable, ICanReceiveCounters
         {
             if (viewer != null)
             {
-                viewer.showToolTips(SourceCard.toolTipInfos);
+                viewer.ShowToolTips(SourceCard.toolTipInfos);
             }
         }
     }
 
-    // Returns true if this card has the the tag passed to this method
-    public bool hasTag(Tag tag)
-    {
-        return SourceCard.Tags.Contains(tag);
-    }
 
     #region Keyword
     public bool hasKeyword(Keyword keyword)
     {
-        return SourceCard.hasKeyword(keyword);
+        return SourceCard.HasKeyword(keyword);
     }
     public void addKeyword(Keyword keyword)
     {
-        SourceCard.addKeyword(keyword);
+        SourceCard.AddKeyword(keyword);
     }
     public ReadOnlyCollection<Keyword> getKeywordList()
     {
@@ -131,29 +126,21 @@ public class Structure : Permanent, Damageable, ICanReceiveCounters
     }
     public void removeKeyword(Keyword keyword)
     {
-        SourceCard.removeKeyword(keyword);
+        SourceCard.RemoveKeyword(keyword);
     }
     #endregion
 
-    public Vector2 getCoordinates()
-    {
-        return new Vector2(tile.x, tile.y);
-    }
     public Player getController() => Controller;
-    public void updateFriendOrFoeBorder()
+    public void UpdateFriendOrFoeBorder()
     {
         if (GameManager.gameMode != GameManager.GameMode.online)
-        {
-            statsScript.setAsAlly(GameManager.Get().activePlayer == Controller);
-        }
+            CardVisual.SetIsAlly(GameManager.Get().activePlayer == Controller);
         else
-        {
-            statsScript.setAsAlly(NetInterface.Get().getLocalPlayer() == Controller);
-        }
+            CardVisual.SetIsAlly(NetInterface.Get().localPlayer == Controller);
     }
-    public void resetForNewTurn()
+    public void ResetForNewTurn()
     {
-        updateFriendOrFoeBorder();
+        UpdateFriendOrFoeBorder();
     }
     #region Counters
     public void OnCountersAdded(CounterType counterType, int amount)
@@ -163,16 +150,16 @@ public class Structure : Permanent, Damageable, ICanReceiveCounters
     }
     public void syncCounters(CounterType counterType)
     {
-        NetInterface.Get().syncCounterPlaced(SourceCard, counterType, Counters.amountOf(counterType));
+        NetInterface.Get().SyncCounterPlaced(SourceCard, counterType, Counters.AmountOf(counterType));
     }
     // used by net interface for syncing
     public void recieveCountersPlaced(CounterType counterType, int newCounters)
     {
-        int currentCounters = Counters.amountOf(counterType);
+        int currentCounters = Counters.AmountOf(counterType);
         if (currentCounters > newCounters)
-            Counters.remove(counterType, currentCounters - newCounters);
+            Counters.Remove(counterType, currentCounters - newCounters);
         else if (currentCounters < newCounters)
-            Counters.add(counterType, newCounters - currentCounters);
+            Counters.Add(counterType, newCounters - currentCounters);
         else
             Debug.LogError("Trying to set counters to a value it's already set to. This shouldn't happen under normal circumstances");
     }

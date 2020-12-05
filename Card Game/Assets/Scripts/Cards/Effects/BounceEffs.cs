@@ -8,6 +8,6 @@ public class BounceEffs : SpellEffects
 
     public override void doEffect(Tile t)
     {
-        t.creature.bounce(card);
+        t.creature.Bounce(card);
     }
 }

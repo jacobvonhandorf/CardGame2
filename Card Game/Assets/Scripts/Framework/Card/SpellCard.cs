@@ -5,14 +5,13 @@ using UnityEngine;
 public class SpellCard : Card
 {
     public override CardType getCardType() => CardType.Spell;
-    public int spellId;
-    public SpellEffects effects;
-    public override List<Tile> legalTargetTiles => GetComponent<SpellEffects>().validTiles;
+    [HideInInspector] public SpellEffects effects;
+    public override List<Tile> LegalTargetTiles => GetComponent<SpellEffects>().validTiles;
 
-    public override void play(Tile t)
+    public override void Play(Tile t)
     {
         doEffect(t);
-        moveToCardPile(owner.graveyard, null);
+        MoveToCardPile(owner.graveyard, null);
         owner.hand.resetCardPositions();
         GameManager.Get().onSpellCastEffects(this);
     }
@@ -22,16 +21,16 @@ public class SpellCard : Card
         GetComponent<SpellEffects>().doEffect(t);
     }
 
-    public override bool canBePlayed()
+    public override bool CanBePlayed()
     {
-        if (!ownerCanPayCosts())
+        if (!OwnerCanPayCosts())
             return false;
         if (!additionalCanBePlayedChecks())
             return false;
         return true;
     }
 
-    public override void initialize()
+    public override void Initialize()
     {
         onInitilization?.Invoke();
         onInitilization = null;

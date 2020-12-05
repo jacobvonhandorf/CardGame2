@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1001460260961317369}
+  - component: {fileID: 5350228656722443440}
   m_Layer: 0
   m_Name: Mana
   m_TagString: Card Icon
@@ -32,6 +33,19 @@ Transform:
   m_Father: {fileID: 1736040871346471346}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5350228656722443440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 117501850663937112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e092dd564f4897345aadffb9ee4dd4a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncWith: 2
 --- !u!1 &992040486306723112
 GameObject:
   m_ObjectHideFlags: 0
@@ -1503,6 +1517,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8752579279117728044}
+  - component: {fileID: 5068577820522211296}
   m_Layer: 0
   m_Name: Health
   m_TagString: Card Icon
@@ -1526,6 +1541,19 @@ Transform:
   m_Father: {fileID: 1736040871346471346}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5068577820522211296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2700770266254174208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e092dd564f4897345aadffb9ee4dd4a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncWith: 5
 --- !u!1 &3404014711143674301
 GameObject:
   m_ObjectHideFlags: 0
@@ -1780,6 +1808,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7279522973447296256}
+  - component: {fileID: 8452624243077793738}
   m_Layer: 0
   m_Name: Gold
   m_TagString: Card Icon
@@ -1803,6 +1832,19 @@ Transform:
   m_Father: {fileID: 1736040871346471346}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8452624243077793738
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4762326737994762657}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e092dd564f4897345aadffb9ee4dd4a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncWith: 0
 --- !u!1 &5466395477896199233
 GameObject:
   m_ObjectHideFlags: 0
@@ -2131,6 +2173,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 650711774044915439}
+  - component: {fileID: 6086971798662328118}
   m_Layer: 0
   m_Name: Movement
   m_TagString: Card Icon
@@ -2154,6 +2197,19 @@ Transform:
   m_Father: {fileID: 1736040871346471346}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6086971798662328118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8107823603166955882}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e092dd564f4897345aadffb9ee4dd4a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncWith: 9
 --- !u!1 &8753332699508773866
 GameObject:
   m_ObjectHideFlags: 0
@@ -2237,6 +2293,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8209461025914572032}
+  - component: {fileID: 2349430042380794867}
   m_Layer: 0
   m_Name: Attack
   m_TagString: Card Icon
@@ -2260,6 +2317,19 @@ Transform:
   m_Father: {fileID: 1736040871346471346}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2349430042380794867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8795749594195964720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e092dd564f4897345aadffb9ee4dd4a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncWith: 7
 --- !u!1 &8796752213634199507
 GameObject:
   m_ObjectHideFlags: 0
@@ -2315,6 +2385,11 @@ MonoBehaviour:
   - {fileID: 5137014008784409932}
   - {fileID: 8902863978995356128}
   - {fileID: 8528474155029591600}
+  - {fileID: 8452624243077793738}
+  - {fileID: 5350228656722443440}
+  - {fileID: 2349430042380794867}
+  - {fileID: 6086971798662328118}
+  - {fileID: 5068577820522211296}
 --- !u!1 &8927279129469797912
 GameObject:
   m_ObjectHideFlags: 0

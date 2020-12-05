@@ -13,7 +13,7 @@ public class RingOfEternityEffs : SpellEffects
     private const int THIRD_MANA_TO_ADD = 1;
 
     public override List<Tile> validTiles => getValidTiles();
-    public override bool canBePlayed => card.owner.getAllControlledCreatures().FindAll(c => c.hasTag(Tag.Arcane)).Count > 0;
+    public override bool canBePlayed => card.owner.getAllControlledCreatures().FindAll(c => c.HasTag(Tag.Arcane)).Count > 0;
 
     public List<Tile> getValidTiles()
     {
@@ -29,7 +29,7 @@ public class RingOfEternityEffs : SpellEffects
         Creature targetCreature = t.creature;
         // add last breath effect
         targetCreature.SourceCard.E_AddedToCardPile += SourceCard_E_AddedToCardPile;
-        targetCreature.addKeyword(Keyword.LastBreath);
+        targetCreature.AddKeyword(Keyword.LastBreath);
 
         if (card.owner.extraStats[ExtraStatsKey.NumRingOfEternityPlayed] >= FIRST_THRESHOLD)
         {
@@ -38,7 +38,7 @@ public class RingOfEternityEffs : SpellEffects
         }
         if (card.owner.extraStats[ExtraStatsKey.NumRingOfEternityPlayed] >= SECOND_THRESHOLD)
         {
-            card.owner.drawCard();
+            card.owner.DrawCard();
         }
         if (card.owner.extraStats[ExtraStatsKey.NumRingOfEternityPlayed] >= SECOND_THRESHOLD)
         {
@@ -51,19 +51,19 @@ public class RingOfEternityEffs : SpellEffects
         if (e.previousCardPile is Board && e.newCardPile is Graveyard)
         {
             // last breath effect
-            Creature effectCreature = (sender as CreatureCard).creature;
+            Creature effectCreature = (sender as CreatureCard).Creature;
             Player effectOwner = effectCreature.Controller;
             foreach (Card c in effectOwner.graveyard.getCardList())
             {
                 if (c.cardId == (int)CardIds.RingOfEternity)
                 {
-                    c.moveToCardPile(effectOwner.hand, effectCreature.SourceCard);
+                    c.MoveToCardPile(effectOwner.hand, effectCreature.SourceCard);
                     break;
                 }
             }
 
             // make sure to remove effect and keyword
-            effectCreature.removeKeyword(Keyword.LastBreath);
+            effectCreature.RemoveKeyword(Keyword.LastBreath);
             effectCreature.SourceCard.E_AddedToCardPile -= SourceCard_E_AddedToCardPile;
         }
     }

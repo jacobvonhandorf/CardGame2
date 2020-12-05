@@ -13,7 +13,7 @@ public class ChannelEffs : SpellEffects
         int numCardsToReduce = numCards;
         foreach (Card c in card.owner.deck.getCardList())
         {
-            if (c.isType(CardType.Spell))
+            if (c.IsType(CardType.Spell))
             {
                 c.ManaCost -= 1;
                 if (c.ManaCost < 0)
@@ -23,6 +23,6 @@ public class ChannelEffs : SpellEffects
                     break;
             }
         }
-        card.owner.drawCard();
+        card.owner.DrawCard();
     }
 }

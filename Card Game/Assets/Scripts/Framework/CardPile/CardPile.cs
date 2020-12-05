@@ -16,7 +16,7 @@ public abstract class CardPile : MonoBehaviour
     protected void Awake()
     {
         nullCheckList();
-        NetInterface.Get().registerCardPile(this, ownedByLocalPlayer);
+        NetInterface.Get().RegisterCardPile(this, ownedByLocalPlayer);
     }
 
     // this method is dangerous to call. If possible use Card.moveToCardPile()
@@ -89,7 +89,7 @@ public abstract class CardPile : MonoBehaviour
     {
         List<Card> returnList = new List<Card>();
         foreach (Card c in cardList)
-            if (c.isType(type))
+            if (c.IsType(type))
                 returnList.Add(c);
         return returnList;
     }
@@ -99,7 +99,7 @@ public abstract class CardPile : MonoBehaviour
         List<Card> returnList = new List<Card>();
         foreach (Card c in cardList)
         {
-            if (c.Tags.Contains(tag) && c.isType(type))
+            if (c.Tags.Contains(tag) && c.IsType(type))
                 returnList.Add(c);
         }
         return returnList;

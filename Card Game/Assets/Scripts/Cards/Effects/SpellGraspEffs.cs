@@ -10,8 +10,8 @@ public class SpellGraspEffs : SpellEffects
     {
         CardPicker.CreateAndQueue(card.owner.deck.getAllCardsWithTag(Card.Tag.Arcane), 1, 1, "Select a card to add to your hand", card.owner, delegate (List<Card> cards)
         {
-            cards[0].moveToCardPile(card.owner.hand, card);
-            if (card.owner.getAllControlledCreatures().Find(c => c.hasTag(Card.Tag.Arcane)))
+            cards[0].MoveToCardPile(card.owner.hand, card);
+            if (card.owner.getAllControlledCreatures().Find(c => c.HasTag(Card.Tag.Arcane)))
                 card.owner.addMana(1);
         });
     }

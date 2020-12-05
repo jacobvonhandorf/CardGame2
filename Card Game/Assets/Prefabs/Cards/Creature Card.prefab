@@ -1,5 +1,19 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &264120723727286791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7711184758716672088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8b8c4d956fd2304ea799cd15379f09d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  counterDisplayPrefab: {fileID: 4748116662381802841, guid: 22dffab0611b81e4aa1a7a42b38cc1cf,
+    type: 3}
 --- !u!114 &711741266907690324
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12,19 +26,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca0d4bdb06c171b4984d9d95f197269f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardName: 
-  currentCardPile: {fileID: 0}
   owner: {fileID: 0}
   cardId: 0
   cardStatsScript: {fileID: 0}
+  cardVisuals: {fileID: 7830077361384698802}
   isBeingDragged: 0
   positionLocked: 0
   positionInHand: {x: 0, y: 0, z: 0}
+  statChangePropogator: {fileID: 3550035590364805590}
   positionOnScene: {x: 0, y: 0, z: 0}
   hoverTimeForToolTips: 0.5
-  creatureStatsScript: {fileID: 0}
-  counterController: {fileID: 0}
-  statChangePropogator: {fileID: 3550035590364805590}
+  counterController: {fileID: 264120723727286791}
+  cardVisual: {fileID: 7830077361384698802}
 --- !u!114 &711741266907690325
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63,6 +76,24 @@ MonoBehaviour:
   pauseBetweenResize: 0
   iconResizeSpeed: 6
   timeForShrinkAnimation: 0.3
+--- !u!114 &7830077361384698802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8974139625713654983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b321daa3df27ef448883ebc63827c7bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  permanentOnlyIcons:
+  - {fileID: 214443358082752429}
+  - {fileID: 748563100776147841}
+  - {fileID: 8796599615998071874}
+  hasActedTextIndicator: {fileID: 0}
+  friendOrFoeBorder: {fileID: 7711184759798968150}
 --- !u!1001 &8460593095014066580
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -182,6 +213,42 @@ MonoBehaviour:
 --- !u!1 &7711184759798968168 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2191477543278118652, guid: a0275818814fb654890b69d55214531d,
+    type: 3}
+  m_PrefabInstance: {fileID: 8460593095014066580}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &7711184759798968150 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2191477543278118594, guid: a0275818814fb654890b69d55214531d,
+    type: 3}
+  m_PrefabInstance: {fileID: 8460593095014066580}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7711184759798968168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!1 &7711184758716672088 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2191477542229705164, guid: a0275818814fb654890b69d55214531d,
+    type: 3}
+  m_PrefabInstance: {fileID: 8460593095014066580}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &214443358082752429 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8616454267397043769, guid: a0275818814fb654890b69d55214531d,
+    type: 3}
+  m_PrefabInstance: {fileID: 8460593095014066580}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &748563100776147841 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9153987031596368405, guid: a0275818814fb654890b69d55214531d,
+    type: 3}
+  m_PrefabInstance: {fileID: 8460593095014066580}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8796599615998071874 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1115164440925879766, guid: a0275818814fb654890b69d55214531d,
     type: 3}
   m_PrefabInstance: {fileID: 8460593095014066580}
   m_PrefabAsset: {fileID: 0}

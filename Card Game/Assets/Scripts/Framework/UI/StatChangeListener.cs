@@ -6,18 +6,21 @@ using UnityEngine.UI;
 
 public abstract class StatChangeListener : MonoBehaviour
 {
-    //private TextMeshProUGUI textMesh;
     [SerializeField] private StatType syncWith;
-    protected Type statType { get; }
 
-    public void updateValue(StatsContainer container)
+    public void UpdateValue(IHaveReadableStats source)
     {
-        if (container.Stats.TryGetValue(syncWith, out object value))
+        if (source.TryGetValue(syncWith, out object value))
         {
             if (value != null)
-                onValueUpdated(container.Stats[syncWith]);
+                OnValueUpdated(value);
+        }
+        else
+        {
+            ValueMissing();
         }
     }
 
-    protected abstract void onValueUpdated(object value);
+    protected abstract void OnValueUpdated(object value);
+    protected virtual void ValueMissing() { } // called when the source doesn't have a value for the set stat
 }

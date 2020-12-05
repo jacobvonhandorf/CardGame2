@@ -12,11 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f959f66966e95474ebee1473d2ad6346, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardName: 
-  currentCardPile: {fileID: 0}
   owner: {fileID: 0}
   cardId: 0
-  cardStatsScript: {fileID: 0}
+  cardVisuals: {fileID: 5451119052803417291}
   isBeingDragged: 0
   positionLocked: 0
   positionInHand: {x: 0, y: 0, z: 0}
@@ -25,6 +23,18 @@ MonoBehaviour:
   hoverTimeForToolTips: 0.5
   spellId: 0
   effects: {fileID: 0}
+--- !u!114 &5451119052803417291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7059521183239709292}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c5c428a76d01364b9d033fa6e812435, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &7501002420837537599
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -97,12 +107,12 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4929532977526993560, guid: a0275818814fb654890b69d55214531d,
+    - target: {fileID: 8966334156233639945, guid: a0275818814fb654890b69d55214531d,
         type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8966334156233639945, guid: a0275818814fb654890b69d55214531d,
+    - target: {fileID: 4929532977526993560, guid: a0275818814fb654890b69d55214531d,
         type: 3}
       propertyPath: m_IsActive
       value: 0

@@ -11,7 +11,7 @@ public class SpellRecycling : SpellEffects
         CardPicker.CreateAndQueue(owner.graveyard.getAllCardsWithType(Card.CardType.Spell).FindAll(c => c.cardId != (int) CardIds.SpellRecycling), 1, 2, "Select cards to add to your hand", owner, delegate (List<Card> cards)
         {
             foreach (Card c in cards)
-                c.moveToCardPile(owner.hand, card);
+                c.MoveToCardPile(owner.hand, card);
         });
     }
 

@@ -13,7 +13,7 @@ public class AllOutAttack : HeroPower
         {
             c.hasDoneActionThisTurn = false;
             c.hasMovedThisTurn = false;
-            c.updateHasActedIndicators();
+            c.UpdateHasActedIndicators();
         }
 
         controller.addActions(creatures.Count);

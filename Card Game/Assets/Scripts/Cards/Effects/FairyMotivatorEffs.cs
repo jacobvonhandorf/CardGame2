@@ -11,8 +11,8 @@ public class FairyMotivatorEffs : CreatureEffects
     {
         foreach (Card c in creature.Controller.hand.getAllCardsWithType(Card.CardType.Creature))
         {
-            (c as CreatureCard).creature.AttackStat += 1;
-            (c as CreatureCard).creature.Health += 1;
+            (c as CreatureCard).Creature.AttackStat += 1;
+            (c as CreatureCard).Creature.Health += 1;
         }
     }
 }

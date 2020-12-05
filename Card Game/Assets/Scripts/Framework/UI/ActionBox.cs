@@ -24,14 +24,14 @@ public class ActionBox : MonoBehaviour
     }
     public void show(Creature c)
     {
-        show(c.tile.x - 2.4f, c.tile.y - 2, c);
+        show(c.Tile.x - 2.4f, c.Tile.y - 2, c);
     }
 
     public void Attack()
     {
         if (creature.hasDoneActionThisTurn)
         {
-            GameManager.Get().showToast("You have already acted with this creature");
+            GameManager.Get().ShowToast("You have already acted with this creature");
             return;
         }
         GameManager.Get().setUpCreatureAttack(creature);
@@ -42,7 +42,7 @@ public class ActionBox : MonoBehaviour
         if (!creature.hasDoneActionThisTurn)
             GameManager.Get().setUpCreatureEffect(creature);
         else
-            GameManager.Get().showToast("This creature's action is unavailable");
+            GameManager.Get().ShowToast("This creature's action is unavailable");
         creature.Controller.heldCreature = null;
         gameObject.SetActive(false);
     }

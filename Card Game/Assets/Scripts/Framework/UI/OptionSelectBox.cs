@@ -56,12 +56,12 @@ public class OptionSelectBox : MonoBehaviour
             this.owner = owner;
         }
 
-        public override bool isFinished => optionBox != null && optionBox.finished || forceFinished;
+        public override bool IsFinished => optionBox != null && optionBox.finished || forceFinished;
         private bool forceFinished = false;
 
-        public override void execute()
+        public override void Execute()
         {
-            if (owner != NetInterface.Get().getLocalPlayer())
+            if (owner != NetInterface.Get().localPlayer)
             {
                 forceFinished = true;
                 return;
@@ -76,7 +76,7 @@ public class OptionSelectBox : MonoBehaviour
     {
         this.handler = handler;
         if (GameManager.Get() != null)
-            GameManager.Get().setPopUpGlassActive(true);
+            GameManager.Get().SetPopUpGlassActive(true);
         // set background size based on number of options
         float backgroundHeight = yMargin * 2 + Math.Abs(offsetPerOption) * options.Count + headerHeight;
         float top = backgroundHeight / 2;
@@ -103,7 +103,7 @@ public class OptionSelectBox : MonoBehaviour
     public void submit(int index, string text)
     {
         handler.Invoke(index, text);
-        GameManager.Get().setPopUpGlassActive(false);
+        GameManager.Get().SetPopUpGlassActive(false);
         finished = true;
         Destroy(gameObject);
     }

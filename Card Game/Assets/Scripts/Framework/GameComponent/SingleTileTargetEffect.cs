@@ -7,7 +7,7 @@ public class SingleTileTargetEffect : QueueableCommand
     public TileHandler handler;
     private List<Tile> validTargets;
 
-    public override bool isFinished => finished;
+    public override bool IsFinished => finished;
     public bool finished;
 
     public SingleTileTargetEffect(List<Tile> validTargets, TileHandler handler)
@@ -16,11 +16,11 @@ public class SingleTileTargetEffect : QueueableCommand
         this.validTargets = validTargets;
     }
 
-    public override void execute()
+    public override void Execute()
     {
         if (validTargets.Count == 0)
         {
-            GameManager.Get().showToast("No valid targets for effect");
+            GameManager.Get().ShowToast("No valid targets for effect");
             finished = true;
             return;
         }

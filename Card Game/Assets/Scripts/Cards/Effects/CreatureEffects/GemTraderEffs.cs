@@ -11,14 +11,14 @@ public class GemTraderEffs : CreatureEffects
         {
             foreach (Card c in cardList)
             {
-                c.moveToCardPile(creature.Controller.deck, card);
+                c.MoveToCardPile(creature.Controller.deck, card);
                 creature.Controller.deck.shuffle();
             }
             foreach (Card c in creature.Controller.deck.getCardList())
             {
                 if (c.Tags.Contains(Card.Tag.Gem))
                 {
-                    c.moveToCardPile(creature.Controller.hand, card);
+                    c.MoveToCardPile(creature.Controller.hand, card);
                     break;
                 }
             }
@@ -28,7 +28,7 @@ public class GemTraderEffs : CreatureEffects
     public override EventHandler onDeath => delegate (object s, EventArgs e)
     {
         Card obsidian = GameManager.Get().createCardById((int)CardIds.Obsidian, creature.Controller);
-        obsidian.moveToCardPile(creature.Controller.deck, card);
+        obsidian.MoveToCardPile(creature.Controller.deck, card);
         creature.Controller.deck.shuffle();
     };
 }

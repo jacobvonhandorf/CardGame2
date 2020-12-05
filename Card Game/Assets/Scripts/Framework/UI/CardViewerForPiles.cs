@@ -7,7 +7,7 @@ public class CardViewerForPiles : CardViewer
     private void OnMouseEnter()
     {
         if (GameManager.Get() != null)
-            GameManager.Get().getCardViewer().setCard(sourceCard);
+            GameManager.Get().getCardViewer().SetCard(SourceCard);
     }
 
 }

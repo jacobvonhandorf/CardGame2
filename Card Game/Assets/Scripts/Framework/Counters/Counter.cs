@@ -19,7 +19,7 @@ public static class Counters
         CounterData[] data = Resources.LoadAll<CounterData>("");
         foreach (CounterData d in data)
             counterData.Add(d.CType, d);
-        Debug.Log("Set up counter data");
+        //Debug.Log("Set up counter data");
     }
 
     /*

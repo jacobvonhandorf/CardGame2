@@ -51,7 +51,7 @@ public class CardIdChecker : MonoBehaviour
             if (usedIds.Contains(newCard.cardId))
             {
                 duplicateFound = true;
-                Debug.LogError(newCard.getCardName() + " has duplicate ID " + newCard.cardId);
+                Debug.LogError(newCard.CardName + " has duplicate ID " + newCard.cardId);
             }
             else
             {
@@ -74,6 +74,7 @@ public class CardIdChecker : MonoBehaviour
 
     private static void generateAndSaveCardMap()
     {
+        Debug.Log("WWTF");
         return;
         GameObject[] allCards = Resources.LoadAll<GameObject>(cardsPath);
         Vector3 tempPosition = new Vector3(999, 999, 999);

@@ -8,8 +8,8 @@ public class AccelerateEffs : SpellEffects
 
     public override void doEffect(Tile t)
     {
-        card.owner.drawCard();
+        card.owner.DrawCard();
     }
 
-    public override bool canBePlayed => card.owner.getAllControlledCreatures().FindAll(c => c.hasTag(Card.Tag.Arcane)).Count > 0;
+    public override bool canBePlayed => card.owner.getAllControlledCreatures().FindAll(c => c.HasTag(Card.Tag.Arcane)).Count > 0;
 }

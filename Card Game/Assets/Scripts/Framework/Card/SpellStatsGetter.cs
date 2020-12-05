@@ -6,6 +6,7 @@ public class SpellStatsGetter : CardStatsGetter
 {
     public override void setCardViewer(CardViewer cardViewer)
     {
+        /*
         cardViewer.gameObject.SetActive(true);
 
         // flip everything to active that needs to be active
@@ -30,5 +31,6 @@ public class SpellStatsGetter : CardStatsGetter
 
         cardViewer.background.sprite = background.sprite;
         cardViewer.setCardArt(cardArt.sprite);
+        */
     }
 }

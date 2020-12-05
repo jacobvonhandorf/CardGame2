@@ -26,46 +26,52 @@ public class CardBuilder : MonoBehaviour
 
     public Card BuildFromCardData(CardData cardData)
     {
+        System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+        stopwatch.Start();
         Card card = null;
         switch (cardData)
         {
             case CreatureCardData creatureData:
-                card = creatureSetup(creatureData);
+                card = CreatureSetup(creatureData);
                 break;
             case SpellCardData spellData:
-                card = spellSetup(spellData);
+                card = SpellSetup(spellData);
                 break;
             case StructureCardData structureData:
-                card = structureSetup(structureData);
+                card = StructureSetup(structureData);
                 break;
             default:
                 throw new Exception("Unexpected cardData");
         }
 
         // do all generic setting of variables
+        card.cardId = cardData.id;
         card.BaseManaCost = cardData.manaCost;
         card.ManaCost = cardData.manaCost;
         card.GoldCost = cardData.goldCost;
         card.BaseGoldCost = cardData.goldCost;
-        card.cardName = cardData.cardName;
-        card.gameObject.name = cardData.cardName;
         card.CardName = cardData.cardName;
+        card.gameObject.name = cardData.cardName;
         card.Art = cardData.art;
         card.EffectText = cardData.effectText;
         card.ElementalId = cardData.elementalIdentity;
 
         foreach (Keyword k in cardData.keywords)
-            card.addKeyword(k);
+            card.AddKeyword(k);
         foreach (Tag t in cardData.tags)
             card.Tags.Add(t);
+
+        stopwatch.Stop();
+        Debug.Log("Time to create card " + stopwatch.ElapsedMilliseconds + "ms");
 
         return card;
     }
 
-    private Card creatureSetup(CreatureCardData data)
+    private Card CreatureSetup(CreatureCardData data)
     {
         CreatureCard card = Instantiate(creatureCardPrefab, instantiationLocation, Quaternion.identity).GetComponent<CreatureCard>();
-        Creature creature = card.creature;
+        card.BaseManaCost = -1;
+        Creature creature = card.Creature;
         creature.BaseHealth = data.health;
         creature.Health = data.health;
         creature.BaseAttack = data.attack;
@@ -74,7 +80,6 @@ public class CardBuilder : MonoBehaviour
         creature.Movement = data.movement;
         creature.Range = data.range;
         creature.BaseRange = data.range;
-        //creature.creatureCardId = data.id;
 
         // Effects
         if (data.effects == null)
@@ -103,13 +108,13 @@ public class CardBuilder : MonoBehaviour
         return card;
     }
 
-    private Card structureSetup(StructureCardData data)
+    private Card StructureSetup(StructureCardData data)
     {
         StructureCard card = Instantiate(structureCardPrefab, instantiationLocation, Quaternion.identity).GetComponent<StructureCard>();
+        card.BaseManaCost = -1;
         Structure structure = card.structure;
         structure.BaseHealth = data.health;
         structure.Health = data.health;
-        //structure.structureCardId = data.id;
 
         StructureEffects effs = card.gameObject.AddComponent(data.effects.GetType()) as StructureEffects;
         effs.structure = structure;
@@ -132,10 +137,10 @@ public class CardBuilder : MonoBehaviour
         return card;
     }
 
-    private Card spellSetup(SpellCardData data)
+    private Card SpellSetup(SpellCardData data)
     {
         SpellCard card = Instantiate(spellCardPrefab, instantiationLocation, Quaternion.identity).GetComponent<SpellCard>();
-        card.spellId = data.id;
+        card.BaseGoldCost = -1;
         card.effects = data.effects;
 
         SpellEffects effs = card.gameObject.AddComponent(data.effects.GetType()) as SpellEffects;

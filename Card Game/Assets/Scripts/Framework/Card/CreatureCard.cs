@@ -6,93 +6,96 @@ using UnityEngine.UI;
 
 public class CreatureCard : Card
 {
-    public Creature creature { get; private set; }
-    [SerializeField] private CreatureStatsGetter creatureStatsScript;
+    public Creature Creature { get; private set; }
     [SerializeField] private CounterController counterController;
 
     public override CardType getCardType() => CardType.Creature;
-    public override List<Tile> legalTargetTiles => GameManager.Get().getAllDeployableTiles(owner);
-    public CounterController getCounterController() => counterController;
+    public override List<Tile> LegalTargetTiles => GameManager.Get().getAllDeployableTiles(owner);
+    public CounterController CounterController { get { return counterController; } }
+
+    public new PermanentCardVisual CardVisuals { get { return (PermanentCardVisual)cardVisuals; } }
+
+    private CardToPermanentConverter cardToPermanentConverter;
 
     protected override void Awake()
     {
         base.Awake();
-        creature = GetComponent<Creature>();
-        creatureStatsScript = GetComponent<CreatureStatsGetter>();
+        Creature = GetComponent<Creature>();
+        cardToPermanentConverter = GetComponent<CardToPermanentConverter>();
     }
 
-    public override void initialize()
+    public override void Initialize()
     {
-        creature.enabled = false;
+        Creature.enabled = false;
         onInitilization?.Invoke(); // keep this on last line
     }
 
-    public override void play(Tile t)
+    public override void Play(Tile t)
     {
         GameManager gameManager = GameManager.Get();
-        gameManager.createCreatureOnTile(creature, t, owner); // this makes the assumption that a card will always be played by it's owner
-        setSpritesToSortingLayer(SpriteLayers.Creature);
-        creatureStatsScript.setTextSortingLayer(SpriteLayers.CreatureAbove);
+        gameManager.createCreatureOnTile(Creature, t, owner); // this makes the assumption that a card will always be played by it's owner
+        //setSpritesToSortingLayer(SpriteLayers.Creature);
         owner.hand.resetCardPositions();
-        GameEvents.TriggerCreaturePlayedEvents(null, new GameEvents.CreaturePlayedArgs() { creature = creature });
+        GameEvents.TriggerCreaturePlayedEvents(null, new GameEvents.CreaturePlayedArgs() { creature = Creature });
     }
 
-    internal void swapToCreature(Tile onTile)
+    internal void SwapToCreature(Tile onTile)
     {
         // disable card functionality
         enabled = false;
 
         // enable creature functionality
-        creature.enabled = true;
+        Creature.enabled = true;
 
         // resize
-        creatureStatsScript.swapToCreature(this, onTile);
+        //creatureStatsScript.swapToCreature(this, onTile);
+        cardToPermanentConverter.DoConversion(onTile.transform.position);
 
         // set card pile to board
-        moveToCardPile(Board.instance, null); // null to signal by game mechanics
+        MoveToCardPile(Board.instance, null); // null to signal by game mechanics
     }
 
-    internal void swapToCard()
+    public void SwapToCard()
     {
         // enable card functinality
         enabled = true;
 
         // disable creature functionality
-        creature.enabled = false;
+        Creature.enabled = false;
 
         // resize
-        creatureStatsScript.swapToCard();
+        CardVisuals.ResizeToCard();
 
         // no longer a creature so forget the tile it's on
-        creature.tile = null;
+        Creature.Tile = null;
         // and remove it from allCreatures
-        GameManager.Get().allCreatures.Remove(creature);
+        GameManager.Get().allCreatures.Remove(Creature);
 
         // counters don't say on cards when they aren't creatures so clear them
-        counterController.clear();
+        counterController.Clear();
     }
 
     public override void resetToBaseStats()
     {
         base.resetToBaseStats();
-        creature.resetToBaseStats();
+        Creature.ResetToBaseStats();
     }
     public override void resetToBaseStatsWithoutSyncing()
     {
         base.resetToBaseStatsWithoutSyncing();
-        creature.resetToBaseStatsWithoutSyncing();
+        Creature.ResetToBaseStatsWithoutSyncing();
     }
 
     // returns true if the card can be played right now
-    public override bool canBePlayed()
+    public override bool CanBePlayed()
     {
-        if (!creature.additionalCanBePlayedChecks())
+        if (!Creature.additionalCanBePlayedChecks())
         {
             Debug.Log("additional can be played checks return false");
             return false;
         }
         // check if the player can pay the costs
-        if (!ownerCanPayCosts())
+        if (!OwnerCanPayCosts())
         {
             Debug.Log("owner can play costs return false");
             return false;

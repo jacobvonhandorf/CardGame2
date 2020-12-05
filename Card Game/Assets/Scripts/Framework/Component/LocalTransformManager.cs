@@ -92,7 +92,7 @@ public class LocalTransformManager : MonoBehaviour
             this.targetTransform = targetTransform;
         }
 
-        public override bool isFinished => isFinishedCheck();
+        public override bool IsFinished => isFinishedCheck();
 
         private bool isFinishedCheck()
         {
@@ -100,7 +100,7 @@ public class LocalTransformManager : MonoBehaviour
             return !transformManager.transformQueue.Contains(targetTransform) || !transformManager.enabled;
         }
 
-        public override void execute()
+        public override void Execute()
         {
             transformManager.moveToImmediate(targetTransform);
         }

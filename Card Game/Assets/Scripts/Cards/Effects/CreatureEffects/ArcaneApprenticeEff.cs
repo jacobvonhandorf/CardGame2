@@ -14,7 +14,7 @@ public class ArcaneApprenticeEff : CreatureEffects
     {
         if (creature.enabled)
         {
-            creature.Counters.add(CounterType.Arcane, 1);
+            creature.Counters.Add(CounterType.Arcane, 1);
         }
     }
 
@@ -23,19 +23,19 @@ public class ArcaneApprenticeEff : CreatureEffects
         
         if (creature.hasDoneActionThisTurn)
         {
-            GameManager.Get().showToast("You have already acted with this creature this turn");
+            GameManager.Get().ShowToast("You have already acted with this creature this turn");
             return;
         }
 
         int selectedValue = -1;
-        QueueableCommand xPickCmd = XPickerBox.CreateAsCommand(1, creature.Counters.amountOf(CounterType.Arcane), "How many counters to remove?", creature.Controller, delegate (int x)
+        QueueableCommand xPickCmd = XPickerBox.CreateAsCommand(1, creature.Counters.AmountOf(CounterType.Arcane), "How many counters to remove?", creature.Controller, delegate (int x)
         {
             selectedValue = x;
         });
         QueueableCommand targetSelect = SingleTileTargetEffect.CreateCommand(GameManager.Get().getAllTilesWithCreatures(creature.Controller.getOppositePlayer(), false), delegate (Tile t)
         {
-            creature.Counters.remove(CounterType.Arcane, selectedValue);
-            t.creature.takeDamage(selectedValue, creature.SourceCard);
+            creature.Counters.Remove(CounterType.Arcane, selectedValue);
+            t.creature.TakeDamage(selectedValue, creature.SourceCard);
             creature.hasDoneActionThisTurn = true;
         });
         new CompoundQueueableCommand.Builder().addCommand(xPickCmd).addCommand(targetSelect).BuildAndQueue();

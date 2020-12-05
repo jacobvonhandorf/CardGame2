@@ -34,7 +34,7 @@ public class EffectsManager : MonoBehaviour
 
     public void addEffect(EffectActuator newEffect, Player effectOwner)
     {
-        if (effectOwner != NetInterface.Get().getLocalPlayer())
+        if (effectOwner != NetInterface.Get().localPlayer)
             return;
         effectsQueue.Add(newEffect);
     }
@@ -47,7 +47,7 @@ public class EffectsManager : MonoBehaviour
 
     public void addEffectToStartOfQueue(EffectActuator newEffect, string informationText, Player effectOwner)
     {
-        if (effectOwner != NetInterface.Get().getLocalPlayer())
+        if (effectOwner != NetInterface.Get().localPlayer)
             return;
         newEffect.informationText = informationText;
         effectsQueue.Insert(0, newEffect);

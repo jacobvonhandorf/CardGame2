@@ -42,10 +42,10 @@ public class EffectGraphicsView : MonoBehaviour
             this.view = view;
         }
 
-        public override bool isFinished => finished;
+        public override bool IsFinished => finished;
         public bool finished = false;
 
-        public override void execute()
+        public override void Execute()
         {
             Debug.Log("Showing effect graphic");
             view.StartCoroutine(view.showGraphicCoroutine(graphic, this));
@@ -92,7 +92,7 @@ public class EffectGraphicsView : MonoBehaviour
     }
     private void showCardEffectGraphic(CardEffectGraphic cardEffectGraphic)
     {
-        cardEffectGraphic.card.addToCardViewer(cardViewer);
+        //cardEffectGraphic.card.RegisterToCardViewer(cardViewer);
         cvGameObject.SetActive(true);
     }
     #endregion

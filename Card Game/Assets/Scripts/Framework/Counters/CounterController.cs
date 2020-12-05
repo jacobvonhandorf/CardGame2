@@ -15,38 +15,37 @@ public class CounterController : MonoBehaviour
     private void Awake()
     {
         attachedObject = GetComponentInParent<ICanReceiveCounters>();
-        Debug.Log("Attached object " + attachedObject);
     }
 
-    public void add(CounterType counterType, int amount)
+    public void Add(CounterType counterType, int amount)
     {
         counterList.addCounters(counterType, amount);
         attachedObject.OnCountersAdded(counterType, amount);
-        updateDisplay(counterType);
+        UpdateDisplay(counterType);
     }
-    public void remove(CounterType counterType, int amount)
+    public void Remove(CounterType counterType, int amount)
     {
         counterList.removeCounters(counterType, amount);
         attachedObject.OnCountersAdded(counterType, amount);
-        updateDisplay(counterType);
+        UpdateDisplay(counterType);
     }
-    public int amountOf(CounterType counterType)
+    public int AmountOf(CounterType counterType)
     {
         return counterList.hasCounter(counterType);
     }
-    public void clear()
+    public void Clear()
     {
         counterList.clear();
-        updateDisplays();
+        UpdateDisplays();
     }
 
-    private void updateDisplays()
+    private void UpdateDisplays()
     {
         foreach (CounterType type in counterList.CounterMap.Keys)
-            updateDisplay(type);
+            UpdateDisplay(type);
     }
 
-    private void updateDisplay(CounterType counterType)
+    private void UpdateDisplay(CounterType counterType)
     {
         // get the display if it exists
         if (displays.TryGetValue(counterType, out CounterDisplay display))
@@ -61,7 +60,7 @@ public class CounterController : MonoBehaviour
                 // A display exists but no amount so set the display to inactive
                 display.setText(0);
                 display.gameObject.SetActive(false);
-                updateDisplayLocations();
+                UpdateDisplayLocations();
             }
         }
         else
@@ -75,11 +74,11 @@ public class CounterController : MonoBehaviour
             newDisplay.setTextColor(Counters.GetData(counterType).BorderColor);
             newDisplay.setText(counterList.hasCounter(counterType));
             newDisplay.transform.localScale = new Vector3(1, 1, 1);
-            updateDisplayLocations();
+            UpdateDisplayLocations();
         }
     }
 
-    private void updateDisplayLocations()
+    private void UpdateDisplayLocations()
     {
         int index = 0;
         foreach (CounterDisplay display in displays.Values)

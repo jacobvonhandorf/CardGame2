@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GameEvents
 {
@@ -49,5 +50,4 @@ public class GameEvents
     public delegate void CreatureMovedEventHandler(CreatureMovedArgs e);
     public static void TriggerMovedEvents(object sender, CreatureMovedArgs args) { E_CreatureMoved?.Invoke(sender, args); }
     #endregion
-
 }

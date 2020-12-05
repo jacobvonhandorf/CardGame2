@@ -10,7 +10,7 @@ public class SpiritScryingEffs : SpellEffects
     {
         CardPicker.CreateAndQueue(owner.deck.getAllCardsWithTag(Card.Tag.Fairy), 1, 1, "Select a card to add to your hand", owner, delegate (List<Card> cards)
         {
-            cards[0].moveToCardPile(owner.hand, card);
+            cards[0].MoveToCardPile(owner.hand, card);
         });
     }
 }

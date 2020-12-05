@@ -7,6 +7,6 @@ public class HeadquartersEffs : StructureEffects
 {
     public override EventHandler onLeavesField => delegate (object s, EventArgs e)
     {
-        structure.Controller.makeLose();
+        structure.Controller.MakeLose();
     };
 }

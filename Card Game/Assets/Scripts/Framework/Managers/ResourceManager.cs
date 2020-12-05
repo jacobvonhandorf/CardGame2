@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -33,7 +34,10 @@ public class ResourceManager : MonoBehaviour
         cardDataMap = new Dictionary<int, CardData>();
         CardData[] dataArray = Resources.LoadAll<CardData>("Card Data");
         foreach (CardData data in dataArray)
+        {
+            //Debug.Log(data.name + " " + data.id);
             cardDataMap.Add(data.id, data);
+        }
         stopwatch.Stop();
         Debug.Log("Time to load card data " + stopwatch.ElapsedMilliseconds + "ms");
     }
@@ -50,7 +54,8 @@ public class ResourceManager : MonoBehaviour
         return instance;
     }
 
-    public Card instantiateCardById(int id) => CardBuilder.Instance.BuildFromCardData(cardDataMap[id]);
+    public Card InstantiateCardById(int id) => CardBuilder.Instance.BuildFromCardData(cardDataMap[id]);
+    public Card InstantiateCardById(CardIds id) => InstantiateCardById((int)id);
 
     public List<CardData> getAllCardDataVisibleInDeckBuilder()
     {

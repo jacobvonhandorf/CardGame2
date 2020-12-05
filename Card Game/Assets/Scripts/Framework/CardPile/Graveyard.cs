@@ -24,7 +24,7 @@ public class Graveyard : ViewableCardPile
     protected override void onCardAdded(Card c)
     {
         if (c is CreatureCard)
-            removeCreatureFromTile((c as CreatureCard).creature);
+            removeCreatureFromTile((c as CreatureCard).Creature);
         else if (c is StructureCard)
             removeStructureFromTile((c as StructureCard).structure);
 
@@ -42,32 +42,32 @@ public class Graveyard : ViewableCardPile
         // if network game mode need to sync creature stats here because the creature is set to not active so it won't sync itself
         if (GameManager.gameMode == GameManager.GameMode.online)
         {
-            NetInterface.Get().syncCardStats(c);
+            NetInterface.Get().SyncCardStats(c);
             if (c is CreatureCard)
-                NetInterface.Get().syncCreatureStats((c as CreatureCard).creature);
+                NetInterface.Get().SyncCreatureStats((c as CreatureCard).Creature);
             else if (c is StructureCard)
-                NetInterface.Get().syncStructureStats((c as StructureCard).structure);
+                NetInterface.Get().SyncStructureStats((c as StructureCard).structure);
         }
 
         // change image being displayed
-        topCardViewer.setCard(c);
+        topCardViewer.SetCard(c);
     }
 
     private void removeStructureFromTile(Structure structure)
     {
-        if (structure.tile != null)
+        if (structure.Tile != null)
         {
-            structure.tile.structure = null;
-            structure.tile = null;
+            structure.Tile.structure = null;
+            structure.Tile = null;
         }
     }
 
     private void removeCreatureFromTile(Creature creature)
     {
-        if (creature.tile != null)
+        if (creature.Tile != null)
         {
-            creature.tile.creature = null;
-            creature.tile = null;
+            creature.Tile.creature = null;
+            creature.Tile = null;
         }
     }
 
@@ -82,7 +82,7 @@ public class Graveyard : ViewableCardPile
             }
             else // else set the top card to the last one added to grave (highest index in list)
             {
-                topCardViewer.setCard(cardList[cardList.Count - 1]);
+                topCardViewer.SetCard(cardList[cardList.Count - 1]);
             }
         }
         cardCountText.text = cardList.Count + "";

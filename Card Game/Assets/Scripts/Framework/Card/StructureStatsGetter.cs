@@ -14,6 +14,7 @@ public class StructureStatsGetter : CardStatsGetter
 
     public override void setCardViewer(CardViewer viewer)
     {
+        /*
         viewer.gameObject.SetActive(true);
 
         // flip everything to active that needs to be active
@@ -44,7 +45,9 @@ public class StructureStatsGetter : CardStatsGetter
 
         //throw new System.NotImplementedException();
         viewer.background.sprite = background.sprite;
+        viewer.CardArt = cardArt.sprite;
         viewer.setCardArt(cardArt.sprite);
+        */
     }
 
     public void swapToStructure(Tile structureTile)
@@ -74,9 +77,9 @@ public class StructureStatsGetter : CardStatsGetter
             this.newPostion = newPostion;
         }
 
-        public override bool isFinished => statsGetter.resizeToCreatureFinished;
+        public override bool IsFinished => statsGetter.resizeToCreatureFinished;
 
-        public override void execute()
+        public override void Execute()
         {
             statsGetter.resizeToCreatureFinished = false;
             statsGetter.StartCoroutine(statsGetter.resizeToCreature(statsGetter.transform, newRootScale, iconsToResize, newIconScale, newPostion));

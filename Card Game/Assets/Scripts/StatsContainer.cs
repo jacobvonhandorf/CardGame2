@@ -1,40 +1,52 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-//using System.Diagnostics;
 using System;
+using UnityEngine.Events;
 
-public class StatsContainer : MonoBehaviour
+// Holds a map of stats and has an event that triggers when one of them are changed
+public class StatsContainer : IHaveReadableStats
 {
-    public Dictionary<StatType, object> Stats { get; private set; } = new Dictionary<StatType, object>();
-
+    public Dictionary<StatType, object> StatList { get; } = new Dictionary<StatType, object>();
+    public UnityEvent E_OnStatChange { get; } = new UnityEvent();
     public event EventHandler E_OnStatsChanged;
 
-    public void raiseEvent()
+    public void RaiseEvent()
     {
         E_OnStatsChanged?.Invoke(this, EventArgs.Empty);
+        E_OnStatChange.Invoke();
     }
 
-    public void setValue(StatType type, object value)
+    public void SetValue(StatType type, object value)
     {
-        if (!Stats.ContainsKey(type))
-            Stats.Add(type, value);
+        if (!StatList.ContainsKey(type))
+            StatList.Add(type, value);
         else
-            Stats[type] = value;
-        raiseEvent();
+            StatList[type] = value;
+        RaiseEvent();
     }
 
-    public T getValue<T>(StatType type)
+    public T GetValue<T>(StatType type)
     {
-        if (Stats.TryGetValue(type, out object value))
+        if (StatList.TryGetValue(type, out object value))
             return (T)value;
         else
             return default;
     }
 
-    public void addType(StatType type)
+    public void AddType(StatType type)
     {
-        if (!Stats.ContainsKey(type))
-            Stats.Add(type, -1);
+        if (!StatList.ContainsKey(type))
+            StatList.Add(type, -1);
     }
+
+    public object GetValue(StatType type)
+    {
+        if (StatList.TryGetValue(type, out object value))
+            return value;
+        else
+            return default;
+    }
+
+    public bool TryGetValue(StatType statType, out object value) => StatList.TryGetValue(statType, out value);
 }

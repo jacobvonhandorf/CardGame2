@@ -24,12 +24,12 @@ public class CardToPermanentConverter : MonoBehaviour
         iconsToResize = new List<Transform>(GetComponentsInChildren<Transform>()).FindAll(go => go.tag.Contains(TagsEnum.CardIcon));
     }
 
-    public void doConversion(Vector3 newPosition)
+    public void DoConversion(Vector3 newPosition)
     {
         card.enabled = false;
         permanent.enabled = true;
         dragHandler.enabled = false;
-        StartCoroutine(resizeToCreature(newPosition));
+        StartCoroutine(ResizeToCreature(newPosition));
     }
 
     [SerializeField] private float pauseBetweenResize;
@@ -37,7 +37,7 @@ public class CardToPermanentConverter : MonoBehaviour
     [SerializeField] private float timeForShrinkAnimation;
     private bool resizeToCreatureFinished;
 
-    IEnumerator resizeToCreature(Vector3 newPosition)
+    IEnumerator ResizeToCreature(Vector3 newPosition)
     {
         restingTransform.clearQueue();
         restingTransform.Lock();
@@ -45,7 +45,6 @@ public class CardToPermanentConverter : MonoBehaviour
 
         Vector3 positionStart = restingTransform.transform.localPosition;
         Vector3 positionEnd = newPosition;
-        Debug.Log("Move from " + restingTransform.transform.localPosition);
         Vector3 scaleStart = restingTransform.transform.localScale;
         Vector3 scaleEnd = Vector3.one * scaleWhenPermanent;
         Vector3 offsetPosStart = offsetTransform.transform.localPosition;

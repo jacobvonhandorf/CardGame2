@@ -8,7 +8,7 @@ public class InformativeAnimationsQueue : MonoBehaviour
     public static InformativeAnimationsQueue Instance {
         get
         {
-            if (Instance == null)
+            if (instance == null)
                 instance = new GameObject().AddComponent<InformativeAnimationsQueue>();
             return instance;
         }
@@ -28,22 +28,22 @@ public class InformativeAnimationsQueue : MonoBehaviour
     }
     private void processCommands()
     {
-        if (currentAnimation != null && !currentAnimation.isFinished) // command is in progress
+        if (currentAnimation != null && !currentAnimation.IsFinished) // command is in progress
         {
             return;
         }
-        if (currentAnimation != null && currentAnimation.isFinished) // command finishes
+        if (currentAnimation != null && currentAnimation.IsFinished) // command finishes
         {
             currentAnimation = null;
-            if (NetInterface.Get().getLocalPlayer() != null)
-                NetInterface.Get().getLocalPlayer().removeLock(playingAnimationsLock);
+            if (NetInterface.Get().localPlayer != null)
+                NetInterface.Get().localPlayer.removeLock(playingAnimationsLock);
         }
         if (animationQueue.Count == 0) // command is finished but there is no new command
             return;
         currentAnimation = animationQueue.Dequeue();
-        if (NetInterface.Get().getLocalPlayer() != null)
-            NetInterface.Get().getLocalPlayer().addLock(playingAnimationsLock);
-        currentAnimation.execute();
+        if (NetInterface.Get().localPlayer != null)
+            NetInterface.Get().localPlayer.addLock(playingAnimationsLock);
+        currentAnimation.Execute();
     }
 
     public void addAnimation(QueueableCommand cmd)
