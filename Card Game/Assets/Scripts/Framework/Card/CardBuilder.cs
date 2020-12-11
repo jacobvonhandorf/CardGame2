@@ -55,6 +55,7 @@ public class CardBuilder : MonoBehaviour
         card.Art = cardData.art;
         card.EffectText = cardData.effectText;
         card.ElementalId = cardData.elementalIdentity;
+        card.TypeText = cardData.TypeText;
 
         foreach (Keyword k in cardData.keywords)
             card.AddKeyword(k);
@@ -92,7 +93,7 @@ public class CardBuilder : MonoBehaviour
         card.onInitilization = effs.onInitilization;
         // register activated Effect
         if (effs.activatedEffect != null)
-            creature.activatedEffects.Add(effs.activatedEffect);
+            creature.ActivatedEffects.Add(effs.activatedEffect);
         // register triggers
         if (effs.onDeploy != null)
             creature.E_OnDeployed += effs.onDeploy;
@@ -117,8 +118,8 @@ public class CardBuilder : MonoBehaviour
         structure.Health = data.health;
 
         StructureEffects effs = card.gameObject.AddComponent(data.effects.GetType()) as StructureEffects;
-        effs.structure = structure;
-        effs.card = card;
+        effs.Structure = structure;
+        effs.Card = card;
         if (effs == null)
             return card;
         card.onInitilization = effs.onInitilization;
@@ -147,10 +148,10 @@ public class CardBuilder : MonoBehaviour
         effs.card = card;
         if (effs == null)
             return card;
-        card.onInitilization = effs.onInitilization;
+        card.onInitilization = effs.OnInitilization;
         // regist effects
-        if (effs.onMoveToCardPile != null)
-            card.E_AddedToCardPile += effs.onMoveToCardPile;
+        if (effs.OnMoveToCardPile != null)
+            card.E_AddedToCardPile += effs.OnMoveToCardPile;
 
         return card;
     }

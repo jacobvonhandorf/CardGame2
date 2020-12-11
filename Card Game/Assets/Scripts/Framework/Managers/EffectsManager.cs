@@ -72,7 +72,7 @@ public class EffectsManager : MonoBehaviour
             else
             {
                 // TODO fix this for netplay
-                GameManager.Get().activePlayer.removeLock(effectsManagerLock);
+                GameManager.Get().activePlayer.RemoveLock(effectsManagerLock);
             }
             // reset bool
             effectJustFinished = false;
@@ -87,7 +87,7 @@ public class EffectsManager : MonoBehaviour
         effectsQueue.Remove(effectToActivate);
         effectInProcess = true;
         effectToActivate.activate();
-        GameManager.Get().activePlayer.addLock(effectsManagerLock);
+        GameManager.Get().activePlayer.AddLock(effectsManagerLock);
         //GameManager.Get().activePlayer.locked = true;
         if (effectToActivate.informationText != null)
             flipEffectTextOn(effectToActivate.informationText);

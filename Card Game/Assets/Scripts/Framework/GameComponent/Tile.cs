@@ -2,16 +2,47 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class Tile : MonoBehaviour
 {
-    public Creature creature;
-    public Effect effect;
-    public Structure structure;
-    public int x;
-    public int y;
-    private bool active = false;
-    private bool attackable = false;
+    public bool IsPowerTile { get; private set; } = false;
+    public List<Tile> AdjacentTiles => GameManager.Get().board.GetAllTilesWithinExactRangeOfTile(this, 1);
+    public Permanent Permanent
+    {
+        get
+        {
+            if (creature != null)
+                return creature;
+            else
+                return structure;
+        }
+        set
+        {
+            if (creature != null || structure != null)
+            {
+                Debug.LogError("Trying to set permanent on a tile that already has a permanent");
+                return;
+            }
+
+            if (value is Creature c)
+                creature = c;
+            else if (value is Structure s)
+                structure = s;
+            else if (value == null)
+            {
+                creature = null;
+                structure = null;
+            }
+        }
+    }
+    [HideInInspector] public Creature creature;
+    [HideInInspector] public Structure structure;
+    [HideInInspector] public Effect effect;
+    [HideInInspector] public int x;
+    [HideInInspector] public int y;
+    [HideInInspector] public GameObject effectFilterLocal; // keeps track of filter that highlights effectable tiles.
 
     [SerializeField] private GameObject attackableFilter; // prefab to instantiate
     [SerializeField] private GameObject effectableFilter; // prefab to instantiate
@@ -20,46 +51,37 @@ public class Tile : MonoBehaviour
     [SerializeField] private Color moveColor;
     [SerializeField] private Color defaultColor;
     [SerializeField] private Color powerTileColor;
+    private bool active = false;
+    private bool attackable = false;
     private GameObject attackFilterLocal; // keeps track of filter that highlights attackable tiles.
-    public GameObject effectFilterLocal; // keeps track of filter that highlights effectable tiles.
-    private bool powerTile = false;
+    private Image image;
 
     private void Awake()
     {
-        sr = GetComponent<SpriteRenderer>();
+        image = GetComponent<Image>();
+        GetComponent<OnMouseClickEvents>().OnMouseClick.AddListener(OnClicked);
     }
 
-    public void setAsPowerTile()
+    public void SetAsPowerTile()
     {
-        powerTile = true;
+        IsPowerTile = true;
         defaultColor = powerTileColor;
-        setColor(powerTileColor);
+        image.color = powerTileColor;
     }
 
-    public bool isPowerTile()
-    {
-        return powerTile;
-    }
-
-    public int getDistanceTo(Tile otherTile)
+    #region Utility
+    public int GetDistanceTo(Tile otherTile)
     {
         int distX = Math.Abs(otherTile.x - x);
         int distY = Math.Abs(otherTile.y - y);
 
         return distX + distY;
     }
+    #endregion
 
-    public List<Tile> getAdjacentTiles()
-    {
-        return GameManager.Get().board.getAllTilesWithinExactRangeOfTile(this, 1);
-    }
-
-    public void removeCreature()
-    {
-        creature = null;
-    }
-
-    public void setAttackable(bool attackable)
+    // This should be reworked
+    #region Effects and Attacks Control Flow
+    public void SetAttackable(bool attackable)
     {
         this.attackable = attackable;
         if (attackable)
@@ -76,15 +98,13 @@ public class Tile : MonoBehaviour
             Destroy(attackFilterLocal);
         }
     }
-
-    public void setEffectable(SingleTileTargetEffect singleTileTargetEffect)
+    public void SetEffectable(SingleTileTargetEffect singleTileTargetEffect)
     {
         effectFilterLocal = Instantiate(effectableFilter, new Vector3(x - 4, y - 3, -1), Quaternion.identity);
         EffectableFilter filter = effectFilterLocal.GetComponent<EffectableFilter>();
         filter.tile = this;
         filter.effect = singleTileTargetEffect;
     }
-
     public void setEffectableFalse()
     {
         if (effectFilterLocal != null)
@@ -92,37 +112,18 @@ public class Tile : MonoBehaviour
             Destroy(effectFilterLocal);
         }
     }
-
     public void setActive(bool active)
     {
         this.active = active;
         if (active)
         {
-            sr.color = moveColor;
+            image.color = moveColor;
         }
         else
         {
-            sr.color = defaultColor;
+            image.color = defaultColor;
         }
     }
-
-    void OnMouseUpAsButton()
-    {
-        if (active)
-        {
-            doCreatureMove();
-        }
-        else if (attackable)
-        {
-            GameManager.Get().doAttackOn(creature);
-            Board.instance.setAllTilesToDefault();
-        }
-        else
-        {
-            nonActiveClick();
-        }
-    }
-
     private void nonActiveClick()
     {
         Player activePlayer = GameManager.Get().activePlayer;
@@ -130,7 +131,7 @@ public class Tile : MonoBehaviour
         if (activePlayer.heldCreature != null) // player was attacking or moving
         {
             activePlayer.heldCreature = null;
-            Board.instance.setAllTilesToDefault();
+            Board.instance.SetAllTilesToDefault();
         }
     }
 
@@ -142,15 +143,27 @@ public class Tile : MonoBehaviour
         else
             playerWithCreature = GameManager.Get().activePlayer;
         Creature creatureToMove = playerWithCreature.heldCreature;
-        creatureToMove.move(this);
-        Board.instance.setAllTilesToDefault();
+        creatureToMove.Move(this);
+        Board.instance.SetAllTilesToDefault();
         ActionBox.instance.show(creature);
         playerWithCreature.heldCreature = null;
     }
+    #endregion
 
-    private SpriteRenderer sr;
-    public void setColor(Color color)
+    private void OnClicked()
     {
-        sr.color = color;
+        if (active)
+        {
+            doCreatureMove();
+        }
+        else if (attackable)
+        {
+            GameManager.Get().doAttackOn(creature);
+            Board.instance.SetAllTilesToDefault();
+        }
+        else
+        {
+            nonActiveClick();
+        }
     }
 }

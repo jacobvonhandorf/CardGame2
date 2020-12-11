@@ -17,6 +17,7 @@ public class TestScript : MonoBehaviour
     private void Start()
     {
         // setup test
+        
         //testCard = getTestStructureCard();
     }
 
@@ -25,6 +26,7 @@ public class TestScript : MonoBehaviour
     Card c = null;
     private void DoTestOnKeyPress()
     {
+        /*
         // setting card viewer to cardData for all card types
         if (testNum == 0)
         {
@@ -60,6 +62,7 @@ public class TestScript : MonoBehaviour
         testNum++;
         // test code here
         //(testCard as StructureCard).structure.Health -= 1;
+        */
     }
 
     private void Update()

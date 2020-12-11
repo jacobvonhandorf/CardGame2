@@ -59,7 +59,7 @@ public class LocalTransformManager : MonoBehaviour
     }
     public void moveToInformativeAnimation(LocalTransformStruct t)
     {
-        InformativeAnimationsQueue.Instance.addAnimation(new TransformCommand(this, t));
+        InformativeAnimationsQueue.Instance.AddAnimation(new TransformCommand(this, t));
     }
 
     public void setTransform(LocalTransformStruct tStruct)
@@ -81,7 +81,7 @@ public class LocalTransformManager : MonoBehaviour
     }
 
     // informative commands clear queue then add to it, then check for !contains in queue
-    private class TransformCommand : QueueableCommand
+    private class TransformCommand : IQueueableCommand
     {
         private LocalTransformManager transformManager;
         private LocalTransformStruct targetTransform;
@@ -92,15 +92,15 @@ public class LocalTransformManager : MonoBehaviour
             this.targetTransform = targetTransform;
         }
 
-        public override bool IsFinished => isFinishedCheck();
+        public bool IsFinished => IsFinishedCheck();
 
-        private bool isFinishedCheck()
+        private bool IsFinishedCheck()
         {
             // check for not being enabled here so queue doesn't get clogged
             return !transformManager.transformQueue.Contains(targetTransform) || !transformManager.enabled;
         }
 
-        public override void Execute()
+        public void Execute()
         {
             transformManager.moveToImmediate(targetTransform);
         }

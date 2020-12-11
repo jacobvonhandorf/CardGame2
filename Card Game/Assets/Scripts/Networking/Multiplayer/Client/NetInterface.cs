@@ -96,11 +96,10 @@ public class NetInterface
     public void SyncDeckOrder(CardPile deck)
     {
         byte deckCpId = pileIdMap.Get(deck);
-        List<Card> cardList = deck.getCardList();
-        int[] cardIds = new int[cardList.Count];
-        for (int i = 0; i < cardList.Count; i++)
+        int[] cardIds = new int[deck.CardList.Count];
+        for (int i = 0; i < deck.CardList.Count; i++)
         {
-            cardIds[i] = cardMap.Get(cardList[i]);
+            cardIds[i] = cardMap.Get(deck.CardList[i]);
         }
 
         Net_SyncDeckOrder msg = new Net_SyncDeckOrder();
@@ -115,7 +114,7 @@ public class NetInterface
         {
             newCardList.Add(cardMap.Get(cardId));
         }
-        deck.syncOrderFromNetwork(newCardList);
+        deck.SyncOrderFromNetwork(newCardList);
     }
     public void SyncCreatureCoordinates(Creature c, int x, int y, Card source)
     {
@@ -137,7 +136,7 @@ public class NetInterface
         if (source is Card)
             c.forceMove(x, y, source as Card);
         else
-            c.move(x, y);
+            c.Move(x, y);
     }
     public void SyncAttack(Creature attacker, Damageable defender, int damageRoll)
     {
@@ -166,12 +165,12 @@ public class NetInterface
     public void SyncPlayerStats(Player p)
     {
         Net_SyncPlayerResources msg = new Net_SyncPlayerResources();
-        msg.gold = p.getGold();
-        msg.mana = p.getMana();
-        msg.actions = p.GetActions();
-        msg.goldPTurn = p.getGoldPerTurn();
-        msg.manaPTurn = p.getManaPerTurn();
-        msg.actionsPTurn = p.getActionsPerTurn();
+        msg.gold = p.Gold;
+        msg.mana = p.Mana;
+        msg.actions = p.Actions;
+        msg.goldPTurn = p.GoldPerTurn;
+        msg.manaPTurn = p.ManaPerTurn;
+        msg.actionsPTurn = p.ActionsPerTurn;
         if (LocalPlayerIsP1)
             msg.isPlayerOne = p == localPlayer;
         else
@@ -187,7 +186,7 @@ public class NetInterface
         }
         else
         {
-            Player opposingPlayer = GameManager.Get().getOppositePlayer(localPlayer);
+            Player opposingPlayer = GameManager.Get().GetOppositePlayer(localPlayer);
             opposingPlayer.SyncStats(gold, goldPTurn, mana, manaPTurn, actions, actionsPTurn);
         }
     }
@@ -270,7 +269,7 @@ public class NetInterface
     {
         Card card = cardMap.Get(msg.sourceCardId) as Card;
         //card.setSpritesToSortingLayer(SpriteLayers.Creature); // move sprite layer down
-        Tile targetTile =  GameManager.Get().board.getTileByCoordinate(msg.x, msg.y);
+        Tile targetTile =  GameManager.Get().board.GetTileByCoordinate(msg.x, msg.y);
         if (card is CreatureCard)
             GameManager.Get().syncCreateCreatureOnTile(card as CreatureCard, targetTile, card.owner);
         else
@@ -336,13 +335,13 @@ public class NetInterface
         if (LocalPlayerIsP1)
             return localPlayer;
         else
-            return GameManager.Get().getOppositePlayer(localPlayer);
+            return GameManager.Get().GetOppositePlayer(localPlayer);
     }
 
     private Player GetPlayer2()
     {
         if (LocalPlayerIsP1)
-            return GameManager.Get().getOppositePlayer(localPlayer);
+            return GameManager.Get().GetOppositePlayer(localPlayer);
         else
             return localPlayer;
     }

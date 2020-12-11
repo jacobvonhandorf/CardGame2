@@ -8,7 +8,7 @@ public class AllOutAttack : HeroPower
 
     public void activate(Player controller)
     {
-        List<Creature> creatures = controller.getAllControlledCreatures();
+        List<Creature> creatures = controller.ControlledCreatures;
         foreach (Creature c in creatures)
         {
             c.hasDoneActionThisTurn = false;
@@ -16,12 +16,12 @@ public class AllOutAttack : HeroPower
             c.UpdateHasActedIndicators();
         }
 
-        controller.addActions(creatures.Count);
+        controller.Actions += creatures.Count;
     }
 
     public bool canBeActivatedCheck(Player controller)
     {
-        return controller.getGold() >= goldCost;
+        return controller.Gold >= goldCost;
     }
 
     public string getEffectText()

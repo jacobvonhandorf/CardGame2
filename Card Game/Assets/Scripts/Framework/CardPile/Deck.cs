@@ -34,13 +34,13 @@ public class Deck : CardPile
             card.owner = deckOwner;
             (card as StructureCard).structure.SourceCard.owner = deckOwner;
             (card as StructureCard).structure.Controller = deckOwner;
-            addCard(card);
+            AddCard(card);
             card.MoveToCardPile(this, null);
         }
         foreach (Card card in GetComponentsInChildren<SpellCard>())
         {
             card.owner = deckOwner;
-            addCard(card);
+            AddCard(card);
             card.MoveToCardPile(this, null);
         }
         shuffle();
@@ -63,33 +63,10 @@ public class Deck : CardPile
             cardList[k] = cardList[n];
             cardList[n] = card;
         }
-        foreach(Card c in cardList)
-        {
-            c.hide();
-        }
         NetInterface.Get().SyncDeckOrder(this);
     }
-    /*
-    public Card draw()
-    {
-        if (cardList.Count == 0)
-        {
-            GameManager.Get().playerHasDrawnOutDeck(deckOwner);
-            return null;
-        }
-        return removeCard(cardList[0]);
-    }*/
 
-        /*
-    public List<Card> draw(int numCards)
-    {
-        List<Card> returnList = new List<Card>();
-        for (int i = 0; i < numCards; i++)
-            returnList.Add(draw());
-        return returnList;
-    }*/
-
-    protected override void onCardAdded(Card c)
+    protected override void OnCardAdded(Card c)
     {
         c.removeGraphicsAndCollidersFromScene(); // card in deck should not be clickable
         c.positionOnScene = transform.position;
@@ -97,19 +74,13 @@ public class Deck : CardPile
             cardCountText.text = cardList.Count + "";
     }
 
-    // usually what will be used for drawing
-    internal Card getTopCard()
-    {
-        return cardList[0];
-    }
-
-    protected override void onCardRemoved(Card c)
+    protected override void OnCardRemoved(Card c)
     {
         if (cardCountText != null)
             cardCountText.text = cardList.Count + "";
     }
 
-    public void printCardList() // used for debugging
+    public void PrintCardList() // used for debugging
     {
         Debug.Log("Printing deck cardList");
         foreach(Card c in cardList)
@@ -119,7 +90,7 @@ public class Deck : CardPile
     }
 
     // only use when loading a new deck
-    public void clearDeck()
+    public void ClearDeck()
     {
         foreach (Card c in cardList)
         {

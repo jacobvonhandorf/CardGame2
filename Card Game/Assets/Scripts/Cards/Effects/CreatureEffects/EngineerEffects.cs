@@ -14,7 +14,7 @@ public class EngineerEffects : CreatureEffects
         };
 
         int selectedCardId = -1;
-        QueueableCommand selectCommand = OptionSelectBox.CreateCommand(options, "Select which structure you would like to place", creature.Controller, delegate (int selectedIndex, string selectedOption)
+        IQueueableCommand selectCommand = OptionSelectBox.CreateCommand(options, "Select which structure you would like to place", creature.Controller, delegate (int selectedIndex, string selectedOption)
         {
             if (selectedIndex == 0)
                 selectedCardId = (int)CardIds.Market;
@@ -25,9 +25,9 @@ public class EngineerEffects : CreatureEffects
         });
         Debug.Log(creature.Controller);
         List<Tile> validTargets = GameManager.Get().getLegalStructurePlacementTiles(creature.Controller);
-        validTargets.RemoveAll(t => t.getDistanceTo(creature.Tile) > 1);
+        validTargets.RemoveAll(t => t.GetDistanceTo(creature.Tile) > 1);
         validTargets.RemoveAll(t => t.creature != null);
-        QueueableCommand selectTileCmd = SingleTileTargetEffect.CreateCommand(validTargets, delegate (Tile t)
+        IQueueableCommand selectTileCmd = SingleTileTargetEffect.CreateCommand(validTargets, delegate (Tile t)
         {
             creature.Counters.Remove(CounterType.Build, 1);
             StructureCard structureToPlace = GameManager.Get().createCardById(selectedCardId, creature.Controller) as StructureCard;
@@ -35,6 +35,6 @@ public class EngineerEffects : CreatureEffects
             creature.hasDoneActionThisTurn = true;
             creature.UpdateHasActedIndicators();
         });
-        new CompoundQueueableCommand.Builder().addCommand(selectCommand).addCommand(selectTileCmd).BuildAndQueue();
+        new CompoundQueueableCommand.Builder().AddCommand(selectCommand).AddCommand(selectTileCmd).BuildAndQueue();
     };
 }

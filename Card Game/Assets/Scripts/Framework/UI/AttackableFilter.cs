@@ -11,7 +11,7 @@ public class AttackableFilter : MonoBehaviour
         Debug.Log("attack filter clicked");
         Creature targetCreature = tile.creature;
         Structure targetStructure = tile.structure;
-        Board.instance.setAllTilesToDefault();
+        Board.instance.SetAllTilesToDefault();
         if (targetCreature == null) // attack structure if not creature is on tile
         {
             GameManager.Get().doAttackOn(targetStructure);

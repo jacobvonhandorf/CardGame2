@@ -5,10 +5,10 @@ using UnityEngine;
 public class AlchemyEffs : SpellEffects
 {
     public int goldToAdd;
-    public override List<Tile> validTiles => Board.instance.allTiles;
+    public override List<Tile> ValidTiles => Board.instance.AllTiles;
 
-    public override void doEffect(Tile t)
+    public override void DoEffect(Tile t)
     {
-        card.owner.addGold(goldToAdd);
+        card.owner.Gold += goldToAdd;
     }
 }

@@ -5,13 +5,13 @@ using static Card;
 
 public class MightMakesRightEffs : SpellEffects
 {
-    public override List<Tile> validTiles => Board.instance.allTiles;
+    public override List<Tile> ValidTiles => Board.instance.AllTiles;
 
-    public override void doEffect(Tile t)
+    public override void DoEffect(Tile t)
     {
-        Deck deck = card.owner.deck;
+        Deck deck = card.owner.Deck;
         CreatureCard cardToAdd = null;
-        foreach (CreatureCard c in deck.getAllCardsWithType(CardType.Creature))
+        foreach (CreatureCard c in deck.GetAllCardsWithType(CardType.Creature))
         {
             if (cardToAdd == null)
                 cardToAdd = c;
@@ -23,7 +23,7 @@ public class MightMakesRightEffs : SpellEffects
         {
             cardToAdd.Creature.AttackStat += 1;
             cardToAdd.Creature.Health += 1;
-            cardToAdd.MoveToCardPile(card.owner.hand, card);
+            cardToAdd.MoveToCardPile(card.owner.Hand, card);
         }
     }
 }

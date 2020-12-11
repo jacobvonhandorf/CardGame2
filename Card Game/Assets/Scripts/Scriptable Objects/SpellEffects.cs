@@ -7,12 +7,12 @@ public abstract class SpellEffects : MonoBehaviour
 {
     [HideInInspector] public Card card;
 
-    public abstract void doEffect(Tile t);
-    public abstract List<Tile> validTiles { get; }
-    public virtual bool canBePlayed { get; } = true;
+    public abstract void DoEffect(Tile t);
+    public abstract List<Tile> ValidTiles { get; }
+    public virtual bool CanBePlayed { get; } = true;
 
-    public virtual EmptyHandler onInitilization { get; }
-    public virtual EventHandler<Card.AddedToCardPileArgs> onMoveToCardPile { get; }
+    public virtual EmptyHandler OnInitilization { get; }
+    public virtual EventHandler<Card.AddedToCardPileArgs> OnMoveToCardPile { get; }
 
-    public Player owner { get { return card.owner; } }
+    public Player Owner { get { return card.owner; } }
 }

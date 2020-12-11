@@ -13,7 +13,7 @@ public class CreatureCard : Card
     public override List<Tile> LegalTargetTiles => GameManager.Get().getAllDeployableTiles(owner);
     public CounterController CounterController { get { return counterController; } }
 
-    public new PermanentCardVisual CardVisuals { get { return (PermanentCardVisual)cardVisuals; } }
+    public new PermanentCardVisual CardVisuals { get { return (PermanentCardVisual)base.CardVisuals; } }
 
     private CardToPermanentConverter cardToPermanentConverter;
 
@@ -34,8 +34,6 @@ public class CreatureCard : Card
     {
         GameManager gameManager = GameManager.Get();
         gameManager.createCreatureOnTile(Creature, t, owner); // this makes the assumption that a card will always be played by it's owner
-        //setSpritesToSortingLayer(SpriteLayers.Creature);
-        owner.hand.resetCardPositions();
         GameEvents.TriggerCreaturePlayedEvents(null, new GameEvents.CreaturePlayedArgs() { creature = Creature });
     }
 
@@ -48,7 +46,6 @@ public class CreatureCard : Card
         Creature.enabled = true;
 
         // resize
-        //creatureStatsScript.swapToCreature(this, onTile);
         cardToPermanentConverter.DoConversion(onTile.transform.position);
 
         // set card pile to board
@@ -69,7 +66,7 @@ public class CreatureCard : Card
         // no longer a creature so forget the tile it's on
         Creature.Tile = null;
         // and remove it from allCreatures
-        GameManager.Get().allCreatures.Remove(Creature);
+        //GameManager.Get().allCreatures.Remove(Creature);
 
         // counters don't say on cards when they aren't creatures so clear them
         counterController.Clear();

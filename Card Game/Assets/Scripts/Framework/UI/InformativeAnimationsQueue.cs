@@ -19,14 +19,14 @@ public class InformativeAnimationsQueue : MonoBehaviour
         instance = this;
     }
 
-    private object playingAnimationsLock = new object();
-    private Queue<QueueableCommand> animationQueue = new Queue<QueueableCommand>();
-    private QueueableCommand currentAnimation;
+    private readonly object playingAnimationsLock = new object();
+    private Queue<IQueueableCommand> animationQueue = new Queue<IQueueableCommand>();
+    private IQueueableCommand currentAnimation;
     void Update()
     {
-        processCommands();
+        ProcessCommands();
     }
-    private void processCommands()
+    private void ProcessCommands()
     {
         if (currentAnimation != null && !currentAnimation.IsFinished) // command is in progress
         {
@@ -36,17 +36,17 @@ public class InformativeAnimationsQueue : MonoBehaviour
         {
             currentAnimation = null;
             if (NetInterface.Get().localPlayer != null)
-                NetInterface.Get().localPlayer.removeLock(playingAnimationsLock);
+                NetInterface.Get().localPlayer.RemoveLock(playingAnimationsLock);
         }
         if (animationQueue.Count == 0) // command is finished but there is no new command
             return;
         currentAnimation = animationQueue.Dequeue();
         if (NetInterface.Get().localPlayer != null)
-            NetInterface.Get().localPlayer.addLock(playingAnimationsLock);
+            NetInterface.Get().localPlayer.AddLock(playingAnimationsLock);
         currentAnimation.Execute();
     }
 
-    public void addAnimation(QueueableCommand cmd)
+    public void AddAnimation(IQueueableCommand cmd)
     {
         animationQueue.Enqueue(cmd);
     }

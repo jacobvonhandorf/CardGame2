@@ -15,15 +15,15 @@ public class XPickerBox : MonoBehaviour
     private bool finished = false;
 
     #region Command
-    public static QueueableCommand CreateAsCommand(int minValue, int maxValue, string headerText, Player owner, XValueHandler handler)
+    public static IQueueableCommand CreateAsCommand(int minValue, int maxValue, string headerText, Player owner, XValueHandler handler)
     {
         return new XPickerCmd(minValue, maxValue, headerText, owner, handler);
     }
     public static void CreateAndQueue(int minValue, int maxValue, string headerText, Player owner, XValueHandler handler)
     {
-        InformativeAnimationsQueue.Instance.addAnimation(CreateAsCommand(minValue, maxValue, headerText, owner, handler));
+        InformativeAnimationsQueue.Instance.AddAnimation(CreateAsCommand(minValue, maxValue, headerText, owner, handler));
     }
-    private class XPickerCmd : QueueableCommand
+    private class XPickerCmd : IQueueableCommand
     {
         XPickerBox xPicker;
         int minValue;
@@ -42,9 +42,9 @@ public class XPickerBox : MonoBehaviour
             this.handler = handler;
         }
 
-        public override bool IsFinished => forceFinished || xPicker.finished;
+        public bool IsFinished => forceFinished || xPicker.finished;
 
-        public override void Execute()
+        public void Execute()
         {
             if (owner != null && NetInterface.Get().localPlayer != owner)
             {

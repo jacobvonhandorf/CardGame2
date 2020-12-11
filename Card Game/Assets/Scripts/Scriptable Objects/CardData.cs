@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 
-public abstract class CardData : ScriptableObject, IComparable<CardData>, IHasCardTags, ICanBeCardViewed
+public abstract class CardData : ScriptableObject, IComparable<CardData>, ICanBeCardViewed
 {
     public int id;
     public string cardName;
@@ -38,6 +38,7 @@ public abstract class CardData : ScriptableObject, IComparable<CardData>, IHasCa
 
     public abstract IHaveReadableStats ReadableStats { get; }
     public abstract string CardTypeString { get; }
+    public Card AsCard => CardBuilder.Instance.BuildFromCardData(this);
 
     public int CompareTo(CardData other)
     {

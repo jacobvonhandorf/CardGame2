@@ -5,11 +5,24 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using UnityEngine;
+using System.Linq;
 
 public class ResourceManager : MonoBehaviour
 {
     private static ResourceManager instance;
     private static Dictionary<int, CardData> cardDataMap;
+
+    public static ResourceManager Get()
+    {
+        if (instance == null)
+        {
+            // if an instance doesn't exist then instantiate one
+            GameObject resourceManager = new GameObject();
+            resourceManager.name = "Resource Manager";
+            instance = resourceManager.AddComponent<ResourceManager>();
+        }
+        return instance;
+    }
 
     private void Awake()
     {
@@ -23,10 +36,10 @@ public class ResourceManager : MonoBehaviour
         }
         // Get path for all cards
         if (cardDataMap == null)
-            setupCardDataMap();
+            SetupCardDataMap();
     }
 
-    private void setupCardDataMap()
+    private void SetupCardDataMap()
     {
         Debug.Log("Generating card data map");
         System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
@@ -42,33 +55,12 @@ public class ResourceManager : MonoBehaviour
         Debug.Log("Time to load card data " + stopwatch.ElapsedMilliseconds + "ms");
     }
 
-    public static ResourceManager Get()
-    {
-        if (instance == null)
-        {
-            // if an instance doesn't exist then instantiate one
-            GameObject resourceManager = new GameObject();
-            resourceManager.name = "Resource Manager";
-            instance = resourceManager.AddComponent<ResourceManager>();
-        }
-        return instance;
-    }
 
     public Card InstantiateCardById(int id) => CardBuilder.Instance.BuildFromCardData(cardDataMap[id]);
     public Card InstantiateCardById(CardIds id) => InstantiateCardById((int)id);
 
-    public List<CardData> getAllCardDataVisibleInDeckBuilder()
-    {
-        List<CardData> returnList = new List<CardData>();
-        foreach (CardData data in cardDataMap.Values)
-        {
-            if (data.visibleInDeckBuilder)
-                returnList.Add(data);
-        }
-        return returnList;
-    }
-
-    public List<CardData> getAllCardData() => new List<CardData>(cardDataMap.Values);
-
-    public CardData getCardDataById(int id) => cardDataMap[id];
+    public List<CardData> GetAllCardDataVisibleInDeckBuilder() => cardDataMap.Values.Where(d => d.visibleInDeckBuilder).ToList();
+    public List<CardData> GetAllCardData() => new List<CardData>(cardDataMap.Values);
+    public CardData GetCardDataById(int id) => cardDataMap[id];
+    public CardData GetCardDataById(CardIds id) => GetCardDataById((int)id);
 }

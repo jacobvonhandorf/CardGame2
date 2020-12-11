@@ -12,7 +12,7 @@ public class DoubleUp : HeroPower
 
     public bool canBeActivatedCheck(Player controller)
     {
-        return controller.hand.getAllCardsWithType(Card.CardType.Creature).Count > 0;
+        return controller.Hand.GetAllCardsWithType(Card.CardType.Creature).Count > 0;
     }
 
     public string getEffectText()

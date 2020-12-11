@@ -37,6 +37,7 @@ public class StructureCardData : CardData, IHaveReadableStats
             case StatType.EffectText: value = effectText; break;
             case StatType.Art: value = art; break;
             case StatType.ElementalId: value = elementalIdentity; break;
+            case StatType.CardType: value = CardType; break;
             default:
                 value = default;
                 Debug.LogError("Unexpected card type");

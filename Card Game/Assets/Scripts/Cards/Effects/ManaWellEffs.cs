@@ -16,12 +16,12 @@ public class ManaWellEffs : StructureEffects
 
     private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastArgs e)
     {
-        structure.Counters.Add(CounterType.Arcane, 1);
-        if (structure.Counters.AmountOf(CounterType.Arcane) == 3)
+        Structure.Counters.Add(CounterType.Arcane, 1);
+        if (Structure.Counters.AmountOf(CounterType.Arcane) == 3)
         {
-            card.showInEffectsView();
-            controller.addMana(1);
-            structure.Counters.Remove(CounterType.Arcane, 3);
+            Card.ShowInEffectsView();
+            //controller.addMana(1);
+            Structure.Counters.Remove(CounterType.Arcane, 3);
         }
     }
 }

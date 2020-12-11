@@ -7,33 +7,33 @@ public class FairyFortressEffs : StructureEffects
 {
     public override EventHandler onDeploy => delegate (object s, EventArgs e)
     {
-        controller.increaseActionsPerTurn(1);
+        Controller.ActionsPerTurn += 1;
     };
     public override EventHandler onLeavesField => delegate (object s, EventArgs e)
     {
-        controller.increaseActionsPerTurn(-1);
+        Controller.ActionsPerTurn -= 1;
     };
 
     public override EmptyHandler activatedEffect => delegate ()
     {
-        if (controller.GetActions() < 1)
+        if (Controller.Actions < 1)
         {
-            Toaster.instance.doToast("You do not have enough actions to activate " + card.CardName);
+            Toaster.instance.doToast("You do not have enough actions to activate " + Card.CardName);
             return;
         }
 
         Creature ownedCreature = null;
-        QueueableCommand ownedSelect = SingleTileTargetEffect.CreateCommand(Board.instance.getAllTilesWithCreatures(controller, true), delegate (Tile t)
+        IQueueableCommand ownedSelect = SingleTileTargetEffect.CreateCommand(Board.instance.GetAllTilesWithCreatures(Controller, true), delegate (Tile t)
         {
             ownedCreature = t.creature;
         });
-        QueueableCommand opponentSelect = SingleTileTargetEffect.CreateCommand(Board.instance.getAllTilesWithCreatures(controller.OppositePlayer, false), delegate (Tile t)
+        IQueueableCommand opponentSelect = SingleTileTargetEffect.CreateCommand(Board.instance.GetAllTilesWithCreatures(Controller.OppositePlayer, false), delegate (Tile t)
         {
             Creature opponentCreature = t.creature;
-            controller.subtractActions(1);
-            ownedCreature.Bounce(card);
-            opponentCreature.Bounce(card);
+            Controller.Actions -= 1;
+            ownedCreature.Bounce(Card);
+            opponentCreature.Bounce(Card);
         });
-        new CompoundQueueableCommand.Builder().addCommand(ownedSelect).addCommand(opponentSelect).BuildAndQueue();
+        new CompoundQueueableCommand.Builder().AddCommand(ownedSelect).AddCommand(opponentSelect).BuildAndQueue();
     };
 }

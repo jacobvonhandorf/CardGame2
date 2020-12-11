@@ -9,11 +9,11 @@ public class StatsContainer : IHaveReadableStats
 {
     public Dictionary<StatType, object> StatList { get; } = new Dictionary<StatType, object>();
     public UnityEvent E_OnStatChange { get; } = new UnityEvent();
-    public event EventHandler E_OnStatsChanged;
+    //public event EventHandler E_OnStatsChanged;
 
     public void RaiseEvent()
     {
-        E_OnStatsChanged?.Invoke(this, EventArgs.Empty);
+        //E_OnStatsChanged?.Invoke(this, EventArgs.Empty);
         E_OnStatChange.Invoke();
     }
 
@@ -45,7 +45,7 @@ public class StatsContainer : IHaveReadableStats
         if (StatList.TryGetValue(type, out object value))
             return value;
         else
-            return default;
+            return null;
     }
 
     public bool TryGetValue(StatType statType, out object value) => StatList.TryGetValue(statType, out value);

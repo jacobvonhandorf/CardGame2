@@ -12,7 +12,7 @@ public class DeckBuilderCardName : MonoBehaviour
     private void OnMouseOver()
     {
         CardViewer viewer = DeckBuilderDeck.instance.hoveredCardViewer;
-        viewer.SetCard(cardId);
+        //viewer.SetCard(cardId); needs to be redone
         Vector3 newPosition = transform.position;
         newPosition.x = X_OFFSET;
         if (newPosition.y < MIN_Y)

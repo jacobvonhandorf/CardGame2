@@ -58,9 +58,9 @@ public class StructureStatsGetter : CardStatsGetter
         Vector3 newIconScale = new Vector3(scalingCoefficient, scalingCoefficient, 1);
         Vector3 newRootScale = new Vector3(entireCardScaleCoefficient, entireCardScaleCoefficient, 1);
 
-        InformativeAnimationsQueue.Instance.addAnimation(new SwapToCreatureAnimation(this, iconsToResize, newIconScale, newRootScale, structureTile.transform.position));
+        InformativeAnimationsQueue.Instance.AddAnimation(new SwapToCreatureAnimation(this, iconsToResize, newIconScale, newRootScale, structureTile.transform.position));
     }
-    private class SwapToCreatureAnimation : QueueableCommand
+    private class SwapToCreatureAnimation : IQueueableCommand
     {
         StructureStatsGetter statsGetter;
         List<Transform> iconsToResize;
@@ -77,9 +77,9 @@ public class StructureStatsGetter : CardStatsGetter
             this.newPostion = newPostion;
         }
 
-        public override bool IsFinished => statsGetter.resizeToCreatureFinished;
+        public bool IsFinished => statsGetter.resizeToCreatureFinished;
 
-        public override void Execute()
+        public void Execute()
         {
             statsGetter.resizeToCreatureFinished = false;
             statsGetter.StartCoroutine(statsGetter.resizeToCreature(statsGetter.transform, newRootScale, iconsToResize, newIconScale, newPostion));

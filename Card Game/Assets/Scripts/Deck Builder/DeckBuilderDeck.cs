@@ -39,7 +39,7 @@ public class DeckBuilderDeck : MonoBehaviour
 
     public void addCard(int id)
     {
-        addCard(ResourceManager.Get().getCardDataById(id));
+        addCard(ResourceManager.Get().GetCardDataById(id));
     }
 
     public void addCard(CardData newCard)
@@ -259,8 +259,8 @@ public class DeckBuilderDeck : MonoBehaviour
 
         public int CompareTo(CardAmountPair other)
         {
-            CardData first = ResourceManager.Get().getCardDataById(cardId);
-            CardData second = ResourceManager.Get().getCardDataById(other.cardId);
+            CardData first = ResourceManager.Get().GetCardDataById(cardId);
+            CardData second = ResourceManager.Get().GetCardDataById(other.cardId);
             return first.CompareTo(second);
         }
     }
@@ -342,7 +342,7 @@ public class DeckBuilderDeck : MonoBehaviour
                     //Card newCard = DeckBuilderCardsView.instance.getCardById(id);
                     for (int i = 0; i < deckMap[id]; i++)
                     {
-                        addCard(ResourceManager.Get().getCardDataById(id));
+                        addCard(ResourceManager.Get().GetCardDataById(id));
                     }
                 }
                 // set deck name text

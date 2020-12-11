@@ -34,13 +34,13 @@ public class OptionSelectBox : MonoBehaviour
     #region Command
     public static void CreateAndQueue(List<string> options, string headerText, Player owner, OptionBoxHandler handler)
     {
-        InformativeAnimationsQueue.Instance.addAnimation(new OptionSelectCmd(options, headerText, owner, handler));
+        InformativeAnimationsQueue.Instance.AddAnimation(new OptionSelectCmd(options, headerText, owner, handler));
     }
     public static OptionSelectCmd CreateCommand(List<string> options, string headerText, Player owner, OptionBoxHandler handler)
     {
         return new OptionSelectCmd(options, headerText, owner, handler);
     }
-    public class OptionSelectCmd : QueueableCommand
+    public class OptionSelectCmd : IQueueableCommand
     {
         List<string> options;
         OptionBoxHandler handler;
@@ -56,10 +56,10 @@ public class OptionSelectBox : MonoBehaviour
             this.owner = owner;
         }
 
-        public override bool IsFinished => optionBox != null && optionBox.finished || forceFinished;
+        public bool IsFinished => optionBox != null && optionBox.finished || forceFinished;
         private bool forceFinished = false;
 
-        public override void Execute()
+        public void Execute()
         {
             if (owner != NetInterface.Get().localPlayer)
             {

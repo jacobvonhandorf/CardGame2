@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using static Card;
+using System.Collections.ObjectModel;
 
 // structures and creatures
 public abstract class Permanent : MonoBehaviour
@@ -33,6 +34,8 @@ public abstract class Permanent : MonoBehaviour
     public void TriggerOnCounterAddedEvents(object sender, CounterAddedArgs args) { E_CounterAdded?.Invoke(sender, args); }
     #endregion
 
+    public abstract void ResetForNewTurn();
+
     public void CheckDeath()
     {
         if (Health <= 0)
@@ -47,4 +50,24 @@ public abstract class Permanent : MonoBehaviour
         Stats.StatList[type] = value;
         Stats.RaiseEvent();
     }
+
+    public void RemoveFromCurrentTile()
+    {
+        if (Tile != null)
+        {
+            Tile.Permanent = null;
+            Tile = null;
+        }
+        else
+        {
+            Debug.Log("Trying to remove from tile while not on tile");
+        }
+    }
+
+    #region Keywords
+    public void AddKeyword(Keyword k) => SourceCard.AddKeyword(k);
+    public void RemoveKeyword(Keyword k) => SourceCard.RemoveKeyword(k);
+    public bool HasKeyword(Keyword k) => SourceCard.HasKeyword(k);
+    public ReadOnlyCollection<Keyword> KeywordList => SourceCard.KeywordList;
+    #endregion
 }

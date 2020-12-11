@@ -38,7 +38,7 @@ public class Structure : Permanent, Damageable, ICanReceiveCounters
     public void sendToGrave(Card source)
     {
         resetToBaseStats();
-        SourceCard.MoveToCardPile(SourceCard.owner.graveyard, null);
+        SourceCard.MoveToCardPile(SourceCard.owner.Graveyard, null);
         SourceCard.removeGraphicsAndCollidersFromScene();
     }
 
@@ -62,7 +62,7 @@ public class Structure : Permanent, Damageable, ICanReceiveCounters
     {
         if (!enabled)
             return;
-        if (GameManager.Get().activePlayer != Controller || Controller.isLocked())
+        if (GameManager.Get().activePlayer != Controller || Controller.IsLocked())
             return;
         if (getEffect() == null)
             return;
@@ -70,23 +70,6 @@ public class Structure : Permanent, Damageable, ICanReceiveCounters
     }
 
     private bool hovered = false;
-    private void OnMouseEnter()
-    {
-        if (!enabled)
-            return;
-        hovered = true;
-        //SourceCard.RegisterToCardViewer(GameManager.Get().getCardViewer());
-        StartCoroutine(checkHoverForTooltips());
-    }
-    private void OnMouseExit()
-    {
-        if (!enabled)
-            return;
-        hovered = false;
-        foreach (CardViewer cv in SourceCard.viewersDisplayingThisCard)
-            cv.ClearToolTips();
-
-    }
     [SerializeField] private float hoverTimeForToolTips = .5f;
     private float timePassed = 0;
     IEnumerator checkHoverForTooltips()
@@ -101,36 +84,8 @@ public class Structure : Permanent, Damageable, ICanReceiveCounters
         }
         timePassed = 0;
         // if we get here then enough time has passed so tell cardviewers to display tooltips
-        foreach (CardViewer viewer in SourceCard.viewersDisplayingThisCard)
-        {
-            if (viewer != null)
-            {
-                viewer.ShowToolTips(SourceCard.toolTipInfos);
-            }
-        }
     }
 
-
-    #region Keyword
-    public bool hasKeyword(Keyword keyword)
-    {
-        return SourceCard.HasKeyword(keyword);
-    }
-    public void addKeyword(Keyword keyword)
-    {
-        SourceCard.AddKeyword(keyword);
-    }
-    public ReadOnlyCollection<Keyword> getKeywordList()
-    {
-        return SourceCard.getKeywordList();
-    }
-    public void removeKeyword(Keyword keyword)
-    {
-        SourceCard.RemoveKeyword(keyword);
-    }
-    #endregion
-
-    public Player getController() => Controller;
     public void UpdateFriendOrFoeBorder()
     {
         if (GameManager.gameMode != GameManager.GameMode.online)
@@ -138,7 +93,7 @@ public class Structure : Permanent, Damageable, ICanReceiveCounters
         else
             CardVisual.SetIsAlly(NetInterface.Get().localPlayer == Controller);
     }
-    public void ResetForNewTurn()
+    public override void ResetForNewTurn()
     {
         UpdateFriendOrFoeBorder();
     }

@@ -8,10 +8,10 @@ public class StructureCard : Card
 {
     [HideInInspector] public Structure structure;
     public bool isStructure;
+    public CounterController CounterController => counterCountroller;
     [SerializeField] private CounterController counterCountroller;
-    [SerializeField] private PermanentCardVisual cardVisual;
 
-    public new PermanentCardVisual CardVisuals { get { return (PermanentCardVisual)cardVisuals; } }
+    public new PermanentCardVisual CardVisuals { get { return (PermanentCardVisual)base.CardVisuals; } }
     public override List<Tile> LegalTargetTiles => GameManager.Get().getLegalStructurePlacementTiles(owner);
     public override CardType getCardType() => CardType.Structure;
 
@@ -30,14 +30,10 @@ public class StructureCard : Card
     public override void Play(Tile t)
     {
         GameManager.Get().createStructureOnTile(structure, t, owner, this);
-        owner.hand.resetCardPositions();
     }
 
     public void swapToStructure(Tile onTile)
     {
-        // change structure so that it is rendered beneath cards in hand
-        //setSpritesToSortingLayer(SpriteLayers.Creature);
-
         // disable card functionality
         enabled = false;
 
@@ -48,7 +44,7 @@ public class StructureCard : Card
         //structure.initialize();
 
         // resize
-        cardVisual.ResizeToPermanent(onTile.transform.position);
+        CardVisuals.ResizeToPermanent(onTile.transform.position);
 
         isStructure = true;
     }
@@ -62,7 +58,7 @@ public class StructureCard : Card
         structure.enabled = false;
 
         // resize
-        cardVisual.ResizeToCard();
+        CardVisuals.ResizeToCard();
 
         // set tile back to null because no longer on field
         structure.Tile = null;
@@ -94,5 +90,4 @@ public class StructureCard : Card
             return true;
     }
 
-    public CounterController getCounterController() => counterCountroller;
 }

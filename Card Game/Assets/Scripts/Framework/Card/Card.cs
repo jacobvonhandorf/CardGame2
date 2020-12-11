@@ -52,18 +52,13 @@ public abstract class Card : MonoBehaviour, IHasCardTags, ICanBeCardViewed
     public ElementIdentity ElementalId { get { return Stats.GetValue<ElementIdentity>(StatType.ElementalId); } set { Stats.SetValue(StatType.ElementalId, value); } }
     public int TotalCost { get { return GoldCost + ManaCost; } }
 
-    // graphics
     public CardVisual CardVisuals { get { return cardVisuals; } }
-    [SerializeField] protected CardVisual cardVisuals;
-    protected TextMeshPro[] tmps; // all text objects for this card
-    [HideInInspector] public bool isBeingDragged = false;
-    [HideInInspector] public bool positionLocked = false;
-    [HideInInspector] public Vector3 positionInHand;
-    public HashSet<CardViewer> viewersDisplayingThisCard;
+    [SerializeField] private CardVisual cardVisuals;
 
     public List<ToolTipInfo> toolTipInfos = new List<ToolTipInfo>();
     public TransformManager TransformManager { get; private set; }
     [SerializeField] private StatChangePropogator statChangePropogator;
+    public Card AsCard => this;
 
     #region Events
     public event EventHandler<AddedToCardPileArgs> E_AddedToCardPile;
@@ -87,16 +82,8 @@ public abstract class Card : MonoBehaviour, IHasCardTags, ICanBeCardViewed
     }
     #endregion
 
-    protected virtual void Start()
-    {
-        positionInHand = transform.position;
-    }
     protected virtual void Awake()
     {
-        viewersDisplayingThisCard = new HashSet<CardViewer>();
-
-        tmps = GetComponentsInChildren<TextMeshPro>();
-        //setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
         effectGraphic = EffectGraphic.NewEffectGraphic(this);
         TransformManager = GetComponentInChildren<TransformManager>();
         statChangePropogator.Source = Stats;
@@ -104,25 +91,10 @@ public abstract class Card : MonoBehaviour, IHasCardTags, ICanBeCardViewed
         Stats.AddType(StatType.GoldCost);
         Stats.AddType(StatType.BaseManaCost);
         Stats.AddType(StatType.ManaCost);
+        Stats.SetValue(StatType.CardType, getCardType());
     }
 
-    // returns true if this card is the type passed to it
     public bool IsType(CardType type) => getCardType().Equals(type);
-
-    /*
-     * makes it so this card is only visible if it normally is
-     * ex: cards in deck will not be visible but cards in hand will be
-     */
-    public void hide()
-    {
-        hidden = true;
-    }
-
-    // make visible to the controller of the card
-    public void show()
-    {
-        hidden = false;
-    }
 
     public abstract void Initialize();
 
@@ -144,202 +116,26 @@ public abstract class Card : MonoBehaviour, IHasCardTags, ICanBeCardViewed
         {
             if (newPile == CardPile) // if we're already in the new pile then do nothing
                 return;
-            CardPile.removeCard(this);
+            CardPile.RemoveCard(this);
         }
         CardPile previousPile = CardPile;
         CardPile = newPile;
 
-        newPile.addCard(this);
+        newPile.AddCard(this);
         TriggerAddedToCardPileEffects(this, new AddedToCardPileArgs(previousPile, newPile, source));
     }
 
-
-    #region HoveringEffects
-    private bool hovered = false;
-    // when card becomse hovered show it in the main card preview
-    private void OnMouseEnter()
-    {
-        if (!enabled)
-            return;
-        GameManager.Get().getCardViewer().SetCard(this);
-
-        // also move card up a bit
-        Vector3 oldPosition = positionInHand;
-        Vector3 newPosition = new Vector3(oldPosition.x, oldPosition.y + hoverOffset, oldPosition.z);
-        moveTo(newPosition);
-
-        hovered = true;
-        StartCoroutine(CheckHoverForTooltips());
-    }
-    private const float hoverOffset = .7f;
-    // move card back down when it is no longer being hovered
-    private void OnMouseExit()
-    {
-        if (!enabled)
-            return;
-        moveTo(positionInHand);
-        hovered = false;
-        foreach (CardViewer cv in viewersDisplayingThisCard)
-            cv.ClearToolTips();
-    }
-    private void OnDisable()
-    {
-        foreach (CardViewer cv in viewersDisplayingThisCard)
-            cv.ClearToolTips();
-    }
-    #endregion
-    #region ClickAndDrag
-    private Vector3 offset;
-    void OnMouseDown()
-    {
-        if (!enabled)
-            return;
-        if (owner.isLocked())
-            return;
-        if (positionLocked)
-        {
-            return;
-        }
-
-        isBeingDragged = true;
-        offset = transform.position -
-            Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, 0.0f));
-        Board.instance.setAllTilesToDefault();
-        NetInterface.Get().localPlayer.heldCreature = null;
-
-        foreach (Tile tile in LegalTargetTiles)
-        {
-            tile.setActive(true);
-        }
-
-        //setSpritesToSortingLayer(SpriteLayers.CardBeingDragged);
-        // clear tooltips
-        foreach (CardViewer cv in viewersDisplayingThisCard)
-        {
-            cv.ClearToolTips();
-        }
-        TransformManager.clearQueue();
-        TransformManager.Lock();
-    }
-    void OnMouseDrag()
-    {
-        if (!enabled)
-            return;
-        if (positionLocked || owner.isLocked())
-        {
-            Debug.Log("Card Position locked");
-            return;
-        }
-        if (!isBeingDragged) // if being dragged has been cancelled
-            return;
-
-        Vector3 newPosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, -1.0f);
-        transform.position = Camera.main.ScreenToWorldPoint(newPosition) + offset;
-        //isBeingDragged = true;
-        Tile aboveTile = getTileMouseIsOver();
-        if (aboveTile != null)
-        {
-            //setSpriteAlpha(.5f);
-        }
-        else
-        {
-            //setSpriteAlpha(1f);
-        }
-        TransformManager.Lock();
-    }
-    private void OnMouseUp()
-    {
-        if (!enabled)
-            return;
-        if (owner.isLocked())
-        {
-            Debug.Log("Owner is locked");
-            return;
-        }
-        if (!isBeingDragged) // if drag was cancelled
-            return;
-        isBeingDragged = false;
-        //setSpriteAlpha(1f);
-        //setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
-
-        TransformManager.UnLock();
-        // if card is above a Tile then play it
-        Tile tile = getTileMouseIsOver();
-        if (tile != null)
-        {
-            if (LegalTargetTiles.Contains(tile))
-            {
-                //Debug.Log("Attempting to play card");
-                if (CanBePlayed())
-                {
-                    PayCosts(owner);
-                    switch (getCardType())
-                    {
-                        case CardType.Spell:
-                            owner.numSpellsCastThisTurn++;
-                            break;
-                        case CardType.Creature:
-                            owner.numCreaturesThisTurn++;
-                            break;
-                        case CardType.Structure:
-                            owner.numStructuresThisTurn++;
-                            break;
-                    }
-                    Play(tile);
-                }
-                else
-                {
-                    GameManager.Get().ShowToast("You can't play this card right now");
-                    moveTo(positionInHand);
-                }
-            }
-            else
-                moveTo(positionInHand);
-        }
-        else
-            moveTo(positionInHand);
-        Board.instance.setAllTilesToDefault();
-    }
-    private void cancelDrag()
-    {
-        Debug.Log("Cancel drag called");
-        if (owner.isLocked() || !isBeingDragged)
-            return;
-        isBeingDragged = false;
-        //setSpriteAlpha(1f);
-        //setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
-        moveTo(positionInHand);
-        
-        Board.instance.setAllTilesToDefault();
-        TransformManager.UnLock();
-    }
-    // change the alpha for all sprites related to this card
-    private Tile getTileMouseIsOver()
-    {
-        Vector2 origin = new Vector2(Camera.main.ScreenToWorldPoint(Input.mousePosition).x,
-                                          Camera.main.ScreenToWorldPoint(Input.mousePosition).y);
-        RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.zero, 0.1f, LayerMask.GetMask("Tile"));
-        if (hit.collider != null)
-        {
-            Tile objectHit = hit.transform.gameObject.GetComponent<Tile>();
-            Debug.DrawLine(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, Color.red);
-            return objectHit;
-        }
-        return null;
-    }
-    #endregion
-
     private EffectGraphic effectGraphic; // initialized in awake
-    public void showInEffectsView()
+    public void ShowInEffectsView()
     {
-        EffectGraphicsView.Get().addToQueue(effectGraphic);
+        EffectGraphicsView.Get().AddToQueue(effectGraphic);
     }
 
     #region MovingGraphicsMethods
     private const float smoothing = 9f; // speed at which cards snap into their place
     // methods for removing Card from scene by moving them way off screen
     // and for returning them to the scene afterwards
-    public Vector3 positionOnScene;
+    [HideInInspector] public Vector3 positionOnScene;
     private bool onScene = true;
     public void removeGraphicsAndCollidersFromScene()
     {
@@ -379,7 +175,7 @@ public abstract class Card : MonoBehaviour, IHasCardTags, ICanBeCardViewed
     {
         TransformStruct ts = new TransformStruct(TransformManager.transform);
         ts.position = position;
-        TransformManager.moveToImmediate(ts);
+        TransformManager.MoveToImmediate(ts);
     }
     #endregion
     #region CardViewer
@@ -398,16 +194,16 @@ public abstract class Card : MonoBehaviour, IHasCardTags, ICanBeCardViewed
 
     public bool OwnerCanPayCosts()
     {
-        if (GoldCost > owner.getGold())
+        if (GoldCost > owner.Gold)
             return false;
-        if (ManaCost > owner.getMana())
+        if (ManaCost > owner.Mana)
             return false;
         return true;
     }
     private void PayCosts(Player player)
     {
-        player.addGold(-Mathf.Clamp(GoldCost, 0, 999999));
-        player.addMana(-Mathf.Clamp(ManaCost, 0, 999999));
+        player.Gold -= Mathf.Clamp(GoldCost, 0, 999999);
+        player.Mana -= Mathf.Clamp(ManaCost, 0, 999999);
     }
 
     #region GettersAndSetters
@@ -435,31 +231,9 @@ public abstract class Card : MonoBehaviour, IHasCardTags, ICanBeCardViewed
         toolTipInfos.Remove(KeywordData.getData(keyword).info);
     }
     public bool HasKeyword(Keyword keyword) => keywordList.Contains(keyword);
-    public ReadOnlyCollection<Keyword> getKeywordList() => keywordList.AsReadOnly();
+    public ReadOnlyCollection<Keyword> KeywordList => keywordList.AsReadOnly();
     [SerializeField] private float hoverTimeForToolTips = .5f;
     private float timePassed = 0;
-    IEnumerator CheckHoverForTooltips()
-    {
-        while (timePassed < hoverTimeForToolTips)
-        {
-            timePassed += Time.deltaTime;
-            if (!hovered || isBeingDragged)
-            {
-                timePassed = 0;
-                yield break;
-            }
-            else
-                yield return null;
-        }
-        timePassed = 0;
-        
-        // if we get here then enough time has passed so tell cardviewers to display tooltips
-        foreach (CardViewer viewer in viewersDisplayingThisCard)
-        {
-            viewer.ShowToolTips(toolTipInfos);
-        }
-        yield return null;
-    }
     #endregion
 
     #region OverrideMethods

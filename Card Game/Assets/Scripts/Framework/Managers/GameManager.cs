@@ -27,8 +27,6 @@ public class GameManager : MonoBehaviour
     public Player nonActivePlayer;
 
     public Board board;
-    public List<Creature> allCreatures;
-    public List<Structure> allStructures;
 
     // singletone objects that GameManager is responsible for handling
     [SerializeField] private CardViewer cardPreview;
@@ -44,7 +42,6 @@ public class GameManager : MonoBehaviour
     [SerializeField] public CardPicker cardPickerPrefab;
     [SerializeField] private OptionButton optionButton;
     [SerializeField] public OptionSelectBox optionSelectBoxPrefab;
-    [SerializeField] private GameObject headquartersPrefab;
 
     [SerializeField] private ParticleSystem onAttackParticles;
 
@@ -60,8 +57,6 @@ public class GameManager : MonoBehaviour
         if (gameManager != null)
             throw new Exception("More than one game manager detected. Game manager should be singleton");
         gameManager = this;
-
-        allCreatures = new List<Creature>();
     }
 
     // Game start
@@ -73,7 +68,7 @@ public class GameManager : MonoBehaviour
                 hotSeatSetup();
                 break;
             case GameMode.online:
-                StartCoroutine(onlineGameSetupCoroutine());
+                StartCoroutine(OnlineGameSetupCoroutine());
                 break;
             case GameMode.testing:
                 Debug.LogError("Not implemented");
@@ -87,7 +82,7 @@ public class GameManager : MonoBehaviour
     }
 
     private object activePlayerLock = new object();
-    IEnumerator onlineGameSetupCoroutine()
+    IEnumerator OnlineGameSetupCoroutine()
     {
         System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
         stopwatch.Start();
@@ -97,7 +92,7 @@ public class GameManager : MonoBehaviour
         endTurnButton.gameObject.SetActive(NetInterface.Get().LocalPlayerIsP1);
         // lock local player if they are going second
         if (!NetInterface.Get().LocalPlayerIsP1)
-            localPlayer.addLock(activePlayerLock);
+            localPlayer.AddLock(activePlayerLock);
 
         // send opponent starting deck
         NetInterface.Get().SyncStartingDeck();
@@ -111,67 +106,65 @@ public class GameManager : MonoBehaviour
 
         // place starting engi
         int engiCoord = NetInterface.Get().LocalPlayerIsP1 ? 1 : 6;
-        Tile engiTile = board.getTileByCoordinate(engiCoord, engiCoord);
+        Tile engiTile = board.GetTileByCoordinate(engiCoord, engiCoord);
         Card engineer = createCardById((int) CardIds.Engineer, localPlayer);
         engineer.Play(engiTile);
         (engineer as CreatureCard).Creature.Counters.Add(CounterType.Build, 3);
 
         // place HQ
         int hqCoord = NetInterface.Get().LocalPlayerIsP1 ? 0 : board.boardWidth - 1;
-        Tile hqTile = board.getTileByCoordinate(hqCoord, hqCoord);
+        Tile hqTile = board.GetTileByCoordinate(hqCoord, hqCoord);
         Card hq = createCardById((int)CardIds.Headquarters, localPlayer);
         hq.owner = NetInterface.Get().localPlayer;
         //hq.removeGraphicsAndCollidersFromScene();
         hq.Play(hqTile);
         // draw starting hand
-        Deck localPlayerDeck = localPlayer.deck;
+        Deck localPlayerDeck = localPlayer.Deck;
 
-        //localPlayer.drawCards(STARTING_HAND_SIZE);
         NetInterface.Get().SignalSetupComplete();
 
         // network setup is done so wait for opponent to catch up if needed
         while (!NetInterface.Get().finishedWithSetup) { yield return null; }
-        // lock local player if they are going second
         NetInterface.Get().gameSetupComplete = true;
 
         // starting mulligan
-        List<Card> mullList = localPlayerDeck.getCardList().GetRange(0, STARTING_HAND_SIZE);
+        List<Card> mullList = localPlayerDeck.CardList.Take(STARTING_HAND_SIZE).ToList();
         CardPicker.CreateAndQueue(mullList, 0, STARTING_HAND_SIZE, "Select cards to return to deck", localPlayer, delegate (List<Card> cardList) 
         {
-            // remove selected cards from list
-            mullList.RemoveAll(c => cardList.Contains(c));
-            // add more cards equal to the number mulled away
-            List<Card> deckList = localPlayer.deck.getCardList();
-            mullList.AddRange(deckList.GetRange(STARTING_HAND_SIZE, cardList.Count));
-            foreach (Card c in mullList)
+            IReadOnlyCollection<Card> deckList = localPlayer.Deck.CardList;
+
+            for (int i = 0; i < STARTING_HAND_SIZE; i++)
             {
-                c.MoveToCardPile(localPlayer.hand, null);
+                if (i < cardList.Count)
+                    cardList[i].MoveToCardPile(localPlayer.Hand, null);
+                else
+                    localPlayer.Deck.CardList.Last().MoveToCardPile(localPlayer.Hand, null);
             }
-            localPlayer.deck.shuffle();
+            localPlayer.Deck.shuffle();
         });
     }
 
-    private void loadDecks()
+    private void LoadDecks()
     {
-        TextMeshPro p1DeckText = player1.deck.cardCountText;
-        TextMeshPro p2DeckText = player2.deck.cardCountText;
-        Destroy(player1.deck.gameObject);
-        Destroy(player2.deck.gameObject);
+        TextMeshPro p1DeckText = player1.Deck.cardCountText;
+        TextMeshPro p2DeckText = player2.Deck.cardCountText;
+        Destroy(player1.Deck.gameObject);
+        Destroy(player2.Deck.gameObject);
 
         Deck newP1Deck = DeckUtilities.getDeckFromFileName(p1DeckName + ".dek");
         Deck newP2Deck = DeckUtilities.getDeckFromFileName(p2DeckName + ".dek");
 
         newP1Deck.transform.parent = player1.transform;
         newP2Deck.transform.parent = player2.transform;
-        player1.deck = newP1Deck;
-        player2.deck = newP2Deck;
+        //player1.Deck = newP1Deck;
+        //player2.Deck = newP2Deck;
         newP1Deck.cardCountText = p1DeckText;
         newP2Deck.cardCountText = p2DeckText;
         newP1Deck.deckOwner = player1;
         newP2Deck.deckOwner = player2;
-        foreach (Card c in newP1Deck.getCardList())
+        foreach (Card c in newP1Deck.CardList)
             c.owner = player1;
-        foreach (Card c in newP2Deck.getCardList())
+        foreach (Card c in newP2Deck.CardList)
             c.owner = player2;
         newP1Deck.shuffle();
         newP2Deck.shuffle();
@@ -202,10 +195,10 @@ public class GameManager : MonoBehaviour
     // GAME FLOW METHODS
     private void takeTurn()
     {
-        activePlayer.startOfTurn();
-        nonActivePlayer.startOfTurn();
+        activePlayer.StartOfTurn();
+        nonActivePlayer.StartOfTurn();
         beginningOfTurnEffects();
-        activePlayer.doIncome();
+        activePlayer.DoIncome();
         activePlayer.DrawCard();
     }
 
@@ -227,12 +220,12 @@ public class GameManager : MonoBehaviour
     private List<Card> getAllCardsNotInPlay()
     {
         List<Card> allCards = new List<Card>(); // all cards not in play
-        allCards.AddRange(player1.hand.getCardList());
-        allCards.AddRange(player2.hand.getCardList());
-        allCards.AddRange(player1.graveyard.getCardList());
-        allCards.AddRange(player2.graveyard.getCardList());
-        allCards.AddRange(player1.deck.getCardList());
-        allCards.AddRange(player2.deck.getCardList());
+        allCards.AddRange(player1.Hand.CardList);
+        allCards.AddRange(player2.Hand.CardList);
+        allCards.AddRange(player1.Graveyard.CardList);
+        allCards.AddRange(player2.Graveyard.CardList);
+        allCards.AddRange(player1.Deck.CardList);
+        allCards.AddRange(player2.Deck.CardList);
         return allCards;
     }
 
@@ -241,10 +234,10 @@ public class GameManager : MonoBehaviour
         Creature attacker = activePlayer.heldCreature;
         int damageRoll = attacker.Attack(defender);
         NetInterface.Get().SyncAttack(attacker, defender, damageRoll);
-        Board.instance.setAllTilesToDefault();
+        Board.instance.SetAllTilesToDefault();
     }
 
-    private void switchActivePlayer()
+    private void SwitchActivePlayer()
     {
         Player tempPlayer = activePlayer;
         activePlayer = nonActivePlayer;
@@ -252,17 +245,14 @@ public class GameManager : MonoBehaviour
         activePlayer.isActivePlayer = true;
         nonActivePlayer.isActivePlayer = false;
 
-        activePlayer.setToActivePlayer();
-        nonActivePlayer.setToNonActivePlayer();
-
-        activePlayerText.text = activePlayer.getPlayerName() + "'s turn";
+        activePlayerText.text = activePlayer.name + "'s turn";
     }
 
-    public void endTurn()
+    public void EndTurn()
     {
         if (gameMode == GameMode.online)
         {
-            if (activePlayer.isLocked())
+            if (activePlayer.IsLocked())
             {
                 ShowToast("Must finish resolving effects before ending turn");
                 return;
@@ -271,15 +261,16 @@ public class GameManager : MonoBehaviour
             // disable button
             endTurnButton.gameObject.SetActive(false);
             // lock local player
-            NetInterface.Get().localPlayer.addLock(activePlayerLock);
+            NetInterface.Get().localPlayer.AddLock(activePlayerLock);
             // reset player for new turn
-            NetInterface.Get().localPlayer.startOfTurn();
+            NetInterface.Get().localPlayer.StartOfTurn();
             // trigger effects
             endOfTurnEffects();
-            switchActivePlayer();
-            foreach (Creature c in allCreatures)
+            SwitchActivePlayer();
+            
+            foreach (Creature c in board.AllCreatures)
                 c.ResetForNewTurn();
-            foreach (Structure s in allStructures)
+            foreach (Structure s in board.AllStructures)
                 s.ResetForNewTurn();
             ActionBox.instance.gameObject.SetActive(false);
             // send opponent message
@@ -287,16 +278,16 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        if (activePlayer.isLocked())
+        if (activePlayer.IsLocked())
         {
             ShowToast("Must finish resolving effects before ending turn");
             return;
         }
         endOfTurnEffects();
-        switchActivePlayer();
-        foreach (Creature c in allCreatures)
+        SwitchActivePlayer();
+        foreach (Creature c in board.AllCreatures)
             c.ResetForNewTurn();
-        foreach (Structure s in allStructures)
+        foreach (Structure s in board.AllStructures)
             s.ResetForNewTurn();
         ActionBox.instance.gameObject.SetActive(false);
         takeTurn();
@@ -312,51 +303,51 @@ public class GameManager : MonoBehaviour
         // re enable end turn
         endTurnButton.gameObject.SetActive(true);
         // do income and trigger effects
-        switchActivePlayer();
+        SwitchActivePlayer();
         Player localPlayer = NetInterface.Get().localPlayer;
-        localPlayer.startOfTurn();
-        localPlayer.doIncome();
+        localPlayer.StartOfTurn();
+        localPlayer.DoIncome();
         localPlayer.DrawCard();
         beginningOfTurnEffects();
         // unlock local player
-        NetInterface.Get().localPlayer.removeLock(activePlayerLock);
+        NetInterface.Get().localPlayer.RemoveLock(activePlayerLock);
     }
 
     public List<Tile> getMovableTilesForCreature(Creature creature)
     {
-        return board.getAllMovableTiles(creature);
+        return board.GetAllMovableTiles(creature);
     }
 
     // Returns a list of all tiles that a creature could be deployed to
     public List<Tile> getAllDeployableTiles(Player player)
     {
         List<Tile> returnList = new List<Tile>();
-        foreach(Tile tile in board.allTiles)
+        foreach(Tile tile in board.AllTiles)
         {
             if (tile.creature != null)
                 continue;
 
             int x1 = tile.x + 1;
             int y1 = tile.y;
-            if (canDeployFrom(board.getTileByCoordinate(x1, y1), player))
+            if (canDeployFrom(board.GetTileByCoordinate(x1, y1), player))
                 if (!returnList.Contains(tile))
                     returnList.Add(tile);
 
             int x2 = tile.x - 1;
             int y2 = tile.y;
-            if (canDeployFrom(board.getTileByCoordinate(x2, y2), player))
+            if (canDeployFrom(board.GetTileByCoordinate(x2, y2), player))
                 if (!returnList.Contains(tile))
                     returnList.Add(tile);
 
             int x3 = tile.x;
             int y3 = tile.y + 1;
-            if (canDeployFrom(board.getTileByCoordinate(x3, y3), player))
+            if (canDeployFrom(board.GetTileByCoordinate(x3, y3), player))
                 if (!returnList.Contains(tile))
                     returnList.Add(tile);
 
             int x4 = tile.x;
             int y4 = tile.y - 1;
-            if (canDeployFrom(board.getTileByCoordinate(x4, y4), player))
+            if (canDeployFrom(board.GetTileByCoordinate(x4, y4), player))
                 if (!returnList.Contains(tile))
                     returnList.Add(tile);
         }
@@ -375,18 +366,18 @@ public class GameManager : MonoBehaviour
         // add all possible placement tiles to the list
         foreach (Structure structure in board.getAllStructures(player))
         {
-            returnList.AddRange(board.getAllTilesWithinExactRangeOfTile(structure.Tile, 2));
+            returnList.AddRange(board.GetAllTilesWithinExactRangeOfTile(structure.Tile, 2));
             // also get a list of already used tiles
             invalidTiles.Add(structure.Tile);
             // also get a list of tiles adjacent to structures
-            invalidTiles.AddRange(board.getAllTilesWithinExactRangeOfTile(structure.Tile, 1));
+            invalidTiles.AddRange(board.GetAllTilesWithinExactRangeOfTile(structure.Tile, 1));
         }
 
         // remove all invalid tiles
         returnList = returnList.Except(invalidTiles).ToList();
         returnList = returnList.Except(getAllTilesWithCreatures(true)).ToList();
-        returnList = returnList.Except(board.getAllTilesOnRow(3)).ToList();
-        returnList = returnList.Except(board.getAllTilesOnRow(4)).ToList();
+        returnList = returnList.Except(board.GetAllTilesOnRow(3)).ToList();
+        returnList = returnList.Except(board.GetAllTilesOnRow(4)).ToList();
 
         return returnList;
     }
@@ -439,8 +430,6 @@ public class GameManager : MonoBehaviour
 
         tile.creature = creature;
         creature.Tile = tile;
-        // add creature to all creatures
-        allCreatures.Add(creature);
 
         creature.UpdateFriendOrFoeBorder();
     }
@@ -449,11 +438,11 @@ public class GameManager : MonoBehaviour
     {
         Debug.Log("Syncing creature placement");
         // animate showing card
-        InformativeAnimationsQueue.Instance.addAnimation(new ShowCardCmd(card, true, this));
+        InformativeAnimationsQueue.Instance.AddAnimation(new ShowCardCmd(card, true, this));
         createCreatureActual(tile, owner, card.Creature);
     }
     private bool showCardFinished = false;
-    private class ShowCardCmd : QueueableCommand
+    private class ShowCardCmd : IQueueableCommand
     {
         Card card;
         bool fromTop;
@@ -466,9 +455,9 @@ public class GameManager : MonoBehaviour
             this.gameManager = gameManager;
         }
 
-        public override bool IsFinished => Get().showCardFinished;
+        public bool IsFinished => Get().showCardFinished;
 
-        public override void Execute()
+        public void Execute()
         {
             gameManager.StartCoroutine(gameManager.showCardCrt(card, fromTop));
         }
@@ -477,7 +466,7 @@ public class GameManager : MonoBehaviour
     {
         showCardFinished = false;
         TransformManager tm = card.TransformManager;
-        tm.clearQueue();
+        tm.ClearQueue();
         tm.Lock();
         // set starting location
         if (fromTop)
@@ -542,15 +531,12 @@ public class GameManager : MonoBehaviour
 
         // turn on FoF border
         structure.UpdateFriendOrFoeBorder();
-
-        // add structure to all structures
-        allStructures.Add(structure);
     }
 
     public void syncStructureOnTile(StructureCard card, Tile tile, Player owner)
     {
         Debug.Log("Card is " + card);
-        InformativeAnimationsQueue.Instance.addAnimation(new ShowCardCmd(card, true, this));
+        InformativeAnimationsQueue.Instance.AddAnimation(new ShowCardCmd(card, true, this));
         createStructureOnTileActual(card.structure, tile, owner);
     }
 
@@ -582,9 +568,7 @@ public class GameManager : MonoBehaviour
         }
         TriggerCreatureDeathEvents(this, new CreatureDeathArgs() { creature = creature });
 
-        allCreatures.Remove(creature);
         creature.TriggerOnDeathEvents(this);
-        creature.onLeavesTheField();
         creature.SendToGrave();
     }
 
@@ -593,12 +577,11 @@ public class GameManager : MonoBehaviour
         Debug.Log("Destroying structure");
         structure.Tile.structure = null;
         structure.Tile = null;
-        allStructures.Remove(structure);
         structure.sendToGrave(null);
         structure.onRemoved();
     }
 
-    public Player getOppositePlayer(Player player)
+    public Player GetOppositePlayer(Player player)
     {
         if (player == activePlayer)
             return nonActivePlayer;
@@ -608,7 +591,7 @@ public class GameManager : MonoBehaviour
 
     public void makePlayerLose(Player player)
     {
-        ShowToast("Player " + getOppositePlayer(player).name + " wins!");
+        ShowToast("Player " + GetOppositePlayer(player).name + " wins!");
     }
 
     public void makePlayerWin(Player player)
@@ -627,12 +610,12 @@ public class GameManager : MonoBehaviour
     public void setUpCreatureEffect(Creature creature)
     {
         // check for creature not having an effect
-        if (creature.activatedEffects.Count == 0)
+        if (creature.ActivatedEffects.Count == 0)
         {
             ShowToast("This creature has no effect");
             return;
         }
-        else if (creature.activatedEffects.Count > 1)
+        else if (creature.ActivatedEffects.Count > 1)
         {
             throw new Exception("Not implemented");
         }
@@ -640,7 +623,7 @@ public class GameManager : MonoBehaviour
         {
             // there is only 1 effect so just activate it
             // creature.activatedEffects[0].doEffect(this);
-            creature.activatedEffects[0].Invoke();
+            creature.ActivatedEffects[0].Invoke();
         }
     }
 
@@ -661,7 +644,7 @@ public class GameManager : MonoBehaviour
             OptionSelectBox.CreateAndQueue(options, "Are you sure you want to activate the effect of " + structure.SourceCard.cardId, structure.Controller, delegate (int selectedIndex, string selectedOption)
             {
                 if (selectedIndex == 0)
-                    effect.activate(structure.Controller, Get().getOppositePlayer(structure.Controller), structure.Tile, null, null, null);
+                    effect.activate(structure.Controller, Get().GetOppositePlayer(structure.Controller), structure.Tile, null, null, null);
             });
         }
     }
@@ -673,7 +656,7 @@ public class GameManager : MonoBehaviour
         bool validAttack = false;
         foreach (Tile tile in tiles)
         {
-            tile.setAttackable(true);
+            tile.SetAttackable(true);
             validAttack = true;
         }
 
@@ -692,7 +675,7 @@ public class GameManager : MonoBehaviour
     {
         List<Tile> returnList = new List<Tile>();
         Tile creaturesTile = creature.Tile;
-        foreach (Tile tile in board.allTiles)
+        foreach (Tile tile in board.AllTiles)
         {
             int xDiff = Math.Abs(creaturesTile.x - tile.x); // 0
             int yDiff = Math.Abs(creaturesTile.y - tile.y); // 1
@@ -706,11 +689,11 @@ public class GameManager : MonoBehaviour
         return returnList;
     }
 
-    public List<Tile> getAllTilesWithCreatures(bool includeUntargetable) => board.getAllTilesWithCreatures(includeUntargetable);
-    public List<Tile> getAllTilesWithCreatures(Player controller, bool includeUntargetable) => board.getAllTilesWithCreatures(controller, includeUntargetable);
-    public List<Tile> getAllTilesWithStructures() => board.getAllTilesWithStructures();
-    public List<Tile> getAllTilesWithStructures(Player controller) => board.getAllTilesWithStructures(controller);
-    public List<Creature> getAllCreaturesControlledBy(Player controller) => allCreatures.FindAll(c => c.Controller == controller);
+    public List<Tile> getAllTilesWithCreatures(bool includeUntargetable) => board.GetAllTilesWithCreatures(includeUntargetable);
+    public List<Tile> getAllTilesWithCreatures(Player controller, bool includeUntargetable) => board.GetAllTilesWithCreatures(controller, includeUntargetable);
+    public List<Tile> getAllTilesWithStructures() => board.GetAllTilesWithStructures();
+    public List<Tile> getAllTilesWithStructures(Player controller) => board.GetAllTilesWithStructures(controller);
+    public List<Creature> getAllCreaturesControlledBy(Player controller) => board.AllCreatures.FindAll(c => c.Controller == controller);
 
     // called when a player tries to draw a card when there are no cards left
     // haven't decided what to do in this situation yet
@@ -732,7 +715,7 @@ public class GameManager : MonoBehaviour
 
     public void SetPopUpGlassActive(bool value) => glassBackground.SetActive(value);
 
-    public void getOnAttackParticles(Vector3 position, Vector3 rotation)
+    public void PlayOnAttackParticles(Vector3 position, Vector3 rotation)
     {
         ParticleSystem particleSystem =  Instantiate(onAttackParticles);
         particleSystem.transform.localEulerAngles = rotation;

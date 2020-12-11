@@ -15,12 +15,7 @@ public abstract class StatChangeListener : MonoBehaviour
             if (value != null)
                 OnValueUpdated(value);
         }
-        else
-        {
-            ValueMissing();
-        }
     }
 
     protected abstract void OnValueUpdated(object value);
-    protected virtual void ValueMissing() { } // called when the source doesn't have a value for the set stat
 }

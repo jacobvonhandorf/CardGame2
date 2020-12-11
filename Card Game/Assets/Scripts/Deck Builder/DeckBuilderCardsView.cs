@@ -24,7 +24,7 @@ public class DeckBuilderCardsView : MonoBehaviour
     private void Awake()
     {
         cardViewers = new List<CardViewerForDeckBuilder>();
-        allCards = ResourceManager.Get().getAllCardDataVisibleInDeckBuilder();
+        allCards = ResourceManager.Get().GetAllCardDataVisibleInDeckBuilder();
         allCards.Sort();
         cardList = new List<CardData>();
         cardList.AddRange(allCards);
@@ -53,7 +53,7 @@ public class DeckBuilderCardsView : MonoBehaviour
             }
             else
                 cardViewer = Instantiate(cardViewerPrefab, contentTransform);
-            cardViewer.SetCard(id);
+            // cardViewer.SetCard(id); needs to be redone
             cardViewer.deckBeingBuilt = deck;
             if (!cardIdToViewerMap.ContainsKey(id))
                 cardIdToViewerMap.Add(id, cardViewer);

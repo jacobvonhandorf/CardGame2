@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class SpellRecycling : SpellEffects
 {
-    public override List<Tile> validTiles => Board.instance.allTiles;
+    public override List<Tile> ValidTiles => Board.instance.AllTiles;
 
-    public override void doEffect(Tile t)
+    public override void DoEffect(Tile t)
     {
-        CardPicker.CreateAndQueue(owner.graveyard.getAllCardsWithType(Card.CardType.Spell).FindAll(c => c.cardId != (int) CardIds.SpellRecycling), 1, 2, "Select cards to add to your hand", owner, delegate (List<Card> cards)
+        CardPicker.CreateAndQueue(Owner.Graveyard.GetAllCardsWithType(Card.CardType.Spell).FindAll(c => c.cardId != (int) CardIds.SpellRecycling), 1, 2, "Select cards to add to your hand", Owner, delegate (List<Card> cards)
         {
             foreach (Card c in cards)
-                c.MoveToCardPile(owner.hand, card);
+                c.MoveToCardPile(Owner.Hand, card);
         });
     }
 
-    public override bool canBePlayed => owner.graveyard.getAllCardsWithType(Card.CardType.Spell).Count > 0;
+    public override bool CanBePlayed => Owner.Graveyard.GetAllCardsWithType(Card.CardType.Spell).Count > 0;
 }

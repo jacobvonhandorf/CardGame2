@@ -6,12 +6,12 @@ using static Card;
 public class ChannelEffs : SpellEffects
 {
     public int numCards = 3;
-    public override List<Tile> validTiles => Board.instance.allTiles;
+    public override List<Tile> ValidTiles => Board.instance.AllTiles;
 
-    public override void doEffect(Tile t)
+    public override void DoEffect(Tile t)
     {
         int numCardsToReduce = numCards;
-        foreach (Card c in card.owner.deck.getCardList())
+        foreach (Card c in card.owner.Deck.CardList)
         {
             if (c.IsType(CardType.Spell))
             {

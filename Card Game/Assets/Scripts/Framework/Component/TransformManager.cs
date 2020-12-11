@@ -32,41 +32,43 @@ public class TransformManager : MonoBehaviour
                 return;
             }
         }
-        // move to current transform
+        // move towards current transform
         transform.position = Vector3.Lerp(transform.position, currentTransform.position, speed * Time.deltaTime);
         transform.localScale = Vector3.Lerp(transform.localScale, currentTransform.localScale, speed * Time.deltaTime);
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(currentTransform.rotation), speed * Time.deltaTime);
     }
     // add to queue
-    public void queueMoveTo(TransformStruct t)
+    public void QueueMoveTo(TransformStruct t)
     {
         if (!locked && !removedFromScene)
             transformQueue.Enqueue(t);
     }
     // clear queue
-    public void clearQueue()
+    public void ClearQueue()
     {
         currentTransform = null;
         transformQueue.Clear();
     }
     // clear and add
-    public void moveToImmediate(TransformStruct t)
+    public void MoveToImmediate(TransformStruct t)
     {
         if (!locked && !removedFromScene)
         {
-            clearQueue();
-            queueMoveTo(t);
+            ClearQueue();
+            QueueMoveTo(t);
         }
     }
-    public void moveToInformativeAnimation(TransformStruct t)
+    public void MoveToInformativeAnimation(TransformStruct t)
     {
-        InformativeAnimationsQueue.Instance.addAnimation(new TransformCommand(this, t));
+        InformativeAnimationsQueue.Instance.AddAnimation(new TransformCommand(this, t));
     }
 
     public void setTransform(TransformStruct tStruct)
     {
-        clearQueue();
+        ClearQueue();
         transform.localPosition = tStruct.position;
         transform.localScale = tStruct.localScale;
+        transform.localRotation = Quaternion.Euler(tStruct.rotation);
 
     }
     // lock (clear and don't accept new commands)
@@ -81,7 +83,7 @@ public class TransformManager : MonoBehaviour
     }
 
     // informative commands clear queue then add to it, then check for !contains in queue
-    private class TransformCommand : QueueableCommand
+    private class TransformCommand : IQueueableCommand
     {
         private TransformManager transformManager;
         private TransformStruct targetTransform;
@@ -92,7 +94,7 @@ public class TransformManager : MonoBehaviour
             this.targetTransform = targetTransform;
         }
 
-        public override bool IsFinished => isFinishedCheck();
+        public bool IsFinished => isFinishedCheck();
 
         private bool isFinishedCheck()
         {
@@ -100,9 +102,9 @@ public class TransformManager : MonoBehaviour
             return !transformManager.transformQueue.Contains(targetTransform) || !transformManager.enabled;
         }
 
-        public override void Execute()
+        public void Execute()
         {
-            transformManager.moveToImmediate(targetTransform);
+            transformManager.MoveToImmediate(targetTransform);
         }
     }
 }
@@ -115,8 +117,10 @@ public class TransformStruct
     {
         position = t.position;
         localScale = t.localScale;
+        rotation = t.rotation.eulerAngles;
     }
 
     public Vector3 position;
     public Vector3 localScale;
+    public Vector3 rotation;
 }

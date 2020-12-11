@@ -49,7 +49,7 @@ public class ActionBox : MonoBehaviour
     public void Cancel()
     {
         GameManager.Get().activePlayer.heldCreature = null;
-        Board.instance.setAllTilesToDefault();
+        Board.instance.SetAllTilesToDefault();
         gameObject.SetActive(false);
     }
 }

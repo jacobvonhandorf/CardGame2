@@ -26,6 +26,7 @@ public class CardToPermanentConverter : MonoBehaviour
 
     public void DoConversion(Vector3 newPosition)
     {
+        Debug.Log("Doing conversion");
         card.enabled = false;
         permanent.enabled = true;
         dragHandler.enabled = false;
@@ -39,7 +40,7 @@ public class CardToPermanentConverter : MonoBehaviour
 
     IEnumerator ResizeToCreature(Vector3 newPosition)
     {
-        restingTransform.clearQueue();
+        restingTransform.ClearQueue();
         restingTransform.Lock();
         resizeToCreatureFinished = false;
 

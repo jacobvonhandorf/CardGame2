@@ -7,10 +7,10 @@ public class TowerEffs : StructureEffects
 {
     public override EventHandler onDeploy => delegate (object s, EventArgs e)
     {
-        structure.Controller.increaseActionsPerTurn(1);
+        Structure.Controller.ActionsPerTurn += 1;
     };
     public override EventHandler onLeavesField => delegate (object s, EventArgs e)
     {
-        structure.Controller.increaseActionsPerTurn(1);
+        Structure.Controller.ActionsPerTurn -= 1;
     };
 }

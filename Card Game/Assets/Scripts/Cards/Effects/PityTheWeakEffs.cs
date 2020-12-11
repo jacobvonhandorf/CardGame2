@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class PityTheWeakEffs : SpellEffects
 {
-    public override List<Tile> validTiles => Board.instance.allTiles;
+    public override List<Tile> ValidTiles => Board.instance.AllTiles;
 
-    public override void doEffect(Tile t)
+    public override void DoEffect(Tile t)
     {
         Card cardToAdd = null;
-        foreach (Card c in owner.deck.getAllCardsWithType(Card.CardType.Creature))
+        foreach (Card c in Owner.Deck.GetAllCardsWithType(Card.CardType.Creature))
         {
             if (cardToAdd == null)
                 cardToAdd = c;
@@ -21,6 +21,6 @@ public class PityTheWeakEffs : SpellEffects
             Toaster.instance.doToast("No targets for " + card.CardName);
             return;
         }
-        cardToAdd.MoveToCardPile(owner.hand, card);
+        cardToAdd.MoveToCardPile(Owner.Hand, card);
     }
 }

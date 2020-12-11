@@ -3,45 +3,41 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class CardViewer : MonoBehaviour
 {
-    public Card SourceCard { get; private set; }
-    ICanBeCardViewed currentlyDisplayed;
+    public ICanBeCardViewed CurrentlyDisplayed { get; private set; }
+    public UnityEvent<CardViewer> E_OnClicked { get; private set; } = new CardViewerEvent();
 
     [SerializeField] private TextMeshProUGUI typeText;
     [SerializeField] private StatChangePropogator statChangePropogator;
     [SerializeField] private ToolTipBox toolTipPrefab;
+    [SerializeField] private static Vector3 toolTipOffset;
+    [SerializeField] private static Vector3 toolTipTOffsetPerBox;
 
-    private void OnDestroy()
+    private void Awake()
     {
-        //if (SourceCard != null)
-        //    SourceCard.removeFromCardViewer(this);
+        GetComponentInChildren<OnMouseClickEvents>().OnMouseClick.AddListener(OnClicked);
     }
 
-    public virtual void SetCard(int cardId)
+    private void OnClicked()
     {
-        //if (SourceCard != null)
-        //    SourceCard.removeFromCardViewer(this);
-        CardData data = ResourceManager.Get().getCardDataById(cardId);
-        SetCard(data);
+        E_OnClicked.Invoke(this);
     }
+
     public void SetCard(ICanBeCardViewed newCard)
     {
-        //newCard.OnRemovedFromViewer(this);
-        if (currentlyDisplayed != null)
-            currentlyDisplayed = newCard;
+        CurrentlyDisplayed = newCard;
         statChangePropogator.Source = newCard.ReadableStats;
-
     }
 
     #region Tooltips
     private List<ToolTipBox> toolTips = new List<ToolTipBox>();
-    private static Vector3 toolTipOffset = new Vector3(3.7f, 2.1f, 0);
-    private static Vector3 toolTipTOffsetPerBox = new Vector3(0, -1.74f, 0);
     public void ShowToolTips()
     {
-        ShowToolTips(SourceCard.toolTipInfos);
+        Debug.LogError("Not Implemented");
+        //ShowToolTips(SourceCard.toolTipInfos);
     }
     public void ShowToolTips(List<ToolTipInfo> toolTipInfos)
     {
@@ -56,7 +52,6 @@ public class CardViewer : MonoBehaviour
             toolTips.Add(box);
             i++;
         }
-        
     }
     public void ClearToolTips()
     {

@@ -7,18 +7,18 @@ public class GemTraderEffs : CreatureEffects
 {
     public override EventHandler onDeploy => delegate (object s, EventArgs e)
     {
-        CardPicker.CreateAndQueue(creature.Controller.hand.getAllCardsWithTag(Card.Tag.Gem), 1, 1, "Select a card to shuffle into your deck", creature.Controller, delegate (List<Card> cardList)
+        CardPicker.CreateAndQueue(creature.Controller.Hand.GetAllCardsWithTag(Card.Tag.Gem), 1, 1, "Select a card to shuffle into your deck", creature.Controller, delegate (List<Card> cardList)
         {
             foreach (Card c in cardList)
             {
-                c.MoveToCardPile(creature.Controller.deck, card);
-                creature.Controller.deck.shuffle();
+                c.MoveToCardPile(creature.Controller.Deck, card);
+                creature.Controller.Deck.shuffle();
             }
-            foreach (Card c in creature.Controller.deck.getCardList())
+            foreach (Card c in creature.Controller.Deck.CardList)
             {
                 if (c.Tags.Contains(Card.Tag.Gem))
                 {
-                    c.MoveToCardPile(creature.Controller.hand, card);
+                    c.MoveToCardPile(creature.Controller.Hand, card);
                     break;
                 }
             }
@@ -28,7 +28,7 @@ public class GemTraderEffs : CreatureEffects
     public override EventHandler onDeath => delegate (object s, EventArgs e)
     {
         Card obsidian = GameManager.Get().createCardById((int)CardIds.Obsidian, creature.Controller);
-        obsidian.MoveToCardPile(creature.Controller.deck, card);
-        creature.Controller.deck.shuffle();
+        obsidian.MoveToCardPile(creature.Controller.Deck, card);
+        creature.Controller.Deck.shuffle();
     };
 }

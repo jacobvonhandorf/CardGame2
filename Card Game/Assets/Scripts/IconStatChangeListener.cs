@@ -3,20 +3,12 @@ using TMPro;
 
 public class IconStatChangeListener : StatChangeListener
 {
-    [SerializeField] private bool activeToggleable;
     private TextMeshProUGUI textMesh;
     private int baseStat;
-    private int currentStat;
-
-    private void Awake()
-    {
-        textMesh = GetComponentInChildren<TextMeshProUGUI>();
-        GetComponentInChildren<IntChangeListener>().ValueChanged.AddListener(CurrentValueUpdated);
-    }
+    private IntChangeListener currentStatListener;
 
     private void CurrentValueUpdated(int currentValue)
     {
-        currentStat = currentValue;
         UpdateIcon();
     }
 
@@ -27,25 +19,18 @@ public class IconStatChangeListener : StatChangeListener
         UpdateIcon();
     }
 
-    protected override void ValueMissing()
-    {
-        gameObject.SetActive(false);
-    }
-
     private void UpdateIcon()
     {
-        if (textMesh == null)
-            textMesh = GetComponentInChildren<TextMeshProUGUI>();
-
-        if (activeToggleable)
+        // doing this here instead of awake because this can start inactive
+        if (currentStatListener == null)
         {
-            //Debug.Log("Setting active to " + (baseStat < 0));
-            gameObject.SetActive(baseStat >= 0);
+            currentStatListener = GetComponentInChildren<IntChangeListener>();
+            currentStatListener.ValueChanged.AddListener(CurrentValueUpdated);
+            textMesh = GetComponentInChildren<TextMeshProUGUI>();
         }
-
-        if (baseStat > currentStat)
+        if (baseStat > currentStatListener.Value)
             textMesh.color = Color.red;
-        else if (baseStat < currentStat)
+        else if (baseStat < currentStatListener.Value)
             textMesh.color = Color.green;
         else
             textMesh.color = Color.white;

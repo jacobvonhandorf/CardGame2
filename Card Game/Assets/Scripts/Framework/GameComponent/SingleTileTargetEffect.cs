@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SingleTileTargetEffect : QueueableCommand
+public class SingleTileTargetEffect : IQueueableCommand
 {
     public TileHandler handler;
     private List<Tile> validTargets;
 
-    public override bool IsFinished => finished;
+    public bool IsFinished => finished;
     public bool finished;
 
     public SingleTileTargetEffect(List<Tile> validTargets, TileHandler handler)
@@ -16,7 +16,7 @@ public class SingleTileTargetEffect : QueueableCommand
         this.validTargets = validTargets;
     }
 
-    public override void Execute()
+    public void Execute()
     {
         if (validTargets.Count == 0)
         {
@@ -25,15 +25,15 @@ public class SingleTileTargetEffect : QueueableCommand
             return;
         }
         foreach (Tile t in validTargets)
-            t.setEffectable(this);
+            t.SetEffectable(this);
     }
 
     #region UtilityBuilders
     public static void CreateAndQueue(List<Tile> validTargets, TileHandler handler)
     {
-        InformativeAnimationsQueue.Instance.addAnimation(new SingleTileTargetEffect(validTargets, handler));
+        InformativeAnimationsQueue.Instance.AddAnimation(new SingleTileTargetEffect(validTargets, handler));
     }
-    public static QueueableCommand CreateCommand(List<Tile> validTargets, TileHandler handler)
+    public static IQueueableCommand CreateCommand(List<Tile> validTargets, TileHandler handler)
     {
         return new SingleTileTargetEffect(validTargets, handler);
     }

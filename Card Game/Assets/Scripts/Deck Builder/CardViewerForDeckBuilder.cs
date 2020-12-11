@@ -30,21 +30,4 @@ public class CardViewerForDeckBuilder : CardViewer
         else
             countText.text = "x" + count;
     }
-
-    public override void SetCard(int cardId)
-    {
-        base.SetCard(cardId);
-        if (deckBeingBuilt == null)
-            return;
-        count = deckBeingBuilt.getCardAmount(cardId);
-        if (count > 0)
-        {
-            countGameObject.SetActive(true);
-            countText.text = "x" + count;
-        }
-        else
-        {
-            countGameObject.SetActive(false);
-        }
-    }
 }

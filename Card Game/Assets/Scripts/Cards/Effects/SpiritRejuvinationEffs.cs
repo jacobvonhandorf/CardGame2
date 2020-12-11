@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class SpiritRejuvinationEffs : SpellEffects
 {
-    public override List<Tile> validTiles => GameManager.Get().getAllTilesWithCreatures(owner, true);
+    public override List<Tile> ValidTiles => GameManager.Get().getAllTilesWithCreatures(Owner, true);
 
-    public override void doEffect(Tile t)
+    public override void DoEffect(Tile t)
     {
         t.creature.Bounce(card);
-        owner.DrawCards(2);
+        Owner.DrawCards(2);
     }
 }

@@ -14,7 +14,7 @@ public class CardClickHandler : MonoBehaviour, IPointerDownHandler, IPointerUpHa
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        transformManager.clearQueue();
+        transformManager.ClearQueue();
         transformManager.Lock();
     }
 

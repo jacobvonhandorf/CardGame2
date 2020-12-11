@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class BounceEffs : SpellEffects
 {
-    public override List<Tile> validTiles => Board.instance.getAllTilesWithCreatures(false);
+    public override List<Tile> ValidTiles => Board.instance.GetAllTilesWithCreatures(false);
 
-    public override void doEffect(Tile t)
+    public override void DoEffect(Tile t)
     {
         t.creature.Bounce(card);
     }
