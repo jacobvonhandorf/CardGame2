@@ -12,7 +12,7 @@ public class ArcaneNoviceEffs : CreatureEffects
 
     private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastArgs e)
     {
-        if (creature.enabled && creature.Counters.AmountOf(CounterType.Arcane) > 0 && e.spell.owner == creature.Controller)
+        if (creature.enabled && creature.Counters.AmountOf(CounterType.Arcane) > 0 && e.spell.Owner == creature.Controller)
         {
             creature.Controller.DrawCard();
             creature.Counters.Remove(CounterType.Arcane, 1);

@@ -10,86 +10,32 @@ public static class Counters
     public static CounterData GetData(CounterType type)
     {
         if (counterData == null)
-            setupMap();
+            SetupMap();
         return counterData[type];
     }
-    private static void setupMap()
+    private static void SetupMap()
     {
         counterData = new Dictionary<CounterType, CounterData>();
         CounterData[] data = Resources.LoadAll<CounterData>("");
         foreach (CounterData d in data)
             counterData.Add(d.CType, d);
-        //Debug.Log("Set up counter data");
-    }
-
-    /*
-    public static CounterClass build { get; } = new CounterClass.BuildCounter();
-    public static CounterClass well { get; } = new CounterClass.WellCounter();
-    public static CounterClass mine { get; } = new CounterClass.MineCounter();
-    public static CounterClass arcane { get; } = new CounterClass.ArcaneCounter();
-
-    // when adding a new counter add it to this map for netcode to work with it
-    public static Dictionary<int, CounterClass> counterMap = new Dictionary<int, CounterClass>()
-    {
-        { build.id(), build },
-        { well.id(), well },
-        { mine.id(), mine },
-        { arcane.id(), arcane },
-    };
-    */
-}
-/*
-public abstract class CounterClass
-{
-    public abstract Color borderColor();
-    public abstract Color fillColor();
-    public abstract int id();
-    public abstract string tooltip();
-
-    public class BuildCounter : CounterClass
-    {
-        public override Color borderColor() => new Color(0, 0, 0);
-        public override Color fillColor() => new Color(1, 1, 1);
-        public override int id() => 1;
-        public override string tooltip() => "Used to make basic structures";
-    }
-    public class WellCounter : CounterClass
-    {
-        public override Color borderColor() => new Color(.047f, .36f, .678f);
-        public override Color fillColor() => new Color(.039f, .714f, .75f);
-        public override int id() => 2;
-        public override string tooltip() => "Spend 3 to gain 1 mana";
-    }
-    public class MineCounter : CounterClass
-    {
-        public override Color borderColor() => new Color(.047f, .36f, .678f);
-        public override Color fillColor() => new Color(.169f, .125f, 0f);
-        public override int id() => 3;
-        public override string tooltip() => "Remove to add a gem to your hand";
-    }
-    public class ArcaneCounter : CounterClass
-    {
-        public override Color borderColor() => new Color(0, .525f, .812f);
-        public override Color fillColor() => new Color(1, 1, 1);
-        public override int id() => 4;
-        public override string tooltip() => "Arcane creatures use these for their effects";
     }
 }
-*/
+
 public class CounterList
 {
     
     protected Dictionary<CounterType, int> counterAmounts = new Dictionary<CounterType, int>();
     public IReadOnlyDictionary<CounterType, int> CounterMap { get { return counterAmounts; } }
 
-    public void addCounters(CounterType counterType, int amount)
+    public void AddCounters(CounterType counterType, int amount)
     {
         if (counterAmounts.ContainsKey(counterType))
             counterAmounts[counterType] += amount;
         else
             counterAmounts.Add(counterType, amount);
     }
-    public virtual void removeCounters(CounterType counterType, int amount)
+    public virtual void RemoveCounters(CounterType counterType, int amount)
     {
         if (counterAmounts.ContainsKey(counterType))
         {
@@ -104,14 +50,14 @@ public class CounterList
             throw new Exception("Trying to remove counters that don't exist");
         }
     }
-    public int hasCounter(CounterType counterType)
+    public int AmountOf(CounterType counterType)
     {
         if (counterAmounts.TryGetValue(counterType, out int value))
             return value;
         else
             return 0;
     }
-    public void clear()
+    public void Clear()
     {
         counterAmounts.Clear();
     }

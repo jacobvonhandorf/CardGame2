@@ -35,6 +35,6 @@ public class Graveyard : ViewableCardPile
 
     protected override void OnCardRemoved(Card c)
     {
-        numCardsChanged.Invoke();
+        NumCardsChanged.Invoke();
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BounceEffs : SpellEffects
 {
-    public override List<Tile> ValidTiles => Board.instance.GetAllTilesWithCreatures(false);
+    public override List<Tile> ValidTiles => Board.Instance.GetAllTilesWithCreatures(false);
 
     public override void DoEffect(Tile t)
     {

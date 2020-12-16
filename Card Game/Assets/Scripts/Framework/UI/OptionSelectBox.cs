@@ -66,7 +66,7 @@ public class OptionSelectBox : MonoBehaviour
                 forceFinished = true;
                 return;
             }
-            optionBox = Instantiate(GameManager.Get().optionSelectBoxPrefab);
+            optionBox = Instantiate(GameManager.Instance.optionSelectBoxPrefab);
             optionBox.setUp(options, headerText, handler);
         }
     }
@@ -75,8 +75,7 @@ public class OptionSelectBox : MonoBehaviour
     public void setUp(List<string> options, string headerText, OptionBoxHandler handler)
     {
         this.handler = handler;
-        if (GameManager.Get() != null)
-            GameManager.Get().SetPopUpGlassActive(true);
+        UIEvents.EnableUIBlocker.Invoke();
         // set background size based on number of options
         float backgroundHeight = yMargin * 2 + Math.Abs(offsetPerOption) * options.Count + headerHeight;
         float top = backgroundHeight / 2;
@@ -103,7 +102,7 @@ public class OptionSelectBox : MonoBehaviour
     public void submit(int index, string text)
     {
         handler.Invoke(index, text);
-        GameManager.Get().SetPopUpGlassActive(false);
+        UIEvents.DisableUIBlocker.Invoke();
         finished = true;
         Destroy(gameObject);
     }

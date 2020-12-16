@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SpiritRejuvinationEffs : SpellEffects
 {
-    public override List<Tile> ValidTiles => GameManager.Get().getAllTilesWithCreatures(Owner, true);
+    public override List<Tile> ValidTiles => Board.Instance.GetAllTilesWithCreatures(Owner, true);
 
     public override void DoEffect(Tile t)
     {

@@ -7,8 +7,16 @@ using System;
 
 public class CardVisual : MonoBehaviour
 {
-    internal void SetColor(Color color)
+    private List<Image> allImages = new List<Image>();
+
+    private void Awake()
     {
-        throw new NotImplementedException();
+        allImages.AddRange(GetComponentsInChildren<Image>());
+    }
+
+    public void SetColor(Color color)
+    {
+        foreach (Image i in allImages)
+            i.color = color;
     }
 }

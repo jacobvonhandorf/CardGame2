@@ -34,15 +34,15 @@ public class CardInDeckBuilder : MonoBehaviour
         amount = 0;
         incrementAmount();
 
-        if (card.elementalIdentity == Card.ElementIdentity.Earth)
+        if (card.elementalIdentity == ElementIdentity.Earth)
             setBackgroundColor(earthColor);
-        else if (card.elementalIdentity == Card.ElementIdentity.Fire)
+        else if (card.elementalIdentity == ElementIdentity.Fire)
             setBackgroundColor(fireColor);
-        else if (card.elementalIdentity == Card.ElementIdentity.Water)
+        else if (card.elementalIdentity == ElementIdentity.Water)
             setBackgroundColor(waterColor);
-        else if (card.elementalIdentity == Card.ElementIdentity.Wind)
+        else if (card.elementalIdentity == ElementIdentity.Wind)
             setBackgroundColor(windColor);
-        else if (card.elementalIdentity == Card.ElementIdentity.Nuetral)
+        else if (card.elementalIdentity == ElementIdentity.Nuetral)
             setBackgroundColor(nuetralColor);
         else
             Debug.LogError(card.elementalIdentity);

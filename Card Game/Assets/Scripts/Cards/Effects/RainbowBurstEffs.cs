@@ -9,7 +9,7 @@ public class RainbowBurstEffs : SpellEffects
     private const int CARDS_DRAWN = 3;
     private const int CARDS_TO_SHUFFLE_BACK = 3;
 
-    public override List<Tile> ValidTiles => Board.instance.AllTiles;
+    public override List<Tile> ValidTiles => Board.Instance.AllTiles;
 
     private List<int> selectedCardIds = new List<int>();
     private List<Card> cardsToShuffleBack = new List<Card>();
@@ -20,25 +20,25 @@ public class RainbowBurstEffs : SpellEffects
         cardsToShuffleBack.Clear();
         gemsNeededToShuffleBack = CARDS_TO_SHUFFLE_BACK;
 
-        List<Card> pickableCards = card.owner.Hand.GetAllCardsWithTag(Tag.Gem);
+        List<Card> pickableCards = card.Owner.Hand.GetAllCardsWithTag(Tag.Gem);
         CompoundQueueableCommand.Builder cmdBuilder = new CompoundQueueableCommand.Builder();
         for (int i = 0; i < CARDS_TO_SHUFFLE_BACK; i++)
         {
-            IQueueableCommand cmd = CardPicker.CreateCommand(pickableCards, 1, 1, "Select a gem to shuffle back. " + gemsNeededToShuffleBack + " remaining", card.owner, delegate (List<Card> cardList)
+            IQueueableCommand cmd = CardPicker.CreateCommand(pickableCards, 1, 1, "Select a gem to shuffle back. " + gemsNeededToShuffleBack + " remaining", card.Owner, delegate (List<Card> cardList)
             {
-                pickableCards.RemoveAll(c => c.cardId == cardList[0].cardId); // remove already selected cards
+                pickableCards.RemoveAll(c => c.CardId == cardList[0].CardId); // remove already selected cards
                 cardsToShuffleBack.Add(cardList[0]);
                 gemsNeededToShuffleBack--;
             });
             cmdBuilder.AddCommand(cmd);
         }
-        cmdBuilder.AddCommand(SingleTileTargetEffect.CreateCommand(GameManager.Get().getAllTilesWithCreatures(card.owner.OppositePlayer, false), delegate (Tile targetTile)
+        cmdBuilder.AddCommand(SingleTileTargetEffect.CreateCommand(Board.Instance.GetAllTilesWithCreatures(card.Owner.OppositePlayer, false), delegate (Tile targetTile)
         {
             foreach (Card c in cardsToShuffleBack)
-                c.MoveToCardPile(card.owner.Deck, card);
-            card.owner.Deck.shuffle();
+                c.MoveToCardPile(card.Owner.Deck, card);
+            card.Owner.Deck.Shuffle();
             targetTile.creature.TakeDamage(DAMAGE, card);
-            card.owner.DrawCards(CARDS_DRAWN);
+            card.Owner.DrawCards(CARDS_DRAWN);
         }));
         cmdBuilder.BuildAndQueue();
     }
@@ -48,11 +48,11 @@ public class RainbowBurstEffs : SpellEffects
     {
         int numUniqueGemsInHand = 0;
         List<int> usedIds = new List<int>();
-        foreach (Card c in card.owner.Hand.CardList)
+        foreach (Card c in card.Owner.Hand.CardList)
         {
-            if (c.Tags.Contains(Tag.Gem) && !usedIds.Contains(c.cardId))
+            if (c.Tags.Contains(Tag.Gem) && !usedIds.Contains(c.CardId))
             {
-                usedIds.Add(c.cardId);
+                usedIds.Add(c.CardId);
                 numUniqueGemsInHand++;
             }
         }

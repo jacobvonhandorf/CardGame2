@@ -12,8 +12,8 @@ public class StructureCard : Card
     [SerializeField] private CounterController counterCountroller;
 
     public new PermanentCardVisual CardVisuals { get { return (PermanentCardVisual)base.CardVisuals; } }
-    public override List<Tile> LegalTargetTiles => GameManager.Get().getLegalStructurePlacementTiles(owner);
-    public override CardType getCardType() => CardType.Structure;
+    public override List<Tile> LegalTargetTiles => GameManager.Instance.getLegalStructurePlacementTiles(Owner);
+    public override CardType CardType => CardType.Structure;
 
     protected override void Awake()
     {
@@ -29,7 +29,7 @@ public class StructureCard : Card
 
     public override void Play(Tile t)
     {
-        GameManager.Get().createStructureOnTile(structure, t, owner, this);
+        GameManager.Instance.createStructureOnTile(structure, t, Owner, this);
     }
 
     public void swapToStructure(Tile onTile)
@@ -40,10 +40,8 @@ public class StructureCard : Card
         // enable creature functionality
         structure.enabled = true;
 
-        // initialize the structure if it hasn't already been initialized
-        //structure.initialize();
-
         // resize
+        Debug.Log("Tile position " + onTile.transform.position);
         CardVisuals.ResizeToPermanent(onTile.transform.position);
 
         isStructure = true;
@@ -66,9 +64,9 @@ public class StructureCard : Card
         isStructure = false;
     }
 
-    public override void resetToBaseStats()
+    public override void ResetToBaseStats()
     {
-        base.resetToBaseStats();
+        base.ResetToBaseStats();
         structure.resetToBaseStats();
     }
 

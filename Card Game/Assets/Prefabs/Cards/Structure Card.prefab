@@ -33,6 +33,7 @@ MonoBehaviour:
   FofBorder: {fileID: 3952035037657976631}
   iconScaleWhenPermanent: 2
   scaleWhenPermanent: 0.3
+  positionOffset: {x: 50, y: -50, z: 0}
   pauseBetweenResize: 0
   iconResizeSpeed: 6
   timeForShrinkAnimation: 0.3

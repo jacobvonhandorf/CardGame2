@@ -12,44 +12,6 @@ public class StructureStatsGetter : CardStatsGetter
     [SerializeField] private TextMeshPro hpText;
     [SerializeField] private SpriteRenderer friendOrFoeBorder;
 
-    public override void setCardViewer(CardViewer viewer)
-    {
-        /*
-        viewer.gameObject.SetActive(true);
-
-        // flip everything to active that needs to be active
-        // and flip everything to inactive that should be inactive
-        viewer.hpGameObject.SetActive(hpText.gameObject.activeInHierarchy);
-        viewer.setGoldActive(goldText.gameObject.activeInHierarchy);
-        viewer.setManaActive(manaText1.gameObject.activeInHierarchy);
-        viewer.setManaLowerActive(manaText2.gameObject.activeInHierarchy);
-        viewer.setFullBodyTextActive(true);
-        viewer.setAttackActive(false);
-        viewer.setMoveActive(false);
-        viewer.setHalfBodyTextActive(false);
-
-        // set all values that need to be set
-        viewer.hpText.text = hpText.text;
-        viewer.goldText.text = goldText.text;
-        viewer.manaText1.text = manaText1.text;
-        viewer.manaText2.text = manaText2.text;
-        viewer.fullBodyText.text = effectText.text;
-        viewer.nameText.text = nameText.text;
-        viewer.typeText.text = typeText.text;
-
-        // set all colors that need to be set. Will need to add more things here later probably
-        viewer.hpText.color = hpText.color;
-        viewer.goldText.color = goldText.color;
-        viewer.manaText1.color = manaText1.color;
-        viewer.manaText2.color = manaText2.color;
-
-        //throw new System.NotImplementedException();
-        viewer.background.sprite = background.sprite;
-        viewer.CardArt = cardArt.sprite;
-        viewer.setCardArt(cardArt.sprite);
-        */
-    }
-
     public void swapToStructure(Tile structureTile)
     {
         List<Transform> iconsToResize = new List<Transform>();

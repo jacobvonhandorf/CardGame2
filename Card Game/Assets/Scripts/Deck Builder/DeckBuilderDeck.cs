@@ -119,7 +119,7 @@ public class DeckBuilderDeck : MonoBehaviour
 
         if (deckName.Length == 0)
         {
-            Toaster.instance.doToast("Deck name cannot be empty");
+            Toaster.Instance.DoToast("Deck name cannot be empty");
             return;
         }
 
@@ -147,7 +147,7 @@ public class DeckBuilderDeck : MonoBehaviour
 
         // do on save stuff
         unsavedChanges = false;
-        Toaster.Get().doToast("Deck Saved");
+        Toaster.Instance.DoToast("Deck Saved");
         int dropdownIndex = deckNameDropdown.value;
         loadDeckPopUp.setup();
         deckNameDropdown.SetValueWithoutNotify(dropdownIndex);
@@ -158,12 +158,12 @@ public class DeckBuilderDeck : MonoBehaviour
         // check if deck is more than 40 cards
         if (cardCount < minNumerOfCardsInDeck)
         {
-            Toaster.Get().doToast("Deck must contain at least " + minNumerOfCardsInDeck + " cards");
+            Toaster.Instance.DoToast("Deck must contain at least " + minNumerOfCardsInDeck + " cards");
             return;
         }
         else if (cardCount > maxNumberOfCardsInDeck)
         {
-            Toaster.Get().doToast("Deck must be under " + maxNumberOfCardsInDeck + " cards");
+            Toaster.Instance.DoToast("Deck must be under " + maxNumberOfCardsInDeck + " cards");
             return;
         }
         save(deckNameDropdown.options[deckNameDropdown.value].text);
@@ -197,12 +197,12 @@ public class DeckBuilderDeck : MonoBehaviour
         // check if deck is legal size
         if (cardCount < minNumerOfCardsInDeck)
         {
-            Toaster.Get().doToast("Deck must contain at least " + minNumerOfCardsInDeck + " cards");
+            Toaster.Instance.DoToast("Deck must contain at least " + minNumerOfCardsInDeck + " cards");
             return;
         }
         else if (cardCount > maxNumberOfCardsInDeck)
         {
-            Toaster.Get().doToast("Deck must be under " + maxNumberOfCardsInDeck + " cards");
+            Toaster.Instance.DoToast("Deck must be under " + maxNumberOfCardsInDeck + " cards");
             return;
         }
 
@@ -358,7 +358,7 @@ public class DeckBuilderDeck : MonoBehaviour
                 File.Delete(Application.persistentDataPath + "/decks/" + deckName + ".dek");
                 unsavedChanges = false;
 
-                Toaster.Get().doToast("Deleted corrupted deck: " + deckName);
+                Toaster.Instance.DoToast("Deleted corrupted deck: " + deckName);
                 clear();
                 // rework deck builder to use cardData
             }

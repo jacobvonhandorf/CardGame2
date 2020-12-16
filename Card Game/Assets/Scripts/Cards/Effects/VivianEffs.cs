@@ -9,9 +9,9 @@ public class VivianEffs : CreatureEffects
     {
         if (e.newCardPile is Hand && e.source != null)
         {
-            SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllDeployableTiles(card.owner), delegate (Tile t)
+            SingleTileTargetEffect.CreateAndQueue(GameManager.Instance.getAllDeployableTiles(card.Owner), delegate (Tile t)
             {
-                GameManager.Get().createCreatureOnTile(creature, t, card.owner);
+                GameManager.Instance.createCreatureOnTile(creature, t, card.Owner);
             });
         }
     };

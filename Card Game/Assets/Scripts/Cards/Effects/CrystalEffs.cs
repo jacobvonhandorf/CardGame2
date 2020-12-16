@@ -12,6 +12,6 @@ public class CrystalEffs : SpellEffects
     public override EventHandler<Card.AddedToCardPileArgs> OnMoveToCardPile => delegate (object s, Card.AddedToCardPileArgs e)
     {
         if (e.newCardPile is Hand)
-            card.owner.Mana += 1;
+            card.Owner.Mana += 1;
     };
 }

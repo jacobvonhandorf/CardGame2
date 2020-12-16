@@ -14,5 +14,5 @@ public abstract class SpellEffects : MonoBehaviour
     public virtual EmptyHandler OnInitilization { get; }
     public virtual EventHandler<Card.AddedToCardPileArgs> OnMoveToCardPile { get; }
 
-    public Player Owner { get { return card.owner; } }
+    public Player Owner { get { return card.Owner; } }
 }

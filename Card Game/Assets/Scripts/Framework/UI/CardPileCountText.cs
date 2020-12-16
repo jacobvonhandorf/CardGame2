@@ -15,12 +15,12 @@ public class CardPileCountText : MonoBehaviour
 
     private void OnEnable()
     {
-        sourcePile.numCardsChanged.AddListener(UpdateText);
+        sourcePile.NumCardsChanged.AddListener(UpdateText);
     }
 
     private void OnDisable()
     {
-        sourcePile.numCardsChanged.RemoveListener(UpdateText);
+        sourcePile.NumCardsChanged.RemoveListener(UpdateText);
     }
 
     public void UpdateText()

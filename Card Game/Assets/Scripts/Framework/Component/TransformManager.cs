@@ -22,7 +22,7 @@ public class TransformManager : MonoBehaviour
             return;
 
         // if close to transform or currentTransform is null then move to next transform
-        if (currentTransform == null || Vector3.Distance(transform.position, currentTransform.position) < closeEnough && Vector3.Distance(transform.position, currentTransform.position) < closeEnough)
+        if (currentTransform == null || Vector3.Distance(transform.localPosition, currentTransform.position) < closeEnough)
         {
             if (transformQueue.Count > 0)
                 currentTransform = transformQueue.Dequeue();
@@ -33,7 +33,7 @@ public class TransformManager : MonoBehaviour
             }
         }
         // move towards current transform
-        transform.position = Vector3.Lerp(transform.position, currentTransform.position, speed * Time.deltaTime);
+        transform.localPosition = Vector3.Lerp(transform.localPosition, currentTransform.position, speed * Time.deltaTime);
         transform.localScale = Vector3.Lerp(transform.localScale, currentTransform.localScale, speed * Time.deltaTime);
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(currentTransform.rotation), speed * Time.deltaTime);
     }

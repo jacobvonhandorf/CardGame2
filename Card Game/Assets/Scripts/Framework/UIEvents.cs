@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using UnityEngine.Events;
 
 public static class UIEvents
 {
@@ -11,4 +12,8 @@ public static class UIEvents
 
     public static event EventHandler<CardArgs> OnCardBeginDrag;
     public static void BeginCardDrag(Card card) { OnCardBeginDrag?.Invoke(null, new CardArgs() { card = card}); }
+
+    public static UnityEvent EnableUIBlocker = new UnityEvent();
+    public static UnityEvent DisableUIBlocker = new UnityEvent();
+    public static UnityEvent<Card> PermanentHovered = new CardEvent();
 }

@@ -6,14 +6,14 @@ using UnityEngine;
 
 public class Board : CardPile
 {
-    public static Board instance;
+    public static Board Instance { get; private set; }
     public Tile myPrefab;
     public int boardWidth;
     public int boardHeight;
     public Tile[,] tileArray;
     public List<Tile> AllTiles { get; private set; }
-    public List<Creature> AllCreatures { get { return CardList.Where(c => c.IsType(Card.CardType.Creature)).Select(c => (c as CreatureCard).Creature).ToList(); } }
-    public List<Structure> AllStructures { get { return CardList.Where(c => c.IsType(Card.CardType.Structure)).Select(c => (c as StructureCard).structure).ToList(); } }
+    public List<Creature> AllCreatures { get { return CardList.Where(c => c.IsType(CardType.Creature)).Select(c => (c as CreatureCard).Creature).ToList(); } }
+    public List<Structure> AllStructures { get { return CardList.Where(c => c.IsType(CardType.Structure)).Select(c => (c as StructureCard).structure).ToList(); } }
     [SerializeField] private Transform tileContainer; // used to organize tiles in inspector
 
     private List<Vector2> powerTileCoordinates;
@@ -21,7 +21,7 @@ public class Board : CardPile
     new void Awake()
     {
         base.Awake();
-        instance = this;
+        Instance = this;
         AllTiles = new List<Tile>();
         powerTileCoordinates = new List<Vector2>();
         // add power tiles to power tile list
@@ -41,6 +41,7 @@ public class Board : CardPile
 
                 newTile.x = j;
                 newTile.y = i;
+                newTile.name = j + ", " + i;
                 AllTiles.Add(newTile);
                 tileArray[j, i] = newTile;
                 if (powerTileCoordinates.Contains(new Vector2(newTile.x, newTile.y)))

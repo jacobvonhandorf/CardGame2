@@ -109,7 +109,7 @@ public class DeckBuilderCardsView : MonoBehaviour
             if (filter.tags != null && filter.tags.Count > 0)
             {
                 bool hasTag = false;
-                foreach (Card.Tag tag in filter.tags)
+                foreach (Tag tag in filter.tags)
                     if (data.tags.Contains(tag))
                     {
                         hasTag = true;
@@ -168,10 +168,10 @@ public class DeckBuilderCardsView : MonoBehaviour
 
 public class CardFilterObject
 {
-    public List<Card.ElementIdentity> elements;
+    public List<ElementIdentity> elements;
     public List<int> totalCosts;
-    public List<Card.CardType> cardTypes;
-    public List<Card.Tag> tags;
+    public List<CardType> cardTypes;
+    public List<Tag> tags;
     public List<Keyword> keywords;
     public string nameTextSearch;
     public string descriptionTextSearch;

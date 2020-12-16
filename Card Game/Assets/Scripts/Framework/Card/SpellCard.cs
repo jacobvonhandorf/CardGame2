@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class SpellCard : Card
 {
-    public override CardType getCardType() => CardType.Spell;
+    public override CardType CardType => CardType.Spell;
     [HideInInspector] public SpellEffects effects;
     public override List<Tile> LegalTargetTiles => GetComponent<SpellEffects>().ValidTiles;
 
     public override void Play(Tile t)
     {
         DoEffect(t);
-        MoveToCardPile(owner.Graveyard, null);
-        GameManager.Get().onSpellCastEffects(this);
+        MoveToCardPile(Owner.Graveyard, null);
+        GameManager.Instance.onSpellCastEffects(this);
     }
 
     private void DoEffect(Tile t)

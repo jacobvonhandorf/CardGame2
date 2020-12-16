@@ -19,23 +19,23 @@ public class CounterController : MonoBehaviour
 
     public void Add(CounterType counterType, int amount)
     {
-        counterList.addCounters(counterType, amount);
+        counterList.AddCounters(counterType, amount);
         attachedObject.OnCountersAdded(counterType, amount);
         UpdateDisplay(counterType);
     }
     public void Remove(CounterType counterType, int amount)
     {
-        counterList.removeCounters(counterType, amount);
+        counterList.RemoveCounters(counterType, amount);
         attachedObject.OnCountersAdded(counterType, amount);
         UpdateDisplay(counterType);
     }
     public int AmountOf(CounterType counterType)
     {
-        return counterList.hasCounter(counterType);
+        return counterList.AmountOf(counterType);
     }
     public void Clear()
     {
-        counterList.clear();
+        counterList.Clear();
         UpdateDisplays();
     }
 
@@ -53,12 +53,12 @@ public class CounterController : MonoBehaviour
             if (counterList.CounterMap.TryGetValue(counterType, out int amount))
             {
                 display.gameObject.SetActive(true);
-                display.setText(amount); // if a display exists and there is an amount for it then set the display to the amount
+                display.SetText(amount); // if a display exists and there is an amount for it then set the display to the amount
             }
             else
             {
                 // A display exists but no amount so set the display to inactive
-                display.setText(0);
+                display.SetText(0);
                 display.gameObject.SetActive(false);
                 UpdateDisplayLocations();
             }
@@ -66,14 +66,12 @@ public class CounterController : MonoBehaviour
         else
         {
             // no display exists so create a new one
-            CounterDisplay newDisplay = Instantiate(counterDisplayPrefab);
-            newDisplay.gameObject.transform.SetParent(transform);
+            CounterDisplay newDisplay = Instantiate(counterDisplayPrefab, transform);
             displays.Add(counterType, newDisplay);
-            newDisplay.setBackgroundColor(Counters.GetData(counterType).FillColor);
-            newDisplay.setBorderColor(Counters.GetData(counterType).BorderColor);
-            newDisplay.setTextColor(Counters.GetData(counterType).BorderColor);
-            newDisplay.setText(counterList.hasCounter(counterType));
-            newDisplay.transform.localScale = new Vector3(1, 1, 1);
+            newDisplay.SetBackgroundColor(Counters.GetData(counterType).FillColor);
+            newDisplay.SetBorderColor(Counters.GetData(counterType).BorderColor);
+            newDisplay.SetTextColor(Counters.GetData(counterType).BorderColor);
+            newDisplay.SetText(counterList.AmountOf(counterType));
             UpdateDisplayLocations();
         }
     }

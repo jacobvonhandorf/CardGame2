@@ -4,15 +4,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class CreatureCard : Card
+public class CreatureCard : Card, IScriptCreatureCard
 {
     public Creature Creature { get; private set; }
     [SerializeField] private CounterController counterController;
 
-    public override CardType getCardType() => CardType.Creature;
-    public override List<Tile> LegalTargetTiles => GameManager.Get().getAllDeployableTiles(owner);
+    public override CardType CardType => CardType.Creature;
+    public override List<Tile> LegalTargetTiles => GameManager.Instance.getAllDeployableTiles(Owner);
     public CounterController CounterController { get { return counterController; } }
-
     public new PermanentCardVisual CardVisuals { get { return (PermanentCardVisual)base.CardVisuals; } }
 
     private CardToPermanentConverter cardToPermanentConverter;
@@ -32,12 +31,12 @@ public class CreatureCard : Card
 
     public override void Play(Tile t)
     {
-        GameManager gameManager = GameManager.Get();
-        gameManager.createCreatureOnTile(Creature, t, owner); // this makes the assumption that a card will always be played by it's owner
+        GameManager gameManager = GameManager.Instance;
+        gameManager.createCreatureOnTile(Creature, t, Owner); // this makes the assumption that a card will always be played by it's owner
         GameEvents.TriggerCreaturePlayedEvents(null, new GameEvents.CreaturePlayedArgs() { creature = Creature });
     }
 
-    internal void SwapToCreature(Tile onTile)
+    public void SwapToCreature(Tile onTile)
     {
         // disable card functionality
         enabled = false;
@@ -45,11 +44,14 @@ public class CreatureCard : Card
         // enable creature functionality
         Creature.enabled = true;
 
+        // set card pile to board
+        if (Board.Instance != null)
+            MoveToCardPile(Board.Instance, null); // null to signal by game mechanics
+
         // resize
         cardToPermanentConverter.DoConversion(onTile.transform.position);
 
-        // set card pile to board
-        MoveToCardPile(Board.instance, null); // null to signal by game mechanics
+        // attach hover and click handlers
     }
 
     public void SwapToCard()
@@ -65,16 +67,16 @@ public class CreatureCard : Card
 
         // no longer a creature so forget the tile it's on
         Creature.Tile = null;
-        // and remove it from allCreatures
-        //GameManager.Get().allCreatures.Remove(Creature);
 
         // counters don't say on cards when they aren't creatures so clear them
         counterController.Clear();
+
+        // remove hover and click handlers
     }
 
-    public override void resetToBaseStats()
+    public override void ResetToBaseStats()
     {
-        base.resetToBaseStats();
+        base.ResetToBaseStats();
         Creature.ResetToBaseStats();
     }
     public override void resetToBaseStatsWithoutSyncing()
@@ -94,7 +96,7 @@ public class CreatureCard : Card
         // check if the player can pay the costs
         if (!OwnerCanPayCosts())
         {
-            Debug.Log("owner can play costs return false");
+            Debug.Log("owner can't play costs return false");
             return false;
         }
         else

@@ -10,7 +10,7 @@ public class CardTypeChangeListener : StatChangeListener
 
     protected override void OnValueUpdated(object value)
     {
-        Card.CardType cardType = (Card.CardType)value;
+        CardType cardType = (CardType)value;
         foreach (CardTypeBoolPair pair in listenerList)
         {
             if (pair.listenerType == cardType)
@@ -22,6 +22,6 @@ public class CardTypeChangeListener : StatChangeListener
 [Serializable]
 public struct CardTypeBoolPair
 {
-    public Card.CardType listenerType;
+    public CardType listenerType;
     public bool setActive;
 }

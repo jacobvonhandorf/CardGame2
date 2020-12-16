@@ -6,12 +6,12 @@ public class FireballEffs : SpellEffects
 {
     public int damageAmount = 5;
 
-    public override List<Tile> ValidTiles => Board.instance.GetAllTilesWithCreatures(Owner.OppositePlayer, false);
+    public override List<Tile> ValidTiles => Board.Instance.GetAllTilesWithCreatures(Owner.OppositePlayer, false);
 
     public override void DoEffect(Tile t)
     {
         t.creature.TakeDamage(damageAmount, card);
     }
 
-    public override bool CanBePlayed => Owner.ControlledCreatures.Find(c => c.HasTag(Card.Tag.Arcane));
+    public override bool CanBePlayed => Owner.ControlledCreatures.Find(c => c.HasTag(Tag.Arcane));
 }

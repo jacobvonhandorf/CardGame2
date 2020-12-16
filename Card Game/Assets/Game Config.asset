@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 21ae10754efbf8047a88e00858aab9ef, type: 3}
   m_Name: Game Config
   m_EditorClassIdentifier: 
-  StartingPlayerGold: 0
-  StartingPlayerActions: 0
-  StartingPlayerMana: 0
-  StartingPlayerGoldIncome: 0
-  StartingPlayerActionsIncome: 0
-  StartingPlayerManaIncome: 0
+  StartingPlayerGold: 1
+  StartingPlayerActions: 3
+  StartingPlayerMana: 1
+  StartingPlayerGoldIncome: 1
+  StartingPlayerActionsIncome: 3
+  StartingPlayerManaIncome: 1

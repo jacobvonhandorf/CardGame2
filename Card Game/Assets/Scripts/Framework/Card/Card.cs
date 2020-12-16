@@ -7,37 +7,32 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public abstract class Card : MonoBehaviour, IHasCardTags, ICanBeCardViewed
+public enum CardType
 {
-    #region Enums
-    public enum Tag
-    {
-        Human, Fairy, Arcane,
-        Income,
-        Gem
-    }
-
-    public enum CardType
-    {
-        Spell,
-        Creature,
-        Structure,
-        Other
-    }
-
-    public enum ElementIdentity
-    {
-        Fire = 0, Water = 1, Wind = 2, Earth = 3, Nuetral = 4 // numbered so cards can be sorted by element
-    }
-    #endregion
-
+    Spell,
+    Creature,
+    Structure,
+    Other
+}
+public enum Tag
+{
+    Human, Fairy, Arcane,
+    Income, Tactic,
+    Gem
+}
+public enum ElementIdentity
+{
+    Fire = 0, Water = 1, Wind = 2, Earth = 3, Nuetral = 4 // numbered so cards can be sorted by element
+}
+public abstract class Card : MonoBehaviour, IHasCardTags, ICanBeCardViewed, IScriptCard
+{
     // basic fields
     public List<Tag> Tags { get; } = new List<Tag>();
     private bool hidden = true; // if true then all players can see the card
     public CardPile CardPile { get; private set; }
-    [HideInInspector] public Player owner; // set this to readonly after done using TestCard
+    public Player Owner { get; set; }
     public EmptyHandler onInitilization;
-    [HideInInspector] public int cardId;
+    public int CardId { get; set; }
 
     // stats
     public StatsContainer Stats { get; } = new StatsContainer();
@@ -51,6 +46,9 @@ public abstract class Card : MonoBehaviour, IHasCardTags, ICanBeCardViewed
     public Sprite Art { get { return (Sprite)Stats.StatList[StatType.Art]; } set { Stats.SetValue(StatType.Art, value); } }
     public ElementIdentity ElementalId { get { return Stats.GetValue<ElementIdentity>(StatType.ElementalId); } set { Stats.SetValue(StatType.ElementalId, value); } }
     public int TotalCost { get { return GoldCost + ManaCost; } }
+    public IHaveReadableStats ReadableStats => Stats;
+    public abstract CardType CardType { get; }
+    public abstract List<Tile> LegalTargetTiles { get; }
 
     public CardVisual CardVisuals { get { return cardVisuals; } }
     [SerializeField] private CardVisual cardVisuals;
@@ -91,10 +89,10 @@ public abstract class Card : MonoBehaviour, IHasCardTags, ICanBeCardViewed
         Stats.AddType(StatType.GoldCost);
         Stats.AddType(StatType.BaseManaCost);
         Stats.AddType(StatType.ManaCost);
-        Stats.SetValue(StatType.CardType, getCardType());
+        Stats.SetValue(StatType.CardType, CardType);
     }
 
-    public bool IsType(CardType type) => getCardType().Equals(type);
+    public bool IsType(CardType type) => CardType == type;
 
     public abstract void Initialize();
 
@@ -102,7 +100,8 @@ public abstract class Card : MonoBehaviour, IHasCardTags, ICanBeCardViewed
     public void MoveToCardPile(CardPile newPile, Card source)
     {
         ActualMove(newPile, source);
-        NetInterface.Get().SyncMoveCardToPile(this, newPile, source);
+        if (GameManager.gameMode == GameManager.GameMode.online)
+            NetInterface.Get().SyncMoveCardToPile(this, newPile, source);
     }
 
     public void SyncCardMovement(CardPile newPile, Card source)
@@ -141,21 +140,23 @@ public abstract class Card : MonoBehaviour, IHasCardTags, ICanBeCardViewed
     {
         //if (!onScene) not sure if this is needed. Commenting it out fixed card not going to grave when killed over network
         //    return;
-
+        
         positionOnScene = transform.position;
         transform.position = new Vector3(99999f, 99999f, 99999f);
         TransformManager.Lock();
         TransformManager.enabled = false;
         //interuptMove = true;
         onScene = false;
+        
     }
     public void returnGraphicsAndCollidersToScene()
     {
         if (GameManager.gameMode == GameManager.GameMode.online)
         {
             // if card is in hand and the owner is not the local player then don't do anything
-            if (CardPile is Hand && owner != NetInterface.Get().localPlayer)
+            if (CardPile is Hand && Owner != NetInterface.Get().localPlayer)
             {
+                Debug.Log("Escaping return to scene");
                 return;
             }
         }
@@ -178,25 +179,12 @@ public abstract class Card : MonoBehaviour, IHasCardTags, ICanBeCardViewed
         TransformManager.MoveToImmediate(ts);
     }
     #endregion
-    #region CardViewer
-    public void OnAddedToViewer(CardViewer cardViewer)
-    {
-    }
-
-    public void OnRemovedFromViewer(CardViewer cardViewer)
-    {
-    }
-
-    public abstract List<Tile> LegalTargetTiles { get; }
-
-    public IHaveReadableStats ReadableStats => Stats;
-    #endregion
 
     public bool OwnerCanPayCosts()
     {
-        if (GoldCost > owner.Gold)
+        if (GoldCost > Owner.Gold)
             return false;
-        if (ManaCost > owner.Mana)
+        if (ManaCost > Owner.Mana)
             return false;
         return true;
     }
@@ -207,7 +195,7 @@ public abstract class Card : MonoBehaviour, IHasCardTags, ICanBeCardViewed
     }
 
     #region GettersAndSetters
-    public virtual void resetToBaseStats()
+    public virtual void ResetToBaseStats()
     {
         GoldCost = BaseGoldCost;
         ManaCost = BaseManaCost;
@@ -237,10 +225,7 @@ public abstract class Card : MonoBehaviour, IHasCardTags, ICanBeCardViewed
     #endregion
 
     #region OverrideMethods
-    // ABSTRACT METHODS
-    public abstract CardType getCardType();
     public abstract void Play(Tile t);
     public abstract bool CanBePlayed();
-
     #endregion
 }

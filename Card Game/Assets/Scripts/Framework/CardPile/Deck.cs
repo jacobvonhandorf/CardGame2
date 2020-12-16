@@ -4,55 +4,11 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class Deck : CardPile
+public class Deck : CardPile, IScriptDeck
 {
-    // WHEN A METHOD IS ADDED TO PLACE A CARD AT A SPECIFIC POSITION, IT MUST SYNC DECK ORDER IN NET INTERFACE
     private System.Random rng = new System.Random();
-    [SerializeField] public TextMeshPro cardCountText;
-    [SerializeField] public Player deckOwner;
 
-    protected new void Awake()
-    {
-        base.Awake();
-        if (cardList == null)
-            cardList = new List<Card>();
-        if (GameManager.gameMode == GameManager.GameMode.online)
-        {
-            foreach (Card c in GetComponentsInChildren<Card>())
-                Destroy(c.gameObject);
-            return;
-        }
-        foreach (Card card in GetComponentsInChildren<CreatureCard>())
-        {
-            card.owner = deckOwner;
-            //(card as CreatureCard).creature.owner = deckOwner; Creatures don't know owner anymore
-            (card as CreatureCard).Creature.Controller = deckOwner;
-            card.MoveToCardPile(this, null);
-        }
-        foreach (Card card in GetComponentsInChildren<StructureCard>())
-        {
-            card.owner = deckOwner;
-            (card as StructureCard).structure.SourceCard.owner = deckOwner;
-            (card as StructureCard).structure.Controller = deckOwner;
-            AddCard(card);
-            card.MoveToCardPile(this, null);
-        }
-        foreach (Card card in GetComponentsInChildren<SpellCard>())
-        {
-            card.owner = deckOwner;
-            AddCard(card);
-            card.MoveToCardPile(this, null);
-        }
-        shuffle();
-    }
-
-    private void Start()
-    {
-        if (cardCountText != null)
-            cardCountText.text = cardList.Count + "";
-    }
-
-    public void shuffle()
+    public void Shuffle()
     {
         int n = cardList.Count;
         while (n > 1)
@@ -66,27 +22,21 @@ public class Deck : CardPile
         NetInterface.Get().SyncDeckOrder(this);
     }
 
+    public void PlaceCardAtPosition(Card c, int position, Card source)
+    {
+        if (!cardList.Remove(c))
+            c.MoveToCardPile(this, source); // if the card isn't already in the list then move it there
+        if (position < cardList.Count)
+            cardList.Insert(position, c);
+        else
+            cardList.Insert(cardList.Count - 1, c);
+        NetInterface.Get().SyncDeckOrder(this);
+    }
+
     protected override void OnCardAdded(Card c)
     {
         c.removeGraphicsAndCollidersFromScene(); // card in deck should not be clickable
         c.positionOnScene = transform.position;
-        if (cardCountText != null)
-            cardCountText.text = cardList.Count + "";
-    }
-
-    protected override void OnCardRemoved(Card c)
-    {
-        if (cardCountText != null)
-            cardCountText.text = cardList.Count + "";
-    }
-
-    public void PrintCardList() // used for debugging
-    {
-        Debug.Log("Printing deck cardList");
-        foreach(Card c in cardList)
-        {
-            Debug.Log(c.transform.name);
-        }
     }
 
     // only use when loading a new deck
@@ -97,6 +47,5 @@ public class Deck : CardPile
             Destroy(c.gameObject);
         }
         cardList.Clear();
-        cardCountText.text = "0";
     }
 }

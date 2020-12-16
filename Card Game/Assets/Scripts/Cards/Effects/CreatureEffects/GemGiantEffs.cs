@@ -7,7 +7,7 @@ public class GemGiantEffs : CreatureEffects
 {
     public override EventHandler onDeploy => delegate (object s, EventArgs e)
     {
-        int numGemsInHand = creature.Controller.Hand.GetAllCardsWithTag(Card.Tag.Gem).Count;
+        int numGemsInHand = creature.Controller.Hand.GetAllCardsWithTag(Tag.Gem).Count;
         creature.AttackStat += numGemsInHand;
         creature.Health += numGemsInHand * 2;
     };

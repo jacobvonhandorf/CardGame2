@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class Tile : MonoBehaviour
 {
     public bool IsPowerTile { get; private set; } = false;
-    public List<Tile> AdjacentTiles => GameManager.Get().board.GetAllTilesWithinExactRangeOfTile(this, 1);
+    public List<Tile> AdjacentTiles => GameManager.Instance.board.GetAllTilesWithinExactRangeOfTile(this, 1);
     public Permanent Permanent
     {
         get
@@ -126,12 +126,12 @@ public class Tile : MonoBehaviour
     }
     private void nonActiveClick()
     {
-        Player activePlayer = GameManager.Get().activePlayer;
+        Player activePlayer = GameManager.Instance.ActivePlayer;
         // figure out what the player was doing before they clicked a non active tile
         if (activePlayer.heldCreature != null) // player was attacking or moving
         {
             activePlayer.heldCreature = null;
-            Board.instance.SetAllTilesToDefault();
+            Board.Instance.SetAllTilesToDefault();
         }
     }
 
@@ -141,10 +141,10 @@ public class Tile : MonoBehaviour
         if (GameManager.gameMode == GameManager.GameMode.online)
             playerWithCreature = NetInterface.Get().localPlayer;
         else
-            playerWithCreature = GameManager.Get().activePlayer;
+            playerWithCreature = GameManager.Instance.ActivePlayer;
         Creature creatureToMove = playerWithCreature.heldCreature;
         creatureToMove.Move(this);
-        Board.instance.SetAllTilesToDefault();
+        Board.Instance.SetAllTilesToDefault();
         ActionBox.instance.show(creature);
         playerWithCreature.heldCreature = null;
     }
@@ -158,8 +158,8 @@ public class Tile : MonoBehaviour
         }
         else if (attackable)
         {
-            GameManager.Get().doAttackOn(creature);
-            Board.instance.SetAllTilesToDefault();
+            GameManager.Instance.doAttackOn(creature);
+            Board.Instance.SetAllTilesToDefault();
         }
         else
         {

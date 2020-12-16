@@ -3,21 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UnityEngine;
-using static Card;
 
 // abstract class for structures as they exist on the field
 public class Structure : Permanent, Damageable, ICanReceiveCounters
 {
-    protected string cardName;
-    private bool initialized = false;
-    public PermanentCardVisual CardVisual { get { return (PermanentCardVisual)SourceCard.CardVisuals; } }
-    [SerializeField] public List<EmptyHandler> activatedEffects { get; } = new List<EmptyHandler>();
-
-    public Vector2 Coordinates => new Vector2(Tile.x, Tile.y);
-
     #region Events
-    public event EventHandler E_OnDeployed;
-    public void TriggerOnDeployEvents(object sender) { E_OnDeployed?.Invoke(sender, EventArgs.Empty); }
     public event EventHandler E_OnLeavesField;
     public void TriggerOnLeavesField(object sender) { E_OnLeavesField?.Invoke(sender, EventArgs.Empty); }
     #endregion
@@ -27,19 +17,6 @@ public class Structure : Permanent, Damageable, ICanReceiveCounters
         base.Awake();
         Stats.AddType(StatType.Health);
         Stats.AddType(StatType.BaseHealth);
-    }
-
-    public void TakeDamage(int amount, Card source)
-    {
-        Health -= amount;
-    }
-
-    // if you want to kill a creature do not call this. Call destroy creature in game manager
-    public void sendToGrave(Card source)
-    {
-        resetToBaseStats();
-        SourceCard.MoveToCardPile(SourceCard.owner.Graveyard, null);
-        SourceCard.removeGraphicsAndCollidersFromScene();
     }
 
     public void resetToBaseStats()
@@ -62,11 +39,11 @@ public class Structure : Permanent, Damageable, ICanReceiveCounters
     {
         if (!enabled)
             return;
-        if (GameManager.Get().activePlayer != Controller || Controller.IsLocked())
+        if (GameManager.Instance.ActivePlayer != Controller || Controller.IsLocked())
             return;
         if (getEffect() == null)
             return;
-        GameManager.Get().setUpStructureEffect(this);
+        GameManager.Instance.setUpStructureEffect(this);
     }
 
     private bool hovered = false;
@@ -86,39 +63,10 @@ public class Structure : Permanent, Damageable, ICanReceiveCounters
         // if we get here then enough time has passed so tell cardviewers to display tooltips
     }
 
-    public void UpdateFriendOrFoeBorder()
-    {
-        if (GameManager.gameMode != GameManager.GameMode.online)
-            CardVisual.SetIsAlly(GameManager.Get().activePlayer == Controller);
-        else
-            CardVisual.SetIsAlly(NetInterface.Get().localPlayer == Controller);
-    }
     public override void ResetForNewTurn()
     {
         UpdateFriendOrFoeBorder();
     }
-    #region Counters
-    public void OnCountersAdded(CounterType counterType, int amount)
-    {
-        syncCounters(counterType);
-        Debug.LogError("unimplemented");
-    }
-    public void syncCounters(CounterType counterType)
-    {
-        NetInterface.Get().SyncCounterPlaced(SourceCard, counterType, Counters.AmountOf(counterType));
-    }
-    // used by net interface for syncing
-    public void recieveCountersPlaced(CounterType counterType, int newCounters)
-    {
-        int currentCounters = Counters.AmountOf(counterType);
-        if (currentCounters > newCounters)
-            Counters.Remove(counterType, currentCounters - newCounters);
-        else if (currentCounters < newCounters)
-            Counters.Add(counterType, newCounters - currentCounters);
-        else
-            Debug.LogError("Trying to set counters to a value it's already set to. This shouldn't happen under normal circumstances");
-    }
-    #endregion
     #region Overideable
     // MAY BE OVERWRITTEN
     public virtual void onAnyStructurePlayed(Structure s) { }

@@ -20,7 +20,7 @@ public class SingleTileTargetEffect : IQueueableCommand
     {
         if (validTargets.Count == 0)
         {
-            GameManager.Get().ShowToast("No valid targets for effect");
+            Toaster.Instance.DoToast("No valid targets for effect");
             finished = true;
             return;
         }

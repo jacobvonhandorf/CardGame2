@@ -13,56 +13,35 @@ public class TestScript : MonoBehaviour
     public CardData testCreatureData;
     public CardData testStructureData;
     public Card testCard;
+    public Tile tile1;
+    public Tile tile2;
+    public Tile tile3;
+    public Player testPlayer;
+
+    Creature c = null;
 
     private void Start()
     {
         // setup test
-        
+
         //testCard = getTestStructureCard();
+        c = (ResourceManager.Get().InstantiateCardById(CardIds.Engineer) as CreatureCard).Creature;
+        c.SourceCard.Owner = testPlayer;
+        c.Controller = testPlayer;
+        testList.Add(delegate ()
+        {
+
+        });
+
+        IScriptCard sCard = c.SourceCard;
     }
 
     int testNum = 0;
-    List<Delegate> testList;
-    Card c = null;
+    List<Action> testList;
     private void DoTestOnKeyPress()
     {
-        /*
-        // setting card viewer to cardData for all card types
-        if (testNum == 0)
-        {
-            FindObjectOfType<CardViewer>().SetCard(testSpellData);
-        }
-        else if (testNum == 1)
-        {
-            FindObjectOfType<CardViewer>().SetCard(testCreatureData);
-        }
-        else if (testNum == 2)
-        {
-            FindObjectOfType<CardViewer>().SetCard(testStructureData);
-        }
-        else if (testNum == 3)
-        {
-            FindObjectOfType<CardViewer>().SetCard(getTestSpellCard());
-        }
-        else if (testNum == 4)
-        {
-            FindObjectOfType<CardViewer>().SetCard(getTestCreatureCard());
-        }
-        else if (testNum == 5)
-        {
-            c = getTestStructureCard();
-            FindObjectOfType<CardViewer>().SetCard(c);
-        }
-        else if (testNum == 6)
-        {
-            (c as StructureCard).structure.Health = 12;
-        }
-        // setting card to viewer for each card type and making updates to the original card
-
+        testList[testNum].Invoke();
         testNum++;
-        // test code here
-        //(testCard as StructureCard).structure.Health -= 1;
-        */
     }
 
     private void Update()
@@ -79,14 +58,13 @@ public class TestScript : MonoBehaviour
         List<Card> cardList = new List<Card>();
         for (int i = 0; i < 50; i++)
         {
-            cardList.Add(getTestSpellCard());
+            cardList.Add(GetTestSpellCard());
         }
         return cardList;
     }
 
-    private Card getTestSpellCard() => ResourceManager.Get().InstantiateCardById(CardIds.RingOfEternity);
-    private Card getTestStructureCard() => ResourceManager.Get().InstantiateCardById(CardIds.Market);
-    private Card getTestCreatureCard() => ResourceManager.Get().InstantiateCardById(CardIds.Mercenary);
-    //private Card getTestCard() => ResourceManager.Get().instantiateCardById(68);
+    private Card GetTestSpellCard() => ResourceManager.Get().InstantiateCardById(CardIds.RingOfEternity);
+    private Card GetTestStructureCard() => ResourceManager.Get().InstantiateCardById(CardIds.Market);
+    private Card GetTestCreatureCard() => ResourceManager.Get().InstantiateCardById(CardIds.Mercenary);
 }
 

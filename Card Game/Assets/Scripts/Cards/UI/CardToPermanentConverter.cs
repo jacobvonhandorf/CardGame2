@@ -10,6 +10,7 @@ public class CardToPermanentConverter : MonoBehaviour
     [SerializeField] private GameObject FofBorder;
     [SerializeField] private float iconScaleWhenPermanent;
     [SerializeField] private float scaleWhenPermanent;
+    [SerializeField] private Vector3 positionOffset;
 
     private List<Transform> iconsToResize;
     private Card card;
@@ -26,7 +27,8 @@ public class CardToPermanentConverter : MonoBehaviour
 
     public void DoConversion(Vector3 newPosition)
     {
-        Debug.Log("Doing conversion");
+        newPosition += positionOffset;
+        Debug.Log("Target position " + newPosition);
         card.enabled = false;
         permanent.enabled = true;
         dragHandler.enabled = false;
@@ -44,7 +46,7 @@ public class CardToPermanentConverter : MonoBehaviour
         restingTransform.Lock();
         resizeToCreatureFinished = false;
 
-        Vector3 positionStart = restingTransform.transform.localPosition;
+        Vector3 positionStart = restingTransform.transform.position;
         Vector3 positionEnd = newPosition;
         Vector3 scaleStart = restingTransform.transform.localScale;
         Vector3 scaleEnd = Vector3.one * scaleWhenPermanent;
@@ -58,7 +60,7 @@ public class CardToPermanentConverter : MonoBehaviour
             timePassed += Time.deltaTime;
             currentPercentage = timePassed / timeForShrinkAnimation;
 
-            restingTransform.transform.localPosition = Vector3.Lerp(positionStart, positionEnd, currentPercentage);
+            restingTransform.transform.position = Vector3.Lerp(positionStart, positionEnd, currentPercentage);
             restingTransform.transform.localScale = Vector3.Lerp(scaleStart, scaleEnd, currentPercentage);
 
             offsetTransform.transform.localPosition = Vector3.Lerp(offsetPosStart, Vector3.zero, currentPercentage);

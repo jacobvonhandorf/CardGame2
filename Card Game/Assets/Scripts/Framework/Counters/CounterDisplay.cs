@@ -2,27 +2,16 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CounterDisplay : MonoBehaviour
 {
-    [SerializeField] private TextMeshPro text;
-    [SerializeField] private SpriteRenderer border;
-    [SerializeField] private SpriteRenderer background;
+    [SerializeField] private TextMeshProUGUI text;
+    [SerializeField] private Outline border;
+    [SerializeField] private Image background;
 
-    public void setText(int number)
-    {
-        text.text = "" + number;
-    }
-    public void setBorderColor(Color color)
-    {
-        border.color = color;
-    }
-    public void setBackgroundColor(Color color)
-    {
-        background.color = color;
-    }
-    public void setTextColor(Color color)
-    {
-        text.color = color;
-    }
+    public void SetText(int number) => text.text = number.ToString();
+    public void SetBorderColor(Color color) => border.effectColor = color;
+    public void SetBackgroundColor(Color color) => background.color = color;
+    public void SetTextColor(Color color) => text.color = color;
 }

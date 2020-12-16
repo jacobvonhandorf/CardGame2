@@ -49,7 +49,7 @@ public class Recharge : HeroPower
         {
             c.MoveToCardPile(controller.Deck, null);
         }
-        controller.Deck.shuffle();
+        controller.Deck.Shuffle();
 
         //controller.addMana(-manaCost);
         //controller.addGold(-goldCost);

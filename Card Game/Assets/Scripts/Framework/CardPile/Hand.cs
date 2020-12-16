@@ -1,22 +1,39 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using TMPro;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class Hand : CardPile
+public class Hand : CardPile, IPointerEnterHandler, IPointerExitHandler
 {
-    private bool hidden = false;
-    [SerializeField] private float desiredCardSeperation;
+    [SerializeField] private float speedOnHover = 100;
+    [SerializeField] private float moveUpDistance = 300;
+    private Vector3 targetPosition;
+    private Vector3 originalPosition;
 
-    private new void Awake()
+    private void Start()
     {
-        base.Awake();
+        targetPosition = transform.position;
+        originalPosition = transform.position;
+
+        for (int i = 0; i < 5; i++)
+        {
+            //Card c = ResourceManager.Get().InstantiateCardById(CardIds.RingOfEternity);
+            //AddCard(c);
+        }
+    }
+
+    private void Update()
+    {
+        transform.position = Vector3.Lerp(transform.position, targetPosition, speedOnHover * Time.deltaTime);
     }
 
     protected override void OnCardAdded(Card c)
     {
+        //c.returnGraphicsAndCollidersToScene(); // Cards know when to show themselves
+        c.transform.localScale = Vector3.one * .5f;
+        if (c is CreatureCard)
+            (c as CreatureCard).SwapToCard();
+        else if (c is StructureCard)
+            (c as StructureCard).swapToCard();
+
         if (GameManager.gameMode != GameManager.GameMode.online)
         {
             /*
@@ -28,35 +45,26 @@ public class Hand : CardPile
         }
         else if (GameManager.gameMode == GameManager.GameMode.online)
         {
-            if (c.owner != NetInterface.Get().localPlayer)
+            if (c.Owner != NetInterface.Get().localPlayer)
+            {
+                Debug.Log("Removing from scene");
                 c.removeGraphicsAndCollidersFromScene();
+            }
             else
+            {
+                Debug.Log("Adding to scene");
                 c.returnGraphicsAndCollidersToScene();
-        }
-        c.returnGraphicsAndCollidersToScene(); // Cards know when to show themselves
-        if (c is CreatureCard)
-            (c as CreatureCard).SwapToCard();
-        else if (c is StructureCard)
-            (c as StructureCard).swapToCard();
-    }
-
-    public void show()
-    {
-        if (GameManager.gameMode == GameManager.GameMode.online)
-            return;
-        hidden = false;
-        foreach (Card c in cardList)
-        {
-            c.returnGraphicsAndCollidersToScene();
-            //resetCardPositions();
-            //c.setSpriteMaskInteraction(SpriteMaskInteraction.None);
+            }
         }
     }
 
-    public void hide()
+    public void OnPointerEnter(PointerEventData eventData)
     {
-        if (GameManager.gameMode == GameManager.GameMode.online)
-            return;
-        // move hand off screen
+        targetPosition = originalPosition + Vector3.up * moveUpDistance;
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        targetPosition = originalPosition;
     }
 }

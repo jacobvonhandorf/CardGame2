@@ -29,27 +29,27 @@ public class ActionBox : MonoBehaviour
 
     public void Attack()
     {
-        if (creature.hasDoneActionThisTurn)
+        if (creature.HasDoneActionThisTurn)
         {
-            GameManager.Get().ShowToast("You have already acted with this creature");
+            Toaster.Instance.DoToast("You have already acted with this creature");
             return;
         }
-        GameManager.Get().setUpCreatureAttack(creature);
+        GameManager.Instance.setUpCreatureAttack(creature);
         gameObject.SetActive(false);
     }
     public void Effect()
     {
-        if (!creature.hasDoneActionThisTurn)
-            GameManager.Get().setUpCreatureEffect(creature);
+        if (!creature.HasDoneActionThisTurn)
+            GameManager.Instance.setUpCreatureEffect(creature);
         else
-            GameManager.Get().ShowToast("This creature's action is unavailable");
+            Toaster.Instance.DoToast("This creature's action is unavailable");
         creature.Controller.heldCreature = null;
         gameObject.SetActive(false);
     }
     public void Cancel()
     {
-        GameManager.Get().activePlayer.heldCreature = null;
-        Board.instance.SetAllTilesToDefault();
+        GameManager.Instance.ActivePlayer.heldCreature = null;
+        Board.Instance.SetAllTilesToDefault();
         gameObject.SetActive(false);
     }
 }

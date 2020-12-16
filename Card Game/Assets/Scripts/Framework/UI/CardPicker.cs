@@ -68,7 +68,7 @@ public class CardPicker : MonoBehaviour
             CardPicker cardPicker = Instantiate(PrefabHolder.Instance.cardPicker, MainCanvas.Instance.transform);
             picker = cardPicker;
             cardPicker.SetUp(pickableCards, minCards, maxCards, headerText, handler);
-            GameManager.Get().SetPopUpGlassActive(true);
+            UIEvents.EnableUIBlocker.Invoke();
         }
     }
     #endregion
@@ -77,6 +77,7 @@ public class CardPicker : MonoBehaviour
     {
         if (pickableCards.Count < minCards)
             return false;
+        UIEvents.EnableUIBlocker.Invoke();
         headerTextMesh.text = GetHeaderString(minCards, maxCards, headerMessage);
 
         this.handler = handler;
@@ -151,8 +152,7 @@ public class CardPicker : MonoBehaviour
             confirmedPicks.Add(card.AsCard);
         handler.Invoke(confirmedPicks);
         Finished = true;
-        // GameManager.Get().SetPopUpGlassActive(false);
-        // should fire an event here for turning off popup glass
+        UIEvents.DisableUIBlocker.Invoke();
         Destroy(gameObject);
     }
 }

@@ -24,15 +24,15 @@ public class EngineerEffects : CreatureEffects
                 selectedCardId = (int)CardIds.Tower;
         });
         Debug.Log(creature.Controller);
-        List<Tile> validTargets = GameManager.Get().getLegalStructurePlacementTiles(creature.Controller);
+        List<Tile> validTargets = GameManager.Instance.getLegalStructurePlacementTiles(creature.Controller);
         validTargets.RemoveAll(t => t.GetDistanceTo(creature.Tile) > 1);
         validTargets.RemoveAll(t => t.creature != null);
         IQueueableCommand selectTileCmd = SingleTileTargetEffect.CreateCommand(validTargets, delegate (Tile t)
         {
             creature.Counters.Remove(CounterType.Build, 1);
-            StructureCard structureToPlace = GameManager.Get().createCardById(selectedCardId, creature.Controller) as StructureCard;
-            GameManager.Get().createStructureOnTile(structureToPlace.structure, t, creature.Controller, structureToPlace);
-            creature.hasDoneActionThisTurn = true;
+            StructureCard structureToPlace = GameManager.Instance.CreateCardById(selectedCardId, creature.Controller) as StructureCard;
+            GameManager.Instance.createStructureOnTile(structureToPlace.structure, t, creature.Controller, structureToPlace);
+            creature.HasDoneActionThisTurn = true;
             creature.UpdateHasActedIndicators();
         });
         new CompoundQueueableCommand.Builder().AddCommand(selectCommand).AddCommand(selectTileCmd).BuildAndQueue();

@@ -7,9 +7,6 @@ using System;
 
 public class PermanentCardVisual : CardVisual
 {
-    private const float scalingCoefficient = 2.4f;
-    private const float entireCardScaleCoefficient = .165f;
-
     [SerializeField] private List<Transform> permanentOnlyIcons;
     [SerializeField] private TextMeshPro hasActedTextIndicator; // move to creature only?
     [SerializeField] private Image friendOrFoeBorder;

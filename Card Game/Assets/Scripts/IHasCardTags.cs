@@ -4,5 +4,5 @@ using System.Collections.Generic;
 
 public interface IHasCardTags
 {
-    List<Card.Tag> Tags { get; }
+    List<Tag> Tags { get; }
 }

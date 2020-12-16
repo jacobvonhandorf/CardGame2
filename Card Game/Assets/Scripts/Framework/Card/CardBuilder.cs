@@ -45,7 +45,7 @@ public class CardBuilder : MonoBehaviour
         }
 
         // do all generic setting of variables
-        card.cardId = cardData.id;
+        card.CardId = cardData.id;
         card.BaseManaCost = cardData.manaCost;
         card.ManaCost = cardData.manaCost;
         card.GoldCost = cardData.goldCost;
@@ -63,14 +63,14 @@ public class CardBuilder : MonoBehaviour
             card.Tags.Add(t);
 
         stopwatch.Stop();
-        Debug.Log("Time to create card " + stopwatch.ElapsedMilliseconds + "ms");
+        //Debug.Log("Time to create card " + stopwatch.ElapsedMilliseconds + "ms");
 
         return card;
     }
 
     private Card CreatureSetup(CreatureCardData data)
     {
-        CreatureCard card = Instantiate(creatureCardPrefab, instantiationLocation, Quaternion.identity).GetComponent<CreatureCard>();
+        CreatureCard card = Instantiate(creatureCardPrefab, MainCanvas.Instance.transform).GetComponent<CreatureCard>();
         card.BaseManaCost = -1;
         Creature creature = card.Creature;
         creature.BaseHealth = data.health;
@@ -111,7 +111,7 @@ public class CardBuilder : MonoBehaviour
 
     private Card StructureSetup(StructureCardData data)
     {
-        StructureCard card = Instantiate(structureCardPrefab, instantiationLocation, Quaternion.identity).GetComponent<StructureCard>();
+        StructureCard card = Instantiate(structureCardPrefab, MainCanvas.Instance.transform).GetComponent<StructureCard>();
         card.BaseManaCost = -1;
         Structure structure = card.structure;
         structure.BaseHealth = data.health;
@@ -125,7 +125,7 @@ public class CardBuilder : MonoBehaviour
         card.onInitilization = effs.onInitilization;
         // register effects
         if (effs.activatedEffect != null)
-            structure.activatedEffects.Add(effs.activatedEffect);
+            structure.ActivatedEffects.Add(effs.activatedEffect);
         if (effs.onDefend != null)
             structure.E_OnDefend += effs.onDefend;
         if (effs.onDeploy != null)
@@ -140,7 +140,7 @@ public class CardBuilder : MonoBehaviour
 
     private Card SpellSetup(SpellCardData data)
     {
-        SpellCard card = Instantiate(spellCardPrefab, instantiationLocation, Quaternion.identity).GetComponent<SpellCard>();
+        SpellCard card = Instantiate(spellCardPrefab, MainCanvas.Instance.transform).GetComponent<SpellCard>();
         card.BaseGoldCost = -1;
         card.effects = data.effects;
 

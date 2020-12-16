@@ -13,13 +13,13 @@ public class ObsidianEffs : SpellEffects
     public override EventHandler<Card.AddedToCardPileArgs> OnMoveToCardPile => delegate (object s, Card.AddedToCardPileArgs e)
     {
         if (e.newCardPile is Hand)
-            doEffect();
+            DoEffect();
     };
 
-    private void doEffect()
+    private void DoEffect()
     {
-        card.owner.DrawCard();
-        SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(card.owner.OppositePlayer, false), delegate (Tile t)
+        card.Owner.DrawCard();
+        SingleTileTargetEffect.CreateAndQueue(Board.Instance.GetAllTilesWithCreatures(card.Owner.OppositePlayer, false), delegate (Tile t)
         {
             t.creature.TakeDamage(damageAmount, card);
         });

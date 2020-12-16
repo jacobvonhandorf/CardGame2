@@ -18,16 +18,16 @@ public class FairyFortressEffs : StructureEffects
     {
         if (Controller.Actions < 1)
         {
-            Toaster.instance.doToast("You do not have enough actions to activate " + Card.CardName);
+            Toaster.Instance.DoToast("You do not have enough actions to activate " + Card.CardName);
             return;
         }
 
         Creature ownedCreature = null;
-        IQueueableCommand ownedSelect = SingleTileTargetEffect.CreateCommand(Board.instance.GetAllTilesWithCreatures(Controller, true), delegate (Tile t)
+        IQueueableCommand ownedSelect = SingleTileTargetEffect.CreateCommand(Board.Instance.GetAllTilesWithCreatures(Controller, true), delegate (Tile t)
         {
             ownedCreature = t.creature;
         });
-        IQueueableCommand opponentSelect = SingleTileTargetEffect.CreateCommand(Board.instance.GetAllTilesWithCreatures(Controller.OppositePlayer, false), delegate (Tile t)
+        IQueueableCommand opponentSelect = SingleTileTargetEffect.CreateCommand(Board.Instance.GetAllTilesWithCreatures(Controller.OppositePlayer, false), delegate (Tile t)
         {
             Creature opponentCreature = t.creature;
             Controller.Actions -= 1;

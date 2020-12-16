@@ -32,14 +32,14 @@ public class NetInterface
         List<Card> deck = DeckUtilities.getCardListFromFileName(selectedDeckName + ".dek");
         foreach (Card c in deck)
         {
-            c.owner = localPlayer;
+            c.Owner = localPlayer;
             c.Initialize();
             SyncNewCardToOpponent(c);
         }
         RelayMessage(new Net_DoneSendingCards());
         foreach (Card c in deck)
             c.MoveToCardPile(pileIdMap.Get(LocalPlayerIsP1 ? PileId.p1Deck : PileId.p2Deck), null);
-        (pileIdMap.Get(LocalPlayerIsP1 ? PileId.p1Deck : PileId.p2Deck) as Deck).shuffle();
+        (pileIdMap.Get(LocalPlayerIsP1 ? PileId.p1Deck : PileId.p2Deck) as Deck).Shuffle();
     }
 
     public void RecieveGameSetupComplete()
@@ -52,7 +52,7 @@ public class NetInterface
     {
         SerializeableCard sc = msg.card;
         Card newCard = ResourceManager.Get().InstantiateCardById(sc.cardId);
-        newCard.owner = msg.ownerIsP1 ? GetPlayer1() : GetPlayer2();
+        newCard.Owner = msg.ownerIsP1 ? GetPlayer1() : GetPlayer2();
         cardMap.Add(newCard, sc.netId);
         newCard.removeGraphicsAndCollidersFromScene(); // remove from scene by default. Can be moved later by opponent
     }
@@ -65,10 +65,10 @@ public class NetInterface
         cardMap.Add(c, lastUsedNetId);
         SerializeableCard sc = new SerializeableCard();
         sc.netId = lastUsedNetId;
-        sc.cardId = c.cardId;
+        sc.cardId = c.CardId;
         Net_InstantiateCard msg = new Net_InstantiateCard();
         msg.card = sc;
-        msg.ownerIsP1 = c.owner == GetPlayer1();
+        msg.ownerIsP1 = c.Owner == GetPlayer1();
         RelayMessage(msg);
     }
     public void SyncMoveCardToPile(Card c, CardPile cp, object source)
@@ -134,7 +134,7 @@ public class NetInterface
         Creature c = (cardMap.Get(creatureCardId) as CreatureCard).Creature;
 
         if (source is Card)
-            c.forceMove(x, y, source as Card);
+            c.MoveByEffect(x, y, source as Card);
         else
             c.Move(x, y);
     }
@@ -186,7 +186,7 @@ public class NetInterface
         }
         else
         {
-            Player opposingPlayer = GameManager.Get().GetOppositePlayer(localPlayer);
+            Player opposingPlayer = GameManager.Instance.GetOppositePlayer(localPlayer);
             opposingPlayer.SyncStats(gold, goldPTurn, mana, manaPTurn, actions, actionsPTurn);
         }
     }
@@ -196,7 +196,7 @@ public class NetInterface
     }
     public void RecieveEndTurn()
     {
-        GameManager.Get().startTurnForOnline();
+        GameManager.Instance.startTurnForOnline();
     }
     public void SyncCardStats(Card c)
     {
@@ -207,7 +207,7 @@ public class NetInterface
         msg.manaCost = c.ManaCost;
         msg.elementalIdentity = c.ElementalId;
         msg.sourceCardId = cardMap.Get(c);
-        msg.ownerIsP1 = PlayerIsP1(c.owner);
+        msg.ownerIsP1 = PlayerIsP1(c.Owner);
         RelayMessage(msg);
     }
     public void RecieveCardStats(Net_SyncCard msg)
@@ -219,7 +219,7 @@ public class NetInterface
         c.GoldCost = msg.goldCost;
         c.ManaCost = msg.manaCost;
         c.ElementalId = msg.elementalIdentity;
-        c.owner = msg.ownerIsP1 ? GetPlayer1() : GetPlayer2();
+        c.Owner = msg.ownerIsP1 ? GetPlayer1() : GetPlayer2();
     }
     public void SyncCreatureStats(Creature c)
     {
@@ -269,11 +269,11 @@ public class NetInterface
     {
         Card card = cardMap.Get(msg.sourceCardId) as Card;
         //card.setSpritesToSortingLayer(SpriteLayers.Creature); // move sprite layer down
-        Tile targetTile =  GameManager.Get().board.GetTileByCoordinate(msg.x, msg.y);
+        Tile targetTile =  GameManager.Instance.board.GetTileByCoordinate(msg.x, msg.y);
         if (card is CreatureCard)
-            GameManager.Get().syncCreateCreatureOnTile(card as CreatureCard, targetTile, card.owner);
+            GameManager.Instance.syncCreateCreatureOnTile(card as CreatureCard, targetTile, card.Owner);
         else
-            GameManager.Get().syncStructureOnTile(card as StructureCard, targetTile, card.owner);
+            GameManager.Instance.syncStructureOnTile(card as StructureCard, targetTile, card.Owner);
     }
     public void SyncCounterPlaced(Card sourceCard, CounterType counterType, int amount)
     {
@@ -288,7 +288,7 @@ public class NetInterface
         Card card = cardMap.Get(targetCardId);
         CounterType counterType = (CounterType)counterId;
         if (card is StructureCard)
-            (card as StructureCard).structure.recieveCountersPlaced(counterType, amount);
+            (card as StructureCard).structure.RecieveCountersPlaced(counterType, amount);
         else if (card is CreatureCard)
             (card as CreatureCard).Creature.RecieveCountersPlaced(counterType, amount);
         else
@@ -306,12 +306,12 @@ public class NetInterface
         if (msg.endGameCode == EndGameCode.Disconnect)
         {
             // show opp disconnected
-            GameManager.Get().showEndGamePopup("Your opponent has disconnected");
+            GameManager.Instance.showEndGamePopup("Your opponent has disconnected");
         }
         else if (msg.endGameCode == EndGameCode.Quit)
         {
             // show opp surrender
-            GameManager.Get().showEndGamePopup("Your opponent has surrendered");
+            GameManager.Instance.showEndGamePopup("Your opponent has surrendered");
         }
         else
         {
@@ -335,13 +335,13 @@ public class NetInterface
         if (LocalPlayerIsP1)
             return localPlayer;
         else
-            return GameManager.Get().GetOppositePlayer(localPlayer);
+            return GameManager.Instance.GetOppositePlayer(localPlayer);
     }
 
     private Player GetPlayer2()
     {
         if (LocalPlayerIsP1)
-            return GameManager.Get().GetOppositePlayer(localPlayer);
+            return GameManager.Instance.GetOppositePlayer(localPlayer);
         else
             return localPlayer;
     }
@@ -370,7 +370,7 @@ public class NetInterface
 
     private void RelayMessage(NetMsg msg)
     {
-        if (GameManager.Get() != null && GameManager.gameMode != GameManager.GameMode.online)
+        if (GameManager.Instance!= null && GameManager.gameMode != GameManager.GameMode.online)
             return; // don't send messages if GameMode isn't online
         Net_InGameRelay relay = new Net_InGameRelay();
         relay.msg = msg;
