@@ -8,8 +8,8 @@ public interface IScriptCard
     int BaseManaCost { get; set; }
     int BaseGoldCost { get; set; }
     int TotalCost { get; }
-    CardPile CardPile { get; }
-    Player Owner { get; }
+    IScriptPile CardPile { get; }
+    IScriptPlayer Owner { get; }
     ElementIdentity ElementalId { get; set; }
 
     void MoveToCardPile(CardPile newPile, Card source);

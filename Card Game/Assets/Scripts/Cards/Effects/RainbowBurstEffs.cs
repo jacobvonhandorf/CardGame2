@@ -37,7 +37,7 @@ public class RainbowBurstEffs : SpellEffects
             foreach (Card c in cardsToShuffleBack)
                 c.MoveToCardPile(card.Owner.Deck, card);
             card.Owner.Deck.Shuffle();
-            targetTile.creature.TakeDamage(DAMAGE, card);
+            targetTile.Creature.TakeDamage(DAMAGE, card);
             card.Owner.DrawCards(CARDS_DRAWN);
         }));
         cmdBuilder.BuildAndQueue();

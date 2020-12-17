@@ -5,13 +5,15 @@ using UnityEngine.Events;
 
 public interface IScriptPile
 {
-    IReadOnlyList<Card> CardList { get; }
+    IReadOnlyList<IScriptCard> CardList { get; }
     UnityEvent NumCardsChanged { get; }
-    List<Card> GetAllCardsWithTag(Tag tag);
-    List<Card> GetAllCardsWithType(CardType type);
-    List<Card> GetAllCardWithTagAndType(Tag tag, CardType type);
-    List<Card> GetAllCardsWithLessThanOrEqualCost(int cost);
-    List<Card> GetAllCardsWithinCostRange(int min, int max);
+    /*
+    List<IScriptCard> GetAllCardsWithTag(Tag tag);
+    List<IScriptCard> GetAllCardsWithType(CardType type);
+    List<IScriptCard> GetAllCardWithTagAndType(Tag tag, CardType type);
+    List<IScriptCard> GetAllCardsWithLessThanOrEqualCost(int cost);
+    List<IScriptCard> GetAllCardsWithinCostRange(int min, int max);
+    */
 }
 
 public interface IScriptDeck : IScriptPile

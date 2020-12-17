@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class Creature : Permanent, Damageable, ICanReceiveCounters, IScriptCreature
@@ -16,13 +17,11 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters, IScriptCreat
     public int Movement { get { return (int)Stats.StatList[StatType.Movement]; } set { Stats.SetValue(StatType.Movement, value); needToSync = true; } }
 
     public int CardId { get { return SourceCard.CardId; } }
-    public bool HasMovedThisTurn { get; set; } = false;
-    public bool HasDoneActionThisTurn { get; set; } = false;
-    public bool CanDeployFrom { get; set; } = false;
+    public bool MoveAvailable { get; set; } = true;
+    public bool ActionAvailable { get; set; } = true;
 
     #region Events
-    public event EventHandler E_Death;
-    public void TriggerOnDeathEvents(object sender) { E_Death?.Invoke(sender, EventArgs.Empty); }
+    public UnityEvent E_Death = new UnityEvent();
 
     public event EventHandler<OnAttackArgs> E_OnAttack;
     public class OnAttackArgs : EventArgs { public Damageable target { get; set; } }
@@ -41,6 +40,7 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters, IScriptCreat
         Stats.AddType(StatType.Health);
         Stats.AddType(StatType.Movement);
         Stats.AddType(StatType.Range);
+        CanDeployFrom = false;
     }
 
     public void ResetToBaseStats()
@@ -91,8 +91,8 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters, IScriptCreat
     }
     public void Attack(Damageable defender, int damageRoll) // used when damage roll has been determined
     {
-        HasDoneActionThisTurn = true;
-        if (!HasMovedThisTurn)
+        ActionAvailable = false;
+        if (!MoveAvailable)
             Controller.Actions -= 1;
         StartCoroutine(attackAnimation(defender, damageRoll));
     }
@@ -145,11 +145,11 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters, IScriptCreat
 
         // kick off particle effect
         Vector3 rotation;
-        if (Tile.x > defenderCoords.x)
+        if (Tile.X > defenderCoords.x)
             rotation = left;
-        else if (Tile.x < defenderCoords.x)
+        else if (Tile.X < defenderCoords.x)
             rotation = right;
-        else if (Tile.y > defenderCoords.y)
+        else if (Tile.Y > defenderCoords.y)
             rotation = down;
         else
             rotation = up;
@@ -169,7 +169,7 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters, IScriptCreat
     public void MoveByEffect(Tile tile, Card source)
     {
         ActualMove(tile);
-        NetInterface.Get().SyncCreatureCoordinates(this, this.Tile.x, this.Tile.y, source);
+        NetInterface.Get().SyncCreatureCoordinates(this, this.Tile.X, this.Tile.Y, source);
         GameEvents.TriggerMovedEvents(this, new GameEvents.CreatureMovedArgs() { creature = this, source = source });
     }
     public void MoveByEffect(int x, int y, Card source)
@@ -182,41 +182,76 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters, IScriptCreat
     {
         if (newTile == Tile) // if the new tile is the same as the tile we're on, no moving is done
             return;
-        HasMovedThisTurn = true;
-        if (!HasDoneActionThisTurn)
+        MoveAvailable = false;
+        if (!ActionAvailable)
             Controller.Actions -= 1;
         ActualMove(newTile);
         if (GameManager.gameMode == GameManager.GameMode.online)
-            NetInterface.Get().SyncCreatureCoordinates(this, Tile.x, Tile.y, null);
+            NetInterface.Get().SyncCreatureCoordinates(this, Tile.X, Tile.Y, null);
         GameEvents.TriggerMovedEvents(this, new GameEvents.CreatureMovedArgs() { source = null, creature = this });
         UpdateHasActedIndicators();
     }
     public void Move(int x, int y)
     {
-        Tile t = GameManager.Instance.board.GetTileByCoordinate(x, y);
+        Tile t = Board.Instance.GetTileByCoordinate(x, y);
         Move(t);
     }
+    public void SyncMove(Tile tile) => ActualMove(tile);
     // will move a creature to a tile and nothing else
     private void ActualMove(Tile newTile)
     {
         if (Tile != null)
-            Tile.creature = null;
-        newTile.creature = this;
+            Tile.Creature = null;
+        newTile.Creature = this;
         SetCoordinates(newTile);
         Tile = newTile;
     }
-    private void SetCoordinates(Tile tile)
-    {
-        TransformStruct ts = new TransformStruct(SourceCard.TransformManager.transform);
-        ts.position = tile.transform.localPosition;
-        Debug.Log("Target position = " + tile.transform.localPosition);
-        SourceCard.TransformManager.MoveToInformativeAnimation(ts);
-    }
     #endregion
+
+    // places the creature passed to it on the tile passed
+    public void CreateOnTile(Tile tile)
+    {
+        CreateCreatureActual(tile);
+
+        // sync creature creation
+        if (GameManager.gameMode == GameManager.GameMode.online)
+            NetInterface.Get().SyncPermanentPlaced(SourceCard, tile);
+
+        // trigger effects that need to be triggered
+        E_OnDeployed.Invoke();
+        GameEvents.E_CreaturePlayed.Invoke(this);
+    }
+
+    public void SynCreatureOnTile(Tile t)
+    {
+        Debug.Log("Syncing creature placement");
+        // animate showing card
+        //InformativeAnimationsQueue.Instance.AddAnimation(new ShowCardCmd(card, true, this));
+        CreateCreatureActual(t);
+    }
+
+    private void CreateCreatureActual(Tile tile)
+    {
+        // resize creature, stop treating it as a card and start treating it as a creature
+        (SourceCard as CreatureCard).SwapToCreature(tile);
+
+        // set creature to has moved and acted unless it is quick
+        if (!HasKeyword(Keyword.Quick))
+        {
+            MoveAvailable = true;
+            ActionAvailable = true;
+            UpdateHasActedIndicators();
+        }
+
+        tile.Creature = this;
+        Tile = tile;
+
+        UpdateFriendOrFoeBorder();
+    }
 
     public void UpdateHasActedIndicators()
     {
-        if (HasDoneActionThisTurn || HasMovedThisTurn)
+        if (!ActionAvailable || !MoveAvailable)
             CardVisual.SetColor(new Color(.5f, .5f, .5f));
         else
             CardVisual.SetColor(new Color(1, 1, 1));
@@ -224,8 +259,8 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters, IScriptCreat
 
     public override void ResetForNewTurn()
     {
-        HasMovedThisTurn = false;
-        HasDoneActionThisTurn = false;
+        MoveAvailable = true;
+        ActionAvailable = true;
         UpdateHasActedIndicators();
         // update border
         UpdateFriendOrFoeBorder();
@@ -234,10 +269,10 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters, IScriptCreat
 
     public void Bounce(Card source)
     {
-        HasDoneActionThisTurn = false;
-        HasMovedThisTurn = false;
+        ActionAvailable = true;
+        MoveAvailable = true;
         UpdateHasActedIndicators();
-        Tile.creature = null;
+        Tile.Creature = null;
         SetSpriteColor(Color.white); // reset sprite color in case card is greyed out
         ResetToBaseStats();
         SourceCard.MoveToCardPile(SourceCard.Owner.Hand, source);
@@ -271,14 +306,14 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters, IScriptCreat
         // what to do if controller is trying to do something with this creature while they have no actions
         if (Controller.Actions <= 0)
         {
-            if (HasMovedThisTurn && !HasDoneActionThisTurn)
+            if (!MoveAvailable && ActionAvailable)
             {
                 ActionBox.instance.show(this);
                 Board.Instance.SetAllTilesToDefault();
                 Controller.heldCreature = null;
                 return;
             }
-            else if (!HasMovedThisTurn && !HasDoneActionThisTurn)
+            else if (MoveAvailable && ActionAvailable)
             {
                 Toaster.Instance.DoToast("You do not have enough actions to use this unit");
                 return;
@@ -299,7 +334,7 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters, IScriptCreat
         if (GameManager.gameMode == GameManager.GameMode.hotseat && GameManager.Instance.ActivePlayer != Controller)
             return;
         Controller.heldCreature = this;
-        if (!HasMovedThisTurn && !HasDoneActionThisTurn)
+        if (MoveAvailable && ActionAvailable)
         {
             List<Tile> validTiles = Board.Instance.GetAllMovableTiles(this);
             foreach (Tile t in validTiles)
@@ -307,7 +342,7 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters, IScriptCreat
                 t.setActive(true);
             }
         }
-        else if (HasMovedThisTurn && !HasDoneActionThisTurn)
+        else if (!MoveAvailable && ActionAvailable)
         {
             ActionBox.instance.show(this);
         }
@@ -344,22 +379,6 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters, IScriptCreat
             needToSync = false;
         }
     }
-
-    /*
-    IEnumerator CheckHoverForTooltips()
-    {
-        while (timePassed < hoverTimeForToolTips)
-        {
-            timePassed += Time.deltaTime;
-            if (!hovered)
-                yield break;
-            else
-                yield return null;
-        }
-        timePassed = 0;
-        // if we get here then enough time has passed so tell cardviewers to display tooltips
-    }
-    */
 
     #region ExtendedMethods
     public virtual void onKillingACreature(Creature c) { }

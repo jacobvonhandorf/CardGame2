@@ -131,12 +131,10 @@ public class NetInterface
     }
     public void RecieveCreatureCoordinates(int creatureCardId, int x, int y, object source)
     {
+        Debug.LogError("Receiving creature coordinates");
         Creature c = (cardMap.Get(creatureCardId) as CreatureCard).Creature;
 
-        if (source is Card)
-            c.MoveByEffect(x, y, source as Card);
-        else
-            c.Move(x, y);
+        c.SyncMove(Board.Instance.GetTileByCoordinate(x, y));
     }
     public void SyncAttack(Creature attacker, Damageable defender, int damageRoll)
     {
@@ -157,7 +155,7 @@ public class NetInterface
         if (card is CreatureCard)
             defender = (card as CreatureCard).Creature;
         else if (card is StructureCard)
-            defender = (card as StructureCard).structure;
+            defender = (card as StructureCard).Structure;
         else
             throw new Exception("Invalid defender for attack " + card.transform);
         attacker.Attack(defender, damageRoll);
@@ -253,27 +251,28 @@ public class NetInterface
     }
     public void RecieveStructureStats(Net_SyncStructure msg)
     {
-        Structure s = (cardMap.Get(msg.sourceCardId) as StructureCard).structure;
-        s.recieveStatsFromNet(msg.health, msg.baseHealth, msg.controllerIsP1 ? GetPlayer1() : GetPlayer2());
+        Structure s = (cardMap.Get(msg.sourceCardId) as StructureCard).Structure;
+        s.RecieveStatsFromNet(msg.health, msg.baseHealth, msg.controllerIsP1 ? GetPlayer1() : GetPlayer2());
     }
     // card can be creature or structure
     public void SyncPermanentPlaced(Card c, Tile t)
     {
         Net_SyncPermanentPlaced msg = new Net_SyncPermanentPlaced();
         msg.sourceCardId = cardMap.Get(c);
-        msg.x = t.x;
-        msg.y = t.y;
+        msg.x = t.X;
+        msg.y = t.Y;
         RelayMessage(msg);
     }
     public void RecievePermanentPlaced(Net_SyncPermanentPlaced msg)
     {
         Card card = cardMap.Get(msg.sourceCardId) as Card;
-        //card.setSpritesToSortingLayer(SpriteLayers.Creature); // move sprite layer down
         Tile targetTile =  GameManager.Instance.board.GetTileByCoordinate(msg.x, msg.y);
-        if (card is CreatureCard)
-            GameManager.Instance.syncCreateCreatureOnTile(card as CreatureCard, targetTile, card.Owner);
+        if (card is CreatureCard c)
+            c.Creature.SynCreatureOnTile(targetTile);
+        else if (card is StructureCard sc)
+            sc.Structure.SyncCreateOnTile(targetTile);
         else
-            GameManager.Instance.syncStructureOnTile(card as StructureCard, targetTile, card.Owner);
+            Debug.LogError("Unexpected Card type");
     }
     public void SyncCounterPlaced(Card sourceCard, CounterType counterType, int amount)
     {
@@ -288,7 +287,7 @@ public class NetInterface
         Card card = cardMap.Get(targetCardId);
         CounterType counterType = (CounterType)counterId;
         if (card is StructureCard)
-            (card as StructureCard).structure.RecieveCountersPlaced(counterType, amount);
+            (card as StructureCard).Structure.RecieveCountersPlaced(counterType, amount);
         else if (card is CreatureCard)
             (card as CreatureCard).Creature.RecieveCountersPlaced(counterType, amount);
         else

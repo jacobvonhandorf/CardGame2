@@ -37,7 +37,7 @@ public class GemMineEffs : StructureEffects
             effectUsedThisTurn = true;
             Structure.Counters.Remove(CounterType.Mine, 1);
             Structure.Controller.Actions -= 1;
-            GameEvents.E_TurnEnd += GameEvents_E_TurnEnd;
+            //GameEvents.E_TurnEnd += GameEvents_E_TurnEnd;
         }
         else
         {
@@ -49,6 +49,6 @@ public class GemMineEffs : StructureEffects
     private void GameEvents_E_TurnEnd(object sender, EventArgs e)
     {
         effectUsedThisTurn = false;
-        GameEvents.E_TurnEnd -= GameEvents_E_TurnEnd;
+        //GameEvents.E_TurnEnd -= GameEvents_E_TurnEnd;
     }
 }

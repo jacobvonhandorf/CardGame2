@@ -2,7 +2,6 @@
 using System.Collections;
 using UnityEditor;
 using System;
-using static Card;
 
 public class CardBuilder : MonoBehaviour
 {
@@ -19,7 +18,6 @@ public class CardBuilder : MonoBehaviour
     }
     private static CardBuilder instance;
 
-    private Vector3 instantiationLocation = new Vector3(0, 0, 0); // instantiate cards off screen
     [SerializeField] private GameObject spellCardPrefab;
     [SerializeField] private GameObject structureCardPrefab;
     [SerializeField] private GameObject creatureCardPrefab;
@@ -95,6 +93,7 @@ public class CardBuilder : MonoBehaviour
         if (effs.activatedEffect != null)
             creature.ActivatedEffects.Add(effs.activatedEffect);
         // register triggers
+        /*
         if (effs.onDeploy != null)
             creature.E_OnDeployed += effs.onDeploy;
         if (effs.onDeath != null)
@@ -105,6 +104,7 @@ public class CardBuilder : MonoBehaviour
             creature.E_OnDefend += effs.onDefend;
         if (effs.onDamaged != null)
             creature.E_OnDamaged += effs.onDamaged;
+            */
 
         return card;
     }
@@ -113,7 +113,7 @@ public class CardBuilder : MonoBehaviour
     {
         StructureCard card = Instantiate(structureCardPrefab, MainCanvas.Instance.transform).GetComponent<StructureCard>();
         card.BaseManaCost = -1;
-        Structure structure = card.structure;
+        Structure structure = card.Structure;
         structure.BaseHealth = data.health;
         structure.Health = data.health;
 
@@ -128,8 +128,8 @@ public class CardBuilder : MonoBehaviour
             structure.ActivatedEffects.Add(effs.activatedEffect);
         if (effs.onDefend != null)
             structure.E_OnDefend += effs.onDefend;
-        if (effs.onDeploy != null)
-            structure.E_OnDeployed += effs.onDeploy;
+        //if (effs.onDeploy != null)
+            //structure.E_OnDeployed += effs.onDeploy;
         if (effs.onLeavesField != null)
             structure.E_OnLeavesField += effs.onLeavesField;
         if (effs.onMoveToCardPile != null)

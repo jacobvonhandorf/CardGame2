@@ -10,8 +10,8 @@ public interface IScriptCreature : IScriptPermanent
     int AttackStat { get; set; }
     int Range { get; set; }
     int Movement { get; set; }
-    bool HasMovedThisTurn { get; set; }
-    bool HasDoneActionThisTurn { get; set; }
+    bool MoveAvailable { get; set; }
+    bool ActionAvailable { get; set; }
     bool CanDeployFrom { get; set; }
     List<EmptyHandler> ActivatedEffects { get; }
 

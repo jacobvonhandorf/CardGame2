@@ -12,7 +12,7 @@ public class SpellCard : Card
     {
         DoEffect(t);
         MoveToCardPile(Owner.Graveyard, null);
-        GameManager.Instance.onSpellCastEffects(this);
+        GameEvents.E_SpellCast.Invoke(this);
     }
 
     private void DoEffect(Tile t)

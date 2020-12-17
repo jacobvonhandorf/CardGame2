@@ -3,12 +3,13 @@ using System.Collections;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using UnityEngine.Events;
 
 // structures and creatures
 public abstract class Permanent : MonoBehaviour, IScriptPermanent
 {
     public Tile Tile { get; set; }
-    public Vector2 Coordinates { get { return new Vector2(Tile.x, Tile.y); } }
+    public Vector2 Coordinates { get { return new Vector2(Tile.X, Tile.Y); } }
     public Player Controller { get; set; }
     public CounterController Counters { get; private set; }
     public Card SourceCard { get; private set; }
@@ -19,7 +20,9 @@ public abstract class Permanent : MonoBehaviour, IScriptPermanent
     public PermanentCardVisual CardVisual { get { return (PermanentCardVisual)SourceCard.CardVisuals; } }
     IScriptCard IScriptPermanent.SourceCard => SourceCard;
     IScriptPlayer IScriptPermanent.Controller { get { return Controller; } set { Controller = (Player)value; } }
+    IScriptTile IScriptPermanent.Tile => Tile;
     protected bool needToSync = false;
+    public bool CanDeployFrom { get; set; }
 
     protected void Awake()
     {
@@ -36,11 +39,8 @@ public abstract class Permanent : MonoBehaviour, IScriptPermanent
     public class CounterAddedArgs : EventArgs { public CounterType counterKind; }
     public void TriggerOnCounterAddedEvents(object sender, CounterAddedArgs args) { E_CounterAdded?.Invoke(sender, args); }
 
-    public event EventHandler<OnDamagedArgs> E_OnDamaged;
-    public void TriggerOnDamagedEvents(object sender, OnDamagedArgs args) { if (E_OnDamaged != null) E_OnDamaged.Invoke(sender, args); }
-
-    public event EventHandler E_OnDeployed;
-    public void TriggerOnDeployed(object sender) { E_OnDeployed?.Invoke(sender, EventArgs.Empty); }
+    public UnityEvent<Card> E_OnDamaged { get; } = new CardEvent(); // card passed is the source of the damage
+    public UnityEvent E_OnDeployed { get; } = new UnityEvent();
     #endregion
 
     public abstract void ResetForNewTurn();
@@ -60,9 +60,9 @@ public abstract class Permanent : MonoBehaviour, IScriptPermanent
         List<Tile> adjacentTiles = Tile.AdjacentTiles;
         foreach (Tile t in adjacentTiles)
         {
-            if (t.creature != null && t.creature.HasKeyword(Keyword.Ward))
+            if (t.Creature != null && t.Creature.HasKeyword(Keyword.Ward))
             {
-                t.creature.TakeWardDamage(damage);
+                t.Creature.TakeWardDamage(damage);
                 return;
             }
         }
@@ -82,11 +82,10 @@ public abstract class Permanent : MonoBehaviour, IScriptPermanent
     {
         GameManager.Instance.showDamagedText(transform.position, damage);
         Health -= damage;
-        TriggerOnDamagedEvents(this, new OnDamagedArgs() { source = source });
+        E_OnDamaged.Invoke(source);
         if (Health <= 0)
             GameManager.Instance.kill(this);
     }
-
 
     public bool HasTag(Tag tag) => SourceCard.Tags.Contains(tag);
     public bool IsType(CardType type) => SourceCard.IsType(type);
@@ -113,7 +112,7 @@ public abstract class Permanent : MonoBehaviour, IScriptPermanent
     public void UpdateFriendOrFoeBorder()
     {
         if (GameManager.gameMode != GameManager.GameMode.online)
-            CardVisual.SetIsAlly(GameManager.Instance.ActivePlayer == Controller);
+            CardVisual.SetIsAlly(GameManager.Instance?.ActivePlayer == Controller);
         else
             CardVisual.SetIsAlly(NetInterface.Get().localPlayer == Controller);
     }
@@ -140,12 +139,19 @@ public abstract class Permanent : MonoBehaviour, IScriptPermanent
             Debug.Log("Trying to set counters to a value it's already set to. This shouldn't happen under normal circumstances");
     }
 
+    protected void SetCoordinates(Tile tile)
+    {
+        TransformStruct ts = new TransformStruct(SourceCard.TransformManager.transform);
+        ts.position = tile.transform.position;
+        ts.position = tile.GetComponent<RectTransform>().rect.center;
+        ts.useLocalPosition = false;
+        SourceCard.TransformManager.MoveToInformativeAnimation(ts);
+    }
 
     #region Keywords
     public void AddKeyword(Keyword k) => SourceCard.AddKeyword(k);
     public void RemoveKeyword(Keyword k) => SourceCard.RemoveKeyword(k);
     public bool HasKeyword(Keyword k) => SourceCard.HasKeyword(k);
     public ReadOnlyCollection<Keyword> KeywordList => SourceCard.KeywordList;
-
     #endregion
 }

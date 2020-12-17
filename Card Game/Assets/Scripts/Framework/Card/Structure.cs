@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using UnityEngine;
 
 // abstract class for structures as they exist on the field
-public class Structure : Permanent, Damageable, ICanReceiveCounters
+public class Structure : Permanent, Damageable, ICanReceiveCounters, IScriptStructure
 {
     #region Events
     public event EventHandler E_OnLeavesField;
@@ -17,23 +17,56 @@ public class Structure : Permanent, Damageable, ICanReceiveCounters
         base.Awake();
         Stats.AddType(StatType.Health);
         Stats.AddType(StatType.BaseHealth);
+        CanDeployFrom = true;
     }
 
     public void resetToBaseStats()
     {
         Health = BaseHealth;
+        Controller = SourceCard.Owner;
     }
     public void resetToBaseStatsWithoutSyncing()
     {
         SetStatWithoutSyncing(StatType.Health, BaseHealth);
     }
-    public void recieveStatsFromNet(int hp, int bhp, Player ctrl)
+    public void RecieveStatsFromNet(int hp, int bhp, Player ctrl)
     {
         SetStatWithoutSyncing(StatType.Health, hp);
         SetStatWithoutSyncing(StatType.BaseHealth, bhp);
-
         Controller = ctrl;
     }
+
+    public void CreateOnTile(Tile tile)
+    {
+        CreateOnTileActual(tile);
+        if (GameManager.gameMode == GameManager.GameMode.online)
+            NetInterface.Get().SyncPermanentPlaced(SourceCard, tile);
+        // trigger ETBS
+        E_OnDeployed.Invoke();
+    }
+
+    private void CreateOnTileActual(Tile tile)
+    {
+        // move card from player's hand and parent it to the board
+        if (Board.Instance != null)
+            SourceCard.MoveToCardPile(Board.Instance, null);
+
+        // resize structure and stop treating it as a card and start treating is as a structure
+        (SourceCard as StructureCard).SwapToStructure(tile);
+        
+        tile.Structure = this;
+        Tile = tile;
+
+        // turn on FoF border
+        UpdateFriendOrFoeBorder();
+    }
+
+    public void SyncCreateOnTile(Tile tile)
+    {
+        //InformativeAnimationsQueue.Instance.AddAnimation(new ShowCardCmd(card, true, this));
+        CreateOnTileActual(tile);
+    }
+
 
     private void OnMouseUpAsButton()
     {
@@ -44,23 +77,6 @@ public class Structure : Permanent, Damageable, ICanReceiveCounters
         if (getEffect() == null)
             return;
         GameManager.Instance.setUpStructureEffect(this);
-    }
-
-    private bool hovered = false;
-    [SerializeField] private float hoverTimeForToolTips = .5f;
-    private float timePassed = 0;
-    IEnumerator checkHoverForTooltips()
-    {
-        while (timePassed < hoverTimeForToolTips)
-        {
-            timePassed += Time.deltaTime;
-            if (!hovered)
-                yield break;
-            else
-                yield return null;
-        }
-        timePassed = 0;
-        // if we get here then enough time has passed so tell cardviewers to display tooltips
     }
 
     public override void ResetForNewTurn()
@@ -82,6 +98,5 @@ public class Structure : Permanent, Damageable, ICanReceiveCounters
     public virtual bool additionalCanBePlayedChecks() { return true; } // if some conditions need to be met before playing this structure then do them in this method. Return true if can be played
     public virtual List<Tag> getTags() { return new List<Tag>(); }
     public virtual List<KeywordData> getInitialKeywords() { return new List<KeywordData>(); }
-    public virtual bool canDeployFrom() { return true; }
     #endregion
 }

@@ -23,25 +23,27 @@ public class Hand : CardPile, IPointerEnterHandler, IPointerExitHandler
     private void Update()
     {
         transform.position = Vector3.Lerp(transform.position, targetPosition, speedOnHover * Time.deltaTime);
+
+        // this is a temporary fix that will need to changed
+        foreach (Card c in cardList)
+        {
+            if (c.Owner != NetInterface.Get().localPlayer)
+            {
+                c.removeGraphicsAndCollidersFromScene();
+            }
+        }
     }
 
     protected override void OnCardAdded(Card c)
     {
-        //c.returnGraphicsAndCollidersToScene(); // Cards know when to show themselves
         c.transform.localScale = Vector3.one * .5f;
         if (c is CreatureCard)
             (c as CreatureCard).SwapToCard();
         else if (c is StructureCard)
-            (c as StructureCard).swapToCard();
+            (c as StructureCard).SwapToCard();
 
         if (GameManager.gameMode != GameManager.GameMode.online)
         {
-            /*
-            if (GameManager.Get().activePlayer == handOwner)
-                c.returnGraphicsAndCollidersToScene();
-            else
-                c.removeGraphicsAndCollidersFromScene();
-                */
         }
         else if (GameManager.gameMode == GameManager.GameMode.online)
         {
@@ -52,7 +54,7 @@ public class Hand : CardPile, IPointerEnterHandler, IPointerExitHandler
             }
             else
             {
-                Debug.Log("Adding to scene");
+                //Debug.Log("Adding to scene");
                 c.returnGraphicsAndCollidersToScene();
             }
         }

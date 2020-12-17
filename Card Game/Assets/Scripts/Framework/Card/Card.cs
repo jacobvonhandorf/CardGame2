@@ -51,10 +51,13 @@ public abstract class Card : MonoBehaviour, IHasCardTags, ICanBeCardViewed, IScr
     public abstract List<Tile> LegalTargetTiles { get; }
 
     public CardVisual CardVisuals { get { return cardVisuals; } }
-    [SerializeField] private CardVisual cardVisuals;
+
+    IScriptPile IScriptCard.CardPile => CardPile;
+    IScriptPlayer IScriptCard.Owner => Owner;
 
     public List<ToolTipInfo> toolTipInfos = new List<ToolTipInfo>();
     public TransformManager TransformManager { get; private set; }
+    [SerializeField] private CardVisual cardVisuals;
     [SerializeField] private StatChangePropogator statChangePropogator;
     public Card AsCard => this;
 
@@ -220,6 +223,8 @@ public abstract class Card : MonoBehaviour, IHasCardTags, ICanBeCardViewed, IScr
     }
     public bool HasKeyword(Keyword keyword) => keywordList.Contains(keyword);
     public ReadOnlyCollection<Keyword> KeywordList => keywordList.AsReadOnly();
+
+
     [SerializeField] private float hoverTimeForToolTips = .5f;
     private float timePassed = 0;
     #endregion

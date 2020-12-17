@@ -28,7 +28,6 @@ public class CardToPermanentConverter : MonoBehaviour
     public void DoConversion(Vector3 newPosition)
     {
         newPosition += positionOffset;
-        Debug.Log("Target position " + newPosition);
         card.enabled = false;
         permanent.enabled = true;
         dragHandler.enabled = false;

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public interface IScriptPermanent
 {
-    Tile Tile { get; }
+    IScriptTile Tile { get; }
     Vector2 Coordinates { get; }
     IScriptPlayer Controller { get; set; }
     IScriptCard SourceCard { get; }

@@ -35,5 +35,10 @@ public class PermanentCardVisual : CardVisual
         transform.localScale = newRootScale;
     }
 
+    public void MoveToTile(Tile t, bool inAnimationQueue)
+    {
+        throw new Exception("Not implemented");
+    }
+
     public void SetIsAlly(bool isAlly) => friendOrFoeBorder.color = isAlly ? Color.blue : Color.red;
 }

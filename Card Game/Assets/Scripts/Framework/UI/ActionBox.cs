@@ -24,12 +24,12 @@ public class ActionBox : MonoBehaviour
     }
     public void show(Creature c)
     {
-        show(c.Tile.x - 2.4f, c.Tile.y - 2, c);
+        show(c.Tile.X - 2.4f, c.Tile.Y - 2, c);
     }
 
     public void Attack()
     {
-        if (creature.HasDoneActionThisTurn)
+        if (!creature.ActionAvailable)
         {
             Toaster.Instance.DoToast("You have already acted with this creature");
             return;
@@ -39,7 +39,7 @@ public class ActionBox : MonoBehaviour
     }
     public void Effect()
     {
-        if (!creature.HasDoneActionThisTurn)
+        if (creature.ActionAvailable)
             GameManager.Instance.setUpCreatureEffect(creature);
         else
             Toaster.Instance.DoToast("This creature's action is unavailable");

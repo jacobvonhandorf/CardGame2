@@ -11,8 +11,8 @@ public class AllOutAttack : HeroPower
         List<Creature> creatures = controller.ControlledCreatures;
         foreach (Creature c in creatures)
         {
-            c.HasDoneActionThisTurn = false;
-            c.HasMovedThisTurn = false;
+            c.ActionAvailable = true;
+            c.MoveAvailable = true;
             c.UpdateHasActedIndicators();
         }
 

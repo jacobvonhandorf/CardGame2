@@ -8,7 +8,7 @@ public class ArcaneInfluenceEffs : SpellEffects
 
     public override void DoEffect(Tile t)
     {
-        t.creature.Counters.Add(CounterType.Arcane, 2);
+        t.Creature.Counters.Add(CounterType.Arcane, 2);
         card.Owner.DrawCard();
     }
 }

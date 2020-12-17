@@ -15,7 +15,7 @@ public class Graveyard : ViewableCardPile
         if (c is CreatureCard cAsCreatureCard)
             cAsCreatureCard.Creature.RemoveFromCurrentTile();
         else if (c is StructureCard cAsStructureCard)
-            cAsStructureCard.structure.RemoveFromCurrentTile();
+            cAsStructureCard.Structure.RemoveFromCurrentTile();
 
         // remove the card from the scene
         c.removeGraphicsAndCollidersFromScene();
@@ -29,7 +29,7 @@ public class Graveyard : ViewableCardPile
             if (c is CreatureCard)
                 NetInterface.Get().SyncCreatureStats((c as CreatureCard).Creature);
             else if (c is StructureCard)
-                NetInterface.Get().SyncStructureStats((c as StructureCard).structure);
+                NetInterface.Get().SyncStructureStats((c as StructureCard).Structure);
         }
     }
 

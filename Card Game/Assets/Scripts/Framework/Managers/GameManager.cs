@@ -60,7 +60,7 @@ public class GameManager : MonoBehaviour
         switch (gameMode)
         {
             case GameMode.hotseat:
-                hotSeatSetup();
+                HotSeatSetup();
                 break;
             case GameMode.online:
                 StartCoroutine(OnlineGameSetupCoroutine());
@@ -68,7 +68,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void hotSeatSetup()
+    private void HotSeatSetup()
     {
         throw new NotImplementedException();
     }
@@ -157,34 +157,32 @@ public class GameManager : MonoBehaviour
         clearEvents();
     }
 
+    public Card CreateCardById(CardIds id, Player owner) => CreateCardById((int)id, owner);
     public Card CreateCardById(int id, Player owner)
     {
         Card newCard = ResourceManager.Get().InstantiateCardById(id);
         newCard.Owner = owner;
+        if (newCard is CreatureCard cc)
+            cc.Creature.Controller = owner;
+        else if (newCard is StructureCard sc)
+            sc.Structure.Controller = owner;
         newCard.Initialize();
         if (gameMode == GameMode.online)
             NetInterface.Get().SyncNewCardToOpponent(newCard);
         return newCard;
     }
-    public Card CreateCardById(CardIds id, Player owner) => CreateCardById((int)id, owner);
 
     // GAME FLOW METHODS
     private void StartNewturn()
     {
         ActivePlayer.StartOfTurn();
         NonActivePlayer.StartOfTurn();
-        TriggerTurnStartEvents(this);
+        E_TurnStart.Invoke();
         ActivePlayer.DoIncome();
         ActivePlayer.DrawCard();
     }
 
-    #region TriggeredEffects
-    public void onSpellCastEffects(SpellCard spell)
-    {
-        TriggerSpellCastEvents(this, new SpellCastArgs() { spell = spell });
-    }
-    #endregion
-
+    // move to creature
     public void doAttackOn(Damageable defender)
     {
         Creature attacker = ActivePlayer.heldCreature;
@@ -220,7 +218,7 @@ public class GameManager : MonoBehaviour
 
     private void LocalTurnEnd()
     {
-        TriggerTurnEndEvents(this);
+        E_TurnEnd.Invoke();
         SwitchActivePlayer();
         foreach (Creature c in board.AllCreatures)
             c.ResetForNewTurn();
@@ -239,7 +237,7 @@ public class GameManager : MonoBehaviour
         // reset player for new turn
         NetInterface.Get().localPlayer.StartOfTurn();
         // trigger effects
-        TriggerTurnEndEvents(this);
+        E_TurnEnd.Invoke();
         SwitchActivePlayer();
 
         foreach (Creature c in board.AllCreatures)
@@ -258,7 +256,7 @@ public class GameManager : MonoBehaviour
         if (gameMode != GameMode.online)
             throw new Exception("Only call this for online play");
         // trigger end turn effects
-        TriggerTurnEndEvents(this);
+        E_TurnEnd.Invoke();
         // re enable end turn
         endTurnButton.gameObject.SetActive(true);
         // do income and trigger effects
@@ -267,7 +265,7 @@ public class GameManager : MonoBehaviour
         localPlayer.StartOfTurn();
         localPlayer.DoIncome();
         localPlayer.DrawCard();
-        TriggerTurnStartEvents(this);
+        E_TurnStart.Invoke();
         // unlock local player
         NetInterface.Get().localPlayer.RemoveLock(activePlayerLock);
     }
@@ -275,33 +273,38 @@ public class GameManager : MonoBehaviour
     // Returns a list of all tiles that a creature could be deployed to
     public List<Tile> getAllDeployableTiles(Player player)
     {
+        return board.AllTiles
+            .Where(t => t.CanDeployFrom)
+            .SelectMany(t => t.AdjacentTiles)
+            .Where(t => t.Permanent == null)
+            .ToList();
         List<Tile> returnList = new List<Tile>();
         foreach(Tile tile in board.AllTiles)
         {
-            if (tile.creature != null)
+            if (tile.Creature != null)
                 continue;
 
-            int x1 = tile.x + 1;
-            int y1 = tile.y;
-            if (canDeployFrom(board.GetTileByCoordinate(x1, y1), player))
+            int x1 = tile.X + 1;
+            int y1 = tile.Y;
+            if (CanDeployFrom(board.GetTileByCoordinate(x1, y1), player))
                 if (!returnList.Contains(tile))
                     returnList.Add(tile);
 
-            int x2 = tile.x - 1;
-            int y2 = tile.y;
-            if (canDeployFrom(board.GetTileByCoordinate(x2, y2), player))
+            int x2 = tile.X - 1;
+            int y2 = tile.Y;
+            if (CanDeployFrom(board.GetTileByCoordinate(x2, y2), player))
                 if (!returnList.Contains(tile))
                     returnList.Add(tile);
 
-            int x3 = tile.x;
-            int y3 = tile.y + 1;
-            if (canDeployFrom(board.GetTileByCoordinate(x3, y3), player))
+            int x3 = tile.X;
+            int y3 = tile.Y + 1;
+            if (CanDeployFrom(board.GetTileByCoordinate(x3, y3), player))
                 if (!returnList.Contains(tile))
                     returnList.Add(tile);
 
-            int x4 = tile.x;
-            int y4 = tile.y - 1;
-            if (canDeployFrom(board.GetTileByCoordinate(x4, y4), player))
+            int x4 = tile.X;
+            int y4 = tile.Y - 1;
+            if (CanDeployFrom(board.GetTileByCoordinate(x4, y4), player))
                 if (!returnList.Contains(tile))
                     returnList.Add(tile);
         }
@@ -335,60 +338,9 @@ public class GameManager : MonoBehaviour
 
         return returnList;
     }
-    // returns true if the tile is something that can be returned from
-    private bool canDeployFrom(Tile tile, Player player)
-    {
-        if (tile == null)
-            return false;
-        if (tile.structure != null && tile.structure.Controller == player && tile.structure.canDeployFrom())
-            return true;
-        if (tile.creature != null && tile.creature.Controller == player && tile.creature.CanDeployFrom)
-            return true;
-        return false;
-    }
+    // returns true if the tile is something that can be deployed from
+    private bool CanDeployFrom(Tile tile, Player player) => tile != null && tile.Permanent != null && tile.Permanent.Controller == player && tile.Permanent.CanDeployFrom;
 
-    // places teh creature passed to it on the tile passed
-    public void createCreatureOnTile(Creature creature, Tile tile, Player owner)
-    {
-        //creature.initialize();
-        createCreatureActual(tile, owner, creature);
-        // sync creature creation
-        NetInterface.Get().SyncPermanentPlaced(creature.SourceCard, tile);
-
-        // trigger effects that need to be triggered
-        creature.TriggerOnDeployed(this);
-        TriggerCreaturePlayedEvents(this, new CreaturePlayedArgs() { creature = creature });
-    }
-
-    private void createCreatureActual(Tile tile, Player owner, Creature creature)
-    {
-        // resize creature, stop treating it as a card and start treating it as a creature
-        (creature.SourceCard as CreatureCard).SwapToCreature(tile);
-
-        // set owner if it hasn't been set already
-        creature.Controller = owner;
-
-        // set creature to has moved and acted unless it is quick
-        if (!creature.HasKeyword(Keyword.Quick))
-        {
-            creature.HasMovedThisTurn = true;
-            creature.HasDoneActionThisTurn = true;
-            creature.UpdateHasActedIndicators();
-        }
-
-        tile.creature = creature;
-        creature.Tile = tile;
-
-        creature.UpdateFriendOrFoeBorder();
-    }
-
-    public void syncCreateCreatureOnTile(CreatureCard card, Tile tile, Player owner)
-    {
-        Debug.Log("Syncing creature placement");
-        // animate showing card
-        //InformativeAnimationsQueue.Instance.AddAnimation(new ShowCardCmd(card, true, this));
-        createCreatureActual(tile, owner, card.Creature);
-    }
     private bool showCardFinished = false;
     private class ShowCardCmd : IQueueableCommand
     {
@@ -440,41 +392,6 @@ public class GameManager : MonoBehaviour
         showCardFinished = true;
     }
 
-    public void createStructureOnTile(Structure structure, Tile tile, Player controller, StructureCard sourceCard)
-    {
-        createStructureOnTileActual(structure, tile, controller);
-        NetInterface.Get().SyncPermanentPlaced(sourceCard, tile);
-        // trigger ETBS
-        structure.TriggerOnDeployed(this);
-    }
-
-    private void createStructureOnTileActual(Structure structure, Tile tile, Player controller)
-    {
-        Card sourceCard = structure.SourceCard;
-
-        // parent structure to board
-        structure.transform.SetParent(board.transform);
-
-        // move card from player's hand and parent it to the board
-        sourceCard.MoveToCardPile(board, null);
-
-        // resize structure and stop treating it as a card and start treating is as a structure
-        (sourceCard as StructureCard).swapToStructure(tile);
-
-        tile.structure = structure;
-        structure.Tile = tile;
-        structure.Controller = controller;
-
-        // turn on FoF border
-        structure.UpdateFriendOrFoeBorder();
-    }
-
-    public void syncStructureOnTile(StructureCard card, Tile tile, Player owner)
-    {
-        //Debug.Log("Card is " + card);
-        //InformativeAnimationsQueue.Instance.AddAnimation(new ShowCardCmd(card, true, this));
-        createStructureOnTileActual(card.structure, tile, owner);
-    }
 
     public void kill(Permanent permanent)
     {
@@ -495,17 +412,17 @@ public class GameManager : MonoBehaviour
     {
         if (creature.Tile != null) // this check is needed to make some online stuff work
         {
-            creature.Tile.creature = null;
+            creature.Tile.Creature = null;
             creature.Tile = null;
         }
-        TriggerCreatureDeathEvents(this, new CreatureDeathArgs() { creature = creature });
         creature.SourceCard.MoveToCardPile(creature.SourceCard.Owner.Graveyard, null);
-        creature.TriggerOnDeathEvents(this);
+        E_CreatureDeath.Invoke(creature);
+        creature.E_Death.Invoke();
     }
 
     public void kill(Structure structure)
     {
-        structure.Tile.structure = null;
+        structure.Tile.Structure = null;
         structure.Tile = null;
         structure.onRemoved();
     }
@@ -544,8 +461,6 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            // there is only 1 effect so just activate it
-            // creature.activatedEffects[0].doEffect(this);
             creature.ActivatedEffects[0].Invoke();
         }
     }
@@ -600,13 +515,13 @@ public class GameManager : MonoBehaviour
         Tile creaturesTile = creature.Tile;
         foreach (Tile tile in board.AllTiles)
         {
-            int xDiff = Math.Abs(creaturesTile.x - tile.x); // 0
-            int yDiff = Math.Abs(creaturesTile.y - tile.y); // 1
+            int xDiff = Math.Abs(creaturesTile.X - tile.X); // 0
+            int yDiff = Math.Abs(creaturesTile.Y - tile.Y); // 1
             int distance = xDiff + yDiff; // 1
             if (distance != 0 && distance <= creature.Range) // true
-                if (tile.creature != null && tile.creature.Controller != creature.Controller)
+                if (tile.Creature != null && tile.Creature.Controller != creature.Controller)
                     returnList.Add(tile);
-                else if (tile.structure != null && tile.structure.Controller != creature.Controller)
+                else if (tile.Structure != null && tile.Structure.Controller != creature.Controller)
                     returnList.Add(tile);
         }
         return returnList;

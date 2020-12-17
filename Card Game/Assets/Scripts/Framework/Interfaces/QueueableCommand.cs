@@ -61,3 +61,27 @@ public class CompoundQueueableCommand : IQueueableCommand
     }
     #endregion
 }
+
+public class CoroutineCommand : IQueueableCommand
+{
+    public bool IsFinished { get; set; }
+    private IEnumerator crt;
+    private MonoBehaviour source;
+
+    public CoroutineCommand(IEnumerator crt, MonoBehaviour source)
+    {
+        this.crt = crt;
+        this.source = source;
+    }
+
+    public void Execute()
+    {
+        source.StartCoroutine(CrtRunner());
+    }
+
+    IEnumerator CrtRunner()
+    {
+        yield return source.StartCoroutine(crt);
+        IsFinished = true;
+    }
+}

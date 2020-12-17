@@ -586,11 +586,6 @@ PrefabInstance:
       propertyPath: methodToCall.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
-    - target: {fileID: 8219353265420789744, guid: 172056cdebc6fb646911badf058da3a5,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 8219353265420789746, guid: 172056cdebc6fb646911badf058da3a5,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -620,6 +615,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_textInfo.spaceCount
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8219353265420789744, guid: 172056cdebc6fb646911badf058da3a5,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 172056cdebc6fb646911badf058da3a5, type: 3}
@@ -720,11 +720,6 @@ PrefabInstance:
       propertyPath: methodToCall.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
-    - target: {fileID: 8219353265420789744, guid: 172056cdebc6fb646911badf058da3a5,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 8219353265420789746, guid: 172056cdebc6fb646911badf058da3a5,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -779,6 +774,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SortingOrder
       value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8219353265420789744, guid: 172056cdebc6fb646911badf058da3a5,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 172056cdebc6fb646911badf058da3a5, type: 3}
@@ -2213,11 +2213,6 @@ PrefabInstance:
       propertyPath: methodToCall.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_BoolArgument
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8219353265420789744, guid: 172056cdebc6fb646911badf058da3a5,
-        type: 3}
-      propertyPath: m_Mesh
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 8219353265420789746, guid: 172056cdebc6fb646911badf058da3a5,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -2253,6 +2248,11 @@ PrefabInstance:
       propertyPath: m_firstOverflowCharacterIndex
       value: -1
       objectReference: {fileID: 0}
+    - target: {fileID: 8219353265420789744, guid: 172056cdebc6fb646911badf058da3a5,
+        type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 172056cdebc6fb646911badf058da3a5, type: 3}
 --- !u!1001 &1573403426
@@ -2270,6 +2270,31 @@ PrefabInstance:
     - target: {fileID: 4822982171438034579, guid: 35592a3d91af2e140ac5fb70ac221cdf,
         type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6555283112219469801, guid: 35592a3d91af2e140ac5fb70ac221cdf,
+        type: 3}
+      propertyPath: m_textInfo.characterCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6555283112219469801, guid: 35592a3d91af2e140ac5fb70ac221cdf,
+        type: 3}
+      propertyPath: m_textInfo.spaceCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6555283112219469801, guid: 35592a3d91af2e140ac5fb70ac221cdf,
+        type: 3}
+      propertyPath: m_textInfo.wordCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6555283112219469801, guid: 35592a3d91af2e140ac5fb70ac221cdf,
+        type: 3}
+      propertyPath: m_textInfo.lineCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6555283112219469801, guid: 35592a3d91af2e140ac5fb70ac221cdf,
+        type: 3}
+      propertyPath: m_textInfo.pageCount
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7020741921946145348, guid: 35592a3d91af2e140ac5fb70ac221cdf,
@@ -2391,31 +2416,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.z
       value: 0.77510417
-      objectReference: {fileID: 0}
-    - target: {fileID: 6555283112219469801, guid: 35592a3d91af2e140ac5fb70ac221cdf,
-        type: 3}
-      propertyPath: m_textInfo.characterCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6555283112219469801, guid: 35592a3d91af2e140ac5fb70ac221cdf,
-        type: 3}
-      propertyPath: m_textInfo.spaceCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6555283112219469801, guid: 35592a3d91af2e140ac5fb70ac221cdf,
-        type: 3}
-      propertyPath: m_textInfo.wordCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6555283112219469801, guid: 35592a3d91af2e140ac5fb70ac221cdf,
-        type: 3}
-      propertyPath: m_textInfo.lineCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6555283112219469801, guid: 35592a3d91af2e140ac5fb70ac221cdf,
-        type: 3}
-      propertyPath: m_textInfo.pageCount
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1605270173937724270, guid: 35592a3d91af2e140ac5fb70ac221cdf,
         type: 3}

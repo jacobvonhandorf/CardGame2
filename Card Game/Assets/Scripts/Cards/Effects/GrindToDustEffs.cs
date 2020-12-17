@@ -8,6 +8,6 @@ public class GrindToDustEffs : SpellEffects
 
     public override void DoEffect(Tile t)
     {
-        t.creature.TakeDamage(card.Owner.Hand.GetAllCardsWithTag(Tag.Gem).Count, card);
+        t.Creature.TakeDamage(card.Owner.Hand.GetAllCardsWithTag(Tag.Gem).Count, card);
     }
 }

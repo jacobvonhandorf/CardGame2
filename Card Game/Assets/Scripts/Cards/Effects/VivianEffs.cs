@@ -11,7 +11,7 @@ public class VivianEffs : CreatureEffects
         {
             SingleTileTargetEffect.CreateAndQueue(GameManager.Instance.getAllDeployableTiles(card.Owner), delegate (Tile t)
             {
-                GameManager.Instance.createCreatureOnTile(creature, t, card.Owner);
+                creature.CreateOnTile(t);
             });
         }
     };

@@ -7,9 +7,10 @@ public class ArcaneNoviceEffs : CreatureEffects
 {
     public override EmptyHandler onInitilization => delegate ()
     {
-        GameEvents.E_SpellCast += GameEvents_E_SpellCast;
+        //GameEvents.E_SpellCast += GameEvents_E_SpellCast;
     };
 
+    /*
     private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastArgs e)
     {
         if (creature.enabled && creature.Counters.AmountOf(CounterType.Arcane) > 0 && e.spell.Owner == creature.Controller)
@@ -18,6 +19,7 @@ public class ArcaneNoviceEffs : CreatureEffects
             creature.Counters.Remove(CounterType.Arcane, 1);
         }
     }
+    */
 
     public override EventHandler onDeploy => delegate (object s, EventArgs e)
     {

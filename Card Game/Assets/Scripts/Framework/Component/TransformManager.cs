@@ -33,9 +33,12 @@ public class TransformManager : MonoBehaviour
             }
         }
         // move towards current transform
-        transform.localPosition = Vector3.Lerp(transform.localPosition, currentTransform.position, speed * Time.deltaTime);
-        transform.localScale = Vector3.Lerp(transform.localScale, currentTransform.localScale, speed * Time.deltaTime);
+        if (currentTransform.useLocalPosition)
+            transform.localPosition = Vector3.Lerp(transform.localPosition, currentTransform.position, speed * Time.deltaTime);
+        else
+            transform.position = Vector3.Lerp(transform.position, currentTransform.position, speed * Time.deltaTime);
         transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(currentTransform.rotation), speed * Time.deltaTime);
+        transform.localScale = Vector3.Lerp(transform.localScale, currentTransform.localScale, speed * Time.deltaTime);
     }
     // add to queue
     public void QueueMoveTo(TransformStruct t)
@@ -63,7 +66,7 @@ public class TransformManager : MonoBehaviour
         InformativeAnimationsQueue.Instance.AddAnimation(new TransformCommand(this, t));
     }
 
-    public void setTransform(TransformStruct tStruct)
+    public void SetTransform(TransformStruct tStruct)
     {
         ClearQueue();
         transform.localPosition = tStruct.position;
@@ -94,9 +97,9 @@ public class TransformManager : MonoBehaviour
             this.targetTransform = targetTransform;
         }
 
-        public bool IsFinished => isFinishedCheck();
+        public bool IsFinished => IsFinishedCheck();
 
-        private bool isFinishedCheck()
+        private bool IsFinishedCheck()
         {
             // check for not being enabled here so queue doesn't get clogged
             return !transformManager.transformQueue.Contains(targetTransform) || !transformManager.enabled;
@@ -123,4 +126,5 @@ public class TransformStruct
     public Vector3 position;
     public Vector3 localScale;
     public Vector3 rotation;
+    public bool useLocalPosition = false;
 }

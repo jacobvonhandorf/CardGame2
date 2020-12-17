@@ -14,6 +14,8 @@ public class CreatureCard : Card, IScriptCreatureCard
     public CounterController CounterController { get { return counterController; } }
     public new PermanentCardVisual CardVisuals { get { return (PermanentCardVisual)base.CardVisuals; } }
 
+    IScriptCreature IScriptCreatureCard.Creature => Creature;
+
     private CardToPermanentConverter cardToPermanentConverter;
 
     protected override void Awake()
@@ -31,9 +33,7 @@ public class CreatureCard : Card, IScriptCreatureCard
 
     public override void Play(Tile t)
     {
-        GameManager gameManager = GameManager.Instance;
-        gameManager.createCreatureOnTile(Creature, t, Owner); // this makes the assumption that a card will always be played by it's owner
-        GameEvents.TriggerCreaturePlayedEvents(null, new GameEvents.CreaturePlayedArgs() { creature = Creature });
+        Creature.CreateOnTile(t);
     }
 
     public void SwapToCreature(Tile onTile)
@@ -50,8 +50,6 @@ public class CreatureCard : Card, IScriptCreatureCard
 
         // resize
         cardToPermanentConverter.DoConversion(onTile.transform.position);
-
-        // attach hover and click handlers
     }
 
     public void SwapToCard()
@@ -70,8 +68,6 @@ public class CreatureCard : Card, IScriptCreatureCard
 
         // counters don't say on cards when they aren't creatures so clear them
         counterController.Clear();
-
-        // remove hover and click handlers
     }
 
     public override void ResetToBaseStats()

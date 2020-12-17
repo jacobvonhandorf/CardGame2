@@ -9,7 +9,7 @@ public class FairyCavalierEffs : CreatureEffects
     {
         SingleTileTargetEffect.CreateAndQueue(Board.Instance.GetAllTilesWithCreatures(creature.Controller, true), delegate (Tile t)
         {
-            t.creature.Bounce(card);
+            t.Creature.Bounce(card);
         });
     };
 }

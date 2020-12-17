@@ -13,7 +13,7 @@ public class Board : CardPile
     public Tile[,] tileArray;
     public List<Tile> AllTiles { get; private set; }
     public List<Creature> AllCreatures { get { return CardList.Where(c => c.IsType(CardType.Creature)).Select(c => (c as CreatureCard).Creature).ToList(); } }
-    public List<Structure> AllStructures { get { return CardList.Where(c => c.IsType(CardType.Structure)).Select(c => (c as StructureCard).structure).ToList(); } }
+    public List<Structure> AllStructures { get { return CardList.Where(c => c.IsType(CardType.Structure)).Select(c => (c as StructureCard).Structure).ToList(); } }
     [SerializeField] private Transform tileContainer; // used to organize tiles in inspector
 
     private List<Vector2> powerTileCoordinates;
@@ -39,12 +39,12 @@ public class Board : CardPile
             {
                 Tile newTile = Instantiate(myPrefab, tileContainer);
 
-                newTile.x = j;
-                newTile.y = i;
+                newTile.X = j;
+                newTile.Y = i;
                 newTile.name = j + ", " + i;
                 AllTiles.Add(newTile);
                 tileArray[j, i] = newTile;
-                if (powerTileCoordinates.Contains(new Vector2(newTile.x, newTile.y)))
+                if (powerTileCoordinates.Contains(new Vector2(newTile.X, newTile.Y)))
                     newTile.SetAsPowerTile();
             }
         }
@@ -62,14 +62,14 @@ public class Board : CardPile
             return returnList;
         if (TileMoveAlreadyChecked(tileMovePairs, new TileMovePair(tile, remainingMove)))
             return returnList;
-        if (tile.creature != null && tile.creature.Controller != controller)
+        if (tile.Creature != null && tile.Creature.Controller != controller)
             return returnList;
-        if (tile.structure != null && tile.structure.Controller != controller)
+        if (tile.Structure != null && tile.Structure.Controller != controller)
             return returnList;
 
         // add to list
         remainingMove--;
-        if (tile.structure == null && tile.creature == null)
+        if (tile.Structure == null && tile.Creature == null)
         {
             returnList.Add(tile);
             tileMovePairs.Add(new TileMovePair(tile, remainingMove));
@@ -110,7 +110,7 @@ public class Board : CardPile
         foreach (Vector2 coordinate in powerTileCoordinates)
         {
             Tile powerTile = GetTileByCoordinate((int)coordinate.x, (int)coordinate.y);
-            if (powerTile.creature != null && powerTile.creature.Controller == player)
+            if (powerTile.Creature != null && powerTile.Creature.Controller == player)
                 count++;
         }
         return count;
@@ -129,8 +129,8 @@ public class Board : CardPile
         List<Structure> returnList = new List<Structure>();
         foreach (Tile tile in AllTiles)
         {
-            if (tile.structure != null && tile.structure.Controller == controller)
-                returnList.Add(tile.structure);
+            if (tile.Structure != null && tile.Structure.Controller == controller)
+                returnList.Add(tile.Structure);
         }
         return returnList;
     }
@@ -146,7 +146,7 @@ public class Board : CardPile
 
         foreach (Tile t in AllTiles)
         {
-            if (t.creature != null && t.creature.Controller == controller)
+            if (t.Creature != null && t.Creature.Controller == controller)
                 returnList.Add(t);
         }
 
@@ -160,7 +160,7 @@ public class Board : CardPile
         {
             foreach (Tile t in AllTiles)
             {
-                if (t.creature != null)
+                if (t.Creature != null)
                     returnList.Add(t);
             }
         }
@@ -168,7 +168,7 @@ public class Board : CardPile
         {
             foreach (Tile t in AllTiles)
             {
-                if (t.creature != null && !t.creature.HasKeyword(Keyword.Untargetable))
+                if (t.Creature != null && !t.Creature.HasKeyword(Keyword.Untargetable))
                     returnList.Add(t);
             }
         }
@@ -199,21 +199,21 @@ public class Board : CardPile
     {
         List<Tile> returnList = new List<Tile>();
 
-        int x1 = tile.x + range;
-        int y1 = tile.y + range;
-        int x2 = tile.x - range;
-        int y2 = tile.y - range;
+        int x1 = tile.X + range;
+        int y1 = tile.Y + range;
+        int x2 = tile.X - range;
+        int y2 = tile.Y - range;
 
-        Tile currentTile = GetTileByCoordinate(x1, tile.y);
+        Tile currentTile = GetTileByCoordinate(x1, tile.Y);
         if (currentTile != null)
             returnList.Add(currentTile);
-        currentTile = GetTileByCoordinate(x2, tile.y);
+        currentTile = GetTileByCoordinate(x2, tile.Y);
         if (currentTile != null)
             returnList.Add(currentTile);
-        currentTile = GetTileByCoordinate(tile.x, y1);
+        currentTile = GetTileByCoordinate(tile.X, y1);
         if (currentTile != null)
             returnList.Add(currentTile);
-        currentTile = GetTileByCoordinate(tile.x, y2);
+        currentTile = GetTileByCoordinate(tile.X, y2);
         if (currentTile != null)
             returnList.Add(currentTile);
 
@@ -236,10 +236,10 @@ public class Board : CardPile
         pairs.Add(new TileMovePair(tile, range));
 
         // make more calls
-        _getAllTilesWithinRangeOfTile(GetTileByCoordinate(tile.x, tile.y + 1), range, returnList, pairs); // up
-        _getAllTilesWithinRangeOfTile(GetTileByCoordinate(tile.x + 1, tile.y), range, returnList, pairs); // right
-        _getAllTilesWithinRangeOfTile(GetTileByCoordinate(tile.x, tile.y - 1), range, returnList, pairs); // down
-        _getAllTilesWithinRangeOfTile(GetTileByCoordinate(tile.x - 1, tile.y), range, returnList, pairs); // up
+        _getAllTilesWithinRangeOfTile(GetTileByCoordinate(tile.X, tile.Y + 1), range, returnList, pairs); // up
+        _getAllTilesWithinRangeOfTile(GetTileByCoordinate(tile.X + 1, tile.Y), range, returnList, pairs); // right
+        _getAllTilesWithinRangeOfTile(GetTileByCoordinate(tile.X, tile.Y - 1), range, returnList, pairs); // down
+        _getAllTilesWithinRangeOfTile(GetTileByCoordinate(tile.X - 1, tile.Y), range, returnList, pairs); // up
 
         return returnList;
     }

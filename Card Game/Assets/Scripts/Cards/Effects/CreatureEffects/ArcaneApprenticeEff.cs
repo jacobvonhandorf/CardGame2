@@ -7,9 +7,9 @@ public class ArcaneApprenticeEff : CreatureEffects
 {
     public override EmptyHandler onInitilization => delegate ()
     {
-        GameEvents.E_SpellCast += GameEvents_E_SpellCast;
+        //GameEvents.E_SpellCast += GameEvents_E_SpellCast;
     };
-
+    /*
     private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastArgs e)
     {
         if (creature.enabled)
@@ -17,11 +17,12 @@ public class ArcaneApprenticeEff : CreatureEffects
             creature.Counters.Add(CounterType.Arcane, 1);
         }
     }
+    */
 
     public override EmptyHandler activatedEffect => delegate ()
     {
         
-        if (creature.HasDoneActionThisTurn)
+        if (!creature.ActionAvailable)
         {
             Toaster.Instance.DoToast("You have already acted with this creature this turn");
             return;
@@ -35,8 +36,8 @@ public class ArcaneApprenticeEff : CreatureEffects
         IQueueableCommand targetSelect = SingleTileTargetEffect.CreateCommand(Board.Instance.GetAllTilesWithCreatures(creature.Controller.OppositePlayer, false), delegate (Tile t)
         {
             creature.Counters.Remove(CounterType.Arcane, selectedValue);
-            t.creature.TakeDamage(selectedValue, creature.SourceCard);
-            creature.HasDoneActionThisTurn = true;
+            t.Creature.TakeDamage(selectedValue, creature.SourceCard);
+            creature.ActionAvailable = false;
         });
         new CompoundQueueableCommand.Builder().AddCommand(xPickCmd).AddCommand(targetSelect).BuildAndQueue();
     };

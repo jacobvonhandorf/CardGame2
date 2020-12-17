@@ -25,11 +25,11 @@ public class FairyFortressEffs : StructureEffects
         Creature ownedCreature = null;
         IQueueableCommand ownedSelect = SingleTileTargetEffect.CreateCommand(Board.Instance.GetAllTilesWithCreatures(Controller, true), delegate (Tile t)
         {
-            ownedCreature = t.creature;
+            ownedCreature = t.Creature;
         });
         IQueueableCommand opponentSelect = SingleTileTargetEffect.CreateCommand(Board.Instance.GetAllTilesWithCreatures(Controller.OppositePlayer, false), delegate (Tile t)
         {
-            Creature opponentCreature = t.creature;
+            Creature opponentCreature = t.Creature;
             Controller.Actions -= 1;
             ownedCreature.Bounce(Card);
             opponentCreature.Bounce(Card);

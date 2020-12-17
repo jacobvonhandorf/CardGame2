@@ -10,6 +10,7 @@ using static Card;
 //This is a parent class for all objects that are a pile of cards ex: deck, hand, grave
 public abstract class CardPile : MonoBehaviour, IScriptPile
 {
+    IReadOnlyList<IScriptCard> IScriptPile.CardList => cardList;
     public IReadOnlyList<Card> CardList => cardList;
     public UnityEvent NumCardsChanged { get; } = new UnityEvent();
 
@@ -21,7 +22,6 @@ public abstract class CardPile : MonoBehaviour, IScriptPile
         NetInterface.Get().RegisterCardPile(this, ownedByLocalPlayer);
     }
 
-    // this method is dangerous to call. If possible use Card.moveToCardPile()
     public void AddCard(Card c)
     {
         if (cardList.Contains(c)) // trying to add a card that's already in the list
@@ -33,7 +33,6 @@ public abstract class CardPile : MonoBehaviour, IScriptPile
         NumCardsChanged.Invoke();
     }
 
-    // this method is dangerous to call. If possible use Card.moveToCardPile()
     public void AddCards(List<Card> newCards)
     {
         foreach (Card c in newCards)
@@ -42,8 +41,6 @@ public abstract class CardPile : MonoBehaviour, IScriptPile
         }
     }
 
-    // IF YOU CALL THIS METHOD MAKE SURE YOU MOVE THIS CARD TO ANOTHER PILE
-    // It's probably better to call Card.moveToCardPile()
     public Card RemoveCard(Card cardToRemove)
     {
         foreach (Card c in cardList)
@@ -59,13 +56,8 @@ public abstract class CardPile : MonoBehaviour, IScriptPile
         return null;
     }
 
-    protected virtual void OnCardAdded(Card c)
-    {
-    }
-
-    protected virtual void OnCardRemoved(Card c)
-    {
-    }
+    protected virtual void OnCardAdded(Card c) { }
+    protected virtual void OnCardRemoved(Card c) { }
 
     public List<Card> GetAllCardsWithTag(Tag tag) => cardList.FindAll(c => c.Tags.Contains(tag));
     public List<Card> GetAllCardsWithType(CardType type) => cardList.FindAll(c => c.IsType(type));
@@ -73,7 +65,6 @@ public abstract class CardPile : MonoBehaviour, IScriptPile
     public List<Card> GetAllCardsWithLessThanOrEqualCost(int cost) => cardList.FindAll(c => c.TotalCost <= cost);
     public List<Card> GetAllCardsWithinCostRange(int min, int max) => cardList.FindAll(c => c.TotalCost <= max && c.TotalCost >= min);
 
-    // only call this from NetInterface
     public void SyncOrderFromNetwork(List<Card> newCardList)
     {
         cardList = newCardList;

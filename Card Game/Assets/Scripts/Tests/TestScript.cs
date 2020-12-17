@@ -18,26 +18,37 @@ public class TestScript : MonoBehaviour
     public Tile tile3;
     public Player testPlayer;
 
-    Creature c = null;
-
     private void Start()
     {
         // setup test
 
-        //testCard = getTestStructureCard();
-        c = (ResourceManager.Get().InstantiateCardById(CardIds.Engineer) as CreatureCard).Creature;
-        c.SourceCard.Owner = testPlayer;
-        c.Controller = testPlayer;
+        CreatureCard creatureCard = GetTestCreatureCard();
+        StructureCard structureCard = GetTestStructureCard();
+
         testList.Add(delegate ()
         {
-
+            creatureCard.Creature.CreateOnTile(tile1);
         });
-
-        IScriptCard sCard = c.SourceCard;
+        testList.Add(delegate ()
+        {
+            creatureCard.Creature.Move(tile2);
+        });
+        testList.Add(delegate ()
+        {
+            creatureCard.Creature.SyncMove(tile3);
+        });
+        testList.Add(delegate ()
+        {
+            structureCard.Structure.CreateOnTile(tile1);
+        });
+        testList.Add(delegate ()
+        {
+            GetTestStructureCard().Structure.SyncCreateOnTile(tile2);
+        });
     }
 
     int testNum = 0;
-    List<Action> testList;
+    List<Action> testList = new List<Action>();
     private void DoTestOnKeyPress()
     {
         testList[testNum].Invoke();
@@ -53,18 +64,8 @@ public class TestScript : MonoBehaviour
         }
     }
 
-    private List<Card> getTestCardList()
-    {
-        List<Card> cardList = new List<Card>();
-        for (int i = 0; i < 50; i++)
-        {
-            cardList.Add(GetTestSpellCard());
-        }
-        return cardList;
-    }
-
-    private Card GetTestSpellCard() => ResourceManager.Get().InstantiateCardById(CardIds.RingOfEternity);
-    private Card GetTestStructureCard() => ResourceManager.Get().InstantiateCardById(CardIds.Market);
-    private Card GetTestCreatureCard() => ResourceManager.Get().InstantiateCardById(CardIds.Mercenary);
+    private SpellCard GetTestSpellCard() => ResourceManager.Get().InstantiateCardById(CardIds.RingOfEternity) as SpellCard;
+    private StructureCard GetTestStructureCard() => ResourceManager.Get().InstantiateCardById(CardIds.Market) as StructureCard;
+    private CreatureCard GetTestCreatureCard() => ResourceManager.Get().InstantiateCardById(CardIds.Mercenary) as CreatureCard;
 }
 

@@ -5,44 +5,48 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class Tile : MonoBehaviour
+public class Tile : MonoBehaviour, IScriptTile
 {
     public bool IsPowerTile { get; private set; } = false;
-    public List<Tile> AdjacentTiles => GameManager.Instance.board.GetAllTilesWithinExactRangeOfTile(this, 1);
+    public List<Tile> AdjacentTiles => Board.Instance.GetAllTilesWithinExactRangeOfTile(this, 1);
     public Permanent Permanent
     {
         get
         {
-            if (creature != null)
-                return creature;
+            if (Creature != null)
+                return Creature;
             else
-                return structure;
+                return Structure;
         }
         set
         {
-            if (creature != null || structure != null)
+            if (Creature != null || Structure != null)
             {
                 Debug.LogError("Trying to set permanent on a tile that already has a permanent");
                 return;
             }
 
             if (value is Creature c)
-                creature = c;
+                Creature = c;
             else if (value is Structure s)
-                structure = s;
+                Structure = s;
             else if (value == null)
             {
-                creature = null;
-                structure = null;
+                Creature = null;
+                Structure = null;
             }
         }
     }
-    [HideInInspector] public Creature creature;
-    [HideInInspector] public Structure structure;
-    [HideInInspector] public Effect effect;
-    [HideInInspector] public int x;
-    [HideInInspector] public int y;
-    [HideInInspector] public GameObject effectFilterLocal; // keeps track of filter that highlights effectable tiles.
+    public Creature Creature { get; set; }
+    public Structure Structure { get; set; }
+    public int X { get; set; }
+    public int Y { get; set; }
+
+    IScriptPermanent IScriptTile.Permanent => Permanent;
+    IScriptCreature IScriptTile.Creature => Creature;
+    IScriptStructure IScriptTile.Structure => Structure;
+
+    public GameObject effectFilterLocal; // keeps track of filter that highlights effectable tiles.
 
     [SerializeField] private GameObject attackableFilter; // prefab to instantiate
     [SerializeField] private GameObject effectableFilter; // prefab to instantiate
@@ -70,16 +74,18 @@ public class Tile : MonoBehaviour
     }
 
     #region Utility
+    public bool CanDeployFrom => Permanent.CanDeployFrom;
     public int GetDistanceTo(Tile otherTile)
     {
-        int distX = Math.Abs(otherTile.x - x);
-        int distY = Math.Abs(otherTile.y - y);
+        int distX = Math.Abs(otherTile.X - X);
+        int distY = Math.Abs(otherTile.Y - Y);
 
         return distX + distY;
     }
+    public int GetDistanceTo(IScriptTile t) => GetDistanceTo((Tile)t);
     #endregion
 
-    // This should be reworked
+    // This should be reworked and moved to a different class
     #region Effects and Attacks Control Flow
     public void SetAttackable(bool attackable)
     {
@@ -89,7 +95,7 @@ public class Tile : MonoBehaviour
             Debug.Log("Creating attackable filter");
             SpriteRenderer sr = GetComponent<SpriteRenderer>();
             sr.color = attackColor;
-            attackFilterLocal = Instantiate(attackableFilter, new Vector3(x-4, y-3, -1), Quaternion.identity);
+            attackFilterLocal = Instantiate(attackableFilter, new Vector3(X-4, Y-3, -1), Quaternion.identity);
             attackFilterLocal.GetComponent<AttackableFilter>().tile = this;
             // attackFilterLocal.GetComponent<AttackableFilter>().gameManager = gameManager;
         }
@@ -100,7 +106,7 @@ public class Tile : MonoBehaviour
     }
     public void SetEffectable(SingleTileTargetEffect singleTileTargetEffect)
     {
-        effectFilterLocal = Instantiate(effectableFilter, new Vector3(x - 4, y - 3, -1), Quaternion.identity);
+        effectFilterLocal = Instantiate(effectableFilter, new Vector3(X - 4, Y - 3, -1), Quaternion.identity);
         EffectableFilter filter = effectFilterLocal.GetComponent<EffectableFilter>();
         filter.tile = this;
         filter.effect = singleTileTargetEffect;
@@ -145,7 +151,7 @@ public class Tile : MonoBehaviour
         Creature creatureToMove = playerWithCreature.heldCreature;
         creatureToMove.Move(this);
         Board.Instance.SetAllTilesToDefault();
-        ActionBox.instance.show(creature);
+        ActionBox.instance.show(Creature);
         playerWithCreature.heldCreature = null;
     }
     #endregion
@@ -158,7 +164,7 @@ public class Tile : MonoBehaviour
         }
         else if (attackable)
         {
-            GameManager.Instance.doAttackOn(creature);
+            GameManager.Instance.doAttackOn(Creature);
             Board.Instance.SetAllTilesToDefault();
         }
         else

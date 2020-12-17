@@ -26,7 +26,7 @@ public class RingOfEternityEffs : SpellEffects
 
     public override void DoEffect(Tile t)
     {
-        Creature targetCreature = t.creature;
+        Creature targetCreature = t.Creature;
         // add last breath effect
         targetCreature.SourceCard.E_AddedToCardPile += SourceCard_E_AddedToCardPile;
         targetCreature.AddKeyword(Keyword.LastBreath);

@@ -21,7 +21,7 @@ public class ObsidianEffs : SpellEffects
         card.Owner.DrawCard();
         SingleTileTargetEffect.CreateAndQueue(Board.Instance.GetAllTilesWithCreatures(card.Owner.OppositePlayer, false), delegate (Tile t)
         {
-            t.creature.TakeDamage(damageAmount, card);
+            t.Creature.TakeDamage(damageAmount, card);
         });
     }
 }

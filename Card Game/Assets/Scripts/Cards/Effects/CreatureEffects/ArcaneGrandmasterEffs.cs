@@ -11,13 +11,15 @@ public class ArcaneGrandmasterEffs : CreatureEffects
 
     public override EmptyHandler onInitilization => delegate ()
     {
-        GameEvents.E_SpellCast += GameEvents_E_SpellCast;
+        //GameEvents.E_SpellCast += GameEvents_E_SpellCast;
     };
+    /*
     private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastArgs e)
     {
         if (card.CardPile is Hand && e.spell.Owner == card.Owner)
             creature.AttackStat += 1;
     }
+    */
 
     public override EventHandler onDeploy => delegate (object s, EventArgs e)
     {
@@ -37,7 +39,7 @@ public class ArcaneGrandmasterEffs : CreatureEffects
         {
             SingleTileTargetEffect.CreateAndQueue(Board.Instance.GetAllTilesWithCreatures(creature.Controller.OppositePlayer, false), delegate (Tile t)
             {
-                GameManager.Instance.kill(t.creature);
+                GameManager.Instance.kill(t.Creature);
             });
         }
 

@@ -19,6 +19,7 @@ public class HandPositionSetter : MonoBehaviour
     {
         rect = GetComponent<RectTransform>();
         source = GetComponent<Hand>();
+        source.NumCardsChanged.AddListener(SetPositions);
     }
 
     private void Start()
@@ -32,13 +33,9 @@ public class HandPositionSetter : MonoBehaviour
     public void SetPositions()
     {
         if (source.CardList.Count * desiredDistanceBetweenCards > rect.rect.width * 2)
-        {
             SetPositions(source.CardList, rect.rect.width * 2 / source.CardList.Count);
-        }
         else
-        {
             SetPositions(source.CardList, desiredDistanceBetweenCards);
-        }
     }
 
     private void SetPositions(IReadOnlyList<Card> cards, float distanceBetweenCards)
@@ -50,10 +47,8 @@ public class HandPositionSetter : MonoBehaviour
             offset = multiplier * distanceBetweenCards;
             tStruct.position = Vector3.right * offset;
             tStruct.rotation = new Vector3(0, 0, multiplier * -maxRotation);
+            tStruct.useLocalPosition = true;
 
-            //Vector3 tempPosition = cards[i].TransformManager.transform.localPosition;
-            //tempPosition.y = 0;
-            //cards[i].TransformManager.transform.localPosition = tempPosition;
             cards[i].TransformManager.MoveToImmediate(tStruct);
             cards[i].transform.SetSiblingIndex(i);
             cards[i].transform.localPosition = Vector3.zero;

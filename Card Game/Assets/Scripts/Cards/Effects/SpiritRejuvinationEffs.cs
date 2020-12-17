@@ -8,7 +8,7 @@ public class SpiritRejuvinationEffs : SpellEffects
 
     public override void DoEffect(Tile t)
     {
-        t.creature.Bounce(card);
+        t.Creature.Bounce(card);
         Owner.DrawCards(2);
     }
 }

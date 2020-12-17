@@ -10,7 +10,7 @@ public class FireballEffs : SpellEffects
 
     public override void DoEffect(Tile t)
     {
-        t.creature.TakeDamage(damageAmount, card);
+        t.Creature.TakeDamage(damageAmount, card);
     }
 
     public override bool CanBePlayed => Owner.ControlledCreatures.Find(c => c.HasTag(Tag.Arcane));

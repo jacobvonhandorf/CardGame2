@@ -3,7 +3,7 @@ using System.Collections;
 
 public interface IScriptCreatureCard : IScriptCard
 {
-    Creature Creature { get; }
+    IScriptCreature Creature { get; }
     CounterController CounterController { get; }
 
     void ResetToBaseStats();
