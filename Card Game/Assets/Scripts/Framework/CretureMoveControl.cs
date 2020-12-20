@@ -36,8 +36,9 @@ public static class CreatureMoveControl
 
     private static void DestroyFilters()
     {
+        Debug.LogError("Destroying filters " + LoadedFilters.Count);
         foreach (AboveTileFilter f in LoadedFilters)
-            Object.Destroy(f);
+            Object.Destroy(f.gameObject);
         LoadedFilters.Clear();
     }
 

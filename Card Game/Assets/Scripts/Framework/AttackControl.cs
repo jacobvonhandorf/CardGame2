@@ -32,7 +32,7 @@ public class AttackControl
     private static void DestroyFilters()
     {
         foreach (AboveTileFilter f in LoadedFilters)
-            Object.Destroy(f);
+            Object.Destroy(f.gameObject);
         LoadedFilters.Clear();
     }
 }

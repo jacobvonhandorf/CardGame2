@@ -26,7 +26,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca0d4bdb06c171b4984d9d95f197269f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cardVisuals: {fileID: 7830077361384698802}
+  cardVisuals: {fileID: 2595525450834456104}
   statChangePropogator: {fileID: 3550035590364805590}
   positionOnScene: {x: 0, y: 0, z: 0}
   hoverTimeForToolTips: 0.5
@@ -69,7 +69,7 @@ MonoBehaviour:
   pauseBetweenResize: 0
   iconResizeSpeed: 6
   timeForShrinkAnimation: 0.3
---- !u!114 &7830077361384698802
+--- !u!114 &2595525450834456104
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -78,7 +78,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8974139625713654983}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b321daa3df27ef448883ebc63827c7bc, type: 3}
+  m_Script: {fileID: 11500000, guid: a43ee97fd536aae4bbd9c8cae097dc25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   permanentOnlyIcons:
@@ -98,11 +98,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Creature Card
-      objectReference: {fileID: 0}
-    - target: {fileID: 567283679136735073, guid: a0275818814fb654890b69d55214531d,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2954806875117895729, guid: a0275818814fb654890b69d55214531d,
         type: 3}
@@ -258,6 +253,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_textInfo.pageCount
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 567283679136735073, guid: a0275818814fb654890b69d55214531d,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7785825498712630425, guid: a0275818814fb654890b69d55214531d,
         type: 3}

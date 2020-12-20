@@ -43,11 +43,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14680c16cf16efe41ab0ae1b40073228, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  numCardsChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine.CoreModule, Version=0.0.0.0,
-      Culture=neutral, PublicKeyToken=null
   ownedByLocalPlayer: 1
 --- !u!1 &381960519408949808
 GameObject:
@@ -104,10 +99,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isActivePlayer: 1
   canDraw: 1
-  heldCreature: {fileID: 0}
-  numSpellsCastThisTurn: 0
-  numCreaturesThisTurn: 0
-  numStructuresThisTurn: 0
   hand: {fileID: 5408476915186993373}
   deck: {fileID: 1974506062}
   graveyard: {fileID: 7438590591040114444}
@@ -335,7 +326,8 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 8237371826126604760, guid: 36503ff349564ee47962980ce7adee5d, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 36503ff349564ee47962980ce7adee5d, type: 3}
 --- !u!224 &5408476915186993363 stripped
 RectTransform:
