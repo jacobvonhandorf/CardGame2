@@ -49,7 +49,6 @@ public class Hand : CardPile, IPointerEnterHandler, IPointerExitHandler
         {
             if (c.Owner != NetInterface.Get().localPlayer)
             {
-                Debug.Log("Removing from scene");
                 c.removeGraphicsAndCollidersFromScene();
             }
             else

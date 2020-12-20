@@ -13,7 +13,7 @@ public interface IScriptCreature : IScriptPermanent
     bool MoveAvailable { get; set; }
     bool ActionAvailable { get; set; }
     bool CanDeployFrom { get; set; }
-    List<EmptyHandler> ActivatedEffects { get; }
+    List<ActivatedEffect> ActivatedEffects { get; }
 
     void ResetToBaseStats();
     void Bounce(Card source);

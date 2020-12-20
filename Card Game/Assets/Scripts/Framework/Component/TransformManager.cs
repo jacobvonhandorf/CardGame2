@@ -69,7 +69,10 @@ public class TransformManager : MonoBehaviour
     public void SetTransform(TransformStruct tStruct)
     {
         ClearQueue();
-        transform.localPosition = tStruct.position;
+        if (tStruct.useLocalPosition)
+            transform.localPosition = tStruct.position;
+        else
+            transform.position = tStruct.position;
         transform.localScale = tStruct.localScale;
         transform.localRotation = Quaternion.Euler(tStruct.rotation);
 

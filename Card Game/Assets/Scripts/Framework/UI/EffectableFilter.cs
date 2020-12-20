@@ -13,7 +13,7 @@ public class EffectableFilter : MonoBehaviour
     private void OnMouseUpAsButton()
     {
         effect.handler.Invoke(tile);
-        Board.Instance.SetAllTilesToDefault();
+        //Board.Instance.SetAllTilesToDefault();
         effect.finished = true;
         Destroy(gameObject);
     }

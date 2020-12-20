@@ -24,8 +24,9 @@ public class SingleTileTargetEffect : IQueueableCommand
             finished = true;
             return;
         }
-        foreach (Tile t in validTargets)
-            t.SetEffectable(this);
+        // Single tile target effect Setup here
+        //foreach (Tile t in validTargets)
+            //t.SetEffectable(this);
     }
 
     #region UtilityBuilders

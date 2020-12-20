@@ -1,11 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ActionBox : MonoBehaviour
 {
     public static ActionBox instance;
-    private Creature creature;
+
+    [SerializeField] private Vector2 positionOffset;
+    [SerializeField] private GameObject effectsButton;
+    [SerializeField] private GameObject attackButton;
+    private Permanent source;
 
     public void Awake()
     {
@@ -13,43 +18,49 @@ public class ActionBox : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    public void show(float x, float y, Creature creature)
+    public void Show(Permanent source)
     {
-        this.creature = creature;
-        Vector3 position = gameObject.transform.position;
-        position.x = x;
-        position.y = y;
-        gameObject.transform.position = position;
+        this.source = source;
+        SetPosition(source);
+        effectsButton.SetActive(source.ActivatedEffects.Count > 0);
+        attackButton.SetActive(source is Creature);
         gameObject.SetActive(true);
     }
-    public void show(Creature c)
+    private void SetPosition(Permanent source)
     {
-        show(c.Tile.X - 2.4f, c.Tile.Y - 2, c);
+        Vector2 newPos = source.SourceCard.TransformManager.transform.position;
+        newPos += positionOffset;
+        transform.position = newPos;
     }
 
+    #region Button Functions
     public void Attack()
     {
-        if (!creature.ActionAvailable)
+        if (!(source as Creature).ActionAvailable)
         {
             Toaster.Instance.DoToast("You have already acted with this creature");
             return;
         }
-        GameManager.Instance.setUpCreatureAttack(creature);
+        AttackControl.Setup(source as Creature);
         gameObject.SetActive(false);
     }
     public void Effect()
     {
-        if (creature.ActionAvailable)
-            GameManager.Instance.setUpCreatureEffect(creature);
+        if (source.ActivatedEffects.Count == 1)
+            source.ActivatedEffects[0].Effect.Invoke();
         else
-            Toaster.Instance.DoToast("This creature's action is unavailable");
-        creature.Controller.heldCreature = null;
+        {
+            List<string> options = source.ActivatedEffects.Select(eff => eff.Name).ToList();
+            OptionSelectBox.CreateAndQueue(options, "Select which effect to activate", NetInterface.Get().localPlayer, delegate (int index, string option) 
+            {
+                source.ActivatedEffects[index].Effect.Invoke();
+            });
+        }
         gameObject.SetActive(false);
     }
     public void Cancel()
     {
-        GameManager.Instance.ActivePlayer.heldCreature = null;
-        Board.Instance.SetAllTilesToDefault();
         gameObject.SetActive(false);
     }
+    #endregion
 }

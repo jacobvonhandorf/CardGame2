@@ -131,7 +131,6 @@ public class NetInterface
     }
     public void RecieveCreatureCoordinates(int creatureCardId, int x, int y, object source)
     {
-        Debug.LogError("Receiving creature coordinates");
         Creature c = (cardMap.Get(creatureCardId) as CreatureCard).Creature;
 
         c.SyncMove(Board.Instance.GetTileByCoordinate(x, y));
@@ -177,7 +176,6 @@ public class NetInterface
     }
     public void RecievePlayerStats(bool isPlayer1, int gold, int goldPTurn, int mana, int manaPTurn, int actions, int actionsPTurn)
     {
-        Debug.Log("Recieving player stats");
         if (LocalPlayerIsP1 == isPlayer1)
         {
             localPlayer.SyncStats(gold, goldPTurn, mana, manaPTurn, actions, actionsPTurn);
