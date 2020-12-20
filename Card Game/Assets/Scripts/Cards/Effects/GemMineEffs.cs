@@ -9,39 +9,39 @@ public class GemMineEffs : StructureEffects
 
     public override EventHandler onDeploy => delegate (object s, EventArgs e)
     {
-        structure.Counters.add(CounterType.Mine, 3);
+        Structure.Counters.Add(CounterType.Mine, 3);
     };
-
+    /*
     public override EmptyHandler activatedEffect => delegate ()
     {
-        if (structure.Counters.amountOf(CounterType.Mine) == 0)
+        if (Structure.Counters.AmountOf(CounterType.Mine) == 0)
         {
-            GameManager.Get().showToast("You must have a mine counter on Gem Mine to activate its effect");
+            Toaster.Instance.DoToast("You must have a mine counter on Gem Mine to activate its effect");
             return;
         }
-        if (structure.Controller.GetActions() <= 0)
+        if (Structure.Controller.Actions <= 0)
         {
-            GameManager.Get().showToast("You do not have enough actions to use this effect");
+            Toaster.Instance.DoToast("You do not have enough actions to use this effect");
             return;
         }
         if (effectUsedThisTurn)
         {
-            GameManager.Get().showToast("You can only activate " + card.cardName + " once per turn.");
+            Toaster.Instance.DoToast("You can only activate " + Card.CardName + " once per turn.");
             return;
         }
 
-        List<Card> gemCards = structure.Controller.deck.getAllCardsWithTag(Card.Tag.Gem);
+        List<Card> gemCards = Structure.Controller.Deck.GetAllCardsWithTag(Tag.Gem);
         if (gemCards.Count > 0)
         {
-            gemCards[UnityEngine.Random.Range(0, gemCards.Count)].moveToCardPile(structure.Controller.hand, card);
+            gemCards[UnityEngine.Random.Range(0, gemCards.Count)].MoveToCardPile(Structure.Controller.Hand, Card);
             effectUsedThisTurn = true;
-            structure.Counters.remove(CounterType.Mine, 1);
-            structure.Controller.subtractActions(1);
-            GameEvents.E_TurnEnd += GameEvents_E_TurnEnd;
+            Structure.Counters.Remove(CounterType.Mine, 1);
+            Structure.Controller.Actions -= 1;
+            //GameEvents.E_TurnEnd += GameEvents_E_TurnEnd;
         }
         else
         {
-            GameManager.Get().showToast("No gems left in deck");
+            Toaster.Instance.DoToast("No gems left in deck");
             return;
         }
     };
@@ -49,6 +49,7 @@ public class GemMineEffs : StructureEffects
     private void GameEvents_E_TurnEnd(object sender, EventArgs e)
     {
         effectUsedThisTurn = false;
-        GameEvents.E_TurnEnd -= GameEvents_E_TurnEnd;
+        //GameEvents.E_TurnEnd -= GameEvents_E_TurnEnd;
     }
+    */
 }

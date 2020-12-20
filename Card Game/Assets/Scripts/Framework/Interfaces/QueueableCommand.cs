@@ -2,31 +2,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class QueueableCommand
+public interface IQueueableCommand
 {
-    public abstract void execute();
-    public abstract bool isFinished { get; }
+    void Execute();
+    bool IsFinished { get; }
 }
 
-public class CompoundQueueableCommand : QueueableCommand
+public class CompoundQueueableCommand : IQueueableCommand
 {
-    private Queue<QueueableCommand> commandList;
-    private QueueableCommand currentCommand;
+    private Queue<IQueueableCommand> commandList;
+    private IQueueableCommand currentCommand;
 
-    public override bool isFinished => checkFinished();
+    public bool IsFinished => CheckFinished();
 
-    public CompoundQueueableCommand(Queue<QueueableCommand> commandList)
+    public CompoundQueueableCommand(Queue<IQueueableCommand> commandList)
     {
         this.commandList = commandList;
     }
 
-    private bool checkFinished()
+    private bool CheckFinished()
     {
-        if (currentCommand.isFinished)
+        if (currentCommand.IsFinished)
         {
             if (commandList.Count > 0)
             {
-                moveToNextCommand();
+                MoveToNextCommand();
                 return false;
             }
             else
@@ -38,35 +38,50 @@ public class CompoundQueueableCommand : QueueableCommand
         }
     }
 
-    private void moveToNextCommand()
+    private void MoveToNextCommand()
     {
         currentCommand = commandList.Dequeue();
-        currentCommand.execute();
+        currentCommand.Execute();
     }
 
-    public override void execute()
-    {
-        moveToNextCommand();
-    }
+    public void Execute() => MoveToNextCommand();
 
     #region Builder
     public class Builder
     {
-        private Queue<QueueableCommand> commands = new Queue<QueueableCommand>();
-        public Builder addCommand(QueueableCommand c)
+        private Queue<IQueueableCommand> commands = new Queue<IQueueableCommand>();
+        public Builder AddCommand(IQueueableCommand c)
         {
             commands.Enqueue(c);
             return this;
         }
 
-        public CompoundQueueableCommand Build()
-        {
-            return new CompoundQueueableCommand(commands);
-        }
-        public void BuildAndQueue()
-        {
-            InformativeAnimationsQueue.Instance.addAnimation(new CompoundQueueableCommand(commands));
-        }
+        public CompoundQueueableCommand Build() => new CompoundQueueableCommand(commands);
+        public void BuildAndQueue() => InformativeAnimationsQueue.Instance.AddAnimation(new CompoundQueueableCommand(commands));
     }
     #endregion
+}
+
+public class CoroutineCommand : IQueueableCommand
+{
+    public bool IsFinished { get; set; }
+    private IEnumerator crt;
+    private MonoBehaviour source;
+
+    public CoroutineCommand(IEnumerator crt, MonoBehaviour source)
+    {
+        this.crt = crt;
+        this.source = source;
+    }
+
+    public void Execute()
+    {
+        source.StartCoroutine(CrtRunner());
+    }
+
+    IEnumerator CrtRunner()
+    {
+        yield return source.StartCoroutine(crt);
+        IsFinished = true;
+    }
 }

@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class InspirationEffs : SpellEffects
 {
-    public override List<Tile> validTiles => Board.instance.allTiles;
+    public override List<Tile> ValidTiles => Board.Instance.AllTiles;
 
-    public override void doEffect(Tile t)
+    public override void DoEffect(Tile t)
     {
-        card.owner.drawCards(2);
+        card.Owner.DrawCards(2);
     }
 }

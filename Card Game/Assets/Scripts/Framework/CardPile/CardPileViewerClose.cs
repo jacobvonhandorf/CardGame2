@@ -9,6 +9,6 @@ public class CardPileViewerClose : MonoBehaviour
 
     private void OnMouseDown()
     {
-        cardPileViwer.close();
+        cardPileViwer.Close();
     }
 }

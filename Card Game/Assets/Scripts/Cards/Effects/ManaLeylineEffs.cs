@@ -7,16 +7,18 @@ public class ManaLeylineEffs : StructureEffects
 {
     public override EventHandler onDeploy => delegate (object s, EventArgs e)
     {
-        controller.increaseManaPerTurn(2);
+        Controller.ManaPerTurn += 2;
     };
     public override EventHandler onLeavesField => delegate (object s, EventArgs e)
     {
-        controller.increaseManaPerTurn(-2);
+        Controller.ManaPerTurn -= 2;
     };
 
+    /*
     public override EmptyHandler activatedEffect => delegate ()
     {
-        controller.addActions(-1);
-        controller.addMana(1);
+        Controller.Actions -= 1;
+        Controller.Mana += 1;
     };
+    */
 }

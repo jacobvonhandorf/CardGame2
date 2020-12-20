@@ -7,10 +7,10 @@ public class AltarEffs : StructureEffects
 {
     public override EventHandler onDeploy => delegate (object s, EventArgs e)
     {
-        structure.Controller.increaseManaPerTurn(1);
+        Structure.Controller.ManaPerTurn += 1;
     };
     public override EventHandler onLeavesField => delegate (object s, EventArgs e)
     {
-        structure.Controller.increaseManaPerTurn(-1);
+        Structure.Controller.ManaPerTurn -= 1;
     };
 }

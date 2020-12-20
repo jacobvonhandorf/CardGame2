@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class RecklessDrawEffs : SpellEffects
 {
-    public override List<Tile> validTiles => Board.instance.allTiles;
+    public override List<Tile> ValidTiles => Board.Instance.AllTiles;
 
-    public override void doEffect(Tile t)
+    public override void DoEffect(Tile t)
     {
-        CardPicker.CreateAndQueue(card.owner.hand.getCardList(), 1, 1, "Select a card to discard", card.owner, delegate (List<Card> cards)
+        CardPicker.CreateAndQueue(card.Owner.Hand.CardList, 1, 1, "Select a card to discard", card.Owner, delegate (List<Card> cards)
         {
-            cards[0].moveToCardPile(card.owner.graveyard, card);
-            card.owner.drawCards(2);
+            cards[0].MoveToCardPile(card.Owner.Graveyard, card);
+            card.Owner.DrawCards(2);
         });
     }
 }

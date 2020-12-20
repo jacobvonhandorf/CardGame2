@@ -13,21 +13,17 @@ public class Toaster : MonoBehaviour
     private float textStartingAlpha;
     private bool isToasting = false;
 
-    public static Toaster instance;
-    public static Toaster Get()
-    {
-        return instance;
-    }
+    public static Toaster Instance { get; private set; }
 
     private void Start()
     {
-        instance = this;
+        Instance = this;
         gameObject.SetActive(false);
         backgroundStartingAlpha = background.color.a;
         textStartingAlpha = textMesh.color.a;
     }
 
-    public void doToast(string message)
+    public void DoToast(string message)
     {
         Color tmp = background.color;
         tmp.a = 0f;
@@ -39,10 +35,10 @@ public class Toaster : MonoBehaviour
         gameObject.SetActive(true);
         textMesh.text = message;
 
-        StartCoroutine(toastCoroutine());
+        StartCoroutine(ToastCoroutine());
     }
 
-    IEnumerator toastCoroutine()
+    IEnumerator ToastCoroutine()
     {
         while (isToasting)
         {

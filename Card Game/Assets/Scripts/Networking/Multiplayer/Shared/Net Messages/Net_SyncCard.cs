@@ -13,5 +13,5 @@ public class Net_SyncCard : NetMsg
     public int baseManaCost { get; set; }
     public int manaCost { get; set; }
     public bool ownerIsP1 { get; set; }
-    public Card.ElementIdentity elementalIdentity { get; set; }
+    public ElementIdentity elementalIdentity { get; set; }
 }

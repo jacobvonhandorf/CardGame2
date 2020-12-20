@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class SpellGraspEffs : SpellEffects
 {
-    public override List<Tile> validTiles => Board.instance.allTiles;
+    public override List<Tile> ValidTiles => Board.Instance.AllTiles;
 
-    public override void doEffect(Tile t)
+    public override void DoEffect(Tile t)
     {
-        CardPicker.CreateAndQueue(card.owner.deck.getAllCardsWithTag(Card.Tag.Arcane), 1, 1, "Select a card to add to your hand", card.owner, delegate (List<Card> cards)
+        CardPicker.CreateAndQueue(card.Owner.Deck.GetAllCardsWithTag(Tag.Arcane), 1, 1, "Select a card to add to your hand", card.Owner, delegate (List<Card> cards)
         {
-            cards[0].moveToCardPile(card.owner.hand, card);
-            if (card.owner.getAllControlledCreatures().Find(c => c.hasTag(Card.Tag.Arcane)))
-                card.owner.addMana(1);
+            cards[0].MoveToCardPile(card.Owner.Hand, card);
+            if (card.Owner.ControlledCreatures.Find(c => c.HasTag(Tag.Arcane)))
+                card.Owner.Mana += 1;
         });
     }
 }

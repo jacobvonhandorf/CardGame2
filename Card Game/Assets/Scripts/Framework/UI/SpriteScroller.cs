@@ -95,8 +95,6 @@ public class SpriteScroller : MonoBehaviour
     {
         if (min > max)
             max = min;
-        Debug.Log("set min " + min);
-        Debug.Log("set max " + max);
         maxY = max;
         minY = min;
     }

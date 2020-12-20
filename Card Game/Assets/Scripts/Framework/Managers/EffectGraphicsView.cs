@@ -28,11 +28,11 @@ public class EffectGraphicsView : MonoBehaviour
     }
     #endregion
 
-    public void addToQueue(EffectGraphic newGraphic)
+    public void AddToQueue(EffectGraphic newGraphic)
     {
-        InformativeAnimationsQueue.Instance.addAnimation(new AnimationCommand(newGraphic, this));
+        InformativeAnimationsQueue.Instance.AddAnimation(new AnimationCommand(newGraphic, this));
     }
-    private class AnimationCommand : QueueableCommand
+    private class AnimationCommand : IQueueableCommand
     {
         private EffectGraphic graphic;
         private EffectGraphicsView view;
@@ -42,10 +42,10 @@ public class EffectGraphicsView : MonoBehaviour
             this.view = view;
         }
 
-        public override bool isFinished => finished;
+        public bool IsFinished => finished;
         public bool finished = false;
 
-        public override void execute()
+        public void Execute()
         {
             Debug.Log("Showing effect graphic");
             view.StartCoroutine(view.showGraphicCoroutine(graphic, this));
@@ -92,7 +92,7 @@ public class EffectGraphicsView : MonoBehaviour
     }
     private void showCardEffectGraphic(CardEffectGraphic cardEffectGraphic)
     {
-        cardEffectGraphic.card.addToCardViewer(cardViewer);
+        //cardEffectGraphic.card.RegisterToCardViewer(cardViewer);
         cvGameObject.SetActive(true);
     }
     #endregion

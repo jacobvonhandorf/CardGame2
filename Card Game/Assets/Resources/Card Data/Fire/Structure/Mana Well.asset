@@ -20,7 +20,7 @@ MonoBehaviour:
 
 
     Remove 3 well counters: gain 1 mana.'
-  manaCost: 0
+  manaCost: -1
   goldCost: 1
   elementalIdentity: 0
   tags: 

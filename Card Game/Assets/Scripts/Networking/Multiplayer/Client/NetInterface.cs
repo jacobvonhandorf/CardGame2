@@ -7,15 +7,15 @@ public class NetInterface
 {
     private static NetInterface instance;
 
-    private Player localPlayer;
-    private bool isPlayer1;
+    public Player localPlayer;
     private int lastUsedNetId = 0; // for assigning netIds to cards
     public bool gameSetupComplete = false;
-    private BiDirectioncalCardMap cardMap = new BiDirectioncalCardMap();
+    private BidirectionalMap<Card, int> cardMap = new BidirectionalMap<Card, int>();
     private BidirectionalMap<CardPile, byte> pileIdMap = new BidirectionalMap<CardPile, byte>();
     public string selectedDeckName; // gets set before game start and is used during game setup. Might move to a game setup object
     public bool opponentFinishedSendingCards = false;
     public bool finishedWithSetup = false;
+    public bool LocalPlayerIsP1 { get; set; }
 
     public static NetInterface Get()
     {
@@ -23,123 +23,102 @@ public class NetInterface
             instance = new NetInterface();
         return instance;
     }
-    public static void Reset() // call when a game is complete to reset it for the next game
-    {
-        instance = null;
-    }
 
-    public void setIsPlayer1(bool isPlayer1)
-    {
-        this.isPlayer1 = isPlayer1;
-    }
+    // call when a game is complete to reset it for the next game
+    public static void Reset() => instance = null;
 
-    public bool localPlayerIsP1()
-    {
-        return isPlayer1;
-    }
-
-    public Player getLocalPlayer()
-    {
-        return localPlayer;
-    }
-    public void setLocalPlayer(Player p)
-    {
-        localPlayer = p;
-    }
-
-    public void syncStartingDeck() // might neeed to move to a game setup object
+    public void SyncStartingDeck() // might neeed to move to a game setup object
     {
         List<Card> deck = DeckUtilities.getCardListFromFileName(selectedDeckName + ".dek");
         foreach (Card c in deck)
         {
-            c.owner = localPlayer;
-            c.initialize();
-            syncNewCardToOpponent(c);
+            c.Owner = localPlayer;
+            c.Initialize();
+            SyncNewCardToOpponent(c);
         }
-        relayMessage(new Net_DoneSendingCards());
+        RelayMessage(new Net_DoneSendingCards());
         foreach (Card c in deck)
-            c.moveToCardPile(pileIdMap.get(isPlayer1 ? PileId.p1Deck : PileId.p2Deck), null);
-        (pileIdMap.get(isPlayer1 ? PileId.p1Deck : PileId.p2Deck) as Deck).shuffle();
+            c.MoveToCardPile(pileIdMap.Get(LocalPlayerIsP1 ? PileId.p1Deck : PileId.p2Deck), null);
+        (pileIdMap.Get(LocalPlayerIsP1 ? PileId.p1Deck : PileId.p2Deck) as Deck).Shuffle();
     }
 
-    public void recieveGameSetupComplete()
+    public void RecieveGameSetupComplete()
     {
         gameSetupComplete = true;
     }
 
     #region Syncing
-    public void importNewCardFromOpponent(Net_InstantiateCard msg)
+    public void ImportNewCardFromOpponent(Net_InstantiateCard msg)
     {
         SerializeableCard sc = msg.card;
-        Card newCard = ResourceManager.Get().instantiateCardById(sc.cardId);
-        newCard.owner = msg.ownerIsP1 ? getPlayer1() : getPlayer2();
-        cardMap.add(newCard, sc.netId);
+        Card newCard = ResourceManager.Get().InstantiateCardById(sc.cardId);
+        newCard.Owner = msg.ownerIsP1 ? GetPlayer1() : GetPlayer2();
+        cardMap.Add(newCard, sc.netId);
         newCard.removeGraphicsAndCollidersFromScene(); // remove from scene by default. Can be moved later by opponent
     }
-    public void syncNewCardToOpponent(Card c)
+    public void SyncNewCardToOpponent(Card c)
     {
-        if (isPlayer1)
+        if (LocalPlayerIsP1)
             lastUsedNetId++;
         else
             lastUsedNetId--;
-        cardMap.add(c, lastUsedNetId);
+        cardMap.Add(c, lastUsedNetId);
         SerializeableCard sc = new SerializeableCard();
         sc.netId = lastUsedNetId;
-        sc.cardId = c.cardId;
+        sc.cardId = c.CardId;
         Net_InstantiateCard msg = new Net_InstantiateCard();
         msg.card = sc;
-        msg.ownerIsP1 = c.owner == getPlayer1();
-        relayMessage(msg);
+        msg.ownerIsP1 = c.Owner == GetPlayer1();
+        RelayMessage(msg);
     }
-    public void syncMoveCardToPile(Card c, CardPile cp, object source)
+    public void SyncMoveCardToPile(Card c, CardPile cp, object source)
     {
-        int cardId = cardMap.get(c).netId;
-        byte cpId = pileIdMap.get(cp);
+        int cardId = cardMap.Get(c);
+        byte cpId = pileIdMap.Get(cp);
         Net_MoveCardToPile msg = new Net_MoveCardToPile();
         msg.cardId = cardId;
         msg.cpId = cpId;
         if (source is Card)
-            msg.sourceId = cardMap.get((Card)source).netId;
+            msg.sourceId = cardMap.Get((Card)source);
         else
             msg.sourceId = 0; // 0 is sentinal value for game mechanics/GameManager
-        relayMessage(msg);
+        RelayMessage(msg);
     }
-    public void recieveMoveCardToPile(int cardId, byte cardPileId, int sourceId)
+    public void RecieveMoveCardToPile(int cardId, byte cardPileId, int sourceId)
     {
-        Card c = cardMap.get(cardId).cardObject;
-        CardPile cp = pileIdMap.get(cardPileId);
+        Card c = cardMap.Get(cardId);
+        CardPile cp = pileIdMap.Get(cardPileId);
         Card sourceCard = null;
         if (sourceId != 0)
-            sourceCard = cardMap.get(sourceId).cardObject;
-        c.syncCardMovement(cp, sourceCard);
+            sourceCard = cardMap.Get(sourceId);
+        c.SyncCardMovement(cp, sourceCard);
     }
-    public void syncDeckOrder(CardPile deck)
+    public void SyncDeckOrder(CardPile deck)
     {
-        byte deckCpId = pileIdMap.get(deck);
-        List<Card> cardList = deck.getCardList();
-        int[] cardIds = new int[cardList.Count];
-        for (int i = 0; i < cardList.Count; i++)
+        byte deckCpId = pileIdMap.Get(deck);
+        int[] cardIds = new int[deck.CardList.Count];
+        for (int i = 0; i < deck.CardList.Count; i++)
         {
-            cardIds[i] = cardMap.get(cardList[i]).netId;
+            cardIds[i] = cardMap.Get(deck.CardList[i]);
         }
 
         Net_SyncDeckOrder msg = new Net_SyncDeckOrder();
         msg.cardIds = cardIds;
         msg.deckCpId = deckCpId;
     }
-    public void recieveDeckOrder(int[] cardIds, byte deckCpId)
+    public void RecieveDeckOrder(int[] cardIds, byte deckCpId)
     {
-        CardPile deck = pileIdMap.get(deckCpId);
+        CardPile deck = pileIdMap.Get(deckCpId);
         List<Card> newCardList = new List<Card>();
         foreach (int cardId in cardIds)
         {
-            newCardList.Add(cardMap.get(cardId).cardObject);
+            newCardList.Add(cardMap.Get(cardId));
         }
-        deck.syncOrderFromNetwork(newCardList);
+        deck.SyncOrderFromNetwork(newCardList);
     }
-    public void syncCreatureCoordinates(Creature c, int x, int y, Card source)
+    public void SyncCreatureCoordinates(Creature c, int x, int y, Card source)
     {
-        int creatureCardId = cardMap.get(c.SourceCard).netId;
+        int creatureCardId = cardMap.Get(c.SourceCard);
         Net_SyncCreatureCoordinates msg = new Net_SyncCreatureCoordinates();
         msg.creatureCardId = creatureCardId;
         msg.x = (byte)x;
@@ -147,79 +126,75 @@ public class NetInterface
         if (source == null)
             msg.sourceCardId = 0;
         else
-            msg.sourceCardId = cardMap.get(source).netId;
-        relayMessage(msg);
+            msg.sourceCardId = cardMap.Get(source);
+        RelayMessage(msg);
     }
-    public void recieveCreatureCoordinates(int creatureCardId, int x, int y, object source)
+    public void RecieveCreatureCoordinates(int creatureCardId, int x, int y, object source)
     {
-        Creature c = (cardMap.get(creatureCardId).cardObject as CreatureCard).creature;
+        Creature c = (cardMap.Get(creatureCardId) as CreatureCard).Creature;
 
-        if (source is Card)
-            c.forceMove(x, y, source as Card);
-        else
-            c.move(x, y);
+        c.SyncMove(Board.Instance.GetTileByCoordinate(x, y));
     }
-    public void syncAttack(Creature attacker, Damageable defender, int damageRoll)
+    public void SyncAttack(Creature attacker, Damageable defender, int damageRoll)
     {
-        int attackerId = cardMap.get(attacker.SourceCard).netId;
-        int defenderId = cardMap.get(defender.SourceCard).netId;
+        int attackerId = cardMap.Get(attacker.SourceCard);
+        int defenderId = cardMap.Get(defender.SourceCard);
 
         Net_SyncAttack msg = new Net_SyncAttack();
         msg.attackerId = attackerId;
         msg.defenderId = defenderId;
         msg.damageRoll = damageRoll;
-        relayMessage(msg);
+        RelayMessage(msg);
     }
-    public void receiveAttack(int attackerId, int defenderId, int damageRoll)
+    public void ReceiveAttack(int attackerId, int defenderId, int damageRoll)
     {
-        Creature attacker = (cardMap.get(attackerId).cardObject as CreatureCard).creature;
+        Creature attacker = (cardMap.Get(attackerId) as CreatureCard).Creature;
         Damageable defender;
-        Card card = cardMap.get(defenderId).cardObject;
+        Card card = cardMap.Get(defenderId);
         if (card is CreatureCard)
-            defender = (card as CreatureCard).creature;
+            defender = (card as CreatureCard).Creature;
         else if (card is StructureCard)
-            defender = (card as StructureCard).structure;
+            defender = (card as StructureCard).Structure;
         else
             throw new Exception("Invalid defender for attack " + card.transform);
         attacker.Attack(defender, damageRoll);
     }
-    public void syncPlayerStats(Player p)
+    public void SyncPlayerStats(Player p)
     {
         Net_SyncPlayerResources msg = new Net_SyncPlayerResources();
-        msg.gold = p.getGold();
-        msg.mana = p.getMana();
-        msg.actions = p.GetActions();
-        msg.goldPTurn = p.getGoldPerTurn();
-        msg.manaPTurn = p.getManaPerTurn();
-        msg.actionsPTurn = p.getActionsPerTurn();
-        if (isPlayer1)
+        msg.gold = p.Gold;
+        msg.mana = p.Mana;
+        msg.actions = p.Actions;
+        msg.goldPTurn = p.GoldPerTurn;
+        msg.manaPTurn = p.ManaPerTurn;
+        msg.actionsPTurn = p.ActionsPerTurn;
+        if (LocalPlayerIsP1)
             msg.isPlayerOne = p == localPlayer;
         else
             msg.isPlayerOne = p != localPlayer;
-        relayMessage(msg);
+        RelayMessage(msg);
     }
-    public void recievePlayerStats(bool isPlayer1, int gold, int goldPTurn, int mana, int manaPTurn, int actions, int actionsPTurn)
+    public void RecievePlayerStats(bool isPlayer1, int gold, int goldPTurn, int mana, int manaPTurn, int actions, int actionsPTurn)
     {
-        Debug.Log("Recieving player stats");
-        if (this.isPlayer1 == isPlayer1)
+        if (LocalPlayerIsP1 == isPlayer1)
         {
-            localPlayer.syncStats(gold, goldPTurn, mana, manaPTurn, actions, actionsPTurn);
+            localPlayer.SyncStats(gold, goldPTurn, mana, manaPTurn, actions, actionsPTurn);
         }
         else
         {
-            Player opposingPlayer = GameManager.Get().getOppositePlayer(localPlayer);
-            opposingPlayer.syncStats(gold, goldPTurn, mana, manaPTurn, actions, actionsPTurn);
+            Player opposingPlayer = GameManager.Instance.GetOppositePlayer(localPlayer);
+            opposingPlayer.SyncStats(gold, goldPTurn, mana, manaPTurn, actions, actionsPTurn);
         }
     }
-    public void syncEndTurn()
+    public void SyncEndTurn()
     {
-        relayMessage(new Net_EndTurn());
+        RelayMessage(new Net_EndTurn());
     }
-    public void recieveEndTurn()
+    public void RecieveEndTurn()
     {
-        GameManager.Get().startTurnForOnline();
+        GameManager.Instance.startTurnForOnline();
     }
-    public void syncCardStats(Card c)
+    public void SyncCardStats(Card c)
     {
         Net_SyncCard msg = new Net_SyncCard();
         msg.baseGoldCost = c.BaseGoldCost;
@@ -227,22 +202,22 @@ public class NetInterface
         msg.goldCost = c.GoldCost;
         msg.manaCost = c.ManaCost;
         msg.elementalIdentity = c.ElementalId;
-        msg.sourceCardId = cardMap.get(c).netId;
-        msg.ownerIsP1 = playerIsP1(c.owner);
-        relayMessage(msg);
+        msg.sourceCardId = cardMap.Get(c);
+        msg.ownerIsP1 = PlayerIsP1(c.Owner);
+        RelayMessage(msg);
     }
-    public void recieveCardStats(Net_SyncCard msg)
+    public void RecieveCardStats(Net_SyncCard msg)
     {
         Debug.Log("Recieving creature stats");
-        Card c = cardMap.get(msg.sourceCardId).cardObject;
+        Card c = cardMap.Get(msg.sourceCardId);
         c.BaseGoldCost = msg.baseGoldCost;
         c.BaseManaCost = msg.baseManaCost;
         c.GoldCost = msg.goldCost;
         c.ManaCost = msg.manaCost;
-        c.setElementIdentity(msg.elementalIdentity);
-        c.owner = msg.ownerIsP1 ? getPlayer1() : getPlayer2();
+        c.ElementalId = msg.elementalIdentity;
+        c.Owner = msg.ownerIsP1 ? GetPlayer1() : GetPlayer2();
     }
-    public void syncCreatureStats(Creature c)
+    public void SyncCreatureStats(Creature c)
     {
         Net_SyncCreature msg = new Net_SyncCreature();
         msg.attack = c.AttackStat;
@@ -250,89 +225,90 @@ public class NetInterface
         msg.baseHealth = c.BaseHealth;
         msg.baseMovement = c.BaseMovement;
         msg.baseRange = c.BaseRange;
-        msg.controllerIsP1 = playerIsP1(c.Controller);
+        msg.controllerIsP1 = PlayerIsP1(c.Controller);
         msg.health = c.Health;
         msg.movement = c.Movement;
         msg.range = c.Range;
-        msg.sourceCardId = cardMap.get(c.SourceCard).netId;
-        relayMessage(msg);
+        msg.sourceCardId = cardMap.Get(c.SourceCard);
+        RelayMessage(msg);
     }
-    public void recieveCreatureStats(Net_SyncCreature msg)
+    public void RecieveCreatureStats(Net_SyncCreature msg)
     {
-        Creature c = (cardMap.get(msg.sourceCardId).cardObject as CreatureCard).creature;
-        Player controller = msg.controllerIsP1 ? getPlayer1() : getPlayer2();
-        c.recieveCreatureStatsFromNet(msg.attack, msg.baseAttack, msg.health, msg.baseHealth, msg.baseMovement, msg.baseRange, controller, msg.movement, msg.range);
+        Creature c = (cardMap.Get(msg.sourceCardId) as CreatureCard).Creature;
+        Player controller = msg.controllerIsP1 ? GetPlayer1() : GetPlayer2();
+        c.RecieveCreatureStatsFromNet(msg.attack, msg.baseAttack, msg.health, msg.baseHealth, msg.baseMovement, msg.baseRange, controller, msg.movement, msg.range);
     }
-    public void syncStructureStats(Structure s)
+    public void SyncStructureStats(Structure s)
     {
         Net_SyncStructure msg = new Net_SyncStructure();
         msg.baseHealth = s.BaseHealth;
-        msg.controllerIsP1 = playerIsP1(s.Controller);
+        msg.controllerIsP1 = PlayerIsP1(s.Controller);
         msg.health = s.Health;
-        msg.sourceCardId = cardMap.get(s.SourceCard).netId;
-        relayMessage(msg);
+        msg.sourceCardId = cardMap.Get(s.SourceCard);
+        RelayMessage(msg);
     }
-    public void recieveStructureStats(Net_SyncStructure msg)
+    public void RecieveStructureStats(Net_SyncStructure msg)
     {
-        Structure s = (cardMap.get(msg.sourceCardId).cardObject as StructureCard).structure;
-        s.recieveStatsFromNet(msg.health, msg.baseHealth, msg.controllerIsP1 ? getPlayer1() : getPlayer2());
+        Structure s = (cardMap.Get(msg.sourceCardId) as StructureCard).Structure;
+        s.RecieveStatsFromNet(msg.health, msg.baseHealth, msg.controllerIsP1 ? GetPlayer1() : GetPlayer2());
     }
     // card can be creature or structure
-    public void syncPermanentPlaced(Card c, Tile t)
+    public void SyncPermanentPlaced(Card c, Tile t)
     {
         Net_SyncPermanentPlaced msg = new Net_SyncPermanentPlaced();
-        msg.sourceCardId = cardMap.get(c).netId;
-        msg.x = t.x;
-        msg.y = t.y;
-        relayMessage(msg);
+        msg.sourceCardId = cardMap.Get(c);
+        msg.x = t.X;
+        msg.y = t.Y;
+        RelayMessage(msg);
     }
-    public void recievePermanentPlaced(Net_SyncPermanentPlaced msg)
+    public void RecievePermanentPlaced(Net_SyncPermanentPlaced msg)
     {
-        Card card = cardMap.get(msg.sourceCardId).cardObject as Card;
-        card.setSpritesToSortingLayer(SpriteLayers.Creature); // move sprite layer down
-        Tile targetTile =  GameManager.Get().board.getTileByCoordinate(msg.x, msg.y);
-        if (card is CreatureCard)
-            GameManager.Get().syncCreateCreatureOnTile(card as CreatureCard, targetTile, card.owner);
+        Card card = cardMap.Get(msg.sourceCardId) as Card;
+        Tile targetTile =  GameManager.Instance.board.GetTileByCoordinate(msg.x, msg.y);
+        if (card is CreatureCard c)
+            c.Creature.SynCreatureOnTile(targetTile);
+        else if (card is StructureCard sc)
+            sc.Structure.SyncCreateOnTile(targetTile);
         else
-            GameManager.Get().syncStructureOnTile(card as StructureCard, targetTile, card.owner);
+            Debug.LogError("Unexpected Card type");
     }
-    public void syncCounterPlaced(Card sourceCard, CounterType counterType, int amount)
+    public void SyncCounterPlaced(Card sourceCard, CounterType counterType, int amount)
     {
         Net_SyncCountersPlaced msg = new Net_SyncCountersPlaced();
         msg.amount = amount;
         msg.counterId = (int)counterType;
-        msg.targetCardId = cardMap.get(sourceCard).netId;
-        relayMessage(msg);
+        msg.targetCardId = cardMap.Get(sourceCard);
+        RelayMessage(msg);
     }
-    public void recieveCounterPlaced(int amount, int counterId, int targetCardId)
+    public void RecieveCounterPlaced(int amount, int counterId, int targetCardId)
     {
-        Card card = cardMap.get(targetCardId).cardObject;
+        Card card = cardMap.Get(targetCardId);
         CounterType counterType = (CounterType)counterId;
         if (card is StructureCard)
-            (card as StructureCard).structure.recieveCountersPlaced(counterType, amount);
+            (card as StructureCard).Structure.RecieveCountersPlaced(counterType, amount);
         else if (card is CreatureCard)
-            (card as CreatureCard).creature.recieveCountersPlaced(counterType, amount);
+            (card as CreatureCard).Creature.RecieveCountersPlaced(counterType, amount);
         else
             Debug.LogError("Trying to place counters on a spell card");
     }
-    public void sendSurrenderMessage()
+    public void SendSurrenderMessage()
     {
         Net_EndGame msg = new Net_EndGame();
         msg.endGameCode = EndGameCode.Quit;
         //relayMessage(msg);
         Client.Instance.SendServer(msg);
     }
-    public void recieveEndGameMessage(Net_EndGame msg)
+    public void RecieveEndGameMessage(Net_EndGame msg)
     {
         if (msg.endGameCode == EndGameCode.Disconnect)
         {
             // show opp disconnected
-            GameManager.Get().showEndGamePopup("Your opponent has disconnected");
+            GameManager.Instance.showEndGamePopup("Your opponent has disconnected");
         }
         else if (msg.endGameCode == EndGameCode.Quit)
         {
             // show opp surrender
-            GameManager.Get().showEndGamePopup("Your opponent has surrendered");
+            GameManager.Instance.showEndGamePopup("Your opponent has surrendered");
         }
         else
         {
@@ -341,36 +317,33 @@ public class NetInterface
     }
     #endregion
 
-    public void signalSetupComplete()
-    {
-        relayMessage(new Net_DoneWithSetup());
-    }
+    public void SignalSetupComplete() => RelayMessage(new Net_DoneWithSetup());
 
-    private bool playerIsP1(Player p)
+    private bool PlayerIsP1(Player p)
     {
-        if (isPlayer1)
+        if (LocalPlayerIsP1)
             return p == localPlayer;
         else
             return p != localPlayer;
     }
 
-    private Player getPlayer1()
+    private Player GetPlayer1()
     {
-        if (isPlayer1)
+        if (LocalPlayerIsP1)
             return localPlayer;
         else
-            return GameManager.Get().getOppositePlayer(localPlayer);
+            return GameManager.Instance.GetOppositePlayer(localPlayer);
     }
 
-    private Player getPlayer2()
+    private Player GetPlayer2()
     {
-        if (isPlayer1)
-            return GameManager.Get().getOppositePlayer(localPlayer);
+        if (LocalPlayerIsP1)
+            return GameManager.Instance.GetOppositePlayer(localPlayer);
         else
             return localPlayer;
     }
 
-    public void registerCardPile(CardPile cp, bool ownedByLocalPlayer)
+    public void RegisterCardPile(CardPile cp, bool ownedByLocalPlayer)
     {
         byte cpId = 255;
         if (ownedByLocalPlayer) {
@@ -387,22 +360,19 @@ public class NetInterface
         if (cp is Board) cpId = PileId.field;
 
         if (cpId != 255)
-            pileIdMap.add(cp, cpId);
+            pileIdMap.Add(cp, cpId);
         else
             throw new Exception("Unknown CardPile");
     }
 
-    private void relayMessage(NetMsg msg)
+    private void RelayMessage(NetMsg msg)
     {
-        if (GameManager.Get() != null && GameManager.gameMode != GameManager.GameMode.online)
-        {
+        if (GameManager.Instance!= null && GameManager.gameMode != GameManager.GameMode.online)
             return; // don't send messages if GameMode isn't online
-        }
         Net_InGameRelay relay = new Net_InGameRelay();
         relay.msg = msg;
         Client.Instance.SendServer(relay);
     }
-
 
     #region classes
     // variation of Card used for mapping Cards to their netIds
@@ -410,24 +380,6 @@ public class NetInterface
     {
         public int netId;
         public Card cardObject;
-    }
-
-    private class BiDirectioncalCardMap
-    {
-        Dictionary<Card, NetCard> cardToId = new Dictionary<Card, NetCard>();
-        Dictionary<int, NetCard> idToCard = new Dictionary<int, NetCard>();
-
-        public NetCard get(int netId) => idToCard[netId];
-        public NetCard get(Card card) => cardToId[card];
-
-        public void add(Card c, int id)
-        {
-            NetCard n = new NetCard();
-            n.cardObject = c;
-            n.netId = id;
-            cardToId.Add(c, n);
-            idToCard.Add(id, n);
-        }
     }
 
     // enum for card pile Ids
@@ -448,7 +400,7 @@ public class NetInterface
 }
 
 // variation of Card used for instantiated new cards
-[System.Serializable]
+[Serializable]
 public class SerializeableCard
 {
     public int netId;
@@ -460,18 +412,22 @@ public class BidirectionalMap<T, U>
     private Dictionary<T, U> tu = new Dictionary<T, U>();
     private Dictionary<U, T> ut = new Dictionary<U, T>();
 
-    public T get(U u) => ut[u];
-    public U get(T t) => tu[t];
+    public T Get(U u) => ut[u];
+    public U Get(T t) => tu[t];
 
     // this add is technically not safe. It should throw an exception if ut already
     // contains u, but if used properly it will work as intended
-    public void add(T t, U u)
+    public void Add(T t, U u)
     {
+        if (t == null || u == null)
+        {
+            Debug.Log("Adding null");
+        }
         tu.Add(t, u);
         ut.Add(u, t);
     }
 
-    public void remove(T t)
+    public void Remove(T t)
     {
         U u = tu[t];
         tu.Remove(t);

@@ -9,20 +9,34 @@ using UnityEngine.SceneManagement;
 
 public class TestScript : MonoBehaviour
 {
-    public CardData testCardData;
-    //public Card testCard;
+    public OptionSelectBox optionBox;
 
     private void Start()
     {
         // setup test
-        //testCard = getTestCard();
-        CardBuilder.Instance.BuildFromCardData(testCardData);
+
+        List<string> options = new List<string>()
+        {
+            "Option A",
+            "Option B",
+            "Option C",
+        };
+        testList.Add(delegate ()
+        {
+        });
+
+        OptionSelectBox.CreateAndQueue(options, "Test test test test test test", null, delegate (int index, string option)
+        {
+            Debug.Log(index + " " + option);
+        });
     }
 
-    private void doTestOnKeyPress()
+    int testNum = 0;
+    List<Action> testList = new List<Action>();
+    private void DoTestOnKeyPress()
     {
-        // test code here
-        //testCard.GetComponent<CardToPermanentConverter>().doConversion(new Vector3(0, 0));
+        testList[testNum].Invoke();
+        testNum++;
     }
 
     private void Update()
@@ -30,21 +44,12 @@ public class TestScript : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.A))
         {
             Debug.Log("performing test");
-            doTestOnKeyPress();
+            DoTestOnKeyPress();
         }
     }
 
-    private List<Card> getTestCardList()
-    {
-        List<Card> cardList = new List<Card>();
-        for (int i = 0; i < 50; i++)
-        {
-            cardList.Add(getTestCard());
-        }
-        return cardList;
-    }
-
-    private Card getTestCard() => ResourceManager.Get().instantiateCardById((int)CardIds.RingOfEternity);
-    //private Card getTestCard() => ResourceManager.Get().instantiateCardById(68);
+    private SpellCard GetTestSpellCard() => ResourceManager.Get().InstantiateCardById(CardIds.RingOfEternity) as SpellCard;
+    private StructureCard GetTestStructureCard() => ResourceManager.Get().InstantiateCardById(CardIds.Market) as StructureCard;
+    private CreatureCard GetTestCreatureCard() => ResourceManager.Get().InstantiateCardById(CardIds.Mercenary) as CreatureCard;
 }
 

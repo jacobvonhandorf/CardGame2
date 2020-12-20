@@ -11,18 +11,18 @@ public class InGameEscMenu : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             content.SetActive(!content.activeSelf);
-            GameManager.Get().setPopUpGlassActive(content.activeSelf);
+            UIEvents.EnableUIBlocker.Invoke();
         }
     }
 
     public void onSurrenderClicked()
     {
-        GameManager.Get().surrender();
+        GameManager.Instance.Surrender();
     }
 
     public void onExitGameClicked()
     {
-        NetInterface.Get().sendSurrenderMessage();
+        NetInterface.Get().SendSurrenderMessage();
         Application.Quit();
     }
 }

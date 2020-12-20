@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class LoadingBlocker : MonoBehaviour
 {
-    // Start is called before the first frame update
     void Start()
     {
         StartCoroutine(waitAndDisable());
@@ -14,7 +13,5 @@ public class LoadingBlocker : MonoBehaviour
     {
         yield return new WaitForSeconds(1.5f);
         gameObject.SetActive(false);
-        GameManager.Get().activePlayer.hand.resetCardPositions();
-        GameManager.Get().nonActivePlayer.hand.resetCardPositions();
     }
 }

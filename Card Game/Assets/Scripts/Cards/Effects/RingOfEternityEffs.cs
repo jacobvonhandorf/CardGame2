@@ -12,37 +12,37 @@ public class RingOfEternityEffs : SpellEffects
     private const int THIRD_THRESHOLD = 6;
     private const int THIRD_MANA_TO_ADD = 1;
 
-    public override List<Tile> validTiles => getValidTiles();
-    public override bool canBePlayed => card.owner.getAllControlledCreatures().FindAll(c => c.hasTag(Tag.Arcane)).Count > 0;
+    public override List<Tile> ValidTiles => getValidTiles();
+    public override bool CanBePlayed => card.Owner.ControlledCreatures.FindAll(c => c.HasTag(Tag.Arcane)).Count > 0;
 
     public List<Tile> getValidTiles()
     {
-        Debug.Log(Board.instance);
+        Debug.Log(Board.Instance);
         Debug.Log(card);
-        Debug.Log(card.owner);
+        Debug.Log(card.Owner);
 
-        return Board.instance.getAllTilesWithCreatures(card.owner, true);
+        return Board.Instance.GetAllTilesWithCreatures(card.Owner, true);
     }
 
-    public override void doEffect(Tile t)
+    public override void DoEffect(Tile t)
     {
-        Creature targetCreature = t.creature;
+        Creature targetCreature = t.Creature;
         // add last breath effect
         targetCreature.SourceCard.E_AddedToCardPile += SourceCard_E_AddedToCardPile;
-        targetCreature.addKeyword(Keyword.LastBreath);
+        targetCreature.AddKeyword(Keyword.LastBreath);
 
-        if (card.owner.extraStats[ExtraStatsKey.NumRingOfEternityPlayed] >= FIRST_THRESHOLD)
+        if (card.Owner.ExtraStats[ExtraStatsKey.NumRingOfEternityPlayed] >= FIRST_THRESHOLD)
         {
             targetCreature.AttackStat += FIRST_ATK_BONUS;
             targetCreature.Health += FIRST_HP_BONUS;
         }
-        if (card.owner.extraStats[ExtraStatsKey.NumRingOfEternityPlayed] >= SECOND_THRESHOLD)
+        if (card.Owner.ExtraStats[ExtraStatsKey.NumRingOfEternityPlayed] >= SECOND_THRESHOLD)
         {
-            card.owner.drawCard();
+            card.Owner.DrawCard();
         }
-        if (card.owner.extraStats[ExtraStatsKey.NumRingOfEternityPlayed] >= SECOND_THRESHOLD)
+        if (card.Owner.ExtraStats[ExtraStatsKey.NumRingOfEternityPlayed] >= SECOND_THRESHOLD)
         {
-            card.owner.addMana(THIRD_MANA_TO_ADD);
+            card.Owner.Mana += THIRD_MANA_TO_ADD;
         }
     }
 
@@ -51,27 +51,27 @@ public class RingOfEternityEffs : SpellEffects
         if (e.previousCardPile is Board && e.newCardPile is Graveyard)
         {
             // last breath effect
-            Creature effectCreature = (sender as CreatureCard).creature;
+            Creature effectCreature = (sender as CreatureCard).Creature;
             Player effectOwner = effectCreature.Controller;
-            foreach (Card c in effectOwner.graveyard.getCardList())
+            foreach (Card c in effectOwner.Graveyard.CardList)
             {
-                if (c.cardId == (int)CardIds.RingOfEternity)
+                if (c.CardId == (int)CardIds.RingOfEternity)
                 {
-                    c.moveToCardPile(effectOwner.hand, effectCreature.SourceCard);
+                    c.MoveToCardPile(effectOwner.Hand, effectCreature.SourceCard);
                     break;
                 }
             }
 
             // make sure to remove effect and keyword
-            effectCreature.removeKeyword(Keyword.LastBreath);
+            effectCreature.RemoveKeyword(Keyword.LastBreath);
             effectCreature.SourceCard.E_AddedToCardPile -= SourceCard_E_AddedToCardPile;
         }
     }
 
-    public override EmptyHandler onInitilization => delegate ()
+    public override EmptyHandler OnInitilization => delegate ()
     {
-        if (!card.owner.extraStats.ContainsKey(ExtraStatsKey.NumRingOfEternityPlayed))
-            card.owner.extraStats.Add(ExtraStatsKey.NumRingOfEternityPlayed, 0);
+        if (!card.Owner.ExtraStats.ContainsKey(ExtraStatsKey.NumRingOfEternityPlayed))
+            card.Owner.ExtraStats.Add(ExtraStatsKey.NumRingOfEternityPlayed, 0);
     };
 
 }

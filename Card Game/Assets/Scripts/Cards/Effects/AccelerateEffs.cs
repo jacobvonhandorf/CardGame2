@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class AccelerateEffs : SpellEffects
 {
-    public override List<Tile> validTiles => Board.instance.allTiles;
+    public override List<Tile> ValidTiles => Board.Instance.AllTiles;
 
-    public override void doEffect(Tile t)
+    public override void DoEffect(Tile t)
     {
-        card.owner.drawCard();
+        card.Owner.DrawCard();
     }
 
-    public override bool canBePlayed => card.owner.getAllControlledCreatures().FindAll(c => c.hasTag(Card.Tag.Arcane)).Count > 0;
+    public override bool CanBePlayed => card.Owner.ControlledCreatures.FindAll(c => c.HasTag(Tag.Arcane)).Count > 0;
 }

@@ -9,50 +9,50 @@ public class RainbowBurstEffs : SpellEffects
     private const int CARDS_DRAWN = 3;
     private const int CARDS_TO_SHUFFLE_BACK = 3;
 
-    public override List<Tile> validTiles => Board.instance.allTiles;
+    public override List<Tile> ValidTiles => Board.Instance.AllTiles;
 
     private List<int> selectedCardIds = new List<int>();
     private List<Card> cardsToShuffleBack = new List<Card>();
     private int gemsNeededToShuffleBack;
-    public override void doEffect(Tile t)
+    public override void DoEffect(Tile t)
     {
         selectedCardIds.Clear();
         cardsToShuffleBack.Clear();
         gemsNeededToShuffleBack = CARDS_TO_SHUFFLE_BACK;
 
-        List<Card> pickableCards = card.owner.hand.getAllCardsWithTag(Tag.Gem);
+        List<Card> pickableCards = card.Owner.Hand.GetAllCardsWithTag(Tag.Gem);
         CompoundQueueableCommand.Builder cmdBuilder = new CompoundQueueableCommand.Builder();
         for (int i = 0; i < CARDS_TO_SHUFFLE_BACK; i++)
         {
-            QueueableCommand cmd = CardPicker.CreateCommand(pickableCards, 1, 1, "Select a gem to shuffle back. " + gemsNeededToShuffleBack + " remaining", card.owner, delegate (List<Card> cardList)
+            IQueueableCommand cmd = CardPicker.CreateCommand(pickableCards, 1, 1, "Select a gem to shuffle back. " + gemsNeededToShuffleBack + " remaining", card.Owner, delegate (List<Card> cardList)
             {
-                pickableCards.RemoveAll(c => c.cardId == cardList[0].cardId); // remove already selected cards
+                pickableCards.RemoveAll(c => c.CardId == cardList[0].CardId); // remove already selected cards
                 cardsToShuffleBack.Add(cardList[0]);
                 gemsNeededToShuffleBack--;
             });
-            cmdBuilder.addCommand(cmd);
+            cmdBuilder.AddCommand(cmd);
         }
-        cmdBuilder.addCommand(SingleTileTargetEffect.CreateCommand(GameManager.Get().getAllTilesWithCreatures(card.owner.getOppositePlayer(), false), delegate (Tile targetTile)
+        cmdBuilder.AddCommand(SingleTileTargetEffect.CreateCommand(Board.Instance.GetAllTilesWithCreatures(card.Owner.OppositePlayer, false), delegate (Tile targetTile)
         {
             foreach (Card c in cardsToShuffleBack)
-                c.moveToCardPile(card.owner.deck, card);
-            card.owner.deck.shuffle();
-            targetTile.creature.takeDamage(DAMAGE, card);
-            card.owner.drawCards(CARDS_DRAWN);
+                c.MoveToCardPile(card.Owner.Deck, card);
+            card.Owner.Deck.Shuffle();
+            targetTile.Creature.TakeDamage(DAMAGE, card);
+            card.Owner.DrawCards(CARDS_DRAWN);
         }));
         cmdBuilder.BuildAndQueue();
     }
 
-    public override bool canBePlayed => additionalCanBePlayedChecks();
+    public override bool CanBePlayed => additionalCanBePlayedChecks();
     public bool additionalCanBePlayedChecks()
     {
         int numUniqueGemsInHand = 0;
         List<int> usedIds = new List<int>();
-        foreach (Card c in card.owner.hand.getCardList())
+        foreach (Card c in card.Owner.Hand.CardList)
         {
-            if (c.Tags.Contains(Tag.Gem) && !usedIds.Contains(c.cardId))
+            if (c.Tags.Contains(Tag.Gem) && !usedIds.Contains(c.CardId))
             {
-                usedIds.Add(c.cardId);
+                usedIds.Add(c.CardId);
                 numUniqueGemsInHand++;
             }
         }

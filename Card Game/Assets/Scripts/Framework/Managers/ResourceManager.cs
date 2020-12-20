@@ -1,42 +1,16 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
 using UnityEngine;
+using System.Linq;
 
 public class ResourceManager : MonoBehaviour
 {
     private static ResourceManager instance;
     private static Dictionary<int, CardData> cardDataMap;
-
-    private void Awake()
-    {
-        if (instance == null)
-            instance = this;
-        else
-        {
-            Debug.Log("More than one resource manager. Resource manager should be singleton");
-            Destroy(gameObject);
-            return;
-        }
-        // Get path for all cards
-        if (cardDataMap == null)
-            setupCardDataMap();
-    }
-
-    private void setupCardDataMap()
-    {
-        Debug.Log("Generating card data map");
-        System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
-        stopwatch.Start();
-        cardDataMap = new Dictionary<int, CardData>();
-        CardData[] dataArray = Resources.LoadAll<CardData>("Card Data");
-        foreach (CardData data in dataArray)
-            cardDataMap.Add(data.id, data);
-        stopwatch.Stop();
-        Debug.Log("Time to load card data " + stopwatch.ElapsedMilliseconds + "ms");
-    }
 
     public static ResourceManager Get()
     {
@@ -50,20 +24,43 @@ public class ResourceManager : MonoBehaviour
         return instance;
     }
 
-    public Card instantiateCardById(int id) => CardBuilder.Instance.BuildFromCardData(cardDataMap[id]);
-
-    public List<CardData> getAllCardDataVisibleInDeckBuilder()
+    private void Awake()
     {
-        List<CardData> returnList = new List<CardData>();
-        foreach (CardData data in cardDataMap.Values)
+        if (instance == null)
+            instance = this;
+        else
         {
-            if (data.visibleInDeckBuilder)
-                returnList.Add(data);
+            Debug.Log("More than one resource manager. Resource manager should be singleton");
+            Destroy(gameObject);
+            return;
         }
-        return returnList;
+        // Get path for all cards
+        if (cardDataMap == null)
+            SetupCardDataMap();
     }
 
-    public List<CardData> getAllCardData() => new List<CardData>(cardDataMap.Values);
+    private void SetupCardDataMap()
+    {
+        Debug.Log("Generating card data map");
+        System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+        stopwatch.Start();
+        cardDataMap = new Dictionary<int, CardData>();
+        CardData[] dataArray = Resources.LoadAll<CardData>("Card Data");
+        foreach (CardData data in dataArray)
+        {
+            //Debug.Log(data.name + " " + data.id);
+            cardDataMap.Add(data.id, data);
+        }
+        stopwatch.Stop();
+        Debug.Log("Time to load card data " + stopwatch.ElapsedMilliseconds + "ms");
+    }
 
-    public CardData getCardDataById(int id) => cardDataMap[id];
+
+    public Card InstantiateCardById(int id) => CardBuilder.Instance.BuildFromCardData(cardDataMap[id]);
+    public Card InstantiateCardById(CardIds id) => InstantiateCardById((int)id);
+
+    public List<CardData> GetAllCardDataVisibleInDeckBuilder() => cardDataMap.Values.Where(d => d.visibleInDeckBuilder).ToList();
+    public List<CardData> GetAllCardData() => new List<CardData>(cardDataMap.Values);
+    public CardData GetCardDataById(int id) => cardDataMap[id];
+    public CardData GetCardDataById(CardIds id) => GetCardDataById((int)id);
 }

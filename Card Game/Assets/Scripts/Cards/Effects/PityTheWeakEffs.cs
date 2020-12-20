@@ -4,23 +4,23 @@ using UnityEngine;
 
 public class PityTheWeakEffs : SpellEffects
 {
-    public override List<Tile> validTiles => Board.instance.allTiles;
+    public override List<Tile> ValidTiles => Board.Instance.AllTiles;
 
-    public override void doEffect(Tile t)
+    public override void DoEffect(Tile t)
     {
         Card cardToAdd = null;
-        foreach (Card c in owner.deck.getAllCardsWithType(Card.CardType.Creature))
+        foreach (Card c in Owner.Deck.GetAllCardsWithType(CardType.Creature))
         {
             if (cardToAdd == null)
                 cardToAdd = c;
-            else if ((c as CreatureCard).creature.AttackStat < (cardToAdd as CreatureCard).creature.AttackStat)
+            else if ((c as CreatureCard).Creature.AttackStat < (cardToAdd as CreatureCard).Creature.AttackStat)
                 cardToAdd = c;
         }
         if (cardToAdd == null)
         {
-            Toaster.instance.doToast("No targets for " + card.cardName);
+            Toaster.Instance.DoToast("No targets for " + card.CardName);
             return;
         }
-        cardToAdd.moveToCardPile(owner.hand, card);
+        cardToAdd.MoveToCardPile(Owner.Hand, card);
     }
 }

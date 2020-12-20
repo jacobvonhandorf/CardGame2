@@ -6,6 +6,6 @@ public class NetTestingClient : MonoBehaviour
 {
     public void doGameSetup()
     {
-        NetInterface.Get().syncStartingDeck();
+        NetInterface.Get().SyncStartingDeck();
     }
 }

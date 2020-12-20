@@ -8,7 +8,7 @@ public class InformativeAnimationsQueue : MonoBehaviour
     public static InformativeAnimationsQueue Instance {
         get
         {
-            if (Instance == null)
+            if (instance == null)
                 instance = new GameObject().AddComponent<InformativeAnimationsQueue>();
             return instance;
         }
@@ -19,34 +19,34 @@ public class InformativeAnimationsQueue : MonoBehaviour
         instance = this;
     }
 
-    private object playingAnimationsLock = new object();
-    private Queue<QueueableCommand> animationQueue = new Queue<QueueableCommand>();
-    private QueueableCommand currentAnimation;
+    private readonly object playingAnimationsLock = new object(); // used to lock the player while animations are playing
+    private Queue<IQueueableCommand> animationQueue = new Queue<IQueueableCommand>();
+    private IQueueableCommand currentAnimation;
     void Update()
     {
-        processCommands();
+        ProcessCommands();
     }
-    private void processCommands()
+    private void ProcessCommands()
     {
-        if (currentAnimation != null && !currentAnimation.isFinished) // command is in progress
+        if (currentAnimation != null && !currentAnimation.IsFinished) // command is in progress
         {
             return;
         }
-        if (currentAnimation != null && currentAnimation.isFinished) // command finishes
+        if (currentAnimation != null && currentAnimation.IsFinished) // command finishes
         {
             currentAnimation = null;
-            if (NetInterface.Get().getLocalPlayer() != null)
-                NetInterface.Get().getLocalPlayer().removeLock(playingAnimationsLock);
+            if (NetInterface.Get().localPlayer != null)
+                NetInterface.Get().localPlayer.RemoveLock(playingAnimationsLock);
         }
         if (animationQueue.Count == 0) // command is finished but there is no new command
             return;
-        currentAnimation = animationQueue.Dequeue();
-        if (NetInterface.Get().getLocalPlayer() != null)
-            NetInterface.Get().getLocalPlayer().addLock(playingAnimationsLock);
-        currentAnimation.execute();
+        currentAnimation = animationQueue.Dequeue(); // start new command
+        if (NetInterface.Get().localPlayer != null)
+            NetInterface.Get().localPlayer.AddLock(playingAnimationsLock);
+        currentAnimation.Execute();
     }
 
-    public void addAnimation(QueueableCommand cmd)
+    public void AddAnimation(IQueueableCommand cmd)
     {
         animationQueue.Enqueue(cmd);
     }

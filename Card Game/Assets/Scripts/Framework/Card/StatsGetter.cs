@@ -46,8 +46,6 @@ public abstract class CardStatsGetter : MonoBehaviour
         cardArt.sprite = sprite;
     }
 
-    public abstract void setCardViewer(CardViewer viewer);
-
     public ElementIdentity getElementIdentity()
     {
         string spriteName = background.sprite.name;

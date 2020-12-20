@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class KeywordUtils
 {
-    private static int getDefenderDamage(Keyword keyword)
+    private static int GetDefenderDamage(Keyword keyword)
     {
         if (keyword == Keyword.Defender1)
             return 1;
@@ -15,12 +15,12 @@ public static class KeywordUtils
         else
             return 0;
     }
-    public static int getDefenderValue(Card c)
+    public static int GetDefenderValue(Card c)
     {
         int defenderValue = 0;
-        foreach (Keyword k in c.getKeywordList())
+        foreach (Keyword k in c.KeywordList)
         {
-            defenderValue += getDefenderDamage(k);
+            defenderValue += GetDefenderDamage(k);
         }
         return defenderValue;
     }

@@ -22,7 +22,7 @@ public class TransformManager : MonoBehaviour
             return;
 
         // if close to transform or currentTransform is null then move to next transform
-        if (currentTransform == null || Vector3.Distance(transform.position, currentTransform.position) < closeEnough && Vector3.Distance(transform.position, currentTransform.position) < closeEnough)
+        if (currentTransform == null || Vector3.Distance(transform.localPosition, currentTransform.position) < closeEnough)
         {
             if (transformQueue.Count > 0)
                 currentTransform = transformQueue.Dequeue();
@@ -32,41 +32,49 @@ public class TransformManager : MonoBehaviour
                 return;
             }
         }
-        // move to current transform
-        transform.position = Vector3.Lerp(transform.position, currentTransform.position, speed * Time.deltaTime);
+        // move towards current transform
+        if (currentTransform.useLocalPosition)
+            transform.localPosition = Vector3.Lerp(transform.localPosition, currentTransform.position, speed * Time.deltaTime);
+        else
+            transform.position = Vector3.Lerp(transform.position, currentTransform.position, speed * Time.deltaTime);
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(currentTransform.rotation), speed * Time.deltaTime);
         transform.localScale = Vector3.Lerp(transform.localScale, currentTransform.localScale, speed * Time.deltaTime);
     }
     // add to queue
-    public void queueMoveTo(TransformStruct t)
+    public void QueueMoveTo(TransformStruct t)
     {
         if (!locked && !removedFromScene)
             transformQueue.Enqueue(t);
     }
     // clear queue
-    public void clearQueue()
+    public void ClearQueue()
     {
         currentTransform = null;
         transformQueue.Clear();
     }
     // clear and add
-    public void moveToImmediate(TransformStruct t)
+    public void MoveToImmediate(TransformStruct t)
     {
         if (!locked && !removedFromScene)
         {
-            clearQueue();
-            queueMoveTo(t);
+            ClearQueue();
+            QueueMoveTo(t);
         }
     }
-    public void moveToInformativeAnimation(TransformStruct t)
+    public void MoveToInformativeAnimation(TransformStruct t)
     {
-        InformativeAnimationsQueue.Instance.addAnimation(new TransformCommand(this, t));
+        InformativeAnimationsQueue.Instance.AddAnimation(new TransformCommand(this, t));
     }
 
-    public void setTransform(TransformStruct tStruct)
+    public void SetTransform(TransformStruct tStruct)
     {
-        clearQueue();
-        transform.localPosition = tStruct.position;
+        ClearQueue();
+        if (tStruct.useLocalPosition)
+            transform.localPosition = tStruct.position;
+        else
+            transform.position = tStruct.position;
         transform.localScale = tStruct.localScale;
+        transform.localRotation = Quaternion.Euler(tStruct.rotation);
 
     }
     // lock (clear and don't accept new commands)
@@ -81,7 +89,7 @@ public class TransformManager : MonoBehaviour
     }
 
     // informative commands clear queue then add to it, then check for !contains in queue
-    private class TransformCommand : QueueableCommand
+    private class TransformCommand : IQueueableCommand
     {
         private TransformManager transformManager;
         private TransformStruct targetTransform;
@@ -92,17 +100,17 @@ public class TransformManager : MonoBehaviour
             this.targetTransform = targetTransform;
         }
 
-        public override bool isFinished => isFinishedCheck();
+        public bool IsFinished => IsFinishedCheck();
 
-        private bool isFinishedCheck()
+        private bool IsFinishedCheck()
         {
             // check for not being enabled here so queue doesn't get clogged
             return !transformManager.transformQueue.Contains(targetTransform) || !transformManager.enabled;
         }
 
-        public override void execute()
+        public void Execute()
         {
-            transformManager.moveToImmediate(targetTransform);
+            transformManager.MoveToImmediate(targetTransform);
         }
     }
 }
@@ -115,8 +123,11 @@ public class TransformStruct
     {
         position = t.position;
         localScale = t.localScale;
+        rotation = t.rotation.eulerAngles;
     }
 
     public Vector3 position;
     public Vector3 localScale;
+    public Vector3 rotation;
+    public bool useLocalPosition = false;
 }

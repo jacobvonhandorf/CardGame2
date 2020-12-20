@@ -14,8 +14,8 @@ public class AtlacEffects : CreatureEffects
             creature.Health = creature.BaseHealth;
             creature.AttackStat = creature.BaseAttack;
 
-            card.moveToCardPile(card.owner.deck, card);
-            card.owner.deck.shuffle();
+            card.MoveToCardPile(card.Owner.Deck, card);
+            card.Owner.Deck.Shuffle();
         }
     };
 }

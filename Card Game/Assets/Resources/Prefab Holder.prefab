@@ -45,3 +45,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   xPickerPrefab: {fileID: 3986563060002899856, guid: 3b1c60563bcbd0149be115b4ee7272bc,
     type: 3}
+  cardPicker: {fileID: 574317222100861982, guid: d108752e305458b43a00e4430c684c9c,
+    type: 3}
+  optionBox: {fileID: 8677662822977235596, guid: 9dbb7e32643036f46b812d60b5a074a5,
+    type: 3}
+  aboveTileFilter: {fileID: 6339706019839954063, guid: b68b798cec87ea349a5b17b5f7be293f,
+    type: 3}

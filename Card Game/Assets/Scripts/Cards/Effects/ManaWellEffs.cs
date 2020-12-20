@@ -7,21 +7,22 @@ public class ManaWellEffs : StructureEffects
 {
     public override EventHandler onDeploy => delegate (object s, EventArgs e)
     {
-        GameEvents.E_SpellCast += GameEvents_E_SpellCast;
+        //GameEvents.E_SpellCast += GameEvents_E_SpellCast;
     };
     public override EventHandler onLeavesField => delegate (object s, EventArgs e)
     {
-        GameEvents.E_SpellCast -= GameEvents_E_SpellCast;
+        //GameEvents.E_SpellCast -= GameEvents_E_SpellCast;
     };
-
+    /*
     private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastArgs e)
     {
-        structure.Counters.add(CounterType.Arcane, 1);
-        if (structure.Counters.amountOf(CounterType.Arcane) == 3)
+        Structure.Counters.Add(CounterType.Arcane, 1);
+        if (Structure.Counters.AmountOf(CounterType.Arcane) == 3)
         {
-            card.showInEffectsView();
-            controller.addMana(1);
-            structure.Counters.remove(CounterType.Arcane, 3);
+            Card.ShowInEffectsView();
+            //controller.addMana(1);
+            Structure.Counters.Remove(CounterType.Arcane, 3);
         }
     }
+    */
 }

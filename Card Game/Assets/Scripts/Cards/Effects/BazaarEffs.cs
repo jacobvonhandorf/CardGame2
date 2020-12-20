@@ -7,16 +7,18 @@ public class BazaarEffs : StructureEffects
 {
     public override EventHandler onDeploy => delegate (object s, EventArgs e)
     {
-        controller.increaseGoldPerTurn(2);
+        Controller.GoldPerTurn += 2;
     };
     public override EventHandler onLeavesField => delegate (object s, EventArgs e)
     {
-        controller.increaseGoldPerTurn(-2);
+        Controller.GoldPerTurn -= 2;
     };
 
+    /*
     public override EmptyHandler activatedEffect => delegate ()
     {
-        controller.addGold(1);
-        controller.subtractActions(1);
+        Controller.Gold += 1;
+        Controller.Actions -= 1;
     };
+    */
 }

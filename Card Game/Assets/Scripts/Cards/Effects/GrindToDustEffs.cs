@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class GrindToDustEffs : SpellEffects
 {
-    public override List<Tile> validTiles => Board.instance.getAllTilesWithCreatures(card.owner.oppositePlayer, false);
+    public override List<Tile> ValidTiles => Board.Instance.GetAllTilesWithCreatures(card.Owner.OppositePlayer, false);
 
-    public override void doEffect(Tile t)
+    public override void DoEffect(Tile t)
     {
-        t.creature.takeDamage(card.owner.hand.getAllCardsWithTag(Card.Tag.Gem).Count, card);
+        t.Creature.TakeDamage(card.Owner.Hand.GetAllCardsWithTag(Tag.Gem).Count, card);
     }
 }

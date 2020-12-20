@@ -48,14 +48,14 @@ public class CardIdChecker : MonoBehaviour
                 continue;
             }
 
-            if (usedIds.Contains(newCard.cardId))
+            if (usedIds.Contains(newCard.CardId))
             {
                 duplicateFound = true;
-                Debug.LogError(newCard.getCardName() + " has duplicate ID " + newCard.cardId);
+                Debug.LogError(newCard.CardName + " has duplicate ID " + newCard.CardId);
             }
             else
             {
-                usedIds.Add(newCard.cardId);
+                usedIds.Add(newCard.CardId);
             }
 
             // Destroy card when finished with it
@@ -74,6 +74,7 @@ public class CardIdChecker : MonoBehaviour
 
     private static void generateAndSaveCardMap()
     {
+        Debug.Log("WWTF");
         return;
         GameObject[] allCards = Resources.LoadAll<GameObject>(cardsPath);
         Vector3 tempPosition = new Vector3(999, 999, 999);
@@ -100,7 +101,7 @@ public class CardIdChecker : MonoBehaviour
             //Debug.Log(pathInResources);
             GameObject card = Resources.Load(pathInResources) as GameObject;
             GameObject objectToDestroy =  Instantiate(card, new Vector3(999, 999), Quaternion.identity);
-            cardIdMap.Add(objectToDestroy.GetComponent<Card>().cardId, pathInResources);
+            cardIdMap.Add(objectToDestroy.GetComponent<Card>().CardId, pathInResources);
             Destroy(objectToDestroy);
         }
 

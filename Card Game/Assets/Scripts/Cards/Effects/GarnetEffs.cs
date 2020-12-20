@@ -5,13 +5,13 @@ using UnityEngine;
 
 public class GarnetEffs : SpellEffects
 {
-    public override List<Tile> validTiles => new List<Tile>();
-    public override void doEffect(Tile t) { }
-    public override bool canBePlayed => false;
+    public override List<Tile> ValidTiles => new List<Tile>();
+    public override void DoEffect(Tile t) { }
+    public override bool CanBePlayed => false;
 
-    public override EventHandler<Card.AddedToCardPileArgs> onMoveToCardPile => delegate (object s, Card.AddedToCardPileArgs e)
+    public override EventHandler<Card.AddedToCardPileArgs> OnMoveToCardPile => delegate (object s, Card.AddedToCardPileArgs e)
     {
         if (e.newCardPile is Hand)
-            owner.addGold(1);
+            Owner.Gold += 1;
     };
 }

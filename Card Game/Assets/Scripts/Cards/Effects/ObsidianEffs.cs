@@ -6,22 +6,22 @@ using UnityEngine;
 public class ObsidianEffs : SpellEffects
 {
     [SerializeField] private int damageAmount = 2;
-    public override List<Tile> validTiles => new List<Tile>();
-    public override void doEffect(Tile t) { }
-    public override bool canBePlayed => false;
+    public override List<Tile> ValidTiles => new List<Tile>();
+    public override void DoEffect(Tile t) { }
+    public override bool CanBePlayed => false;
 
-    public override EventHandler<Card.AddedToCardPileArgs> onMoveToCardPile => delegate (object s, Card.AddedToCardPileArgs e)
+    public override EventHandler<Card.AddedToCardPileArgs> OnMoveToCardPile => delegate (object s, Card.AddedToCardPileArgs e)
     {
         if (e.newCardPile is Hand)
-            doEffect();
+            DoEffect();
     };
 
-    private void doEffect()
+    private void DoEffect()
     {
-        card.owner.drawCard();
-        SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(card.owner.oppositePlayer, false), delegate (Tile t)
+        card.Owner.DrawCard();
+        SingleTileTargetEffect.CreateAndQueue(Board.Instance.GetAllTilesWithCreatures(card.Owner.OppositePlayer, false), delegate (Tile t)
         {
-            t.creature.takeDamage(damageAmount, card);
+            t.Creature.TakeDamage(damageAmount, card);
         });
     }
 }

@@ -12,7 +12,7 @@ public class DoubleUp : HeroPower
 
     public bool canBeActivatedCheck(Player controller)
     {
-        return controller.hand.getAllCardsWithType(Card.CardType.Creature).Count > 0;
+        return controller.Hand.GetAllCardsWithType(CardType.Creature).Count > 0;
     }
 
     public string getEffectText()
@@ -24,7 +24,7 @@ public class DoubleUp : HeroPower
     {
         foreach (Card c in cardList)
         {
-            Creature creature = (c as CreatureCard).creature;
+            Creature creature = (c as CreatureCard).Creature;
             creature.AttackStat *= 2;
             creature.Health *= 2;
             c.GoldCost *= 2;

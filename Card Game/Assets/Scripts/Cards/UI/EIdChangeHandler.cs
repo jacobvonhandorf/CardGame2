@@ -13,9 +13,9 @@ public class EIdChangeHandler : StatChangeListener
         image = GetComponent<Image>();
     }
 
-    protected override void onValueUpdated(object value)
+    protected override void OnValueUpdated(object value)
     {
-        Debug.Log("EID Change");
+        //Debug.Log("EID Change");
         ElementIdentity eId = (ElementIdentity)value;
         string spriteName = null;
         switch (eId)

@@ -8,21 +8,21 @@ public class FiltersScreen : MonoBehaviour
 
     public void toggleCardType(string cardType)
     {
-        toggleCardType((Card.CardType) System.Enum.Parse(typeof(Card.CardType), cardType, true));
+        toggleCardType((CardType) System.Enum.Parse(typeof(CardType), cardType, true));
     }
 
     public void toggleElement(string element)
     {
-        toggleElement((Card.ElementIdentity)System.Enum.Parse(typeof(Card.ElementIdentity), element, true));
+        toggleElement((ElementIdentity)System.Enum.Parse(typeof(ElementIdentity), element, true));
     }
 
-    public void toggleCardType(Card.CardType cardType)
+    public void toggleCardType(CardType cardType)
     {
         CardFilterObject filter = cardsView.filter;
         // no list exists
         if (filter.cardTypes == null)
         {
-            List<Card.CardType> types = new List<Card.CardType>();
+            List<CardType> types = new List<CardType>();
             types.Add(cardType);
             filter.cardTypes = types;
         }
@@ -60,13 +60,13 @@ public class FiltersScreen : MonoBehaviour
         }
     }
 
-    public void toggleElement(Card.ElementIdentity element)
+    public void toggleElement(ElementIdentity element)
     {
         CardFilterObject filter = cardsView.filter;
         // no list exists
         if (filter.elements == null)
         {
-            List<Card.ElementIdentity> elements = new List<Card.ElementIdentity>();
+            List<ElementIdentity> elements = new List<ElementIdentity>();
             elements.Add(element);
             filter.elements = elements;
         }
@@ -80,7 +80,7 @@ public class FiltersScreen : MonoBehaviour
             Debug.Log("Removing element");
             filter.elements.Remove(element);
         }
-        foreach (Card.ElementIdentity id in filter.elements)
+        foreach (ElementIdentity id in filter.elements)
         {
             Debug.Log(id);
         }

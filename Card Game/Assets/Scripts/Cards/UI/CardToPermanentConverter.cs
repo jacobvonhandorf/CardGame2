@@ -10,6 +10,7 @@ public class CardToPermanentConverter : MonoBehaviour
     [SerializeField] private GameObject FofBorder;
     [SerializeField] private float iconScaleWhenPermanent;
     [SerializeField] private float scaleWhenPermanent;
+    [SerializeField] private Vector3 positionOffset;
 
     private List<Transform> iconsToResize;
     private Card card;
@@ -24,12 +25,14 @@ public class CardToPermanentConverter : MonoBehaviour
         iconsToResize = new List<Transform>(GetComponentsInChildren<Transform>()).FindAll(go => go.tag.Contains(TagsEnum.CardIcon));
     }
 
-    public void doConversion(Vector3 newPosition)
+    public void DoConversion(Vector3 newPosition)
     {
+        newPosition += positionOffset;
         card.enabled = false;
         permanent.enabled = true;
         dragHandler.enabled = false;
-        StartCoroutine(resizeToCreature(newPosition));
+        StartCoroutine(ResizeToCreature(newPosition));
+
     }
 
     [SerializeField] private float pauseBetweenResize;
@@ -37,19 +40,30 @@ public class CardToPermanentConverter : MonoBehaviour
     [SerializeField] private float timeForShrinkAnimation;
     private bool resizeToCreatureFinished;
 
-    IEnumerator resizeToCreature(Vector3 newPosition)
+    IEnumerator ResizeToCreature(Vector3 newPosition)
     {
-        restingTransform.clearQueue();
+        restingTransform.ClearQueue();
         restingTransform.Lock();
         resizeToCreatureFinished = false;
 
-        Vector3 positionStart = restingTransform.transform.localPosition;
+        Vector3 positionStart = restingTransform.transform.position;
         Vector3 positionEnd = newPosition;
-        Debug.Log("Move from " + restingTransform.transform.localPosition);
         Vector3 scaleStart = restingTransform.transform.localScale;
         Vector3 scaleEnd = Vector3.one * scaleWhenPermanent;
         Vector3 offsetPosStart = offsetTransform.transform.localPosition;
         Vector3 offsetScaleStart = offsetTransform.transform.localScale;
+
+        // --- temporary ---
+        restingTransform.SetTransform(new TransformStruct()
+        {
+            localScale = scaleEnd,
+            position = newPosition,
+            useLocalPosition = false,
+            rotation = Vector3.zero
+        });
+        yield break;
+        // -----------------
+
         // resize root
         float currentPercentage = 0;
         float timePassed = 0;
@@ -58,7 +72,7 @@ public class CardToPermanentConverter : MonoBehaviour
             timePassed += Time.deltaTime;
             currentPercentage = timePassed / timeForShrinkAnimation;
 
-            restingTransform.transform.localPosition = Vector3.Lerp(positionStart, positionEnd, currentPercentage);
+            restingTransform.transform.position = Vector3.Lerp(positionStart, positionEnd, currentPercentage);
             restingTransform.transform.localScale = Vector3.Lerp(scaleStart, scaleEnd, currentPercentage);
 
             offsetTransform.transform.localPosition = Vector3.Lerp(offsetPosStart, Vector3.zero, currentPercentage);

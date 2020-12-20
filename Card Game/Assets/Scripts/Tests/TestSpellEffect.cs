@@ -1,14 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/*
 public class Test : SpellEffects
 {
-    public override List<Tile> validTiles => Board.instance.getAllTilesWithCreatures(card.owner.getOppositePlayer(), false);
-    public override bool canBePlayed => card.owner.hasCreatureWithTag(Card.Tag.Arcane);
+    public override List<Tile> ValidTiles => Board.instance.getAllTilesWithCreatures(card.owner.OppositePlayer, false);
+    public override bool CanBePlayed => card.owner.ControlledCreatures.;
 
-    public override void doEffect(Tile t)
+    public override void DoEffect(Tile t)
     {
-        t.creature.takeDamage(2, card);
+        t.creature.TakeDamage(2, card);
     }
 }
+*/

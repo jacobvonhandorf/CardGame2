@@ -2,7 +2,6 @@
 using System.Collections;
 using UnityEditor;
 using System;
-using static Card;
 
 public class CardBuilder : MonoBehaviour
 {
@@ -19,53 +18,59 @@ public class CardBuilder : MonoBehaviour
     }
     private static CardBuilder instance;
 
-    private Vector3 instantiationLocation = new Vector3(0, 0, 0); // instantiate cards off screen
     [SerializeField] private GameObject spellCardPrefab;
     [SerializeField] private GameObject structureCardPrefab;
     [SerializeField] private GameObject creatureCardPrefab;
 
     public Card BuildFromCardData(CardData cardData)
     {
+        System.Diagnostics.Stopwatch stopwatch = new System.Diagnostics.Stopwatch();
+        stopwatch.Start();
         Card card = null;
         switch (cardData)
         {
             case CreatureCardData creatureData:
-                card = creatureSetup(creatureData);
+                card = CreatureSetup(creatureData);
                 break;
             case SpellCardData spellData:
-                card = spellSetup(spellData);
+                card = SpellSetup(spellData);
                 break;
             case StructureCardData structureData:
-                card = structureSetup(structureData);
+                card = StructureSetup(structureData);
                 break;
             default:
                 throw new Exception("Unexpected cardData");
         }
 
         // do all generic setting of variables
+        card.CardId = cardData.id;
         card.BaseManaCost = cardData.manaCost;
         card.ManaCost = cardData.manaCost;
         card.GoldCost = cardData.goldCost;
         card.BaseGoldCost = cardData.goldCost;
-        card.cardName = cardData.cardName;
-        card.gameObject.name = cardData.cardName;
         card.CardName = cardData.cardName;
+        card.gameObject.name = cardData.cardName;
         card.Art = cardData.art;
         card.EffectText = cardData.effectText;
         card.ElementalId = cardData.elementalIdentity;
+        card.TypeText = cardData.TypeText;
 
         foreach (Keyword k in cardData.keywords)
-            card.addKeyword(k);
+            card.AddKeyword(k);
         foreach (Tag t in cardData.tags)
             card.Tags.Add(t);
+
+        stopwatch.Stop();
+        //Debug.Log("Time to create card " + stopwatch.ElapsedMilliseconds + "ms");
 
         return card;
     }
 
-    private Card creatureSetup(CreatureCardData data)
+    private Card CreatureSetup(CreatureCardData data)
     {
-        CreatureCard card = Instantiate(creatureCardPrefab, instantiationLocation, Quaternion.identity).GetComponent<CreatureCard>();
-        Creature creature = card.creature;
+        CreatureCard card = Instantiate(creatureCardPrefab, MainCanvas.Instance.transform).GetComponent<CreatureCard>();
+        card.BaseManaCost = -1;
+        Creature creature = card.Creature;
         creature.BaseHealth = data.health;
         creature.Health = data.health;
         creature.BaseAttack = data.attack;
@@ -74,7 +79,6 @@ public class CardBuilder : MonoBehaviour
         creature.Movement = data.movement;
         creature.Range = data.range;
         creature.BaseRange = data.range;
-        //creature.creatureCardId = data.id;
 
         // Effects
         if (data.effects == null)
@@ -87,8 +91,9 @@ public class CardBuilder : MonoBehaviour
         card.onInitilization = effs.onInitilization;
         // register activated Effect
         if (effs.activatedEffect != null)
-            creature.activatedEffects.Add(effs.activatedEffect);
+            creature.ActivatedEffects.Add(effs.activatedEffect);
         // register triggers
+        /*
         if (effs.onDeploy != null)
             creature.E_OnDeployed += effs.onDeploy;
         if (effs.onDeath != null)
@@ -99,31 +104,32 @@ public class CardBuilder : MonoBehaviour
             creature.E_OnDefend += effs.onDefend;
         if (effs.onDamaged != null)
             creature.E_OnDamaged += effs.onDamaged;
+            */
 
         return card;
     }
 
-    private Card structureSetup(StructureCardData data)
+    private Card StructureSetup(StructureCardData data)
     {
-        StructureCard card = Instantiate(structureCardPrefab, instantiationLocation, Quaternion.identity).GetComponent<StructureCard>();
-        Structure structure = card.structure;
+        StructureCard card = Instantiate(structureCardPrefab, MainCanvas.Instance.transform).GetComponent<StructureCard>();
+        card.BaseManaCost = -1;
+        Structure structure = card.Structure;
         structure.BaseHealth = data.health;
         structure.Health = data.health;
-        //structure.structureCardId = data.id;
 
         StructureEffects effs = card.gameObject.AddComponent(data.effects.GetType()) as StructureEffects;
-        effs.structure = structure;
-        effs.card = card;
+        effs.Structure = structure;
+        effs.Card = card;
         if (effs == null)
             return card;
         card.onInitilization = effs.onInitilization;
         // register effects
         if (effs.activatedEffect != null)
-            structure.activatedEffects.Add(effs.activatedEffect);
+            structure.ActivatedEffects.Add(effs.activatedEffect);
         if (effs.onDefend != null)
             structure.E_OnDefend += effs.onDefend;
-        if (effs.onDeploy != null)
-            structure.E_OnDeployed += effs.onDeploy;
+        //if (effs.onDeploy != null)
+            //structure.E_OnDeployed += effs.onDeploy;
         if (effs.onLeavesField != null)
             structure.E_OnLeavesField += effs.onLeavesField;
         if (effs.onMoveToCardPile != null)
@@ -132,20 +138,20 @@ public class CardBuilder : MonoBehaviour
         return card;
     }
 
-    private Card spellSetup(SpellCardData data)
+    private Card SpellSetup(SpellCardData data)
     {
-        SpellCard card = Instantiate(spellCardPrefab, instantiationLocation, Quaternion.identity).GetComponent<SpellCard>();
-        card.spellId = data.id;
+        SpellCard card = Instantiate(spellCardPrefab, MainCanvas.Instance.transform).GetComponent<SpellCard>();
+        card.BaseGoldCost = -1;
         card.effects = data.effects;
 
         SpellEffects effs = card.gameObject.AddComponent(data.effects.GetType()) as SpellEffects;
         effs.card = card;
         if (effs == null)
             return card;
-        card.onInitilization = effs.onInitilization;
+        card.onInitilization = effs.OnInitilization;
         // regist effects
-        if (effs.onMoveToCardPile != null)
-            card.E_AddedToCardPile += effs.onMoveToCardPile;
+        if (effs.OnMoveToCardPile != null)
+            card.E_AddedToCardPile += effs.OnMoveToCardPile;
 
         return card;
     }

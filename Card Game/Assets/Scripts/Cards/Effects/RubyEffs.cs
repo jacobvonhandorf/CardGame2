@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class RubyEffs : SpellEffects
 {
-    public override List<Tile> validTiles => new List<Tile>();
-    public override void doEffect(Tile t) { }
-    public override bool canBePlayed => false;
+    public override List<Tile> ValidTiles => new List<Tile>();
+    public override void DoEffect(Tile t) { }
+    public override bool CanBePlayed => false;
 
-    public override EventHandler<Card.AddedToCardPileArgs> onMoveToCardPile => delegate (object s, Card.AddedToCardPileArgs e)
+    public override EventHandler<Card.AddedToCardPileArgs> OnMoveToCardPile => delegate (object s, Card.AddedToCardPileArgs e)
     {
         if (e.newCardPile is Hand)
             activate();
@@ -17,10 +17,10 @@ public class RubyEffs : SpellEffects
 
     private void activate()
     {
-        SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(owner), delegate (Tile t)
+        SingleTileTargetEffect.CreateAndQueue(Board.Instance.GetAllTilesWithCreatures(Owner), delegate (Tile t)
         {
-            t.creature.AttackStat += 1;
-            t.creature.Health += 1;
+            t.Creature.AttackStat += 1;
+            t.Creature.Health += 1;
         });
     }
 }

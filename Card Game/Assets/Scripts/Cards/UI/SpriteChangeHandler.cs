@@ -12,7 +12,7 @@ public class SpriteChangeHandler : StatChangeListener
         image = GetComponent<Image>();
     }
 
-    protected override void onValueUpdated(object value)
+    protected override void OnValueUpdated(object value)
     {
         image.sprite = (Sprite)value;
     }

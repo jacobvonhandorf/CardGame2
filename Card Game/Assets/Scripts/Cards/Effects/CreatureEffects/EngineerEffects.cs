@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EngineerEffects : CreatureEffects
 {
-    public override EmptyHandler activatedEffect => delegate ()
+    public override ActivatedEffect activatedEffect => new ActivatedEffect("Create Structure", delegate ()
     {
         List<string> options = new List<string>
         {
@@ -14,7 +14,7 @@ public class EngineerEffects : CreatureEffects
         };
 
         int selectedCardId = -1;
-        QueueableCommand selectCommand = OptionSelectBox.CreateCommand(options, "Select which structure you would like to place", creature.Controller, delegate (int selectedIndex, string selectedOption)
+        IQueueableCommand selectCommand = OptionSelectBox.CreateCommand(options, "Select which structure you would like to place", creature.Controller, delegate (int selectedIndex, string selectedOption)
         {
             if (selectedIndex == 0)
                 selectedCardId = (int)CardIds.Market;
@@ -24,17 +24,16 @@ public class EngineerEffects : CreatureEffects
                 selectedCardId = (int)CardIds.Tower;
         });
         Debug.Log(creature.Controller);
-        List<Tile> validTargets = GameManager.Get().getLegalStructurePlacementTiles(creature.Controller);
-        validTargets.RemoveAll(t => t.getDistanceTo(creature.tile) > 1);
-        validTargets.RemoveAll(t => t.creature != null);
-        QueueableCommand selectTileCmd = SingleTileTargetEffect.CreateCommand(validTargets, delegate (Tile t)
+        List<Tile> validTargets = GameManager.Instance.getLegalStructurePlacementTiles(creature.Controller);
+        validTargets.RemoveAll(t => t.GetDistanceTo(creature.Tile) > 1);
+        validTargets.RemoveAll(t => t.Creature != null);
+        IQueueableCommand selectTileCmd = SingleTileTargetEffect.CreateCommand(validTargets, delegate (Tile t)
         {
-            creature.Counters.remove(CounterType.Build, 1);
-            StructureCard structureToPlace = GameManager.Get().createCardById(selectedCardId, creature.Controller) as StructureCard;
-            GameManager.Get().createStructureOnTile(structureToPlace.structure, t, creature.Controller, structureToPlace);
-            creature.hasDoneActionThisTurn = true;
-            creature.updateHasActedIndicators();
+            creature.Counters.Remove(CounterType.Build, 1);
+            (GameManager.Instance.CreateCardById(selectedCardId, creature.Controller) as StructureCard).Structure.CreateOnTile(t);
+            creature.ActionAvailable = false;
+            creature.UpdateHasActedIndicators();
         });
-        new CompoundQueueableCommand.Builder().addCommand(selectCommand).addCommand(selectTileCmd).BuildAndQueue();
-    };
+        new CompoundQueueableCommand.Builder().AddCommand(selectCommand).AddCommand(selectTileCmd).BuildAndQueue();
+    });
 }

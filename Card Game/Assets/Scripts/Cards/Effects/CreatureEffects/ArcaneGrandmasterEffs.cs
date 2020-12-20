@@ -11,33 +11,35 @@ public class ArcaneGrandmasterEffs : CreatureEffects
 
     public override EmptyHandler onInitilization => delegate ()
     {
-        GameEvents.E_SpellCast += GameEvents_E_SpellCast;
+        //GameEvents.E_SpellCast += GameEvents_E_SpellCast;
     };
+    /*
     private void GameEvents_E_SpellCast(object sender, GameEvents.SpellCastArgs e)
     {
-        if (card.getCardPile() is Hand && e.spell.owner == card.owner)
+        if (card.CardPile is Hand && e.spell.Owner == card.Owner)
             creature.AttackStat += 1;
     }
+    */
 
     public override EventHandler onDeploy => delegate (object s, EventArgs e)
     {
         if (creature.AttackStat >= FIRST_THRESHOLD)
         {
-            List<Card> arcaneCards = creature.Controller.deck.getAllCardsWithTag(Card.Tag.Arcane);
+            List<Card> arcaneCards = creature.Controller.Deck.GetAllCardsWithTag(Tag.Arcane);
             int index = UnityEngine.Random.Range(0, arcaneCards.Count);
-            arcaneCards[index].moveToCardPile(creature.Controller.hand, creature.SourceCard);
+            arcaneCards[index].MoveToCardPile(creature.Controller.Hand, creature.SourceCard);
         }
         if (creature.AttackStat >= SECOND_THRESHOLD)
         {
-            List<Card> arcaneCards = creature.Controller.deck.getAllCardsWithTag(Card.Tag.Arcane);
+            List<Card> arcaneCards = creature.Controller.Deck.GetAllCardsWithTag(Tag.Arcane);
             int index = UnityEngine.Random.Range(0, arcaneCards.Count);
-            arcaneCards[index].moveToCardPile(creature.Controller.hand, card);
+            arcaneCards[index].MoveToCardPile(creature.Controller.Hand, card);
         }
         if (creature.AttackStat >= THIRD_THRESHOLD)
         {
-            SingleTileTargetEffect.CreateAndQueue(GameManager.Get().getAllTilesWithCreatures(creature.Controller.getOppositePlayer(), false), delegate (Tile t)
+            SingleTileTargetEffect.CreateAndQueue(Board.Instance.GetAllTilesWithCreatures(creature.Controller.OppositePlayer, false), delegate (Tile t)
             {
-                GameManager.Get().kill(t.creature);
+                GameManager.Instance.kill(t.Creature);
             });
         }
 

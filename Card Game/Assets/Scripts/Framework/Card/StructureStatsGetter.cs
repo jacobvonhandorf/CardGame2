@@ -12,41 +12,6 @@ public class StructureStatsGetter : CardStatsGetter
     [SerializeField] private TextMeshPro hpText;
     [SerializeField] private SpriteRenderer friendOrFoeBorder;
 
-    public override void setCardViewer(CardViewer viewer)
-    {
-        viewer.gameObject.SetActive(true);
-
-        // flip everything to active that needs to be active
-        // and flip everything to inactive that should be inactive
-        viewer.hpGameObject.SetActive(hpText.gameObject.activeInHierarchy);
-        viewer.setGoldActive(goldText.gameObject.activeInHierarchy);
-        viewer.setManaActive(manaText1.gameObject.activeInHierarchy);
-        viewer.setManaLowerActive(manaText2.gameObject.activeInHierarchy);
-        viewer.setFullBodyTextActive(true);
-        viewer.setAttackActive(false);
-        viewer.setMoveActive(false);
-        viewer.setHalfBodyTextActive(false);
-
-        // set all values that need to be set
-        viewer.hpText.text = hpText.text;
-        viewer.goldText.text = goldText.text;
-        viewer.manaText1.text = manaText1.text;
-        viewer.manaText2.text = manaText2.text;
-        viewer.fullBodyText.text = effectText.text;
-        viewer.nameText.text = nameText.text;
-        viewer.typeText.text = typeText.text;
-
-        // set all colors that need to be set. Will need to add more things here later probably
-        viewer.hpText.color = hpText.color;
-        viewer.goldText.color = goldText.color;
-        viewer.manaText1.color = manaText1.color;
-        viewer.manaText2.color = manaText2.color;
-
-        //throw new System.NotImplementedException();
-        viewer.background.sprite = background.sprite;
-        viewer.setCardArt(cardArt.sprite);
-    }
-
     public void swapToStructure(Tile structureTile)
     {
         List<Transform> iconsToResize = new List<Transform>();
@@ -55,9 +20,9 @@ public class StructureStatsGetter : CardStatsGetter
         Vector3 newIconScale = new Vector3(scalingCoefficient, scalingCoefficient, 1);
         Vector3 newRootScale = new Vector3(entireCardScaleCoefficient, entireCardScaleCoefficient, 1);
 
-        InformativeAnimationsQueue.Instance.addAnimation(new SwapToCreatureAnimation(this, iconsToResize, newIconScale, newRootScale, structureTile.transform.position));
+        InformativeAnimationsQueue.Instance.AddAnimation(new SwapToCreatureAnimation(this, iconsToResize, newIconScale, newRootScale, structureTile.transform.position));
     }
-    private class SwapToCreatureAnimation : QueueableCommand
+    private class SwapToCreatureAnimation : IQueueableCommand
     {
         StructureStatsGetter statsGetter;
         List<Transform> iconsToResize;
@@ -74,9 +39,9 @@ public class StructureStatsGetter : CardStatsGetter
             this.newPostion = newPostion;
         }
 
-        public override bool isFinished => statsGetter.resizeToCreatureFinished;
+        public bool IsFinished => statsGetter.resizeToCreatureFinished;
 
-        public override void execute()
+        public void Execute()
         {
             statsGetter.resizeToCreatureFinished = false;
             statsGetter.StartCoroutine(statsGetter.resizeToCreature(statsGetter.transform, newRootScale, iconsToResize, newIconScale, newPostion));

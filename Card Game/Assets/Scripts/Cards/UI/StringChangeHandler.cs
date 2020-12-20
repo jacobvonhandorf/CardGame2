@@ -12,7 +12,7 @@ public class StringChangeHandler : StatChangeListener
         textMesh = GetComponent<TextMeshProUGUI>();
     }
 
-    protected override void onValueUpdated(object value)
+    protected override void OnValueUpdated(object value)
     {
         textMesh.text = (string)value + "";
     }

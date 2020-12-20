@@ -1,133 +1,71 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using TMPro;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class Hand : CardPile
+public class Hand : CardPile, IPointerEnterHandler, IPointerExitHandler
 {
-    public float maxWidth;
-    public float spaceBetweenCards;
-    public int maxCardsBeforeSquishingHand = 6;
-    private bool hidden = false;
-    [SerializeField] private TextMeshPro cardCountText;
-    [SerializeField] private Player handOwner;
+    [SerializeField] private float speedOnHover = 100;
+    [SerializeField] private float moveUpDistance = 300;
+    private Vector3 targetPosition;
+    private Vector3 originalPosition;
 
     private void Start()
     {
-        // on start add all cards in players hand to cardList
-        cardList = GetComponentsInChildren<Card>().ToList();
+        targetPosition = transform.position;
+        originalPosition = transform.position;
+
+        for (int i = 0; i < 5; i++)
+        {
+            //Card c = ResourceManager.Get().InstantiateCardById(CardIds.RingOfEternity);
+            //AddCard(c);
+        }
+    }
+
+    private void Update()
+    {
+        transform.position = Vector3.Lerp(transform.position, targetPosition, speedOnHover * Time.deltaTime);
+
+        // this is a temporary fix that will need to changed
         foreach (Card c in cardList)
         {
-            c.owner = handOwner;
-            c.moveToCardPile(this, null);
-        }
-        resetCardPositions();
-
-        if (cardCountText != null)
-            cardCountText.text = cardList.Count + "";
-    }
-
-    public void resetCardPositions()
-    {
-        if (hidden)
-            return;
-        int totalCards = cardList.Count;
-        int index = 0;
-        foreach(Card c in cardList)
-        {
-            Transform t = c.transform; // the transform that needs to be moved
-
-            // calculate new position
-            Vector3 newPosition = new Vector3();
-            if (totalCards > maxCardsBeforeSquishingHand)
-                newPosition.x = transform.position.x + maxWidth / totalCards * index;
-            else
-                newPosition.x = transform.position.x + index * spaceBetweenCards;
-
-            newPosition.y = transform.position.y;
-            newPosition.z = 1 - .01f * index;
-
-            // move card
-            c.moveTo(newPosition);
-            c.positionInHand = newPosition;
-
-            // change sorting layer
-            c.setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle, index * 10);
-
-            index++;
+            if (c.Owner != NetInterface.Get().localPlayer)
+            {
+                c.removeGraphicsAndCollidersFromScene();
+            }
         }
     }
 
-    protected override void onCardAdded(Card c)
+    protected override void OnCardAdded(Card c)
     {
+        c.transform.localScale = Vector3.one * .5f;
+        if (c is CreatureCard)
+            (c as CreatureCard).SwapToCard();
+        else if (c is StructureCard)
+            (c as StructureCard).SwapToCard();
+
         if (GameManager.gameMode != GameManager.GameMode.online)
         {
-            if (GameManager.Get().activePlayer == handOwner)
-                c.returnGraphicsAndCollidersToScene();
-            else
-                c.removeGraphicsAndCollidersFromScene();
         }
         else if (GameManager.gameMode == GameManager.GameMode.online)
         {
-            if (c.owner != NetInterface.Get().getLocalPlayer())
+            if (c.Owner != NetInterface.Get().localPlayer)
             {
                 c.removeGraphicsAndCollidersFromScene();
             }
             else
             {
+                //Debug.Log("Adding to scene");
                 c.returnGraphicsAndCollidersToScene();
             }
         }
-        c.returnGraphicsAndCollidersToScene(); // Cards know when to show themselves
-        if (c is CreatureCard)
-            (c as CreatureCard).swapToCard();
-        else if (c is StructureCard)
-            (c as StructureCard).swapToCard();
-        c.setSpritesToSortingLayer(SpriteLayers.CardInHandMiddle);
-        resetCardPositions();
-        if (cardCountText != null)
-            cardCountText.text = cardList.Count + "";
     }
 
-    protected override void onCardRemoved(Card c)
+    public void OnPointerEnter(PointerEventData eventData)
     {
-        cardCountText.text = cardList.Count + "";
-        resetCardPositions();
+        targetPosition = originalPosition + Vector3.up * moveUpDistance;
     }
 
-    public void printCardList()
+    public void OnPointerExit(PointerEventData eventData)
     {
-        Debug.Log("Printing cards in hand");
-        foreach(Card c in cardList)
-        {
-            Debug.Log(c.transform.name);
-        }
-    }
-
-    public void show()
-    {
-        if (GameManager.gameMode == GameManager.GameMode.online)
-            return;
-        hidden = false;
-        foreach (Card c in cardList)
-        {
-            c.returnGraphicsAndCollidersToScene();
-            //resetCardPositions();
-            //c.setSpriteMaskInteraction(SpriteMaskInteraction.None);
-        }
-    }
-
-    public void hide()
-    {
-        if (GameManager.gameMode == GameManager.GameMode.online)
-            return;
-        hidden = true;
-        foreach (Card c in cardList)
-        {
-            c.removeGraphicsAndCollidersFromScene();
-            //c.setSpriteMaskInteraction(SpriteMaskInteraction.VisibleInsideMask);
-        }
+        targetPosition = originalPosition;
     }
 }

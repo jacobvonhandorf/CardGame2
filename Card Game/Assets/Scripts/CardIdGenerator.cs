@@ -7,7 +7,7 @@ public class CardIdGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        List<CardData> allIds = ResourceManager.Get().getAllCardData();
+        List<CardData> allIds = ResourceManager.Get().GetAllCardData();
         string availableIds = "";
         for (int i = 0; i < allIds.Count; i++)
         {

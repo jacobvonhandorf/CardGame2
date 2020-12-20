@@ -1,32 +1,36 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class StatChangePropogator : MonoBehaviour
 {
-    [SerializeField] private List<StatChangeListener> subscribedTexts;
-    public StatsContainer StatsContainer {
+    public IHaveReadableStats Source
+    {
         private get
         {
-            return statsContainer;
+            return source;
         }
         set
         {
-            // THIS CAN CAUSE PERFORMANCE PROBLEMS BUT I COULDN'T GET IT TO NOT DO A NULL POINTER
-            //if (statsContainer != null)
-                //statsContainer.E_OnStatsChanged -= StatsContainer_E_OnStatsChanged;
-            statsContainer = value;
-            statsContainer.E_OnStatsChanged += StatsContainer_E_OnStatsChanged;
+            source?.E_OnStatChange?.RemoveListener(OnStatsChanged);
+            source = value;
+            source.E_OnStatChange?.AddListener(OnStatsChanged);
+            OnStatsChanged();
         }
     }
-    private StatsContainer statsContainer;
+    [SerializeField] private List<StatChangeListener> subscribedTexts;
+    private IHaveReadableStats source;
 
     private void StatsContainer_E_OnStatsChanged(object sender, System.EventArgs e)
     {
-        Debug.Log("Propogating stat change");
         foreach (StatChangeListener statText in subscribedTexts)
-        {
-            statText.updateValue(statsContainer);
-        }
+            statText.UpdateValue(source);
+    }
+
+    private void OnStatsChanged()
+    {
+        foreach (StatChangeListener statText in subscribedTexts)
+            statText.UpdateValue(source);
     }
 }

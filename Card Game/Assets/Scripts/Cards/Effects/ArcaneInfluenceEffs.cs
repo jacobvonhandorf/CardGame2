@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class ArcaneInfluenceEffs : SpellEffects
 {
-    public override List<Tile> validTiles => Board.instance.getAllTilesWithCreatures(card.owner, true);
+    public override List<Tile> ValidTiles => Board.Instance.GetAllTilesWithCreatures(card.Owner, true);
 
-    public override void doEffect(Tile t)
+    public override void DoEffect(Tile t)
     {
-        t.creature.Counters.add(CounterType.Arcane, 2);
-        card.owner.drawCard();
+        t.Creature.Counters.Add(CounterType.Arcane, 2);
+        card.Owner.DrawCard();
     }
 }

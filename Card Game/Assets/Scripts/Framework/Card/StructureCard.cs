@@ -6,92 +6,76 @@ using UnityEngine;
 
 public class StructureCard : Card
 {
-    public Structure structure;
-    public bool isStructure;
+    public Structure Structure { get; private set; }
+    public CounterController CounterController => counterCountroller;
     [SerializeField] private CounterController counterCountroller;
-    public override List<Tile> legalTargetTiles => GameManager.Get().getLegalStructurePlacementTiles(owner);
-    public override CardType getCardType() => CardType.Structure;
-    //public override int cardId => structure.cardId;
+
+    public new PermanentCardVisual CardVisuals { get { return (PermanentCardVisual)base.CardVisuals; } }
+    public override List<Tile> LegalTargetTiles => GameManager.Instance.getLegalStructurePlacementTiles(Owner);
+    public override CardType CardType => CardType.Structure;
 
     protected override void Awake()
     {
         base.Awake();
-        structure = GetComponent<Structure>();
+        Structure = GetComponent<Structure>();
     }
 
-    public override void initialize()
+    public override void Initialize()
     {
         onInitilization?.Invoke();
         onInitilization = null;
     }
 
-    public override void play(Tile t)
+    public override void Play(Tile t)
     {
-        GameManager.Get().createStructureOnTile(structure, t, owner, this);
-        owner.hand.resetCardPositions();
+        Structure.CreateOnTile(t);
     }
 
-    public void swapToStructure(Tile onTile)
+    public void SwapToStructure(Tile onTile)
     {
-        // change structure so that it is rendered beneath cards in hand
-        setSpritesToSortingLayer(SpriteLayers.Creature);
-
-        // disable card functionality
         enabled = false;
-
-        // enable creature functionality
-        structure.enabled = true;
-
-        // initialize the structure if it hasn't already been initialized
-        //structure.initialize();
+        Structure.enabled = true;
 
         // resize
-        (cardStatsScript as StructureStatsGetter).swapToStructure(onTile);
-
-        isStructure = true;
+        CardVisuals.ResizeToPermanent(onTile.transform.position);
+        //Structure.SyncCreateOnTile(onTile);
     }
 
-    internal void swapToCard()
+    public void SwapToCard()
     {
         // enable card functionality
         enabled = true;
 
         // disable structure functionality
-        structure.enabled = false;
+        Structure.enabled = false;
 
         // resize
-        if (isStructure)
-            (cardStatsScript as StructureStatsGetter).swapToCard();
+        CardVisuals.ResizeToCard();
 
         // set tile back to null because no longer on field
-        structure.tile = null;
-
-        isStructure = false;
+        Structure.Tile = null;
     }
 
-    public override void resetToBaseStats()
+    public override void ResetToBaseStats()
     {
-        base.resetToBaseStats();
-        structure.resetToBaseStats();
+        base.ResetToBaseStats();
+        Structure.resetToBaseStats();
     }
 
     public override void resetToBaseStatsWithoutSyncing()
     {
         base.resetToBaseStatsWithoutSyncing();
-        structure.resetToBaseStatsWithoutSyncing();
+        Structure.resetToBaseStatsWithoutSyncing();
     }
 
     // returns true if the card can be played right now
-    public override bool canBePlayed()
+    public override bool CanBePlayed()
     {
-        if (!structure.additionalCanBePlayedChecks())
+        if (!Structure.additionalCanBePlayedChecks())
             return false;
-        // check if the player can pay the costs
-        if (!ownerCanPayCosts())
+        if (!OwnerCanPayCosts())
             return false;
         else
             return true;
     }
-
-    public CounterController getCounterController() => counterCountroller;
 }

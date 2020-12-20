@@ -15,38 +15,37 @@ public class CounterController : MonoBehaviour
     private void Awake()
     {
         attachedObject = GetComponentInParent<ICanReceiveCounters>();
-        Debug.Log("Attached object " + attachedObject);
     }
 
-    public void add(CounterType counterType, int amount)
+    public void Add(CounterType counterType, int amount)
     {
-        counterList.addCounters(counterType, amount);
+        counterList.AddCounters(counterType, amount);
         attachedObject.OnCountersAdded(counterType, amount);
-        updateDisplay(counterType);
+        UpdateDisplay(counterType);
     }
-    public void remove(CounterType counterType, int amount)
+    public void Remove(CounterType counterType, int amount)
     {
-        counterList.removeCounters(counterType, amount);
+        counterList.RemoveCounters(counterType, amount);
         attachedObject.OnCountersAdded(counterType, amount);
-        updateDisplay(counterType);
+        UpdateDisplay(counterType);
     }
-    public int amountOf(CounterType counterType)
+    public int AmountOf(CounterType counterType)
     {
-        return counterList.hasCounter(counterType);
+        return counterList.AmountOf(counterType);
     }
-    public void clear()
+    public void Clear()
     {
-        counterList.clear();
-        updateDisplays();
+        counterList.Clear();
+        UpdateDisplays();
     }
 
-    private void updateDisplays()
+    private void UpdateDisplays()
     {
         foreach (CounterType type in counterList.CounterMap.Keys)
-            updateDisplay(type);
+            UpdateDisplay(type);
     }
 
-    private void updateDisplay(CounterType counterType)
+    private void UpdateDisplay(CounterType counterType)
     {
         // get the display if it exists
         if (displays.TryGetValue(counterType, out CounterDisplay display))
@@ -54,32 +53,30 @@ public class CounterController : MonoBehaviour
             if (counterList.CounterMap.TryGetValue(counterType, out int amount))
             {
                 display.gameObject.SetActive(true);
-                display.setText(amount); // if a display exists and there is an amount for it then set the display to the amount
+                display.SetText(amount); // if a display exists and there is an amount for it then set the display to the amount
             }
             else
             {
                 // A display exists but no amount so set the display to inactive
-                display.setText(0);
+                display.SetText(0);
                 display.gameObject.SetActive(false);
-                updateDisplayLocations();
+                UpdateDisplayLocations();
             }
         }
         else
         {
             // no display exists so create a new one
-            CounterDisplay newDisplay = Instantiate(counterDisplayPrefab);
-            newDisplay.gameObject.transform.SetParent(transform);
+            CounterDisplay newDisplay = Instantiate(counterDisplayPrefab, transform);
             displays.Add(counterType, newDisplay);
-            newDisplay.setBackgroundColor(Counters.GetData(counterType).FillColor);
-            newDisplay.setBorderColor(Counters.GetData(counterType).BorderColor);
-            newDisplay.setTextColor(Counters.GetData(counterType).BorderColor);
-            newDisplay.setText(counterList.hasCounter(counterType));
-            newDisplay.transform.localScale = new Vector3(1, 1, 1);
-            updateDisplayLocations();
+            newDisplay.SetBackgroundColor(Counters.GetData(counterType).FillColor);
+            newDisplay.SetBorderColor(Counters.GetData(counterType).BorderColor);
+            newDisplay.SetTextColor(Counters.GetData(counterType).BorderColor);
+            newDisplay.SetText(counterList.AmountOf(counterType));
+            UpdateDisplayLocations();
         }
     }
 
-    private void updateDisplayLocations()
+    private void UpdateDisplayLocations()
     {
         int index = 0;
         foreach (CounterDisplay display in displays.Values)

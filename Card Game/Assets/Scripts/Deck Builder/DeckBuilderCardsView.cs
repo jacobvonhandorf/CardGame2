@@ -24,7 +24,7 @@ public class DeckBuilderCardsView : MonoBehaviour
     private void Awake()
     {
         cardViewers = new List<CardViewerForDeckBuilder>();
-        allCards = ResourceManager.Get().getAllCardDataVisibleInDeckBuilder();
+        allCards = ResourceManager.Get().GetAllCardDataVisibleInDeckBuilder();
         allCards.Sort();
         cardList = new List<CardData>();
         cardList.AddRange(allCards);
@@ -53,7 +53,7 @@ public class DeckBuilderCardsView : MonoBehaviour
             }
             else
                 cardViewer = Instantiate(cardViewerPrefab, contentTransform);
-            cardViewer.setCard(id);
+            // cardViewer.SetCard(id); needs to be redone
             cardViewer.deckBeingBuilt = deck;
             if (!cardIdToViewerMap.ContainsKey(id))
                 cardIdToViewerMap.Add(id, cardViewer);
@@ -99,17 +99,17 @@ public class DeckBuilderCardsView : MonoBehaviour
                     continue;
             // total cost
             if (filter.totalCosts != null && filter.totalCosts.Count > 0)
-                if (!filter.totalCosts.Contains(data.totalCost))
+                if (!filter.totalCosts.Contains(data.TotalCost))
                     continue;
             // card types
             if (filter.cardTypes != null && filter.cardTypes.Count > 0)
-                if (!filter.cardTypes.Contains(data.cardType))
+                if (!filter.cardTypes.Contains(data.CardType))
                     continue;
             // tags
             if (filter.tags != null && filter.tags.Count > 0)
             {
                 bool hasTag = false;
-                foreach (Card.Tag tag in filter.tags)
+                foreach (Tag tag in filter.tags)
                     if (data.tags.Contains(tag))
                     {
                         hasTag = true;
@@ -168,10 +168,10 @@ public class DeckBuilderCardsView : MonoBehaviour
 
 public class CardFilterObject
 {
-    public List<Card.ElementIdentity> elements;
+    public List<ElementIdentity> elements;
     public List<int> totalCosts;
-    public List<Card.CardType> cardTypes;
-    public List<Card.Tag> tags;
+    public List<CardType> cardTypes;
+    public List<Tag> tags;
     public List<Keyword> keywords;
     public string nameTextSearch;
     public string descriptionTextSearch;

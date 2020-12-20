@@ -34,7 +34,7 @@ public class EffectsManager : MonoBehaviour
 
     public void addEffect(EffectActuator newEffect, Player effectOwner)
     {
-        if (effectOwner != NetInterface.Get().getLocalPlayer())
+        if (effectOwner != NetInterface.Get().localPlayer)
             return;
         effectsQueue.Add(newEffect);
     }
@@ -47,7 +47,7 @@ public class EffectsManager : MonoBehaviour
 
     public void addEffectToStartOfQueue(EffectActuator newEffect, string informationText, Player effectOwner)
     {
-        if (effectOwner != NetInterface.Get().getLocalPlayer())
+        if (effectOwner != NetInterface.Get().localPlayer)
             return;
         newEffect.informationText = informationText;
         effectsQueue.Insert(0, newEffect);
@@ -72,7 +72,7 @@ public class EffectsManager : MonoBehaviour
             else
             {
                 // TODO fix this for netplay
-                GameManager.Get().activePlayer.removeLock(effectsManagerLock);
+                GameManager.Instance.ActivePlayer.RemoveLock(effectsManagerLock);
             }
             // reset bool
             effectJustFinished = false;
@@ -87,7 +87,7 @@ public class EffectsManager : MonoBehaviour
         effectsQueue.Remove(effectToActivate);
         effectInProcess = true;
         effectToActivate.activate();
-        GameManager.Get().activePlayer.addLock(effectsManagerLock);
+        GameManager.Instance.ActivePlayer.AddLock(effectsManagerLock);
         //GameManager.Get().activePlayer.locked = true;
         if (effectToActivate.informationText != null)
             flipEffectTextOn(effectToActivate.informationText);

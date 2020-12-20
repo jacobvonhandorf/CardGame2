@@ -22,11 +22,11 @@ public class Recharge : HeroPower
 
     public bool canBeActivatedCheck(Player controller)
     {
-        if (controller.graveyard.getCardList().Count < cardsToShuffleBack)
+        if (controller.Graveyard.CardList.Count < cardsToShuffleBack)
             return false;
         int totalResources = 0;
-        totalResources += controller.getMana();
-        totalResources += controller.getGold();
+        //totalResources += controller.getMana();
+        //totalResources += controller.getGold();
         if (totalResources < totalCost)
             return false;
 
@@ -47,24 +47,24 @@ public class Recharge : HeroPower
     {
         foreach (Card c in cardList)
         {
-            c.moveToCardPile(controller.deck, null);
+            c.MoveToCardPile(controller.Deck, null);
         }
-        controller.deck.shuffle();
+        controller.Deck.Shuffle();
 
         //controller.addMana(-manaCost);
         //controller.addGold(-goldCost);
 
-        controller.addMana(manaGain);
-        controller.addGold(goldGain);
+        //controller.addMana(manaGain);
+        //controller.addGold(goldGain);
 
-        controller.drawCards(cardToDraw);
+        controller.DrawCards(cardToDraw);
     }
 
     public void receiveXPick(int value)
     {
         throw new System.Exception("Not implemented");
-        controller.addGold(-value);
-        controller.addMana(-(totalCost - value));
+        //controller.addGold(-value);
+        //controller.addMana(-(totalCost - value));
         //GameManager.Get().queueCardPickerEffect(controller, controller.graveyard.getCardList(), this, cardsToShuffleBack, cardsToShuffleBack, true, "Select cards to shuffle back");
     }
 }

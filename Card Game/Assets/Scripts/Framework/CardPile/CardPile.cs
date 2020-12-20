@@ -1,143 +1,80 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 using static Card;
 
-/*
- * This is a parent class for all objects that are a pile of cards ex: deck, hand, grave
- */
-
-public abstract class CardPile : MonoBehaviour
+//This is a parent class for all objects that are a pile of cards ex: deck, hand, grave
+public abstract class CardPile : MonoBehaviour, IScriptPile
 {
+    IReadOnlyList<IScriptCard> IScriptPile.CardList => cardList;
+    public IReadOnlyList<Card> CardList => cardList;
+    public UnityEvent NumCardsChanged { get; } = new UnityEvent();
+
     [SerializeField] protected bool ownedByLocalPlayer; // used for Net Code
-    [SerializeField] protected List<Card> cardList;
+    protected List<Card> cardList = new List<Card>();
 
     protected void Awake()
     {
-        nullCheckList();
-        NetInterface.Get().registerCardPile(this, ownedByLocalPlayer);
+        NetInterface.Get().RegisterCardPile(this, ownedByLocalPlayer);
     }
 
-    // this method is dangerous to call. If possible use Card.moveToCardPile()
-    public void addCard(Card c)
+    public void AddCard(Card c)
     {
-        nullCheckList();
         if (cardList.Contains(c)) // trying to add a card that's already in the list
             return;
         cardList.Add(c);
 
-        c.transform.SetParent(transform);
-        onCardAdded(c);
+        c.transform.SetParent(transform, false);
+        OnCardAdded(c);
+        NumCardsChanged.Invoke();
     }
 
-    // this method is dangerous to call. If possible use Card.moveToCardPile()
-    public void addCards(List<Card> newCards)
+    public void AddCards(List<Card> newCards)
     {
         foreach (Card c in newCards)
         {
-            addCard(c);
+            AddCard(c);
         }
     }
 
-    protected void nullCheckList()
-    {
-        if (cardList == null)
-            cardList = new List<Card>();
-    }
-
-    // IF YOU CALL THIS METHOD MAKE SURE YOU MOVE THIS CARD TO ANOTHER PILE
-    // It's probably better to call Card.moveToCardPile()
-    public Card removeCard(Card cardToRemove)
+    public Card RemoveCard(Card cardToRemove)
     {
         foreach (Card c in cardList)
         {
             if (c == cardToRemove)
             {
                 cardList.Remove(c);
-                onCardRemoved(c);
+                OnCardRemoved(c);
+                NumCardsChanged.Invoke();
                 return c;
             }
         }
         return null;
     }
 
-    protected virtual void onCardAdded(Card c)
-    {
-        // throw new NotImplementedException();
-        // Debug.Log("Should probably override onCardAdded");
-    }
+    protected virtual void OnCardAdded(Card c) { }
+    protected virtual void OnCardRemoved(Card c) { }
 
-    protected virtual void onCardRemoved(Card c)
-    {
-        // Debug.Log("OnCardRemoved called and not overriden");
-    }
+    public List<Card> GetAllCardsWithTag(Tag tag) => cardList.FindAll(c => c.Tags.Contains(tag));
+    public List<Card> GetAllCardsWithType(CardType type) => cardList.FindAll(c => c.IsType(type));
+    public List<Card> GetAllCardWithTagAndType(Tag tag, CardType type) => cardList.FindAll(c => c.Tags.Contains(tag) && c.IsType(type));
+    public List<Card> GetAllCardsWithLessThanOrEqualCost(int cost) => cardList.FindAll(c => c.TotalCost <= cost);
+    public List<Card> GetAllCardsWithinCostRange(int min, int max) => cardList.FindAll(c => c.TotalCost <= max && c.TotalCost >= min);
 
-    /*
-     * Returns a list of all cards in this pile that have a specified tag
-     */
-    public List<Card> getAllCardsWithTag(Tag tag)
-    {
-        List<Card> returnList = new List<Card>();
-        foreach (Card c in cardList)
-            if (c.Tags.Contains(tag))
-                returnList.Add(c);
-        return returnList;
-    }
-
-    public List<Card> getAllCardsWithType(CardType type)
-    {
-        List<Card> returnList = new List<Card>();
-        foreach (Card c in cardList)
-            if (c.isType(type))
-                returnList.Add(c);
-        return returnList;
-    }
-
-    public List<Card> getAllCardWithTagAndType(Tag tag, CardType type)
-    {
-        List<Card> returnList = new List<Card>();
-        foreach (Card c in cardList)
-        {
-            if (c.Tags.Contains(tag) && c.isType(type))
-                returnList.Add(c);
-        }
-        return returnList;
-    }
-
-    public List<Card> getAllCardsWithLessThanOrEqualCost(int cost)
-    {
-        List<Card> returnList = new List<Card>();
-        foreach (Card c in cardList)
-        {
-            if (c.TotalCost <= cost)
-            {
-                returnList.Add(c);
-            }
-        }
-        return returnList;
-    }
-
-    public List<Card> getAllCardsWithinTotalCostRange(int min, int max)
-    {
-        List<Card> returnList = new List<Card>();
-        foreach (Card c in cardList)
-        {
-            if (c.TotalCost <= max && c.TotalCost >= min)
-                returnList.Add(c);
-        }
-        return returnList;
-    }
-
-    public List<Card> getCardList()
-    {
-        return cardList;
-    }
-
-    // only call this from NetInterface
-    public void syncOrderFromNetwork(List<Card> newCardList)
+    public void SyncOrderFromNetwork(List<Card> newCardList)
     {
         cardList = newCardList;
     }
 
+    public void PrintCardList()
+    {
+        foreach (Card c in cardList)
+        {
+            Debug.Log(c.transform.name);
+        }
+    }
 }

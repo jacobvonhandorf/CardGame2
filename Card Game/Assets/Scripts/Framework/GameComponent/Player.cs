@@ -5,274 +5,144 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour, IScriptPlayer
 {
-    public Hand hand;
-    public Deck deck;
-    public Graveyard graveyard;
-    public bool isActivePlayer = false;
-    public bool canDraw = true;
-    public Creature heldCreature; // If the player clicks a creature a reference to that creature is held here (so it can be moved or attacked with)
-    public Player oppositePlayer { get { return GameManager.Get().getOppositePlayer(this); } }
-
-    public List<Creature> controlledCreatures = new List<Creature>();
-    public List<Structure> controlledStructures = new List<Structure>();
-
-    [SerializeField] private TextMeshPro actionsText;
-    [SerializeField] private TextMeshPro goldText;
-    [SerializeField] private TextMeshPro manaText;
-    [SerializeField] private TextMeshPro actionsPerTurnText;
-    [SerializeField] private TextMeshPro goldPerTurnText;
-    [SerializeField] private TextMeshPro manaPerTurnText;
-    [SerializeField] private TextMeshPro playerNameText;
-    [SerializeField] private int actionsPerTurn;
-    [SerializeField] private int gold;
-    [SerializeField] private int mana;
-    [SerializeField] private int goldPerTurn;
-    [SerializeField] private int manaPerTurn;
-    [SerializeField] private int actions;
-
-    public int numSpellsCastThisTurn = 0;
-    public int numCreaturesThisTurn = 0;
-    public int numStructuresThisTurn = 0;
-    public Dictionary<ExtraStatsKey, int> extraStats = new Dictionary<ExtraStatsKey, int>(); // use when scripting cards to store other stats that are attached to a player
-                                                                                                   // ex number of times a card with x name has been played by this player
-
+    public Hand Hand => hand;
+    public Deck Deck => deck;
+    public Graveyard Graveyard => graveyard;
+    public Player OppositePlayer => GameManager.Instance.GetOppositePlayer(this);
+    public StatsContainer Stats { get; } = new StatsContainer();
+    public List<Creature> ControlledCreatures => Board.Instance.AllCreatures.FindAll(c => c.Controller == this);
+    public Dictionary<ExtraStatsKey, int> ExtraStats { get; } = new Dictionary<ExtraStatsKey, int>(); // use when scripting cards to store other stats that are attached to a player
     public Effect heldEffect;
+    [HideInInspector] public bool isActivePlayer = false;
+    [HideInInspector] public bool canDraw = true;
 
-    enum State {Default, Attacking, UsingEfect} // enum for defining what action the player is in the process of doing (ex: declaring attack, declaring targets for effect)
-                                                    // not used right now. Might not ever use
+    [SerializeField] private Hand hand;
+    [SerializeField] private Deck deck;
+    [SerializeField] private Graveyard graveyard;
+    [SerializeField] private GameConfig gameConfig;
+    [SerializeField] private StatChangePropogator statChangePropogator;
+    
+    public int Gold { get { return (int)Stats.GetValue(StatType.Gold); } set { SyncPlayerStats(); Stats.SetValue(StatType.Gold, value); } }
+    public int Mana { get { return (int)Stats.GetValue(StatType.Mana); } set { SyncPlayerStats(); Stats.SetValue(StatType.Mana, value); } }
+    public int Actions { get { return (int)Stats.GetValue(StatType.Actions); } set { SyncPlayerStats(); Stats.SetValue(StatType.Actions, value); } }
+    public int GoldPerTurn { get { return (int)Stats.GetValue(StatType.GoldPerTurn); } set { SyncPlayerStats(); Stats.SetValue(StatType.GoldPerTurn, value); } }
+    public int ManaPerTurn { get { return (int)Stats.GetValue(StatType.ManaPerTurn); } set { SyncPlayerStats(); Stats.SetValue(StatType.ManaPerTurn, value); } }
+    public int ActionsPerTurn { get { return (int)Stats.GetValue(StatType.ActionsPerTurn); } set { SyncPlayerStats(); Stats.SetValue(StatType.ActionsPerTurn, value); } }
+    public int NumSpellsCastThisTurn { get; set; } = 0;
+    public int NumCreaturesThisTurn { get; set; } = 0;
+    public int NumStructuresThisTurn { get; set; } = 0;
+
+    IScriptPile IScriptPlayer.Hand => hand;
+    IScriptPile IScriptPlayer.Graveyard => graveyard;
+    IScriptDeck IScriptPlayer.Deck => deck;
 
     private void Start()
     {
-        actionsText.text = "Actions: " + actions;
-        goldText.text = "Gold: " + gold;
-        manaText.text = "Mana: " + mana;
-
-        actionsPerTurnText.text = "+" + actionsPerTurn;
-        goldPerTurnText.text = "+" + goldPerTurn;
-        manaPerTurnText.text = "+" + manaPerTurn;
+        Gold = gameConfig.StartingPlayerGold;
+        Mana = gameConfig.StartingPlayerMana;
+        Actions = gameConfig.StartingPlayerActions;
+        GoldPerTurn = gameConfig.StartingPlayerGoldIncome;
+        ManaPerTurn = gameConfig.StartingPlayerManaIncome;
+        ActionsPerTurn = gameConfig.StartingPlayerActionsIncome;
+        statChangePropogator.Source = Stats;
     }
 
-    public void drawCard()
+    public void DrawCard()
     {
         if (canDraw)
         {
-            if (deck.getCardList().Count > 0)
+            if (Deck.CardList.Count > 0)
             {
-                Card cardToAdd = deck.getTopCard();
-                cardToAdd.moveToCardPile(hand, null);
+                Card cardToAdd = Deck.CardList[0];
+                cardToAdd.MoveToCardPile(Hand, null);
             }
             else
-                GameManager.Get().playerHasDrawnOutDeck(this);
+                GameManager.Instance.playerHasDrawnOutDeck(this);
         }
     }
 
-    public void drawCards(int amount)
+    public void DrawCards(int amount)
     {
-        if (canDraw)
-        {
-            for (int i = 0; i < amount; i++)
-                drawCard();
-        }
-        hand.resetCardPositions();
+        for (int i = 0; i < amount; i++)
+            DrawCard();
     }
 
-    public void makeLose()
+    public void MakeLose()
     {
-        GameManager.Get().makePlayerLose(this);
-    }
-
-    public bool hasCreatureWithTag(Card.Tag tag)
-    {
-        foreach (Creature c in GameManager.Get().getAllCreaturesControlledBy(this))
-            if (c.hasTag(tag))
-                return true;
-
-        return false;
+        GameManager.Instance.makePlayerLose(this);
     }
 
     #region Locking
     private List<object> locks = new List<object>();
-    public void addLock(object newLock)
-    {
-        locks.Add(newLock);
-    }
-    public void removeLock(object lockToRemove)
-    {
-        locks.Remove(lockToRemove);
-    }
-    public bool isLocked() => locks.Count > 0;
+    public void AddLock(object newLock) => locks.Add(newLock);
+    public void RemoveLock(object lockToRemove) => locks.Remove(lockToRemove);
+    public bool IsLocked() => locks.Count > 0;
     #endregion
 
-    public void setToActivePlayer()
+    public void StartOfTurn()
     {
-        hand.show();
+        NumCreaturesThisTurn = 0;
+        NumSpellsCastThisTurn = 0;
+        NumStructuresThisTurn = 0;
     }
 
-    public void setToNonActivePlayer()
+    public void DoIncome()
     {
-        hand.hide();
+        Gold += GoldPerTurn;
+        Mana += ManaPerTurn;
+        Actions = ActionsPerTurn;
+        DoPowerTileIncome();
     }
-
-    public void startOfTurn()
+    public void DoPowerTileIncome()
     {
-        numCreaturesThisTurn = 0;
-        numSpellsCastThisTurn = 0;
-    }
-
-    public void doIncome()
-    {
-        doGoldIncome();
-        doManaIncome();
-        doActionIncome();
-        doPowerTileIncome();
-    }
-
-    public void doPowerTileIncome()
-    {
-        int powerTilesControlled = GameManager.Get().board.getPowerTileCount(this);
-        int opponentPowerTilesControlled = GameManager.Get().board.getPowerTileCount(GameManager.Get().getOppositePlayer(this));
+        int powerTilesControlled = GameManager.Instance.board.getPowerTileCount(this);
+        int opponentPowerTilesControlled = GameManager.Instance.board.getPowerTileCount(GameManager.Instance.GetOppositePlayer(this));
         int additionalPowerTilesControlled = powerTilesControlled - opponentPowerTilesControlled;
 
         if (additionalPowerTilesControlled == 1)
         {
-            addGold(1);
+            Gold += 1;
         }
         else if (additionalPowerTilesControlled == 2)
         {
-            addGold(1);
-            addMana(1);
-            addActions(1);
+            Gold += 1;
+            Mana += 1;
+            Actions += 1;
         }
         else if (additionalPowerTilesControlled == 3)
         {
-            addGold(2);
-            addMana(2);
-            addActions(1);
+            Gold += 2;
+            Mana += 2;
+            Actions += 1;
         }
         else if (additionalPowerTilesControlled == 4)
         {
-            addGold(3);
-            addMana(3);
-            addActions(2);
+            Gold += 3;
+            Mana += 3;
+            Actions += 2;
         }
-
     }
 
-    public void doGoldIncome()
+    public void SyncStats(int gold, int gpTurn, int mana, int mpTurn, int actions, int apTurn)
     {
-        addGold(goldPerTurn);
+        Stats.SetValue(StatType.Gold, gold);
+        Stats.SetValue(StatType.GoldPerTurn, gpTurn);
+        Stats.SetValue(StatType.Mana, mana);
+        Stats.SetValue(StatType.ManaPerTurn, mpTurn);
+        Stats.SetValue(StatType.Actions, actions);
+        Stats.SetValue(StatType.ActionsPerTurn, apTurn);
     }
 
-    public void doManaIncome()
-    {
-        addMana(manaPerTurn);
-    }
-
-    public void doActionIncome()
-    {
-        actions = actionsPerTurn;
-        actionsText.text = "Actions: " + actions;
-    }
-
-    public List<Creature> getAllControlledCreatures()
-    {
-        return GameManager.Get().getAllCreaturesControlledBy(this);
-    }
-
-    public void syncStats(int gold, int gpTurn, int mana, int mpTurn, int actions, int apTurn)
-    {
-        this.gold = gold;
-        this.goldPerTurn = gpTurn;
-        this.mana = mana;
-        this.manaPerTurn = mpTurn;
-        this.actions = actions;
-        this.actionsPerTurn = apTurn;
-
-        goldText.text = "Gold: " + gold;
-        goldPerTurnText.text = "+" + goldPerTurn;
-        manaText.text = "Mana: " + mana;
-        manaPerTurnText.text = "+" + manaPerTurn;
-        actionsText.text = "Actions: " + actions;
-        actionsPerTurnText.text = "+" + actionsPerTurn;
-    }
-
-    public void addActions(int amount)
-    {
-        actions += amount;
-        actionsText.text = "Actions: " + actions;
-        syncPlayerStats();
-    }
-    public void addGold(int amount)
-    {
-        gold += amount;
-        goldText.text = "Gold: " + gold;
-        syncPlayerStats();
-    }
-    public void addMana(int amount)
-    {
-        mana += amount;
-        manaText.text = "Mana: " + mana;
-        syncPlayerStats();
-    }
-    public void increaseActionsPerTurn(int amount)
-    {
-        actionsPerTurn += amount;
-        actionsPerTurnText.text = "+" + actionsPerTurn;
-        syncPlayerStats();
-    }
-    public void increaseGoldPerTurn(int amount)
-    {
-        goldPerTurn += amount;
-        goldPerTurnText.text = "+" + goldPerTurn;
-        syncPlayerStats();
-    }
-    public void increaseManaPerTurn(int amount)
-    {
-        manaPerTurn += amount;
-        manaPerTurnText.text = "+" + manaPerTurn;
-        syncPlayerStats();
-    }
-    public void subtractActions(int num)
-    {
-        actions -= num;
-        actionsText.text = "Actions: " + actions;
-        syncPlayerStats();
-    }
-
-    public int getGold()
-    {
-        return gold;
-    }
-    public int getMana()
-    {
-        return mana;
-    }
-    public int GetActions() { return actions; }
-    public int getActionsPerTurn() { return actionsPerTurn; }
-    public int getGoldPerTurn() { return goldPerTurn; }
-    public int getManaPerTurn() { return manaPerTurn; }
-    public string getPlayerName()
-    {
-        return playerNameText.text;
-    }
-    public Player getOppositePlayer()
-    {
-        return GameManager.Get().getOppositePlayer(this);
-    }
-
-    private void syncPlayerStats()
-    {
-        needToSyncStats = true;
-    }
+    private void SyncPlayerStats() => needToSyncStats = true;
     private bool needToSyncStats = false;
     private void Update()
     {
         if (needToSyncStats && NetInterface.Get().gameSetupComplete)
         {
             needToSyncStats = false;
-            NetInterface.Get().syncPlayerStats(this);
+            NetInterface.Get().SyncPlayerStats(this);
         }
     }
 }
