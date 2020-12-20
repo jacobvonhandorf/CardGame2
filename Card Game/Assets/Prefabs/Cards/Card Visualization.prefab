@@ -9,8 +9,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1001460260961317369}
-  - component: {fileID: 5350228656722443440}
-  - component: {fileID: 5842433289866622331}
+  - component: {fileID: 5017552412841886632}
+  - component: {fileID: 5354908322645240352}
   m_Layer: 0
   m_Name: Mana
   m_TagString: Card Icon
@@ -34,7 +34,7 @@ Transform:
   m_Father: {fileID: 618585521136823931}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5350228656722443440
+--- !u!114 &5017552412841886632
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -43,11 +43,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 117501850663937112}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e092dd564f4897345aadffb9ee4dd4a7, type: 3}
+  m_Script: {fileID: 11500000, guid: 231dfb80409c08b44b8bf00132107b72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncWith: 2
---- !u!114 &5842433289866622331
+--- !u!114 &5354908322645240352
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -56,7 +56,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 117501850663937112}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4487f6467836bb4e8289bb8cd13f729, type: 3}
+  m_Script: {fileID: 11500000, guid: 85d38cf297b52c9449c5bcfd1f7a4ef2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncWith: 17
@@ -1298,7 +1298,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   removedFromScene: 0
-  closeEnough: 0.49
+  closeEnough: 1
   speed: 9
 --- !u!1 &2006897085301698465
 GameObject:
@@ -1480,8 +1480,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8752579279117728044}
-  - component: {fileID: 5068577820522211296}
-  - component: {fileID: 7072678602320483301}
+  - component: {fileID: 2783600274572389983}
+  - component: {fileID: 889225669310329794}
   m_Layer: 0
   m_Name: Health
   m_TagString: Card Icon
@@ -1505,7 +1505,7 @@ Transform:
   m_Father: {fileID: 618585521136823931}
   m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5068577820522211296
+--- !u!114 &2783600274572389983
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1514,11 +1514,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 2700770266254174208}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e092dd564f4897345aadffb9ee4dd4a7, type: 3}
+  m_Script: {fileID: 11500000, guid: 231dfb80409c08b44b8bf00132107b72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncWith: 5
---- !u!114 &7072678602320483301
+--- !u!114 &889225669310329794
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1527,7 +1527,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2700770266254174208}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4487f6467836bb4e8289bb8cd13f729, type: 3}
+  m_Script: {fileID: 11500000, guid: 85d38cf297b52c9449c5bcfd1f7a4ef2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncWith: 17
@@ -1792,8 +1792,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7279522973447296256}
-  - component: {fileID: 8452624243077793738}
-  - component: {fileID: 5466530185680504654}
+  - component: {fileID: 297375050078196618}
+  - component: {fileID: 604448871303479357}
   m_Layer: 0
   m_Name: Gold
   m_TagString: Card Icon
@@ -1817,7 +1817,7 @@ Transform:
   m_Father: {fileID: 618585521136823931}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8452624243077793738
+--- !u!114 &297375050078196618
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1826,11 +1826,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 4762326737994762657}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e092dd564f4897345aadffb9ee4dd4a7, type: 3}
+  m_Script: {fileID: 11500000, guid: 231dfb80409c08b44b8bf00132107b72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncWith: 0
---- !u!114 &5466530185680504654
+--- !u!114 &604448871303479357
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1839,7 +1839,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4762326737994762657}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4487f6467836bb4e8289bb8cd13f729, type: 3}
+  m_Script: {fileID: 11500000, guid: 85d38cf297b52c9449c5bcfd1f7a4ef2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncWith: 17
@@ -2178,8 +2178,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 650711774044915439}
-  - component: {fileID: 6086971798662328118}
-  - component: {fileID: 4163562641185689146}
+  - component: {fileID: 6649121406513988273}
+  - component: {fileID: 8828240703163822612}
   m_Layer: 0
   m_Name: Movement
   m_TagString: Card Icon
@@ -2203,7 +2203,7 @@ Transform:
   m_Father: {fileID: 618585521136823931}
   m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6086971798662328118
+--- !u!114 &6649121406513988273
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2212,11 +2212,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 8107823603166955882}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e092dd564f4897345aadffb9ee4dd4a7, type: 3}
+  m_Script: {fileID: 11500000, guid: 231dfb80409c08b44b8bf00132107b72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncWith: 9
---- !u!114 &4163562641185689146
+--- !u!114 &8828240703163822612
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2225,7 +2225,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8107823603166955882}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4487f6467836bb4e8289bb8cd13f729, type: 3}
+  m_Script: {fileID: 11500000, guid: 85d38cf297b52c9449c5bcfd1f7a4ef2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncWith: 17
@@ -2319,8 +2319,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8209461025914572032}
-  - component: {fileID: 2349430042380794867}
-  - component: {fileID: 4734877395271631656}
+  - component: {fileID: 3642544795023485899}
+  - component: {fileID: 6948728505234484613}
   m_Layer: 0
   m_Name: Attack
   m_TagString: Card Icon
@@ -2344,7 +2344,7 @@ Transform:
   m_Father: {fileID: 618585521136823931}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2349430042380794867
+--- !u!114 &3642544795023485899
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2353,11 +2353,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 8795749594195964720}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e092dd564f4897345aadffb9ee4dd4a7, type: 3}
+  m_Script: {fileID: 11500000, guid: 231dfb80409c08b44b8bf00132107b72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncWith: 7
---- !u!114 &4734877395271631656
+--- !u!114 &6948728505234484613
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2366,7 +2366,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8795749594195964720}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b4487f6467836bb4e8289bb8cd13f729, type: 3}
+  m_Script: {fileID: 11500000, guid: 85d38cf297b52c9449c5bcfd1f7a4ef2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncWith: 17
@@ -2439,15 +2439,16 @@ MonoBehaviour:
   - {fileID: 5137014008784409932}
   - {fileID: 8902863978995356128}
   - {fileID: 8528474155029591600}
-  - {fileID: 8452624243077793738}
-  - {fileID: 5350228656722443440}
-  - {fileID: 2349430042380794867}
-  - {fileID: 6086971798662328118}
-  - {fileID: 5466530185680504654}
-  - {fileID: 5842433289866622331}
-  - {fileID: 4734877395271631656}
-  - {fileID: 7072678602320483301}
-  - {fileID: 4163562641185689146}
+  - {fileID: 297375050078196618}
+  - {fileID: 604448871303479357}
+  - {fileID: 5017552412841886632}
+  - {fileID: 5354908322645240352}
+  - {fileID: 3642544795023485899}
+  - {fileID: 6948728505234484613}
+  - {fileID: 2783600274572389983}
+  - {fileID: 889225669310329794}
+  - {fileID: 6649121406513988273}
+  - {fileID: 8828240703163822612}
 --- !u!114 &5916399075537680969
 MonoBehaviour:
   m_ObjectHideFlags: 0
