@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -67,6 +66,7 @@ public class Structure : Permanent, Damageable, ICanReceiveCounters, IScriptStru
         //InformativeAnimationsQueue.Instance.AddAnimation(new ShowCardCmd(card, true, this));
         CreateOnTileActual(tile);
     }
+
 
     private void OnMouseUpAsButton()
     {

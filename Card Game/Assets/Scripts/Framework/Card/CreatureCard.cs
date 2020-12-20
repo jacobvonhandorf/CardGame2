@@ -38,7 +38,10 @@ public class CreatureCard : Card, IScriptCreatureCard
 
     public void SwapToCreature(Tile onTile)
     {
+        // disable card functionality
         enabled = false;
+
+        // enable creature functionality
         Creature.enabled = true;
 
         // set card pile to board
@@ -47,8 +50,6 @@ public class CreatureCard : Card, IScriptCreatureCard
 
         // resize
         cardToPermanentConverter.DoConversion(onTile.transform.position);
-        Debug.Log("aaaaa");
-        //Creature.SynCreatureOnTile(onTile);
     }
 
     public void SwapToCard()

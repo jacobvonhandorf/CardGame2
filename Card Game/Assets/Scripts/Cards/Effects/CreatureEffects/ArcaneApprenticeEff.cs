@@ -17,6 +17,7 @@ public class ArcaneApprenticeEff : CreatureEffects
             creature.Counters.Add(CounterType.Arcane, 1);
         }
     }
+    */
 
     public override EmptyHandler activatedEffect => delegate ()
     {
@@ -40,5 +41,4 @@ public class ArcaneApprenticeEff : CreatureEffects
         });
         new CompoundQueueableCommand.Builder().AddCommand(xPickCmd).AddCommand(targetSelect).BuildAndQueue();
     };
-    */
 }

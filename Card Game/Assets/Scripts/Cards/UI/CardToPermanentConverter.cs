@@ -32,7 +32,6 @@ public class CardToPermanentConverter : MonoBehaviour
         permanent.enabled = true;
         dragHandler.enabled = false;
         StartCoroutine(ResizeToCreature(newPosition));
-
     }
 
     [SerializeField] private float pauseBetweenResize;
@@ -52,18 +51,6 @@ public class CardToPermanentConverter : MonoBehaviour
         Vector3 scaleEnd = Vector3.one * scaleWhenPermanent;
         Vector3 offsetPosStart = offsetTransform.transform.localPosition;
         Vector3 offsetScaleStart = offsetTransform.transform.localScale;
-
-        // --- temporary ---
-        restingTransform.SetTransform(new TransformStruct()
-        {
-            localScale = scaleEnd,
-            position = newPosition,
-            useLocalPosition = false,
-            rotation = Vector3.zero
-        });
-        yield break;
-        // -----------------
-
         // resize root
         float currentPercentage = 0;
         float timePassed = 0;

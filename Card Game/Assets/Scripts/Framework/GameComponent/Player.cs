@@ -12,11 +12,12 @@ public class Player : MonoBehaviour, IScriptPlayer
     public Graveyard Graveyard => graveyard;
     public Player OppositePlayer => GameManager.Instance.GetOppositePlayer(this);
     public StatsContainer Stats { get; } = new StatsContainer();
-    public List<Creature> ControlledCreatures => Board.Instance.AllCreatures.FindAll(c => c.Controller == this);
+    public List<Creature> ControlledCreatures => GameManager.Instance.getAllCreaturesControlledBy(this);
     public Dictionary<ExtraStatsKey, int> ExtraStats { get; } = new Dictionary<ExtraStatsKey, int>(); // use when scripting cards to store other stats that are attached to a player
     public Effect heldEffect;
     [HideInInspector] public bool isActivePlayer = false;
     [HideInInspector] public bool canDraw = true;
+    [HideInInspector] public Creature heldCreature; // If the player clicks a creature a reference to that creature is held here (so it can be moved or attacked with)
 
     [SerializeField] private Hand hand;
     [SerializeField] private Deck deck;
@@ -37,6 +38,7 @@ public class Player : MonoBehaviour, IScriptPlayer
     IScriptPile IScriptPlayer.Hand => hand;
     IScriptPile IScriptPlayer.Graveyard => graveyard;
     IScriptDeck IScriptPlayer.Deck => deck;
+
 
     private void Start()
     {
@@ -95,6 +97,7 @@ public class Player : MonoBehaviour, IScriptPlayer
         Actions = ActionsPerTurn;
         DoPowerTileIncome();
     }
+
     public void DoPowerTileIncome()
     {
         int powerTilesControlled = GameManager.Instance.board.getPowerTileCount(this);

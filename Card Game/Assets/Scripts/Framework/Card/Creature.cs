@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -79,8 +78,6 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters, IScriptCreat
     }
 
     #region Attacking
-    public List<Tile> AttackableTiles
-        => Board.Instance.GetAllTilesWithinRangeOfTile(Tile, Range).Where(t => t.Permanent != null && t.Permanent is Damageable && t.Permanent.Controller != Controller).ToList();
     private Vector3 right = new Vector3(-180, -90, -90);
     private Vector3 left = new Vector3(-180, 90, -90);
     private Vector3 up = new Vector3(-90, 0, 0);
@@ -88,8 +85,7 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters, IScriptCreat
     // stuff done before animation
     public int Attack(Damageable defender)
     {
-        int attackRoll = GetAttackRoll();
-        NetInterface.Get().SyncAttack(this, defender, attackRoll);
+        int attackRoll = getAttackRoll();
         Attack(defender, attackRoll);
         return attackRoll;
     }
@@ -98,7 +94,7 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters, IScriptCreat
         ActionAvailable = false;
         if (!MoveAvailable)
             Controller.Actions -= 1;
-        StartCoroutine(AttackAnimation(defender, damageRoll));
+        StartCoroutine(attackAnimation(defender, damageRoll));
     }
     // stuff done after animation
     private void AttackPart2(Damageable defender, int attackRoll)
@@ -110,7 +106,7 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters, IScriptCreat
             defender.TriggerOnDefendEvents(this, new OnDefendArgs() { attacker = this });
 
         // perform damage calc
-        defender.TakeDamage(attackRoll, SourceCard);
+        defender.TakeDamage(attackRoll, SourceCard); // do damage text in takeDamage()
         TakeDamage(KeywordUtils.GetDefenderValue(defender.SourceCard), SourceCard);
 
         // gray out creature to show it has already acted
@@ -121,7 +117,7 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters, IScriptCreat
         if (HasKeyword(Keyword.Poison) && defender.SourceCard is CreatureCard)
             GameManager.Instance.kill((defender.SourceCard as CreatureCard).Creature);
     }
-    private IEnumerator AttackAnimation(Damageable defender, int attackRoll)
+    private IEnumerator attackAnimation(Damageable defender, int attackRoll)
     {
         Vector3 direction = transform.position - defender.transform.position;
         Vector2 defenderCoords = defender.Coordinates;
@@ -162,7 +158,7 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters, IScriptCreat
         // back to normal script
         AttackPart2(defender, attackRoll);
     }
-    public int GetAttackRoll()
+    public int getAttackRoll()
     {
         return AttackStat;
     }
@@ -228,6 +224,7 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters, IScriptCreat
 
     public void SynCreatureOnTile(Tile t)
     {
+        Debug.Log("Syncing creature placement");
         // animate showing card
         //InformativeAnimationsQueue.Instance.AddAnimation(new ShowCardCmd(card, true, this));
         CreateCreatureActual(t);
@@ -294,45 +291,66 @@ public class Creature : Permanent, Damageable, ICanReceiveCounters, IScriptCreat
 
     public void OnClicked()
     {
-        if (IgnoreClickCheck())
+        if (!enabled)
             return;
-
-        // "move" in place
-        if (CreatureMoveControl.CurrentCreature == this)
+        if (GameManager.gameMode == GameManager.GameMode.online)
         {
-            CreatureMoveControl.Cancel();
-            ActionBox.instance.Show(this);
+            if (Controller != NetInterface.Get().localPlayer || NetInterface.Get().localPlayer.IsLocked())
+                return;
+        }
+        else
+        {
+            if (Controller != GameManager.Instance.ActivePlayer || Controller.IsLocked())
+                return;
+        }
+        // what to do if controller is trying to do something with this creature while they have no actions
+        if (Controller.Actions <= 0)
+        {
+            if (!MoveAvailable && ActionAvailable)
+            {
+                ActionBox.instance.show(this);
+                Board.Instance.SetAllTilesToDefault();
+                Controller.heldCreature = null;
+                return;
+            }
+            else if (MoveAvailable && ActionAvailable)
+            {
+                Toaster.Instance.DoToast("You do not have enough actions to use this unit");
+                return;
+            }
+        }
+
+        // if this creature was already clicked once then simulate a move in place
+        if (Controller.heldCreature == this)
+        {
+            ActionBox.instance.show(this);
+            Board.Instance.SetAllTilesToDefault();
+            Controller.heldCreature = null;
             return;
         }
 
-        // Clicking creature that has already moved
-        if (!MoveAvailable && ActionAvailable)
-        {
-            ActionBox.instance.Show(this);
+        Board.Instance.SetAllTilesToDefault();
+        // in hot seat mode don't let a player move their opponents creatures
+        if (GameManager.gameMode == GameManager.GameMode.hotseat && GameManager.Instance.ActivePlayer != Controller)
             return;
+        Controller.heldCreature = this;
+        if (MoveAvailable && ActionAvailable)
+        {
+            List<Tile> validTiles = Board.Instance.GetAllMovableTiles(this);
+            foreach (Tile t in validTiles)
+            {
+                t.setActive(true);
+            }
         }
-
-        // Clicking creature that's done it's thing for the turn
-        if (!MoveAvailable && !ActionAvailable)
+        else if (!MoveAvailable && ActionAvailable)
+        {
+            ActionBox.instance.show(this);
+        }
+        else
         {
             Toaster.Instance.DoToast("You can only use a creature once per turn");
-            return;
-        }
-
-        // Clicking a creature when nothing else is going on
-        if (MoveAvailable && Controller.Actions > 0)
-        {
-            CreatureMoveControl.Setup(this);
-            return;
         }
     }
-
-    // ignore click if the player doesn't control the creature or the controller is locked
-    private bool IgnoreClickCheck()
-        => GameManager.gameMode == GameManager.GameMode.online && (Controller != NetInterface.Get().localPlayer)
-                    || GameManager.gameMode == GameManager.GameMode.hotseat && GameManager.Instance.ActivePlayer != Controller
-                    || Controller.IsLocked();
-
     public void OnHovered()
     {
         UIEvents.PermanentHovered.Invoke(SourceCard);

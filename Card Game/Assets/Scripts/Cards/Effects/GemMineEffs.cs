@@ -11,7 +11,7 @@ public class GemMineEffs : StructureEffects
     {
         Structure.Counters.Add(CounterType.Mine, 3);
     };
-    /*
+
     public override EmptyHandler activatedEffect => delegate ()
     {
         if (Structure.Counters.AmountOf(CounterType.Mine) == 0)
@@ -51,5 +51,4 @@ public class GemMineEffs : StructureEffects
         effectUsedThisTurn = false;
         //GameEvents.E_TurnEnd -= GameEvents_E_TurnEnd;
     }
-    */
 }

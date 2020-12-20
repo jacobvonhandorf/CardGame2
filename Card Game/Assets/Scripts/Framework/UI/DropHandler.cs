@@ -10,7 +10,6 @@ public class DropHandler : MonoBehaviour, IDropHandler
 
     public void OnDrop(PointerEventData eventData)
     {
-        Debug.Log("Drop event");
         DropAction?.Invoke();
     }
 }

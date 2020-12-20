@@ -22,8 +22,6 @@ public class PrefabHolder : MonoBehaviour
     #region Prefabs
     public XPickerBox xPickerPrefab;
     public CardPicker cardPicker;
-    public OptionSelectBox optionBox;
-    public AboveTileFilter aboveTileFilter;
     #endregion
 
     private void Awake()

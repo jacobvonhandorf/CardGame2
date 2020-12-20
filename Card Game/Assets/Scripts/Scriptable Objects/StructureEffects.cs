@@ -15,5 +15,5 @@ public class StructureEffects : MonoBehaviour
     public virtual EventHandler<OnDefendArgs> onDefend { get; }
     //public virtual EventHandler<OnDamagedArgs> onDamaged { get; }
     public virtual EventHandler<AddedToCardPileArgs> onMoveToCardPile { get; }
-    public virtual ActivatedEffect activatedEffect { get; }
+    public virtual EmptyHandler activatedEffect { get; }
 }

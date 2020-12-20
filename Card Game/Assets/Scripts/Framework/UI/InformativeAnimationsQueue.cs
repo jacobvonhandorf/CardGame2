@@ -19,7 +19,7 @@ public class InformativeAnimationsQueue : MonoBehaviour
         instance = this;
     }
 
-    private readonly object playingAnimationsLock = new object(); // used to lock the player while animations are playing
+    private readonly object playingAnimationsLock = new object();
     private Queue<IQueueableCommand> animationQueue = new Queue<IQueueableCommand>();
     private IQueueableCommand currentAnimation;
     void Update()
@@ -40,7 +40,7 @@ public class InformativeAnimationsQueue : MonoBehaviour
         }
         if (animationQueue.Count == 0) // command is finished but there is no new command
             return;
-        currentAnimation = animationQueue.Dequeue(); // start new command
+        currentAnimation = animationQueue.Dequeue();
         if (NetInterface.Get().localPlayer != null)
             NetInterface.Get().localPlayer.AddLock(playingAnimationsLock);
         currentAnimation.Execute();

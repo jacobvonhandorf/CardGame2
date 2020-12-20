@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class EngineerEffects : CreatureEffects
 {
-    public override ActivatedEffect activatedEffect => new ActivatedEffect("Create Structure", delegate ()
+    public override EmptyHandler activatedEffect => delegate ()
     {
         List<string> options = new List<string>
         {
@@ -35,5 +35,5 @@ public class EngineerEffects : CreatureEffects
             creature.UpdateHasActedIndicators();
         });
         new CompoundQueueableCommand.Builder().AddCommand(selectCommand).AddCommand(selectTileCmd).BuildAndQueue();
-    });
+    };
 }

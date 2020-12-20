@@ -182,6 +182,15 @@ public class GameManager : MonoBehaviour
         ActivePlayer.DrawCard();
     }
 
+    // move to creature
+    public void doAttackOn(Damageable defender)
+    {
+        Creature attacker = ActivePlayer.heldCreature;
+        int damageRoll = attacker.Attack(defender);
+        NetInterface.Get().SyncAttack(attacker, defender, damageRoll);
+        Board.Instance.SetAllTilesToDefault();
+    }
+
     private void SwitchActivePlayer()
     {
         Player tempPlayer = ActivePlayer;
@@ -438,6 +447,24 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(ScenesEnum.MMDeckSelect);
     }
 
+    public void setUpCreatureEffect(Creature creature)
+    {
+        // check for creature not having an effect
+        if (creature.ActivatedEffects.Count == 0)
+        {
+            Toaster.Instance.DoToast("This creature has no effect");
+            return;
+        }
+        else if (creature.ActivatedEffects.Count > 1)
+        {
+            throw new Exception("Not implemented");
+        }
+        else
+        {
+            creature.ActivatedEffects[0].Invoke();
+        }
+    }
+
     public void setUpStructureEffect(Structure structure)
     {
         Debug.Log("Setting up structure effect");
@@ -459,6 +486,48 @@ public class GameManager : MonoBehaviour
             });
         }
     }
+
+    // When the active player is about to perform an attack
+    public void setUpCreatureAttack(Creature creature)
+    {
+        List<Tile> tiles = getAttackableTilesFor(creature);
+        bool validAttack = false;
+        foreach (Tile tile in tiles)
+        {
+            tile.SetAttackable(true);
+            validAttack = true;
+        }
+
+        if (validAttack)
+        {
+            ActivePlayer.heldCreature = creature;
+        }
+        else
+        {
+            Toaster.Instance.DoToast("No valid attacks");
+            ActivePlayer.heldCreature = null;
+        }
+    }
+
+    private List<Tile> getAttackableTilesFor(Creature creature)
+    {
+        List<Tile> returnList = new List<Tile>();
+        Tile creaturesTile = creature.Tile;
+        foreach (Tile tile in board.AllTiles)
+        {
+            int xDiff = Math.Abs(creaturesTile.X - tile.X); // 0
+            int yDiff = Math.Abs(creaturesTile.Y - tile.Y); // 1
+            int distance = xDiff + yDiff; // 1
+            if (distance != 0 && distance <= creature.Range) // true
+                if (tile.Creature != null && tile.Creature.Controller != creature.Controller)
+                    returnList.Add(tile);
+                else if (tile.Structure != null && tile.Structure.Controller != creature.Controller)
+                    returnList.Add(tile);
+        }
+        return returnList;
+    }
+
+    public List<Creature> getAllCreaturesControlledBy(Player controller) => board.AllCreatures.FindAll(c => c.Controller == controller);
 
     // called when a player tries to draw a card when there are no cards left
     // haven't decided what to do in this situation yet

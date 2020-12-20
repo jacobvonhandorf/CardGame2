@@ -40,9 +40,5 @@ public class PermanentCardVisual : CardVisual
         throw new Exception("Not implemented");
     }
 
-    public void SetIsAlly(bool isAlly)
-    {
-        friendOrFoeBorder.gameObject.SetActive(true);
-        friendOrFoeBorder.color = isAlly ? Color.blue : Color.red;
-    }
+    public void SetIsAlly(bool isAlly) => friendOrFoeBorder.color = isAlly ? Color.blue : Color.red;
 }

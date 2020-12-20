@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class GemMercenaryCampEffs : StructureEffects
 {
-    /*
     public override EmptyHandler activatedEffect => delegate ()
     {
         if (Controller.Actions < 1)
@@ -30,5 +29,4 @@ public class GemMercenaryCampEffs : StructureEffects
             Structure.Controller.Actions -= 1;
         });
     };
-    */
 }

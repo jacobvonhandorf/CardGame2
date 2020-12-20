@@ -15,5 +15,5 @@ public abstract class CreatureEffects : MonoBehaviour
     public virtual EventHandler<OnDamagedArgs> onDamaged { get; }
     public virtual EventHandler<OnAttackArgs> onAttack { get; }
     public virtual EventHandler<AddedToCardPileArgs> onMoveToCardPile { get; }
-    public virtual ActivatedEffect activatedEffect { get; }
+    public virtual EmptyHandler activatedEffect { get; }
 }

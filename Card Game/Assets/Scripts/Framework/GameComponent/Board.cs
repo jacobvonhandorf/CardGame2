@@ -115,6 +115,15 @@ public class Board : CardPile
         }
         return count;
     }
+    public void SetAllTilesToDefault()
+    {
+        foreach (Tile t in AllTiles)
+        {
+            t.setActive(false);
+            t.SetAttackable(false);
+            t.setEffectableFalse();
+        }
+    }
     public List<Structure> getAllStructures(Player controller)
     {
         List<Structure> returnList = new List<Structure>();
