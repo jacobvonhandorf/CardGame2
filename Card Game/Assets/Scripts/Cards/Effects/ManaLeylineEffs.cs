@@ -14,9 +14,11 @@ public class ManaLeylineEffs : StructureEffects
         Controller.ManaPerTurn -= 2;
     };
 
+    /*
     public override EmptyHandler activatedEffect => delegate ()
     {
         Controller.Actions -= 1;
         Controller.Mana += 1;
     };
+    */
 }

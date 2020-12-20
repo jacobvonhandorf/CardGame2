@@ -7,7 +7,6 @@ using UnityEngine;
 public class StructureCard : Card
 {
     public Structure Structure { get; private set; }
-    public bool isStructure;
     public CounterController CounterController => counterCountroller;
     [SerializeField] private CounterController counterCountroller;
 
@@ -34,16 +33,12 @@ public class StructureCard : Card
 
     public void SwapToStructure(Tile onTile)
     {
-        // disable card functionality
         enabled = false;
-
-        // enable creature functionality
         Structure.enabled = true;
 
         // resize
         CardVisuals.ResizeToPermanent(onTile.transform.position);
-
-        isStructure = true;
+        //Structure.SyncCreateOnTile(onTile);
     }
 
     public void SwapToCard()
@@ -59,8 +54,6 @@ public class StructureCard : Card
 
         // set tile back to null because no longer on field
         Structure.Tile = null;
-
-        isStructure = false;
     }
 
     public override void ResetToBaseStats()

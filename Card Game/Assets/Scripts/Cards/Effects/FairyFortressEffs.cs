@@ -13,7 +13,7 @@ public class FairyFortressEffs : StructureEffects
     {
         Controller.ActionsPerTurn -= 1;
     };
-
+    /*
     public override EmptyHandler activatedEffect => delegate ()
     {
         if (Controller.Actions < 1)
@@ -36,4 +36,5 @@ public class FairyFortressEffs : StructureEffects
         });
         new CompoundQueueableCommand.Builder().AddCommand(ownedSelect).AddCommand(opponentSelect).BuildAndQueue();
     };
+    */
 }

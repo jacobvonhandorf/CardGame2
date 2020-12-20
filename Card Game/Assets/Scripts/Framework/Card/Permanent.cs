@@ -16,7 +16,7 @@ public abstract class Permanent : MonoBehaviour, IScriptPermanent
     public int BaseHealth { get { return (int)Stats.StatList[StatType.BaseHealth]; } set { Stats.SetValue(StatType.BaseHealth, value); needToSync = true; } }
     public int Health { get { return (int)Stats.StatList[StatType.Health]; } set { Stats.SetValue(StatType.Health, value); needToSync = true; } }
     public StatsContainer Stats { get { return SourceCard.Stats; } }
-    public List<EmptyHandler> ActivatedEffects { get; } = new List<EmptyHandler>();
+    public List<ActivatedEffect> ActivatedEffects { get; } = new List<ActivatedEffect>();
     public PermanentCardVisual CardVisual { get { return (PermanentCardVisual)SourceCard.CardVisuals; } }
     IScriptCard IScriptPermanent.SourceCard => SourceCard;
     IScriptPlayer IScriptPermanent.Controller { get { return Controller; } set { Controller = (Player)value; } }
@@ -143,9 +143,12 @@ public abstract class Permanent : MonoBehaviour, IScriptPermanent
     {
         TransformStruct ts = new TransformStruct(SourceCard.TransformManager.transform);
         ts.position = tile.transform.position;
-        ts.position = tile.GetComponent<RectTransform>().rect.center;
+        //ts.position = tile.GetComponent<RectTransform>().rect.center;
+        ts.position.x += 45; // these adjustments are needed because tile pivot is in the corner
+        ts.position.y -= 40; // if tile size is changed these need to change too
         ts.useLocalPosition = false;
-        SourceCard.TransformManager.MoveToInformativeAnimation(ts);
+        SourceCard.TransformManager.SetTransform(ts);
+        //SourceCard.TransformManager.MoveToInformativeAnimation(ts);
     }
 
     #region Keywords

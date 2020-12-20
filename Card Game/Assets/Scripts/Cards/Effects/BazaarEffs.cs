@@ -14,9 +14,11 @@ public class BazaarEffs : StructureEffects
         Controller.GoldPerTurn -= 2;
     };
 
+    /*
     public override EmptyHandler activatedEffect => delegate ()
     {
         Controller.Gold += 1;
         Controller.Actions -= 1;
     };
+    */
 }

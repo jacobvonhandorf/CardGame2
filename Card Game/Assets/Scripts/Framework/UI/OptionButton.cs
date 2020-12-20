@@ -1,25 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class OptionButton : MyButton
+public class OptionButton : MonoBehaviour
 {
     private int index;
     private string text;
-    //private OptionBoxHandler handler;
     private OptionSelectBox optionSelectBox;
 
-    private void OnMouseUpAsButton()
-    {
-        optionSelectBox.submit(index, text);
-    }
-
-    public void setUp(int index, string text, OptionSelectBox optionSelectBox)
+    public void SetUp(int index, string text, OptionSelectBox optionSelectBox)
     {
         this.index = index;
         this.text = text;
         this.optionSelectBox = optionSelectBox;
 
-        textMesh.text = text;
+        GetComponent<Button>().onClick.AddListener(OnClick);
+        GetComponentInChildren<TextMeshProUGUI>().text = text;
+    }
+
+    private void OnClick()
+    {
+        optionSelectBox.Submit(index, text);
     }
 }

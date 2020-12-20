@@ -9,41 +9,25 @@ using UnityEngine.SceneManagement;
 
 public class TestScript : MonoBehaviour
 {
-    public CardData testSpellData;
-    public CardData testCreatureData;
-    public CardData testStructureData;
-    public Card testCard;
-    public Tile tile1;
-    public Tile tile2;
-    public Tile tile3;
-    public Player testPlayer;
+    public OptionSelectBox optionBox;
 
     private void Start()
     {
         // setup test
 
-        CreatureCard creatureCard = GetTestCreatureCard();
-        StructureCard structureCard = GetTestStructureCard();
+        List<string> options = new List<string>()
+        {
+            "Option A",
+            "Option B",
+            "Option C",
+        };
+        testList.Add(delegate ()
+        {
+        });
 
-        testList.Add(delegate ()
+        OptionSelectBox.CreateAndQueue(options, "Test test test test test test", null, delegate (int index, string option)
         {
-            creatureCard.Creature.CreateOnTile(tile1);
-        });
-        testList.Add(delegate ()
-        {
-            creatureCard.Creature.Move(tile2);
-        });
-        testList.Add(delegate ()
-        {
-            creatureCard.Creature.SyncMove(tile3);
-        });
-        testList.Add(delegate ()
-        {
-            structureCard.Structure.CreateOnTile(tile1);
-        });
-        testList.Add(delegate ()
-        {
-            GetTestStructureCard().Structure.SyncCreateOnTile(tile2);
+            Debug.Log(index + " " + option);
         });
     }
 
